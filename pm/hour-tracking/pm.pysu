@@ -1,0 +1,159 @@
+[Pyspread save file version]
+0.1
+[shape]
+1000	100	3
+[grid]
+36	0	0	S[X-1,Y,Z] + datetime.timedelta(days=1)
+13	1	0	task5.update({'hoursEff':task5['hoursEff'] + S[11,0,0]})
+6	0	0	milestone1 = {'name':"Milestone 1",'hoursPlanned':datetime.timedelta(hours=0),'hoursEff':datetime.timedelta(hours=0)}
+29	2	0	S[X-1,Y,Z] + 1
+38	1	0	S[X-1,Y,Z] + 1
+31	2	0	S[X-1,Y,Z] + 1
+15	0	0	datetime.timedelta(hours=6)
+38	2	0	S[X-1,Y,Z] + 1
+1	4	0	task1['startDateEff']
+31	1	0	S[X-1,Y,Z] + 1
+24	2	0	S[X-1,Y,Z] + 1
+3	8	0	task5['milestone']
+1	7	0	task1['hoursEff']
+40	1	0	S[X-1,Y,Z] + 1
+3	7	0	task5['hoursEff']
+1	2	0	task1['startDatePlanned']
+3	2	0	task5['startDatePlanned']
+33	1	0	S[X-1,Y,Z] + 1
+21	8	0	charts.ChartFigure({'ytick_labels': u"", 'xlim': u"", 'yscale': "linear", 'ytick_labels_kwargs': {'color': (0.0, 0.0, 0.0)}, 'ytick_params_kwargs': {'top': False, 'right': False}, 'xlabel_kwargs': {'color': (0.0, 0.0, 0.0)}, 'ytick_params': "y", 'ylim': u"", 'xtick_params': "x", 'title': ("test chart"), 'title_kwargs': {'color': (0.0, 0.0, 0.0)}, 'xdate_format': u'', 'xticks': u"", 'ylabel': ("value"), 'xscale': "linear", 'xlabel': ("date"), 'xtick_labels': u"", 'xgrid': False, 'ygrid': False, 'legend': 0, 'xtick_params_kwargs': {'direction': u'in'}, 'ylabel_kwargs': {'color': (0.0, 0.0, 0.0)}, 'xtick_labels_kwargs': {'color': (0.0, 0.0, 0.0)}, 'yticks': u""}, {'color': (0.0, 0.0, 0.0), 'type': 'plot', 'markersize': 5, 'label': ("date test"), 'ydata': (S[20:40,2,0]), 'xdata': (S[20:39,1,0]), 'markerfacecolor': (0.0, 0.0, 0.0), 'marker': '.', 'markeredgecolor': (0.0, 0.0, 0.0), 'linewidth': 0, 'linestyle': '-'})
+26	0	0	S[X-1,Y,Z] + datetime.timedelta(days=1)
+3	1	0	task5['name']
+1	8	0	task1['milestone']
+35	0	0	S[X-1,Y,Z] + datetime.timedelta(days=1)
+28	1	0	S[X-1,Y,Z] + 1
+0	7	0	"Hours Effective"
+21	1	0	1
+37	2	0	S[X-1,Y,Z] + 1
+0	4	0	"Start Date"
+39	2	0	S[X-1,Y,Z] + 1
+23	0	0	S[X-1,Y,Z] + datetime.timedelta(days=1)
+0	1	0	"Task"
+39	1	0	S[X-1,Y,Z] + 1
+32	2	0	S[X-1,Y,Z] + 1
+25	0	0	S[X-1,Y,Z] + datetime.timedelta(days=1)
+18	1	0	datetime.timedelta(hours=8)
+2	3	0	datetime.date(2017,03,17)
+0	8	0	"Assigned to Milestone..."
+34	0	0	S[X-1,Y,Z] + datetime.timedelta(days=1)
+18	2	0	task1.update({'hoursEff':task1['hoursEff'] + S[X,Y-1,Z]})
+2	4	0	datetime.date(2017,03,07)
+36	1	0	S[X-1,Y,Z] + 1
+13	0	0	datetime.timedelta(hours=7)
+29	1	0	S[X-1,Y,Z] + 1
+22	0	0	S[X-1,Y,Z] + datetime.timedelta(days=1)
+0	0	1	"Milestone"
+31	0	0	S[X-1,Y,Z] + datetime.timedelta(days=1)
+1	6	0	task1['hoursPlanned']
+40	2	0	S[X-1,Y,Z] + 1
+24	0	0	S[X-1,Y,Z] + datetime.timedelta(days=1)
+3	6	0	task5['hoursPlanned']
+1	1	0	task1['name']
+3	5	0	task5['endDateEff']
+33	0	0	S[X-1,Y,Z] + datetime.timedelta(days=1)
+26	1	0	S[X-1,Y,Z] + 1
+19	2	0	task1.update({'hoursEff':task1['hoursEff'] + S[X,Y-1,Z]})
+3	0	0	task5 = {'name':"Task 5", 'startDatePlanned':datetime.date(2017,03,01),'endDatePlanned':datetime.date(2017,04,01),'startDateEff':datetime.date(2017,03,01),'endDateEff':datetime.date(2017,04,04),'hoursPlanned':datetime.timedelta(hours=44),'hoursEff':datetime.timedelta(hours=0),'milestone':milestone1['name']}
+26	2	0	S[X-1,Y,Z] + 1
+19	1	0	datetime.timedelta(hours=7)
+28	2	0	S[X-1,Y,Z] + 1
+21	0	0	datetime.date(2017,03,01)
+37	1	0	S[X-1,Y,Z] + 1
+0	5	0	"End Date"
+30	0	0	S[X-1,Y,Z] + datetime.timedelta(days=1)
+0	2	0	"Start Date, Planned"
+39	0	0	S[X-1,Y,Z] + datetime.timedelta(days=1)
+32	0	0	S[X-1,Y,Z] + datetime.timedelta(days=1)
+9	1	0	task5['test']
+2	0	0	task2 = {'name':S[X,Y+1,Z],'startDatePlanned':S[X,Y+2,Z],'endDatePlanned':S[X,Y+3,Z],'startDateEff':S[X,Y+4,Z],'endDateEff':S[X,Y+5,Z],'hoursPlanned':S[X,Y+6,Z]}
+25	2	0	S[X-1,Y,Z] + 1
+34	1	0	S[X-1,Y,Z] + 1
+18	3	0	numpy.sum(S[20:39,1,0])
+2	5	0	datetime.date(2017,03,28)
+11	0	0	task5.update({'hoursEff':datetime.timedelta(hours=8)})
+2	0	2	datetime.date(2017,03,01)
+34	2	0	S[X-1,Y,Z] + 1
+2	6	0	datetime.timedelta(hours=120)
+36	2	0	S[X-1,Y,Z] + 1
+29	0	0	S[X-1,Y,Z] + datetime.timedelta(days=1)
+22	1	0	S[X-1,Y,Z] + 1
+38	0	0	S[X-1,Y,Z] + datetime.timedelta(days=1)
+22	2	0	S[X-1,Y,Z] + 1
+15	1	0	task5.update({'hoursEff':task5['hoursEff'] + S[X,Y-1,Z]})
+1	5	0	task1['endDateEff']
+24	1	0	S[X-1,Y,Z] + 1
+1	0	0	task1 = {'name':"Task 1", 'startDatePlanned':datetime.date(2017,03,01),'endDatePlanned':datetime.date(2017,04,01),'startDateEff':datetime.date(2017,03,03),'endDateEff':datetime.date(2017,03,15),'hoursPlanned':datetime.timedelta(hours=120),'hoursEff':datetime.timedelta(hours=0),'milestone':milestone2['name']}
+40	0	0	S[X-1,Y,Z] + datetime.timedelta(days=1)
+3	4	0	task5['startDateEff']
+1	3	0	task1['endDatePlanned']
+3	3	0	task5['endDatePlanned']
+33	2	0	S[X-1,Y,Z] + 1
+35	2	0	S[X-1,Y,Z] + 1
+19	0	0	datetime.date(2017,03,06)
+35	1	0	S[X-1,Y,Z] + 1
+28	0	0	S[X-1,Y,Z] + datetime.timedelta(days=1)
+27	2	0	S[X-1,Y,Z] + 1
+5	1	0	task2['name']
+37	0	0	S[X-1,Y,Z] + datetime.timedelta(days=1)
+0	6	0	"Hours Planned"
+21	2	0	10
+30	1	0	S[X-1,Y,Z] + 1
+23	2	0	S[X-1,Y,Z] + 1
+0	0	2	"Raphael"
+7	0	0	milestone2 = {'name':"Milestone 2",'hoursPlanned':datetime.timedelta(hours=0),'hoursEff':datetime.timedelta(hours=0)}
+0	3	0	"End Date, Planned"
+30	2	0	S[X-1,Y,Z] + 1
+23	1	0	S[X-1,Y,Z] + 1
+32	1	0	S[X-1,Y,Z] + 1
+27	0	0	S[X-1,Y,Z] + datetime.timedelta(days=1)
+9	0	0	task5.update({'test':"Additional Entry"})
+2	1	0	"Task 2"
+25	1	0	S[X-1,Y,Z] + 1
+18	0	0	datetime.date(2017,03,05)
+2	2	0	datetime.date(2017,03,04)
+27	1	0	S[X-1,Y,Z] + 1
+[attributes]
+[(0, 1)]	[(0, 8)]	[]	[]	[]	0	'fontweight'	92	'pointsize'	12
+[]	[]	[]	[]	[(3, 2)]	0	'fontweight'	90	'markup'	False
+[]	[]	[]	[]	[(0, 0)]	1	'fontweight'	92	'pointsize'	12
+[]	[]	[]	[]	[(0, 0)]	2	'fontweight'	92	'pointsize'	12
+[(2, 0)]	[(2, 2)]	[]	[]	[]	2	'fontweight'	92	'pointsize'	12
+[]	[]	[]	[]	[(2, 0)]	2	'fontweight'	90
+[]	[]	[]	[]	[(2, 2)]	2	'fontweight'	90
+[]	[]	[]	[]	[(2, 1)]	2	'fontweight'	90
+[]	[]	[]	[]	[(3, 0)]	0	'button_cell'	u'task5'
+[]	[]	[]	[]	[(2, 1)]	2	'button_cell'	False
+[]	[]	[]	[]	[(3, 0)]	0	'button_cell'	False
+[]	[]	[]	[]	[(6, 0)]	0	'button_cell'	u'milestone 1'
+[]	[]	[]	[]	[(3, 0)]	0	'button_cell'	u'Task 5'
+[]	[]	[]	[]	[(9, 0)]	0	'button_cell'	u'update'
+[]	[]	[]	[]	[(11, 0)]	0	'button_cell'	u'update hours'
+[]	[]	[]	[]	[(13, 1)]	0	'button_cell'	u'add hours'
+[]	[]	[]	[]	[(15, 1)]	0	'button_cell'	u'add hours relative'
+[]	[]	[]	[]	[(18, 1)]	0	'frozen'	False
+[]	[]	[]	[]	[(6, 0)]	0	'button_cell'	False
+[(21, 2)]	[(35, 6)]	[]	[]	[]	0	'merge_area'	(21, 2, 35, 6)	'locked'	True
+[]	[]	[]	[]	[(21, 2)]	0	'locked'	False
+[(21, 8)]	[(35, 14)]	[]	[]	[]	0	'merge_area'	(21, 8, 35, 14)	'locked'	True
+[]	[]	[]	[]	[(21, 8)]	0	'locked'	False
+[(21, 2)]	[(35, 6)]	[]	[]	[]	0	'merge_area'	None	'locked'	False
+[row_heights]
+5	0	30.0
+[col_widths]
+0	1	119.0
+1	2	142.0
+7	0	138.0
+3	0	155.0
+8	0	206.0
+6	0	119.0
+2	0	174.0
+5	0	95.0
+1	0	128.0
+0	2	111.0
+4	0	97.0
+[macros]

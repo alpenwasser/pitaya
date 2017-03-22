@@ -1,0 +1,11 @@
+[Pyspread save file version]
+0.1
+[shape]
+1000	100	3
+[grid]
+1	0	0	tasks.append(1)
+0	0	0	tasks=[]
+[attributes]
+[row_heights]
+[col_widths]
+[macros]

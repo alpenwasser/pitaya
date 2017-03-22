@@ -1,0 +1,8 @@
+-> VPN on
+-> $ssh user@wi18as33032.adm.ds.fhnw.ch
+-> <FHNW PWD>
+-> vncserver // to check open sessions and available commands
+-> vncserver -new -geometry 1280x800 // to start a new session
+-> remember <port>
+-> VNC wi18as33032.adm.ds.fhnw.ch:<port>
+-> <VNC PWD>
