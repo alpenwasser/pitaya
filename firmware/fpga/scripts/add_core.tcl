@@ -12,11 +12,11 @@
 set core_name [lindex $argv 0]
 set part_name [lindex $argv 1]
 
+# Uncomment the following two lines to test cores
+# set core_name axi_axis_reader_v1_0
+# set part_name xc7z010clg400-1
+
 # Extract core name and version from fully qualified core name
-
-set core_name axi_axis_reader_v1_0
-set part_name xc7z010clg400-1
-
 set elements [split $core_name _]
 set name [join [lrange $elements 0 end-2] _]
 set version [string trimleft [join [lrange $elements end-1 end] .] v]
@@ -44,6 +44,8 @@ set_property SUPPORTED_FAMILIES {zynq Production} $core
 
 # Sets core properties and will be called from inside the specific core_config.tcl comming with each core
 proc core_parameter {name display_name description} {
+  set core [ipx::current_core]
+
   set parameter [ipx::get_user_parameters $name -of_objects $core]
   set_property DISPLAY_NAME $display_name $parameter
   set_property DESCRIPTION $description $parameter
