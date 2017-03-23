@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 url="$1"
 basename="$(echo "$url" | sed 's/^.*\/\(.*\)\.pdf/\1/')"
