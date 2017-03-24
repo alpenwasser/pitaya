@@ -1,39 +1,38 @@
-
 # ==================================================================================================
 # basic_red_pitaya_bd.tcl
 #
-# This script creates a new Vivado project and 
+# This script creates a new Vivado project and creates interface pins to the Red Pitaya external hardware.
 #
 # This script is modification of Pavel Demin's project.tcl and block_design.tcl files
 # by Anton Potocnik, 29.11.2016
-# Tested with Vivado 2016.3
+# based on Pavel Demin's 'red-pitaya-notes-master' git repo
 # ==================================================================================================
 
+# Create the directory where the main block design will reside in
 set part_name xc7z010clg400-1
 set bd_path build/$project_name.srcs/sources_1/bd/system
 
+# Delete previous project files
 file delete -force build/$project_name
 
-create_project $project_name tmp/$project_name -part $part_name
+# Create a new project
+create_project $project_name build/$project_name -part $part_name
 
+# Create a new block design for the toplevel
 create_bd_design system
-# open_bd_design {$bd_path/system.bd}
 
-# Load RedPitaya ports
+# Load the Red Pitaya ports specifications
 source cfg/ports.tcl
 
-# Set Path for the custom IP cores
-set_property IP_REPO_PATHS tmp/cores [current_project]
+# Set the path to the custom IP cores and update the IP catalog
+set_property IP_REPO_PATHS build/cores [current_project]
 update_ip_catalog
 
-
-# Load any additional Verilog files in the project folder
-set files [glob -nocomplain projects/$project_name/*.v projects/$project_name/*.sv]
+# Load any additional Verilog and VHDL files in the project folder
+set files [glob -nocomplain projects/$project_name/*.v projects/$project_name/*.sv rojects/$project_name/*.vhd]
 if {[llength $files] > 0} {
   add_files -norecurse $files
 }
-#update_compile_order -fileset sources_1
-
 
 # ====================================================================================
 # IP cores

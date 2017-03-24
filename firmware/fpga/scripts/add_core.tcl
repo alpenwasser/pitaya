@@ -22,16 +22,16 @@ set name [join [lrange $elements 0 end-2] _]
 set version [string trimleft [join [lrange $elements end-1 end] .] v]
 
 # Delete all existing files and directories with the same core name and version
-file delete -force tmp/cores/$core_name tmp/cores/$name.cache tmp/cores/$name.hw tmp/cores/$name.xpr tmp/cores/$name.sim
+file delete -force build/cores/$core_name build/cores/$name.cache build/cores/$name.hw build/cores/$name.xpr build/cores/$name.sim
 
 # Create a project which is used to build the core
-create_project -part $part_name $name tmp/cores
+create_project -part $part_name $name build/cores
 
 # Add all files the core consists of
 add_files -norecurse [glob cores/$core_name/*.v]
 
 # Package a new IP
-ipx::package_project -import_files -root_dir tmp/cores/$core_name
+ipx::package_project -import_files -root_dir build/cores/$core_name
 
 # Remember core to set properties
 set core [ipx::current_core]
