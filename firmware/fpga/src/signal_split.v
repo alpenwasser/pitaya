@@ -39,5 +39,4 @@ module signal_split(
     assign M_AXIS_tdata_PORT2 = {{(AXIS_TDATA_WIDTH-ADC_DATA_WIDTH+1){S_AXIS_tdata[AXIS_TDATA_WIDTH-1]}},S_AXIS_tdata[AXIS_TDATA_WIDTH-1:ADC_DATA_WIDTH]};
     assign M_AXIS_tvalid_PORT1 = S_AXIS_tvalid;
     assign M_AXIS_tvalid_PORT2 = S_AXIS_tvalid;
-
 endmodule
