@@ -10,7 +10,9 @@
 
 set part_name xc7z010clg400-1
 
-set cores [lindex $argv 0]
+#set cores [lindex $argv 0]
+set cores cores
+
 puts "Installing cores from $cores into Vivado..."
 
 if {! [file exists $cores]} {
@@ -23,7 +25,7 @@ cd $cores
 set core_names [glob -type d *]
 cd ..
 
-# Import cores
+# Import Pavel Demin's Red Pitaya cores
 foreach core $core_names {
 	set argv "$core $part_name"
 	puts "Installing $core...";

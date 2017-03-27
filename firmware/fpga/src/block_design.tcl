@@ -10,7 +10,7 @@
 # ==================================================================================================
 
 # Create basic Red Pitaya Block Design
-source projects/$project_name/basic_red_pitaya_bd.tcl
+source $project_name/basic_red_pitaya_bd.tcl
 
 
 
