@@ -44,3 +44,6 @@ foreach {logical physical} {
 set bus [ipx::get_bus_interfaces aclk]
 set parameter [ipx::get_bus_parameters -of_objects $bus ASSOCIATED_BUSIF]
 set_property VALUE M_AXIS:S_AXIS:FIFO_READ:FIFO_WRITE $parameter
+set_property VENDOR {pavel-demin} $core
+set_property VENDOR_DISPLAY_NAME {Pavel Demin} $core
+set_property COMPANY_URL {https://github.com/pavel-demin/red-pitaya-notes} $core

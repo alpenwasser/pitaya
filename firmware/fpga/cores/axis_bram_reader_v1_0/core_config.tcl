@@ -38,3 +38,6 @@ foreach {logical physical} {
 set bus [ipx::get_bus_interfaces bram_porta_clk]
 set parameter [ipx::add_bus_parameter ASSOCIATED_BUSIF $bus]
 set_property VALUE BRAM_PORTA $parameter
+set_property VENDOR {pavel-demin} $core
+set_property VENDOR_DISPLAY_NAME {Pavel Demin} $core
+set_property COMPANY_URL {https://github.com/pavel-demin/red-pitaya-notes} $core

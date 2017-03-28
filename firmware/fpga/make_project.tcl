@@ -8,6 +8,6 @@
 # based on Pavel Demin's 'red-pitaya-notes-master' git repo
 # ==================================================================================================
 
-set project_name "potato"
+set project_name "src"
 
-source projects/$project_name/block_design.tcl
+source $project_name/block_design.tcl

@@ -28,7 +28,10 @@ file delete -force build/cores/$core_name build/cores/$name.cache build/cores/$n
 create_project -part $part_name $name build/cores
 
 # Add all files the core consists of
-add_files -norecurse [glob cores/$core_name/*.v]
+set verilog_files [glob -nocomplain cores/$core_name/*.v]
+set vhdl_files [glob -nocomplain cores/$core_name/*.vhd]
+if {[file exists $verilog_files]} {add_files -norecurse $verilog_files}
+if {[file exists $vhdl_files]} {add_files -norecurse $vhdl_files}
 
 # Package a new IP
 ipx::package_project -import_files -root_dir build/cores/$core_name
@@ -66,4 +69,4 @@ ipx::create_xgui_files $core
 ipx::update_checksums $core
 ipx::save_core $core
 
-close_project
+#close_project

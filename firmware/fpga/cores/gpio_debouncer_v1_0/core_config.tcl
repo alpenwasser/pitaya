@@ -7,3 +7,6 @@ set_property DESCRIPTION $display_name $core
 
 core_parameter DATA_WIDTH {DATA WIDTH} {Width of the input and output ports.}
 core_parameter CNTR_WIDTH {CNTR WIDTH} {Width of the counter register.}
+set_property VENDOR {pavel-demin} $core
+set_property VENDOR_DISPLAY_NAME {Pavel Demin} $core
+set_property COMPANY_URL {https://github.com/pavel-demin/red-pitaya-notes} $core
