@@ -4,8 +4,7 @@
 # This script creates a new Vivado project and creates interface pins to the Red Pitaya external hardware.
 #
 # This script is modification of Pavel Demin's project.tcl and block_design.tcl files
-# by Noah Huesser <yatekii@yatekii.ch>
-# based on Anton Potocnik, 02.10.2016 - 08.01.2017
+# by Anton Potocnik, 29.11.2016
 # based on Pavel Demin's 'red-pitaya-notes-master' git repo
 # ==================================================================================================
 
