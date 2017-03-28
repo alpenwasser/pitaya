@@ -1,6 +1,6 @@
 # The cores library for the Red Pitaya
 
-All cores in this directory for now have been taken from [Pavel Demins' repo](https://github.com/pavel-demin/red-pitaya-notes). Lateron our own cores in VHDL will be added.
+All cores in this directory for now have been taken from [Pavel Demins' repo](https://github.com/pavel-demin/red-pitaya-notes) and are licensed under the [MIT license](https://github.com/pavel-demin/red-pitaya-notes/blob/master/LICENSE). Lateron our own cores in VHDL will be added.
 
 `./` points to the directory this `README.md` resides in.
 
