@@ -8,6 +8,12 @@
 # based on Pavel Demin's 'red-pitaya-notes-master' git repo
 # ==================================================================================================
 
+# ====================================================================================
+# IP repos
+set currrent_dir [get_property DIRECTORY [current_project]]
+set_property  ip_repo_paths  {build/cores $current_dir/../../../../logger} [current_project]
+update_ip_catalog
+
 # Create basic Red Pitaya Block Design
 source $project_name/basic_red_pitaya_bd.tcl
 
@@ -28,28 +34,39 @@ source $project_name/basic_red_pitaya_bd.tcl
 # ====================================================================================
 # RTL modules
 
-# signal split
-add_files -norecurse $project_name/axis_to_data_lanes.vhd
-create_bd_cell -type module -reference axis_to_data_lanes adc_to_osc
+# System rocessor Reset
+create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 proc_sys_reset_0
 
+# AXI Interconnect
+create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 axi_interconnect_0
+
+# Module to convert the ADC AXI Stream data to the data lanes the Logger Core requires
+startgroup
+create_bd_cell -type ip -vlnv noah-huesser:user:axis_to_data_lanes:1.0 axis_to_data_lanes_0
+endgroup
+
+# The Logger module
+startgroup
 create_bd_cell -type ip -vlnv noah.huesser:user:zynq_logger:1.1 zynq_logger_0
+endgroup
 
-# interconn
+# ====================================================================================
+# Connections
 
-# startgroup
-# create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 axi_interconnect_0
-# endgroup
+# Connect ADC to AXIS to Data Lanes
+connect_bd_intf_net [get_bd_intf_pins adc/M_AXIS] [get_bd_intf_pins axis_to_data_lanes_0/SI]
 
-# connect_bd_intf_net [get_bd_intf_pins processing_system7_0/S_AXI_HP0] -boundary_type upper [get_bd_intf_pins axi_interconnect_0/M00_AXI]
-# set_property location {1 93 264} [get_bd_cells zynq_logger_0]
-# connect_bd_intf_net -boundary_type upper [get_bd_intf_pins axi_interconnect_0/S00_AXI] [get_bd_intf_pins zynq_logger_0/M0]
+# Connect Logger to ZYNQ7 Processing System
+connect_bd_net [get_bd_pins zynq_logger_0/MAxiClkxCI] [get_bd_pins processing_system7_0/FCLK_CLK0]
+connect_bd_net [get_bd_pins zynq_logger_0/MAxiRstxRBI] [get_bd_pins processing_system7_0/FCLK_RESET0_N]
+connect_bd_net [get_bd_pins zynq_logger_0/SAxiAClkxCI] [get_bd_pins processing_system7_0/FCLK_CLK0]
+connect_bd_net [get_bd_pins zynq_logger_0/SAxiAResetxRBI] [get_bd_pins processing_system7_0/FCLK_RESET0_N]
+connect_bd_net [get_bd_pins zynq_logger_0/ClkxCI] [get_bd_pins axis_to_data_lanes_0/DataClkxCO]
 
-# connect_bd_net [get_bd_pins axis_red_pitaya_adc_0/adc_clk] [get_bd_pins zynq_logger_0/ClkxCI]
-# connect_bd_net [get_bd_pins zynq_logger_0/MAxiClkxCI] [get_bd_pins processing_system7_0/FCLK_CLK0]
-# connect_bd_net [get_bd_pins zynq_logger_0/SAxiAClkxCI] [get_bd_pins processing_system7_0/FCLK_CLK0]
-# connect_bd_net [get_bd_pins zynq_logger_0/MAxiRstxRBI] [get_bd_pins processing_system7_0/FCLK_RESET0_N]
-# connect_bd_net [get_bd_pins zynq_logger_0/SAxiAResetxRBI] [get_bd_pins processing_system7_0/FCLK_RESET0_N]
-# connect_bd_net [get_bd_pins adc_to_osc/DataStrobexDO] [get_bd_pins zynq_logger_0/DataStrobexSI]
-# connect_bd_net [get_bd_pins adc_to_osc/DataxDO] [get_bd_pins zynq_logger_0/Data0xDI]
-# connect_bd_net [get_bd_pins axi_interconnect_0/M00_ACLK] [get_bd_pins processing_system7_0/FCLK_CLK0]
-# connect_bd_net [get_bd_pins axi_interconnect_0/M00_ARESETN] [get_bd_pins processing_system7_0/FCLK_RESET0_N]
+# Logger to Clocking Wizard
+connect_bd_net [get_bd_pins axis_to_data_lanes_0/DataClkxCI] [get_bd_pins clk_wiz_adc/clk_out1]
+
+# ADC to Logger
+connect_bd_net [get_bd_pins zynq_logger_0/Data0xDI] [get_bd_pins axis_to_data_lanes_0/Data0xDO]
+connect_bd_net [get_bd_pins axis_to_data_lanes_0/Data1xDO] [get_bd_pins zynq_logger_0/Data1xDI]
+connect_bd_net [get_bd_pins axis_to_data_lanes_0/DataStrobexDO] [get_bd_pins zynq_logger_0/DataStrobexSI]

@@ -37,6 +37,4 @@ foreach core $core_names {
 	puts "===========================";
 }
 
-# Import logger IP
-# set_property  ip_repo_paths  {/home/edu/noah.huesser/repos/pitaya/firmware/fpga/build/cores /home/edu/noah.huesser/repos/logger} [current_project]
 update_ip_catalog

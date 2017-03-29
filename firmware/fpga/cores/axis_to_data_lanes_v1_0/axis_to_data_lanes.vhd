@@ -7,7 +7,8 @@ port (
   AxiTValid: in std_logic;
   DataClkxCI: in std_logic;
   DataRstxRBI: in std_logic;
-  DataxDO: out std_logic(13 downto 0);
+  Data0xDO: out std_logic(13 downto 0);
+  Data1xDO: out std_logic(13 downto 0);
   DataStrobexDO: out std_logic;
   DataClkxCO: out std_logic
 );
