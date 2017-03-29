@@ -1,3 +1,8 @@
 *tmp/*
 .nfs*
 *.ipynb_checkpoints*
+*.jou
+*.log
+*.str
+*build/
+*.Xil/
