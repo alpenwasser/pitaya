@@ -48,38 +48,64 @@ source $project_name/basic_red_pitaya_bd.tcl
 # RTL modules
 
 # System rocessor Reset
-create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 proc_sys_reset_0
+create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 system_rst
 
 # AXI Interconnect
-create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 axi_interconnect_0
+create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 interconnect
+set_property -dict [list CONFIG.NUM_MI {2}] [get_bd_cells interconnect]
+set_property -dict [list CONFIG.NUM_SI {2}] [get_bd_cells interconnect]
 
 # Module to convert the ADC AXI Stream data to the data lanes the Logger Core requires
 startgroup
-create_bd_cell -type ip -vlnv noah-huesser:user:axis_to_data_lanes:1.0 axis_to_data_lanes_0
+create_bd_cell -type ip -vlnv noah-huesser:user:axis_to_data_lanes:1.0 axis2lanes
 endgroup
 
 # The Logger module
 startgroup
-create_bd_cell -type ip -vlnv noah.huesser:user:zynq_logger:1.1 zynq_logger_0
+create_bd_cell -type ip -vlnv noah.huesser:user:zynq_logger:1.1 logger
 endgroup
 
 # ====================================================================================
 # Connections
 
 # Connect ADC to AXIS to Data Lanes
-connect_bd_intf_net [get_bd_intf_pins adc/M_AXIS] [get_bd_intf_pins axis_to_data_lanes_0/SI]
+connect_bd_intf_net [get_bd_intf_pins adc/M_AXIS] [get_bd_intf_pins axis2lanes/SI]
 
 # Connect Logger to ZYNQ7 Processing System
-connect_bd_net [get_bd_pins zynq_logger_0/MAxiClkxCI] [get_bd_pins processing_system7_0/FCLK_CLK0]
-connect_bd_net [get_bd_pins zynq_logger_0/MAxiRstxRBI] [get_bd_pins processing_system7_0/FCLK_RESET0_N]
-connect_bd_net [get_bd_pins zynq_logger_0/SAxiAClkxCI] [get_bd_pins processing_system7_0/FCLK_CLK0]
-connect_bd_net [get_bd_pins zynq_logger_0/SAxiAResetxRBI] [get_bd_pins processing_system7_0/FCLK_RESET0_N]
-connect_bd_net [get_bd_pins zynq_logger_0/ClkxCI] [get_bd_pins axis_to_data_lanes_0/DataClkxCO]
+connect_bd_net [get_bd_pins logger/MAxiClkxCI] [get_bd_pins ps/FCLK_CLK0]
+connect_bd_net [get_bd_pins logger/MAxiRstxRBI] [get_bd_pins ps/FCLK_RESET0_N]
+connect_bd_net [get_bd_pins logger/SAxiAClkxCI] [get_bd_pins ps/FCLK_CLK0]
+connect_bd_net [get_bd_pins logger/SAxiAResetxRBI] [get_bd_pins ps/FCLK_RESET0_N]
+connect_bd_net [get_bd_pins logger/ClkxCI] [get_bd_pins axis2lanes/DataClkxCO]
 
 # Logger to Clocking Wizard
-connect_bd_net [get_bd_pins axis_to_data_lanes_0/DataClkxCI] [get_bd_pins clk_wiz_adc/clk_out1]
+connect_bd_net [get_bd_pins axis2lanes/DataClkxCI] [get_bd_pins clk_wiz_adc/clk_out1]
 
 # ADC to Logger
-connect_bd_net [get_bd_pins zynq_logger_0/Data0xDI] [get_bd_pins axis_to_data_lanes_0/Data0xDO]
-connect_bd_net [get_bd_pins axis_to_data_lanes_0/Data1xDO] [get_bd_pins zynq_logger_0/Data1xDI]
-connect_bd_net [get_bd_pins axis_to_data_lanes_0/DataStrobexDO] [get_bd_pins zynq_logger_0/DataStrobexSI]
+connect_bd_net [get_bd_pins logger/Data0xDI] [get_bd_pins axis2lanes/Data0xDO]
+connect_bd_net [get_bd_pins axis2lanes/Data1xDO] [get_bd_pins logger/Data1xDI]
+connect_bd_net [get_bd_pins axis2lanes/DataStrobexDO] [get_bd_pins logger/DataStrobexSI]
+
+# ZYNQ7 Processing System to Interconnect
+connect_bd_intf_net [get_bd_intf_pins ps/S_AXI_HP0] -boundary_type upper [get_bd_intf_pins interconnect/M00_AXI]
+connect_bd_intf_net [get_bd_intf_pins ps/M_AXI_GP0] -boundary_type upper [get_bd_intf_pins interconnect/S01_AXI]
+
+# ZYNQ7 Processing System to Zynq Logger
+connect_bd_net [get_bd_pins ps/Core0_nIRQ] [get_bd_pins logger/IRQxSO]
+
+# AXI Interconnect Clocks
+connect_bd_net [get_bd_pins interconnect/ACLK] [get_bd_pins ps/FCLK_CLK0]
+connect_bd_net [get_bd_pins interconnect/S00_ACLK] [get_bd_pins ps/FCLK_CLK0]
+connect_bd_net [get_bd_pins interconnect/M00_ACLK] [get_bd_pins ps/FCLK_CLK0]
+
+# AXI Interconnect Resets
+connect_bd_net [get_bd_pins interconnect/ARESETN] [get_bd_pins system_rst/interconnect_aresetn]
+connect_bd_net [get_bd_pins interconnect/S00_ARESETN] [get_bd_pins system_rst/peripheral_aresetn]
+connect_bd_net [get_bd_pins interconnect/M00_ARESETN] [get_bd_pins system_rst/peripheral_aresetn]
+
+# Processing System to System Reset
+connect_bd_net [get_bd_pins ps/FCLK_RESET0_N] [get_bd_pins system_rst/aux_reset_in]
+
+# Logger to interconnect
+connect_bd_intf_net -boundary_type upper [get_bd_intf_pins interconnect/M01_AXI] [get_bd_intf_pins logger/S0]
+connect_bd_intf_net [get_bd_intf_pins logger/M0] -boundary_type upper [get_bd_intf_pins interconnect/S00_AXI]

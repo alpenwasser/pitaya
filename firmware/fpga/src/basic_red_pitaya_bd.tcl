@@ -22,9 +22,13 @@ if {[llength $files] > 0} {
 
 # Zynq processing system
 startgroup
-create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.5 processing_system7_0
-set_property -dict [list CONFIG.PCW_USE_S_AXI_HP0 {1}] [get_bd_cells processing_system7_0]
-set_property -dict [list CONFIG.PCW_IMPORT_BOARD_PRESET {cfg/red_pitaya.xml}] [get_bd_cells processing_system7_0]
+create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.5 ps
+set_property -dict [list CONFIG.PCW_USE_S_AXI_HP0 {1}] [get_bd_cells ps]
+set_property -dict [list CONFIG.PCW_IMPORT_BOARD_PRESET {cfg/red_pitaya.xml}] [get_bd_cells ps]
+set_property -dict [list CONFIG.PCW_USE_FABRIC_INTERRUPT {1}] [get_bd_cells ps]
+set_property -dict [list CONFIG.PCW_CORE0_IRQ_INTR {1}] [get_bd_cells ps]
+set_property -dict [list CONFIG.PCW_QSPI_GRP_SINGLE_SS_ENABLE {1}] [get_bd_cells ps]
+set_property -dict [list CONFIG.PCW_UIPARAM_GENERATE_SUMMARY {NONE}] [get_bd_cells ps]
 endgroup
 
 # Buffers for differential IOs - Daisychain
@@ -84,9 +88,9 @@ endgroup
 # TODO: figure out what this does
 #connect_bd_net [get_bd_pins util_ds_buf_1/IBUF_OUT] [get_bd_pins util_ds_buf_2/OBUF_IN]
 
-apply_bd_automation -rule xilinx.com:bd_rule:processing_system7 -config {make_external "FIXED_IO, DDR" Master "Disable" Slave "Disable" }  [get_bd_cells processing_system7_0]
-connect_bd_net [get_bd_pins processing_system7_0/M_AXI_GP0_ACLK] [get_bd_pins processing_system7_0/FCLK_CLK0]
-connect_bd_net [get_bd_pins processing_system7_0/S_AXI_HP0_ACLK] [get_bd_pins processing_system7_0/FCLK_CLK0]
+apply_bd_automation -rule xilinx.com:bd_rule:processing_system7 -config {make_external "FIXED_IO, DDR" Master "Disable" Slave "Disable" }  [get_bd_cells ps]
+connect_bd_net [get_bd_pins ps/M_AXI_GP0_ACLK] [get_bd_pins ps/FCLK_CLK0]
+connect_bd_net [get_bd_pins ps/S_AXI_HP0_ACLK] [get_bd_pins ps/FCLK_CLK0]
 # TODO: figure out what this does
 
 # ADC
@@ -115,9 +119,9 @@ connect_bd_net [get_bd_ports adc_clk_p_i] [get_bd_pins clk_wiz_adc/clk_in1_p]
 #connect_bd_net [get_bd_pins dds_compiler_0/aclk] [get_bd_pins adc/adc_clk]
 
 # TODO: figure out what this does
-#apply_bd_automation -rule xilinx.com:bd_rule:axi4 -config {Master "/processing_system7_0/M_AXI_GP0" Clk "Auto" }  [get_bd_intf_pins axi_gpio_0/S_AXI]
-#set_property offset 0x42000000 [get_bd_addr_segs {processing_system7_0/Data/SEG_axi_gpio_0_Reg}]
-#set_property range 4K [get_bd_addr_segs {processing_system7_0/Data/SEG_axi_gpio_0_Reg}]
+#apply_bd_automation -rule xilinx.com:bd_rule:axi4 -config {Master "/ps/M_AXI_GP0" Clk "Auto" }  [get_bd_intf_pins axi_gpio_0/S_AXI]
+#set_property offset 0x42000000 [get_bd_addr_segs {ps/Data/SEG_axi_gpio_0_Reg}]
+#set_property range 4K [get_bd_addr_segs {ps/Data/SEG_axi_gpio_0_Reg}]
 # TODO: figure out what this does
 
 # ====================================================================================
