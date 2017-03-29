@@ -34,7 +34,7 @@ source $project_name/basic_red_pitaya_bd.tcl
 # ====================================================================================
 # RTL modules
 
-# System rocessor Reset
+# System processor Reset
 create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 proc_sys_reset_0
 
 # AXI Interconnect
