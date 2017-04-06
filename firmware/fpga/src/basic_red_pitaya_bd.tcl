@@ -8,28 +8,11 @@
 # based on Pavel Demin's 'red-pitaya-notes-master' git repo
 # ==================================================================================================
 
-# Create the directory where the main block design will reside in
-set part_name xc7z010clg400-1
-set bd_path build/$project_name/$project_name.srcs/sources_1/bd/system
-
-# Delete previous project files
-file delete -force build/$project_name
-
-# Create a new project
-create_project $project_name build/$project_name -part $part_name -force
-
-# Create a new block design for the toplevel
-create_bd_design system
-
 # Load the Red Pitaya ports specifications
 source cfg/ports.tcl
 
-# Set the path to the custom IP cores and update the IP catalog
-set_property IP_REPO_PATHS build/cores [current_project]
-update_ip_catalog
-
 # Load any additional Verilog and VHDL files in the project folder
-set files [glob -nocomplain projects/$project_name/*.v projects/$project_name/*.sv rojects/$project_name/*.vhd]
+set files [glob -nocomplain $project_name/*.v $project_name/*.sv $project_name/*.vhd]
 if {[llength $files] > 0} {
   add_files -norecurse $files
 }
@@ -39,9 +22,13 @@ if {[llength $files] > 0} {
 
 # Zynq processing system
 startgroup
-create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.5 processing_system7_0
-set_property -dict [list CONFIG.PCW_USE_S_AXI_HP0 {1}] [get_bd_cells processing_system7_0]
-set_property -dict [list CONFIG.PCW_IMPORT_BOARD_PRESET {cfg/red_pitaya.xml}] [get_bd_cells processing_system7_0]
+create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.5 ps
+set_property -dict [list CONFIG.PCW_USE_S_AXI_HP0 {1}] [get_bd_cells ps]
+set_property -dict [list CONFIG.PCW_IMPORT_BOARD_PRESET {cfg/red_pitaya.xml}] [get_bd_cells ps]
+set_property -dict [list CONFIG.PCW_USE_FABRIC_INTERRUPT {1}] [get_bd_cells ps]
+set_property -dict [list CONFIG.PCW_CORE0_IRQ_INTR {1}] [get_bd_cells ps]
+set_property -dict [list CONFIG.PCW_QSPI_GRP_SINGLE_SS_ENABLE {1}] [get_bd_cells ps]
+set_property -dict [list CONFIG.PCW_UIPARAM_GENERATE_SUMMARY {NONE}] [get_bd_cells ps]
 endgroup
 
 # Buffers for differential IOs - Daisychain
@@ -62,7 +49,7 @@ endgroup
 
 # axis_red_pitaya_adc
 startgroup
-create_bd_cell -type ip -vlnv pavel-demin:user:axis_red_pitaya_adc:1.0 axis_red_pitaya_adc_0
+create_bd_cell -type ip -vlnv pavel-demin:user:axis_red_pitaya_adc:2.0 adc
 endgroup
 
 # axis_red_pitaya_dac
@@ -70,12 +57,18 @@ endgroup
 #create_bd_cell -type ip -vlnv pavel-demin:user:axis_red_pitaya_dac:1.0 axis_red_pitaya_dac_0
 #endgroup
 
-# clocking_wizard
-#startgroup
-#create_bd_cell -type ip -vlnv xilinx.com:ip:clk_wiz:5.3 clk_wiz_0
-#set_property -dict [list CONFIG.PRIM_IN_FREQ.VALUE_SRC USER] [get_bd_cells clk_wiz_0]
-#set_property -dict [list CONFIG.PRIM_IN_FREQ {125.000} CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {250.000} CONFIG.USE_RESET {false} CONFIG.CLKIN1_JITTER_PS {80.0} CONFIG.MMCM_DIVCLK_DIVIDE {1} CONFIG.MMCM_CLKFBOUT_MULT_F {8.000} CONFIG.MMCM_CLKIN1_PERIOD {8.0} CONFIG.MMCM_CLKOUT0_DIVIDE_F {4.000} CONFIG.CLKOUT1_JITTER {104.759} CONFIG.CLKOUT1_PHASE_ERROR {96.948}] [get_bd_cells clk_wiz_0]
-#endgroup
+# Clocking Wizard
+# retrieves clock from ADC via PLL
+startgroup
+create_bd_cell -type ip -vlnv xilinx.com:ip:clk_wiz:5.3 clk_wiz_adc
+set_property -dict [list CONFIG.PRIMITIVE PLL] [get_bd_cells clk_wiz_adc]
+set_property -dict [list CONFIG.PRIM_IN_FREQ.VALUE_SRC USER] [get_bd_cells clk_wiz_adc]
+set_property -dict [list CONFIG.PRIM_IN_FREQ {125.000}] [get_bd_cells clk_wiz_adc]
+set_property -dict [list CONFIG.PRIM_SOURCE Differential_clock_capable_pin] [get_bd_cells clk_wiz_adc]
+set_property -dict [list CONFIG.CLKOUT1_USED true] [get_bd_cells clk_wiz_adc]
+set_property -dict [list CONFIG.CLKOUT1_REQUESTED_OUT_FREQ 125.0] [get_bd_cells clk_wiz_adc]
+set_property -dict [list CONFIG.USE_RESET false] [get_bd_cells clk_wiz_adc]
+endgroup
 
 # DDS (Sine generator)
 #startgroup
@@ -95,17 +88,22 @@ endgroup
 # TODO: figure out what this does
 #connect_bd_net [get_bd_pins util_ds_buf_1/IBUF_OUT] [get_bd_pins util_ds_buf_2/OBUF_IN]
 
-apply_bd_automation -rule xilinx.com:bd_rule:processing_system7 -config {make_external "FIXED_IO, DDR" Master "Disable" Slave "Disable" }  [get_bd_cells processing_system7_0]
-connect_bd_net [get_bd_pins processing_system7_0/M_AXI_GP0_ACLK] [get_bd_pins processing_system7_0/FCLK_CLK0]
-connect_bd_net [get_bd_pins processing_system7_0/S_AXI_HP0_ACLK] [get_bd_pins processing_system7_0/FCLK_CLK0]
+apply_bd_automation -rule xilinx.com:bd_rule:processing_system7 -config {make_external "FIXED_IO, DDR" Master "Disable" Slave "Disable" }  [get_bd_cells ps]
+connect_bd_net [get_bd_pins ps/M_AXI_GP0_ACLK] [get_bd_pins ps/FCLK_CLK0]
+connect_bd_net [get_bd_pins ps/S_AXI_HP0_ACLK] [get_bd_pins ps/FCLK_CLK0]
 # TODO: figure out what this does
 
 # ADC
-connect_bd_net [get_bd_ports adc_clk_p_i] [get_bd_pins axis_red_pitaya_adc_0/adc_clk_p]
-connect_bd_net [get_bd_ports adc_clk_n_i] [get_bd_pins axis_red_pitaya_adc_0/adc_clk_n]
-connect_bd_net [get_bd_ports adc_dat_a_i] [get_bd_pins axis_red_pitaya_adc_0/adc_dat_a]
-connect_bd_net [get_bd_ports adc_dat_b_i] [get_bd_pins axis_red_pitaya_adc_0/adc_dat_b]
-connect_bd_net [get_bd_ports adc_csn_o] [get_bd_pins axis_red_pitaya_adc_0/adc_csn]
+connect_bd_net [get_bd_ports adc_dat_a_i] [get_bd_pins adc/adc_dat_a]
+connect_bd_net [get_bd_ports adc_dat_b_i] [get_bd_pins adc/adc_dat_b]
+connect_bd_net [get_bd_ports adc_csn_o] [get_bd_pins adc/adc_csn]
+
+# Connect ADC to Clocking Wizard
+connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins adc/aclk]
+
+# Clocking Wizard Connections
+connect_bd_net [get_bd_ports adc_clk_n_i] [get_bd_pins clk_wiz_adc/clk_in1_n]
+connect_bd_net [get_bd_ports adc_clk_p_i] [get_bd_pins clk_wiz_adc/clk_in1_p]
 
 # DAC
 #connect_bd_net [get_bd_ports dac_clk_o] [get_bd_pins axis_red_pitaya_dac_0/dac_clk]
@@ -113,17 +111,17 @@ connect_bd_net [get_bd_ports adc_csn_o] [get_bd_pins axis_red_pitaya_adc_0/adc_c
 #connect_bd_net [get_bd_ports dac_sel_o] [get_bd_pins axis_red_pitaya_dac_0/dac_sel]
 #connect_bd_net [get_bd_ports dac_wrt_o] [get_bd_pins axis_red_pitaya_dac_0/dac_wrt]
 #connect_bd_net [get_bd_ports dac_dat_o] [get_bd_pins axis_red_pitaya_dac_0/dac_dat]
-#connect_bd_net [get_bd_pins clk_wiz_0/locked] [get_bd_pins axis_red_pitaya_dac_0/locked]
-#connect_bd_net [get_bd_pins clk_wiz_0/clk_out1] [get_bd_pins axis_red_pitaya_dac_0/ddr_clk]
-#connect_bd_net [get_bd_pins axis_red_pitaya_dac_0/aclk] [get_bd_pins axis_red_pitaya_adc_0/adc_clk]
+#connect_bd_net [get_bd_pins clk_wiz_adc/locked] [get_bd_pins axis_red_pitaya_dac_0/locked]
+#connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins axis_red_pitaya_dac_0/ddr_clk]
+#connect_bd_net [get_bd_pins axis_red_pitaya_dac_0/aclk] [get_bd_pins adc/adc_clk]
 #connect_bd_intf_net [get_bd_intf_pins dds_compiler_0/M_AXIS_DATA] [get_bd_intf_pins axis_red_pitaya_dac_0/S_AXIS]
-#connect_bd_net [get_bd_pins clk_wiz_0/clk_in1] [get_bd_pins dds_compiler_0/aclk]
-#connect_bd_net [get_bd_pins dds_compiler_0/aclk] [get_bd_pins axis_red_pitaya_adc_0/adc_clk]
+#connect_bd_net [get_bd_pins clk_wiz_adc/clk_in1] [get_bd_pins dds_compiler_0/aclk]
+#connect_bd_net [get_bd_pins dds_compiler_0/aclk] [get_bd_pins adc/adc_clk]
 
 # TODO: figure out what this does
-#apply_bd_automation -rule xilinx.com:bd_rule:axi4 -config {Master "/processing_system7_0/M_AXI_GP0" Clk "Auto" }  [get_bd_intf_pins axi_gpio_0/S_AXI]
-#set_property offset 0x42000000 [get_bd_addr_segs {processing_system7_0/Data/SEG_axi_gpio_0_Reg}]
-#set_property range 4K [get_bd_addr_segs {processing_system7_0/Data/SEG_axi_gpio_0_Reg}]
+#apply_bd_automation -rule xilinx.com:bd_rule:axi4 -config {Master "/ps/M_AXI_GP0" Clk "Auto" }  [get_bd_intf_pins axi_gpio_0/S_AXI]
+#set_property offset 0x42000000 [get_bd_addr_segs {ps/Data/SEG_axi_gpio_0_Reg}]
+#set_property range 4K [get_bd_addr_segs {ps/Data/SEG_axi_gpio_0_Reg}]
 # TODO: figure out what this does
 
 # ====================================================================================
