@@ -56,3 +56,6 @@
 
 - name: enable autologin
   copy: src=roles/common/files/50-myconfig.conf dest=/etc/lightdm/lightdm.conf.d/50-myconfig.conf backup=yes force=yes
+
+- name: copy bashrc to have the proper PATH variable for the Xilinx tools
+  copy: src=roles/common/files/.bashrc dest=/home/vagrant backup=yes force=yes
