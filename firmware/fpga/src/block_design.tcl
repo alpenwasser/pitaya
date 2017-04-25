@@ -50,12 +50,12 @@ source $project_name/basic_red_pitaya_bd.tcl
 create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 system_rst
 
 # Blinking LED & slow clock
-create_bd_cell -type ip -vlnv xilinx.com:ip:c_counter_binary:12.0 2HzCnt
-set_property -dict [list CONFIG.Output_Width {32}] [get_bd_cells 2HzCnt]
-create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 2HzSlc
-set_property -dict [list CONFIG.DIN_TO {26}] [get_bd_cells 2HzSlc]
-set_property -dict [list CONFIG.DIN_FROM {26}] [get_bd_cells 2HzSlc]
-set_property -dict [list CONFIG.DOUT_WIDTH {1}] [get_bd_cells 2HzSlc]
+create_bd_cell -type ip -vlnv xilinx.com:ip:c_counter_binary:12.0 Cnt2Hz
+set_property -dict [list CONFIG.Output_Width {32}] [get_bd_cells Cnt2Hz]
+create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 Slc2Hz
+set_property -dict [list CONFIG.DIN_TO {26}] [get_bd_cells Slc2Hz]
+set_property -dict [list CONFIG.DIN_FROM {26}] [get_bd_cells Slc2Hz]
+set_property -dict [list CONFIG.DOUT_WIDTH {1}] [get_bd_cells Slc2Hz]
 
 # AXI Protocol Converters
 create_bd_cell -type ip -vlnv xilinx.com:ip:axi_protocol_converter:2.1 M2Sconverter
@@ -71,33 +71,28 @@ create_bd_cell -type ip -vlnv noah-huesser:user:axis_to_data_lanes:1.0 axis2lane
 
 # The Logger module
 create_bd_cell -type ip -vlnv bastli:user:zynq_logger:1.1 logger
-assign_bd_address [get_bd_addr_segs {logger/S0/Reg }]
 
 # ====================================================================================
 # Connections
 
 # Blinking LED
-connect_bd_net [get_bd_pins 2HzCnt/Q] [get_bd_pins 2HzSlc/Din]
-connect_bd_net [get_bd_ports led_o] [get_bd_pins 2HzSlc/Dout]
-connect_bd_net [get_bd_pins 2HzCnt/CLK] [get_bd_pins ps/FCLK_CLK0]
+connect_bd_net [get_bd_pins Cnt2Hz/Q] [get_bd_pins Slc2Hz/Din]
+connect_bd_net [get_bd_ports led_o] [get_bd_pins Slc2Hz/Dout]
+connect_bd_net [get_bd_pins Cnt2Hz/CLK] [get_bd_pins ps/FCLK_CLK0]
 
 # Connect ADC to AXIS to Data Lanes
 connect_bd_intf_net [get_bd_intf_pins adc/M_AXIS] [get_bd_intf_pins axis2lanes/SI]
 
+# Connect AXIS to Data Lanes to Clock Wiz
+connect_bd_net [get_bd_pins axis2lanes/DataClkxCI] [get_bd_pins clk_wiz_adc/clk_out1]
+
 # Connect Logger to ZYNQ7 Processing System
 connect_bd_net [get_bd_pins logger/MAxiClkxCI] [get_bd_pins ps/FCLK_CLK0]
-connect_bd_net [get_bd_pins logger/MAxiRstxRBI] [get_bd_pins ps/FCLK_RESET0_N]
 connect_bd_net [get_bd_pins logger/SAxiAClkxCI] [get_bd_pins ps/FCLK_CLK0]
-connect_bd_net [get_bd_pins logger/SAxiAResetxRBI] [get_bd_pins ps/FCLK_RESET0_N]
-connect_bd_net [get_bd_pins logger/ClkxCI] [get_bd_pins axis2lanes/DataClkxCO]
-
-# Logger to Clocking Wizard
-connect_bd_net [get_bd_pins axis2lanes/DataClkxCI] [get_bd_pins clk_wiz_adc/clk_out1]
 
 # ADC to Logger
 connect_bd_net [get_bd_pins logger/Data0xDI] [get_bd_pins axis2lanes/Data0xDO]
 connect_bd_net [get_bd_pins axis2lanes/Data1xDO] [get_bd_pins logger/Data1xDI]
-connect_bd_net [get_bd_pins axis2lanes/DataStrobexDO] [get_bd_pins logger/DataStrobexSI]
 
 # ZYNQ7 Processing System to Zynq Logger
 connect_bd_net [get_bd_pins ps/Core0_nIRQ] [get_bd_pins logger/IRQxSO]
@@ -105,6 +100,11 @@ connect_bd_net [get_bd_pins ps/Core0_nIRQ] [get_bd_pins logger/IRQxSO]
 # Reset to Logger
 connect_bd_net [get_bd_pins system_rst/peripheral_aresetn] [get_bd_pins logger/MAxiRstxRBI]
 connect_bd_net [get_bd_pins system_rst/peripheral_aresetn] [get_bd_pins logger/SAxiAResetxRBI]
+
+# Clock & DataStrobe to Logger
+connect_bd_net [get_bd_pins logger/ClkxCI] [get_bd_pins Slc2Hz/Dout]
+
+connect_bd_net [get_bd_pins logger/DataStrobexSI] [get_bd_pins Slc2Hz/Dout]
 
 # Reset to axis2lanes
 connect_bd_net [get_bd_pins system_rst/peripheral_aresetn] [get_bd_pins axis2lanes/DataRstxRBI]
@@ -124,5 +124,8 @@ connect_bd_intf_net [get_bd_intf_pins S2Mconverter/M_AXI] [get_bd_intf_pins logg
 # Clock to System Reset
 connect_bd_net [get_bd_pins system_rst/slowest_sync_clk] [get_bd_pins ps/FCLK_CLK0]
 connect_bd_net [get_bd_pins system_rst/ext_reset_in] [get_bd_pins ps/FCLK_RESET0_N]
+
+# Assign Address to Logger MMIO Slave
+assign_bd_address [get_bd_addr_segs {logger/S0/Reg }]
 
 save_bd_design

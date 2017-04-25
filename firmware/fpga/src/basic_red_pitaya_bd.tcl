@@ -29,6 +29,7 @@ set_property -dict [list CONFIG.PCW_USE_FABRIC_INTERRUPT {1}] [get_bd_cells ps]
 set_property -dict [list CONFIG.PCW_CORE0_IRQ_INTR {1}] [get_bd_cells ps]
 set_property -dict [list CONFIG.PCW_QSPI_GRP_SINGLE_SS_ENABLE {1}] [get_bd_cells ps]
 set_property -dict [list CONFIG.PCW_UIPARAM_GENERATE_SUMMARY {NONE}] [get_bd_cells ps]
+set_property -dict [list CONFIG.PCW_S_AXI_HP0_DATA_WIDTH {32}] [get_bd_cells ps]
 endgroup
 
 # Buffers for differential IOs - Daisychain

@@ -43,11 +43,11 @@ create_bd_port -dir IO -from 7 -to 0 exp_p_tri_io
 create_bd_port -dir IO -from 7 -to 0 exp_n_tri_io
 
 # SATA connector ports
-create_bd_port -dir O -from 1 -to 0 daisy_p_o
-create_bd_port -dir O -from 1 -to 0 daisy_n_o
+# create_bd_port -dir O -from 1 -to 0 daisy_p_o
+# create_bd_port -dir O -from 1 -to 0 daisy_n_o
 
-create_bd_port -dir I -from 1 -to 0 daisy_p_i
-create_bd_port -dir I -from 1 -to 0 daisy_n_i
+# create_bd_port -dir I -from 1 -to 0 daisy_p_i
+# create_bd_port -dir I -from 1 -to 0 daisy_n_i
 
 # LED ports
 create_bd_port -dir O -from 7 -to 0 led_o
