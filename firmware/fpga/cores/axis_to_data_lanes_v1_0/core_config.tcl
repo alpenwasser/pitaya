@@ -27,6 +27,7 @@ set_property bus_type_vlnv xilinx.com:signal:clock:1.0 [ipx::get_bus_interfaces 
 set_property interface_mode slave [ipx::get_bus_interfaces SI_clk -of_objects [ipx::current_core]]
 ipx::add_port_map CLK [ipx::get_bus_interfaces SI_clk -of_objects [ipx::current_core]]
 set_property physical_name DataClkxCI [ipx::get_port_maps CLK -of_objects [ipx::get_bus_interfaces SI_clk -of_objects [ipx::current_core]]]
+ipx::associate_bus_interfaces -busif SI -clock SI_clk [ipx::current_core]
 
 # Add new Reset Interface
 ipx::add_bus_interface SI_rst [ipx::current_core]
