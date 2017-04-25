@@ -26,7 +26,7 @@ set core_names [glob -type d *]
 cd ..
 
 #puts "$core_names";
-#set core_names "axis_to_data_lanes_v1_0";
+set core_names "axis_to_data_lanes_v1_0";
 #set core_names "axis_red_pitaya_adc_v1_0";
 
 # Import Pavel Demin's Red Pitaya cores
