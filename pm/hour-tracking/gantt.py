@@ -11,7 +11,7 @@ def parse_date(date):
     return date2num(datetime.datetime(int(year), int(month), int(day)))
 
 def draw_gantt_project_plan(tasks, assignees):
-    y = np.arange(0.5,len(tasks['description'])*4+0.5,4)
+    y = np.arange(len(tasks['description'])*4+0.5,0.5,-4)
     # Draw projected timeline
     bars = plt.barh(
         y,
@@ -19,20 +19,28 @@ def draw_gantt_project_plan(tasks, assignees):
         left=list(map(parse_date, tasks['start_planned'])),
         height=0.3,
         align='center',
-        ecolor='black',
-        color=[assignees.loc[a]['color'] for a in tasks['assignee']],
-        hatch='//',
-        alpha = 0.8
+        color='#cb4b16',
+        alpha = 0.8,
     )
     
+    stop_real_ts = list(map(parse_date, tasks['stop_real']))
+    start_real_ts = list(map(parse_date, tasks['start_real']))
+    today_ts = date2num(datetime.date.today())
+    for i in range(0, len(stop_real_ts)):
+        if stop_real_ts[i] >= today_ts and start_real_ts[i] <= today_ts:
+            stop_real_ts[i] = today_ts
+        elif stop_real_ts[i] >= today_ts and start_real_ts[i] >= today_ts:
+            stop_real_ts[i] = start_real_ts[i]
+
     # Draw real projected timeline
     bars = plt.barh(
-        y - 0.3,
-        np.subtract(list(map(parse_date, tasks['stop_real'])),list(map(parse_date, tasks['start_real']))),
+        y - 0.6,
+        #%np.subtract(list(map(parse_date, tasks['stop_real'])),list(map(parse_date, tasks['start_real']))),
+        np.subtract(stop_real_ts,start_real_ts),
         left=list(map(parse_date, tasks['start_real'])),
-        height=0.1,
+        height=0.3,
         align='center',
-        color=[assignees.loc[a]['color'] for a in tasks['assignee']],
+        color='#268bd2',
         alpha = 0.8
     )
 
@@ -44,13 +52,17 @@ def draw_gantt_project_plan(tasks, assignees):
     ax.xaxis_date()
     ax.xaxis.set_major_formatter(formatter)
     ax.xaxis.set_major_locator(loc)
+    ax.set_facecolor('#fdf6e3')
+    ax.legend(['Planned','Effective'])
     labelsx = ax.get_xticklabels()
     plt.setp(labelsx, rotation=30, fontsize=10)
     plt.gcf().autofmt_xdate()
+    plt.tight_layout()
+    plt.savefig('timetable.pdf')
 
 
 def draw_gantt_hour_tracking(tasks, assignees, hours):
-    y = np.arange(0.5, len(tasks['description']) * 4 + 0.5, 4)
+    y = np.arange(len(tasks['description'])*4+0.5,0.5,-4)
 
     # Draw projected hours
     bars = plt.barh(
@@ -58,9 +70,7 @@ def draw_gantt_hour_tracking(tasks, assignees, hours):
         tasks['projected_hours'],
         height=0.3,
         align='center',
-        ecolor='black',
         color='green',
-        hatch='//',
         alpha = 0.8
     )
     
@@ -69,7 +79,6 @@ def draw_gantt_hour_tracking(tasks, assignees, hours):
     for assignee in assignees.iterrows():
         a.append([])
         c.append(assignee[1]['color'])
-        print(c[-1])
         for task in tasks.iterrows():
             a[-1].append(hours.loc[(hours['assignee'] == assignee[0]) & (hours['task'] == task[0])]['amount'].sum())
 

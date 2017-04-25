@@ -1,0 +1,61 @@
+- name: update apt cache
+  apt: update_cache=yes
+
+- name: Install desktop packages
+  apt: name={{ item }} state=latest
+  with_items:
+    - ubuntu-desktop
+    - virtualbox-guest-dkms
+    - virtualbox-guest-utils
+    - virtualbox-guest-x11
+    - build-essential
+    - autoconf
+
+- name: Install toolchain packages
+  apt: name={{ item }} state=latest
+  with_items:
+    - git
+    - u-boot-tools
+    - device-tree-compiler
+    - build-essential 
+    - git 
+    - curl 
+    - ca-certificates 
+    - sudo 
+    - libxrender1 
+    - libxtst6 
+    - libxi6 
+    - lib32ncurses5 
+    - bc 
+    - u-boot-tools 
+    - device-tree-compiler 
+    - libncurses5-dev
+    - libssl-dev 
+    - qemu-user-static 
+    - binfmt-support
+    - dosfstools 
+    - parted 
+    - debootstrap 
+    - zerofree
+    - lib32z1
+    - lib32stdc++6
+    # - schroot
+    # - qemu qemu-user qemu-user-static
+
+- name: allow any user to startx
+  replace: dest=/etc/X11/Xwrapper.config regexp='allowed_users=.*$' replace='allowed_users=anybody' backup=yes
+
+- name: create Desktop directory in case it's not there yet
+  file: path=/home/vagrant/Desktop state=directory mode=0755 owner=vagrant group=vagrant
+
+- name: copy default .profile to auto startx
+  copy: src=roles/common/files/.profile dest=/home/vagrant backup=yes force=yes
+
+- name: create dir needed for autologin
+  file: path=/etc/lightdm/lightdm.conf.d state=directory
+
+- name: enable autologin
+  copy: src=roles/common/files/50-myconfig.conf dest=/etc/lightdm/lightdm.conf.d/50-myconfig.conf backup=yes force=yes
+
+- name: copy bashrc to have the proper PATH variable for the Xilinx tools
+  copy: src=roles/common/files/.bashrc dest=/home/vagrant backup=yes force=yes
