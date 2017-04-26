@@ -102,7 +102,7 @@ connect_bd_net [get_bd_pins system_rst/peripheral_aresetn] [get_bd_pins logger/M
 connect_bd_net [get_bd_pins system_rst/peripheral_aresetn] [get_bd_pins logger/SAxiAResetxRBI]
 
 # Clock & DataStrobe to Logger
-connect_bd_net [get_bd_pins logger/ClkxCI] [get_bd_pins Slc2Hz/Dout]
+connect_bd_net [get_bd_pins logger/ClkxCI] [get_bd_pins ps/FCLK_CLK0]
 
 connect_bd_net [get_bd_pins logger/DataStrobexSI] [get_bd_pins Slc2Hz/Dout]
 

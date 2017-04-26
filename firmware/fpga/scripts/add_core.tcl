@@ -8,24 +8,21 @@
 # based on Pavel Demin's 'red-pitaya-notes-master' git repo
 # ==================================================================================================
 
-# Get core name and FPGA name
-set core_name [lindex $argv 0]
-set part_name [lindex $argv 1]
-
-# Uncomment the following two lines to test cores
-# set core_name axi_axis_reader_v1_0
-# set part_name xc7z010clg400-1
+set part_name [lindex $argv 0]
+set build_location [lindex $argv 1]
+set core_name [lindex $argv 2]
 
 # Extract core name and version from fully qualified core name
 set elements [split $core_name _]
 set name [join [lrange $elements 0 end-2] _]
+puts $argv
 set version [string trimleft [join [lrange $elements end-1 end] .] v]
 
 # Delete all existing files and directories with the same core name and version
-file delete -force build/cores/$core_name build/cores/$name.cache build/cores/$name.hw build/cores/$name.xpr build/cores/$name.sim
+file delete -force $build_location/$core_name $build_location/$name.cache $build_location/$name.hw $build_location/$name.xpr $build_location/$name.sim
 
 # Create a project which is used to build the core
-create_project -part $part_name $name build/cores
+create_project -part $part_name $name $build_location
 
 # Add all files the core consists of
 set verilog_files [glob -nocomplain cores/$core_name/*.v]
@@ -34,7 +31,7 @@ if {[file exists $verilog_files]} {add_files -norecurse $verilog_files}
 if {[file exists $vhdl_files]} {add_files -norecurse $vhdl_files}
 
 # Package a new IP
-ipx::package_project -import_files -root_dir build/cores/$core_name
+ipx::package_project -import_files -root_dir $build_location/$core_name
 
 # Remember core to set properties
 set core [ipx::current_core]
