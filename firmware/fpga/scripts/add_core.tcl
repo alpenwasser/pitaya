@@ -27,8 +27,10 @@ create_project -part $part_name $name $build_location
 # Add all files the core consists of
 set verilog_files [glob -nocomplain cores/$core_name/*.v]
 set vhdl_files [glob -nocomplain cores/$core_name/*.vhd]
-if {[file exists $verilog_files]} {add_files -norecurse $verilog_files}
-if {[file exists $vhdl_files]} {add_files -norecurse $vhdl_files}
+set tb_files [glob -nocomplain cores/$core_name/tb/*.vhd]
+if {[file exists $verilog_files]} {add_files -fileset sources_1 -norecurse $verilog_files}
+if {[file exists $vhdl_files]} {add_files -fileset sources_1 -norecurse $vhdl_files}
+if {[file exists $tb_files]} {add_files -fileset sim_1 -norecurse $tb_files}
 
 # Package a new IP
 ipx::package_project -import_files -root_dir $build_location/$core_name
