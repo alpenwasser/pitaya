@@ -84,7 +84,8 @@ connect_bd_net [get_bd_pins Cnt2Hz/CLK] [get_bd_pins ps/FCLK_CLK0]
 connect_bd_intf_net [get_bd_intf_pins adc/M_AXIS] [get_bd_intf_pins axis2lanes/SI]
 
 # Connect AXIS to Data Lanes to Clock Wiz
-connect_bd_net [get_bd_pins axis2lanes/DataClkxCI] [get_bd_pins clk_wiz_adc/clk_out1]
+connect_bd_net [get_bd_pins axis2lanes/ClkxCI] [get_bd_pins ps/FCLK_CLK0]
+#[get_bd_pins clk_wiz_adc/clk_out1]
 
 # Connect Logger to ZYNQ7 Processing System
 connect_bd_net [get_bd_pins logger/MAxiClkxCI] [get_bd_pins ps/FCLK_CLK0]
@@ -107,7 +108,7 @@ connect_bd_net [get_bd_pins logger/ClkxCI] [get_bd_pins ps/FCLK_CLK0]
 connect_bd_net [get_bd_pins logger/DataStrobexSI] [get_bd_pins Slc2Hz/Dout]
 
 # Reset to axis2lanes
-connect_bd_net [get_bd_pins system_rst/peripheral_aresetn] [get_bd_pins axis2lanes/DataRstxRBI]
+connect_bd_net [get_bd_pins system_rst/peripheral_aresetn] [get_bd_pins axis2lanes/RstxRBI]
 
 # AXI Converters
 connect_bd_net [get_bd_pins M2Sconverter/aclk] [get_bd_pins ps/FCLK_CLK0]
