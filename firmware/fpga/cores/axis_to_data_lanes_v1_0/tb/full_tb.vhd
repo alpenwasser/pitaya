@@ -52,7 +52,7 @@ begin
     port map (
         ClkxCI => tbClkxC,
         RstxRBI => tbRstxRB,
-        AxiTDataxDI=> tbDataxD,
+        --AxiTDataxDI=> tbDataxD,
         AxiTValid => tbValidxS,
 
         AxiTReady => tbReadyxS,
