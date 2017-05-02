@@ -9,8 +9,8 @@ entity axis_to_data_lanes is
   port (
     ClkxCI: in std_logic;
     RstxRBI: in std_logic;
-    AxiTDataxDI: in std_logic_vector(31 downto 0);
-    AxiTValid: in std_logic;
+    AxiTDataxDI: in std_logic_vector(31 downto 0) := (others => '0');
+    AxiTValid: in std_logic := '0';
 
     AxiTReady: out std_logic;
     Data0xDO: out std_logic_vector(13 downto 0);
@@ -22,7 +22,7 @@ end axis_to_data_lanes;
 architecture V1 of axis_to_data_lanes is
   signal DataxDP, DataxDN : std_logic_vector(31 downto 0) := (others => '0');
   signal StrobexDP, StrobexDN : std_logic := '0';
-  signal CntxDP, CntxDN: unsigned(63 downto 0) := (others => '0');
+  signal CntxDP, CntxDN: unsigned(16 downto 0) := (others => '0');
 begin
 
     -- Persistent signal mappings
@@ -50,18 +50,18 @@ begin
       end if;
     end process;
 
-    process(AxiTValid, CntxDP, AxiTDataxDI)
+    process(AxiTValid, CntxDP, AxiTDataxDI, ClkxCI)
     begin
-      CntxDN <= (others => '0');
-      StrobexDN <= '0';
-      if AxiTValid = '1' then
+      --if AxiTValid = '1' then
         -- receive every nth sample
         if CntxDP = Decimation - 1 then
           DataxDN <= AxiTDataxDI;
           StrobexDN <= '1';
+          CntxDN <= (others => '0');
         else
           CntxDN <= CntxDP + 1;
+          StrobexDN <= '0';
         end if;
-      end if;
+      --end if;
     end process;
 end V1;
