@@ -1,0 +1,19 @@
+--- /Users/yatekii/repos/school/system.dts	2017-04-09 00:19:45.000000000 +0200
++++ /Users/yatekii/repos/school/system-new.dts	2017-04-09 12:27:50.000000000 +0200
+@@ -40,6 +40,16 @@
+ 		device_type = "memory";
+ 		reg = <0x0 0x1E000000>;
+ 	};
++
++	/* ZYNQ Logger */
++	zynq_logger0: zynq_logger@43c40000 {
++	 	compatible = "zynq_logger";
++		reg = <0x43c40000 0x00010000>, <0x1e000000 0x2000000>; /* use 64kByte addess space for the core's registers and 64MBytes for samples */
++		/* configure which interrupt line is used */
++		interrupt-parent = <&intc>;
++		interrupts = <0 31 4>;  // 29: F2P[0]
++		/* add more parameters here as needed */
++	};
+ };
+ &gem0 {
+ 	local-mac-address = [00 0a 35 00 00 00];

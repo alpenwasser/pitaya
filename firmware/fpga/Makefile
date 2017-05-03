@@ -28,6 +28,8 @@ zynq_logger:
 
 project:
 	$(VIVADO) -source make_project.tcl
+	rm -f vivado*
+	rm -f webtalk*
 
 clean:
 	rm -rf $(BUILD)
