@@ -13,6 +13,7 @@ PART = xc7z010clg400-1
 PROC = ps7_cortexa9_0
 BUILD = build
 FPGA = ../fpga
+FPGA_BUILD = $(FPGA)/build/src
 
 VIVADO = vivado -nolog -nojournal -mode batch
 HSI = hsi -nolog -nojournal -mode batch
@@ -43,7 +44,7 @@ RTL_URL = https://www.dropbox.com/sh/5fy49wae6xwxa8a/AABNwuLz3dPHK06vEDHmG8mfa/r
 
 .PRECIOUS: $(BUILD)/cores/% $(BUILD)/%.xpr $(BUILD)/%.hwdef $(BUILD)/%.bit $(BUILD)/%.fsbl/executable.elf $(BUILD)/%.tree/system.dts
 
-all: boot.bin uImage devicetree.dtb fw_printenv
+all: uImage devicetree.dtb fw_printenv
 
 $(UBOOT_TAR):
 	mkdir -p $(@D)
@@ -97,18 +98,18 @@ u-boot: $(UBOOT_DIR)
 	  CROSS_COMPILE=arm-linux-gnueabihf- all
 	cp $</u-boot $(BUILD)/u-boot.elf
 
-fw_printenv: $(UBOOT_DIR) u-boot
-	make -C $< ARCH=arm CFLAGS=$(ARMHF_CFLAGS) \
+fw_printenv:
+	make -C $(UBOOT_DIR) ARCH=arm CFLAGS=$(ARMHF_CFLAGS) \
 	  CROSS_COMPILE=arm-linux-gnueabihf- env
-	cp $</tools/env/fw_printenv $@
+	cp $(UBOOT_DIR)/tools/env/fw_printenv $@
 
 boot.bin: fsbl bitstream u-boot
 	echo "img:{[bootloader] $(BUILD)/$(NAME).fsbl/executable.elf $(BUILD)/$(NAME).bit $(BUILD)/u-boot.elf}" > $(BUILD)/boot.bif
 	bootgen -image $(BUILD)/boot.bif -w -o i $@
 
-devicetree.dtb: uImage devicetree
+devicetree.dtb: devicetree
 	$(LINUX_DIR)/scripts/dtc/dtc -I dts -O dtb -o devicetree.dtb \
-	  -i $(BUILD)/$(NAME).tree $(BUILD)/$(NAME).tree/system.dts
+	  -i $(FPGA_BUILD)/$(NAME).tree $(FPGA_BUILD)/$(NAME).tree/system.dts
 
 cores:
 	cd $(FPGA) && make all-cores
@@ -120,21 +121,21 @@ project:
 
 hwdef: project
 	mkdir -p $(BUILD)
-	$(VIVADO) -source scripts/hwdef.tcl -tclargs $(BUILD) $(NAME)
+	$(VIVADO) -source scripts/hwdef.tcl -tclargs $(FPGA_BUILD) $(NAME)
 
 bitstream: project
 	mkdir -p $(BUILD)
-	$(VIVADO) -source scripts/bitstream.tcl -tclargs $(BUILD) $(NAME)
+	$(VIVADO) -source scripts/bitstream.tcl -tclargs $(FPGA_BUILD) $(NAME)
 
 fsbl: hwdef
 	mkdir -p $(BUILD)/$(NAME).fsbl
-	$(HSI) -source scripts/fsbl.tcl -tclargs $(BUILD) $(NAME) $(PROC)
+	$(HSI) -source scripts/fsbl.tcl -tclargs $(FPGA_BUILD) $(NAME) $(PROC)
 
-devicetree: hwdef $(DTREE_DIR)
+devicetree: $(DTREE_DIR)
 	mkdir -p $(BUILD)/$(NAME).dts
-	$(HSI) -source scripts/devicetree.tcl -tclargs $(BUILD) $(NAME) $(PROC) $(DTREE_DIR)
-	patch $@ patches/devicetree.patch
-	patch $@ patches/logger.patch
+	$(HSI) -source scripts/devicetree.tcl -tclargs $(FPGA_BUILD) $(NAME) $(PROC) $(DTREE_DIR)
+	patch -d .. fpga/build/src/$(NAME).tree/system.dts arm/patches/devicetree.patch
+	patch -d .. fpga/build/src/$(NAME).tree/system.dts arm/patches/logger.patch
 
 clean:
 	$(RM) uImage fw_printenv boot.bin devicetree.dtb $(BUILD)
