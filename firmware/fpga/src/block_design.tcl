@@ -81,7 +81,7 @@ connect_bd_net [get_bd_ports led_o] [get_bd_pins Slc2Hz/Dout]
 connect_bd_net [get_bd_pins Cnt2Hz/CLK] [get_bd_pins ps/FCLK_CLK0]
 
 # Connect ADC to AXIS to Data Lanes
-connect_bd_intf_net [get_bd_intf_pins adc/M_AXIS] [get_bd_intf_pins axis2lanes/SI]
+# connect_bd_intf_net [get_bd_intf_pins adc/M_AXIS] [get_bd_intf_pins axis2lanes/SI]
 
 # Connect AXIS to Data Lanes to Clock Wiz
 connect_bd_net [get_bd_pins axis2lanes/ClkxCI] [get_bd_pins ps/FCLK_CLK0]
@@ -104,8 +104,7 @@ connect_bd_net [get_bd_pins system_rst/peripheral_aresetn] [get_bd_pins logger/S
 
 # Clock & DataStrobe to Logger
 connect_bd_net [get_bd_pins logger/ClkxCI] [get_bd_pins ps/FCLK_CLK0]
-
-connect_bd_net [get_bd_pins logger/DataStrobexSI] [get_bd_pins Slc2Hz/Dout]
+connect_bd_net [get_bd_pins logger/DataStrobexSI] [get_bd_pins axis2lanes/DataStrobexDO]
 
 # Reset to axis2lanes
 connect_bd_net [get_bd_pins system_rst/peripheral_aresetn] [get_bd_pins axis2lanes/RstxRBI]
