@@ -44,7 +44,7 @@ RTL_URL = https://www.dropbox.com/sh/5fy49wae6xwxa8a/AABNwuLz3dPHK06vEDHmG8mfa/r
 
 .PRECIOUS: $(BUILD)/cores/% $(BUILD)/%.xpr $(BUILD)/%.hwdef $(BUILD)/%.bit $(BUILD)/%.fsbl/executable.elf $(BUILD)/%.tree/system.dts
 
-all: uImage devicetree.dtb fw_printenv
+all: boot.bin uImage devicetree.dtb fw_printenv
 
 $(UBOOT_TAR):
 	mkdir -p $(@D)
@@ -104,7 +104,7 @@ fw_printenv:
 	cp $(UBOOT_DIR)/tools/env/fw_printenv $@
 
 boot.bin: fsbl bitstream u-boot
-	echo "img:{[bootloader] $(BUILD)/$(NAME).fsbl/executable.elf $(BUILD)/$(NAME).bit $(BUILD)/u-boot.elf}" > $(BUILD)/boot.bif
+	echo "img:{[bootloader] $(FPGA_BUILD)/$(NAME).fsbl/executable.elf $(FPGA_BUILD)/$(NAME).bit $(BUILD)/u-boot.elf}" > $(BUILD)/boot.bif
 	bootgen -image $(BUILD)/boot.bif -w -o i $@
 
 devicetree.dtb: devicetree
@@ -123,7 +123,7 @@ hwdef: project
 	mkdir -p $(BUILD)
 	$(VIVADO) -source scripts/hwdef.tcl -tclargs $(FPGA_BUILD) $(NAME)
 
-bitstream: project
+bitstream:
 	mkdir -p $(BUILD)
 	$(VIVADO) -source scripts/bitstream.tcl -tclargs $(FPGA_BUILD) $(NAME)
 
