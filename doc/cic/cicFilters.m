@@ -30,7 +30,6 @@ N = 3;
 B_cic = conv(B_int, B_comb);
 A_cic = conv(A_int, A_comb);
 B_cic2 = ones(1,R*M);
-A_cic2 = [1];
 
 % Exponentiate polynomials
 for n = 2:N
@@ -38,7 +37,8 @@ for n = 2:N
     A_cic = conv(A_cic, A_cic);
     B_cic2 = conv(B_cic2, B_cic2);
 end
-B_cic2 = round(B_cic2*power(2,31)-1); % fixed-point coeffs
+% B_cic2 = round(B_cic2*power(2,31)-1); % fixed-point coeffs
+A_cic2 = [1 zeros(1, length(B_cic2 - 1))];
 
 % B_cic2 = B_cic2/2^12; % Normalize to 1 for N = 3
 figure('name', 'B_cic, A_cic');
@@ -73,8 +73,15 @@ figure('name', 'B_cic2');
 zplane(B_cic2);
 title('B_{cic2}');
 
-%% Save to File
+%% Save to Files
 [H,W] = freqz(B_cic2, A_cic2, K);
+[z,p,k] = tf2zp(B_cic2, A_cic2);
+
+% Account for Fuzziness
+% fuzz=1/80;
+% [idx, centroids] = kmeans(z,8)
+
+
 fileName = 'freqzCIC-as-FIR.txt';
 fh = fopen(fileName, 'w');
 if fh ~= -1
@@ -82,3 +89,19 @@ if fh ~= -1
     fclose(fh);
 end
 dlmwrite(fileName, [abs(H) unwrap(angle(H)) W], '-append', 'delimiter', ',', 'newline', 'unix');
+
+fileName = 'polesCIC-as-FIR.txt';
+fh = fopen(fileName, 'w');
+if fh ~= -1
+    fprintf(fh, '%s,%s\n', 'real(p)', 'imag(p)');
+    fclose(fh);
+end
+dlmwrite(fileName, [real(p) imag(p)], '-append', 'delimiter', ',', 'newline', 'unix');
+
+fileName = 'zerosCIC-as-FIR.txt';
+fh = fopen(fileName, 'w');
+if fh ~= -1
+    fprintf(fh, '%s,%s\n', 'real(z)', 'imag(z)');
+    fclose(fh);
+end
+dlmwrite(fileName, [real(z) imag(z)], '-append', 'delimiter', ',', 'newline', 'unix');

@@ -1,15 +1,122 @@
 \documentclass[margin=3mm,tikz]{standalone}
 \usepackage{pgfplots}
+\usepackage{pgfplotstable}
 \pgfplotsset{compat=1.14}
-\newcommand*\datafile{freqzCIC-as-FIR.txt}
+\newcommand*\freqzFile{freqzCIC-as-FIR.txt}
+\newcommand*\polesFile{polesCIC-as-FIR.txt}
+\newcommand*\zerosFile{zerosCIC-as-FIR.txt}
+\pgfmathsetmacro\fuzzy{0.0125}
 
 \begin{document}
-\pgfplotstableread[col sep=comma]{\datafile}\loadedtable
+\pgfplotstableread[col sep=comma]{\freqzFile}\freqzTable
+\pgfplotstableread[col sep=comma]{\polesFile}\polesTable
+\pgfplotstableread[col sep=comma]{\zerosFile}\zerosTable
+
+% Discontinuities
+% Line 2502
+% 0,-12.566,0.7854
+% Line 5002:
+% 0,-18.85,1.5708
 
 \begin{tikzpicture}
-    \begin{semilogyaxis}
-        \addplot[-] table[x=W, y=abs(H)] \loadedtable;
-    \end{semilogyaxis}
+    \pgfplotsset{set layers}
+
+    %\begin{semilogyaxis}
+    %    \addplot[-] table[x=W, y=abs(H)] \freqzTable;
+    %\end{semilogyaxis}
+
+    \begin{axis}[
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            ylabel=$\left|H\right| (dB)$,
+            xlabel=$f$ (normed to $f_s$),
+            axis y line*=left,
+            xtick={0,0.5,1},
+            xticklabels={0,0.5,$f_s$},
+        ]
+        \addplot[blue,-] table[x=W, y=abs(H)] \freqzTable;
+    \end{axis}
+
+    \begin{axis}[
+            ylabel=$\angle H (deg)$,
+            axis y line*=right,
+            xtick=\empty,
+            xticklabels={},
+        ]
+        \addplot[
+            y filter/.code={\pgfmathparse{180*\pgfmathresult/3.141592654}},
+            unbounded coords=discard,
+            point meta=explicit,
+            -,
+            red,
+            filter point/.code={%
+                \pgfmathparse{\pgfkeysvalueof{/data point/meta}==0}
+                \ifpgfmathfloatcomparison
+                    \pgfkeyssetvalue{/data point/y}{nan}%
+                \fi
+            }
+        ] table[x=W,y=angle(H),meta=abs(H)] \freqzTable;
+    \end{axis}
+\end{tikzpicture}
+
+\begin{tikzpicture}
+    \begin{axis}[
+        x=5cm,
+        y=5cm,
+        axis lines = center,
+        grid=both,
+        ymin=-1.2,
+        ymax=+1.2,
+        xmin=-1.2,
+        xmax=+1.2,
+        xlabel=$Re(z)$,
+        ylabel=$Im(z)$,
+        minor tick num=1,
+        xtick={-1,0,1},
+        ytick={-1,0,1},
+        axis line style={-latex},
+    ]
+
+        % Paint over coord origin
+        \fill[white] (-0.05,-0.05) rectangle (0.05,0.05);
+
+        % Unit circle
+        \draw[blue!50!white,dashed] (0,0) circle (1);
+
+        % Poles
+        \addplot[red,only marks,mark=x]  table[x=real(p), y=imag(p)] \polesTable;
+
+        % Zeros
+        \addplot[
+            only marks,
+            mark=*,
+            mark options={fill=white,draw=blue},
+            % -----------------------------------------------------------
+            % Idea for Filter algorithm:
+            % Create pgf key of form
+            % /real N.nnn/imag M.mmm = COUNT (three decimal places each)
+            % \pgfmathround{1000*VALUE}
+            % or
+            % \pgfmathfloatround
+            % Or potentially with a fuzzy factor
+            % For each coordinate, check if corresponding key
+            % already exists.
+            % If yes: Increment count
+            % If No: Create coordinate, set count to 1
+            % -----------------------------------------------------------
+            %
+            %filter point/.code={%
+            %    \pgfmathparse{\pgfkeysvalueof{/data point/x}<0}%
+            %    \ifpgfmathfloatcomparison
+            %        \pgfmathparse{\pgfkeysvalueof{/data point/y}<0}%
+            %        \ifpgfmathfloatcomparison
+            %            \pgfkeyssetvalue{/data point/x}{nan}%
+            %        \fi
+            %    \fi
+            %},
+        ] table[x=real(z), y=imag(z)] \zerosTable;
+    \end{axis}
 \end{tikzpicture}
 
 \end{document}
+freqzCIC-as-FIR.txt
