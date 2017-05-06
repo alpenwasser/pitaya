@@ -72,3 +72,13 @@ title('B_{cic}/A_{cic}');
 figure('name', 'B_cic2');
 zplane(B_cic2);
 title('B_{cic2}');
+
+%% Save to File
+[H,W] = freqz(B_cic2, A_cic2, K);
+fileName = 'freqzCIC-as-FIR.txt';
+fh = fopen(fileName, 'w');
+if fh ~= -1
+    fprintf(fh, '%s,%s,%s\n', 'abs(H)', 'angle(H)', 'W');
+    fclose(fh);
+end
+dlmwrite(fileName, [abs(H) unwrap(angle(H)) W], '-append', 'delimiter', ',', 'newline', 'unix');

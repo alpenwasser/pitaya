@@ -1,0 +1,15 @@
+\documentclass[margin=3mm,tikz]{standalone}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.14}
+\newcommand*\datafile{freqzCIC-as-FIR.txt}
+
+\begin{document}
+\pgfplotstableread[col sep=comma]{\datafile}\loadedtable
+
+\begin{tikzpicture}
+    \begin{semilogyaxis}
+        \addplot[-] table[x=W, y=abs(H)] \loadedtable;
+    \end{semilogyaxis}
+\end{tikzpicture}
+
+\end{document}
