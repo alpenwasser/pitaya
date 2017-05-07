@@ -80,7 +80,7 @@ title('B_{cic2}');
 % Account for Fuzziness
 % fuzz=1/80;
 % [idx, centroids] = kmeans(z,8)
-
+% zpl
 
 fileName = 'freqzCIC-as-FIR.txt';
 fh = fopen(fileName, 'w');
@@ -93,15 +93,15 @@ dlmwrite(fileName, [abs(H) unwrap(angle(H)) W], '-append', 'delimiter', ',', 'ne
 fileName = 'polesCIC-as-FIR.txt';
 fh = fopen(fileName, 'w');
 if fh ~= -1
-    fprintf(fh, '%s,%s\n', 'real(p)', 'imag(p)');
+    fprintf(fh, '%s,%s\n', 'abs(p)', 'angle(p)');
     fclose(fh);
 end
-dlmwrite(fileName, [real(p) imag(p)], '-append', 'delimiter', ',', 'newline', 'unix');
+dlmwrite(fileName, [abs(p) angle(p)], '-append', 'delimiter', ',', 'newline', 'unix');
 
 fileName = 'zerosCIC-as-FIR.txt';
 fh = fopen(fileName, 'w');
 if fh ~= -1
-    fprintf(fh, '%s,%s\n', 'real(z)', 'imag(z)');
+    fprintf(fh, '%s,%s\n', 'abs(z)', 'angle(z)');
     fclose(fh);
 end
-dlmwrite(fileName, [real(z) imag(z)], '-append', 'delimiter', ',', 'newline', 'unix');
+dlmwrite(fileName, [abs(z) angle(z)], '-append', 'delimiter', ',', 'newline', 'unix');

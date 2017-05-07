@@ -75,6 +75,9 @@
         xtick={-1,0,1},
         ytick={-1,0,1},
         axis line style={-latex},
+        every node near coord/.append style={
+            anchor=south west,
+        },
     ]
 
         % Paint over coord origin
@@ -84,39 +87,23 @@
         \draw[blue!50!white,dashed] (0,0) circle (1);
 
         % Poles
-        \addplot[red,only marks,mark=x]  table[x=real(p), y=imag(p)] \polesTable;
+        \addplot[
+            point meta=explicit symbolic,
+            nodes near coords,
+            data cs=polarrad,
+            only marks,
+            mark options={draw=red},
+            mark=x]  table[x=abs(p), y=angle(p), meta=count] \polesTable;
 
         % Zeros
         \addplot[
             only marks,
             mark=*,
             mark options={fill=white,draw=blue},
-            % -----------------------------------------------------------
-            % Idea for Filter algorithm:
-            % Create pgf key of form
-            % /real N.nnn/imag M.mmm = COUNT (three decimal places each)
-            % \pgfmathround{1000*VALUE}
-            % or
-            % \pgfmathfloatround
-            % Or potentially with a fuzzy factor
-            % For each coordinate, check if corresponding key
-            % already exists.
-            % If yes: Increment count
-            % If No: Create coordinate, set count to 1
-            % -----------------------------------------------------------
-            %
-            %filter point/.code={%
-            %    \pgfmathparse{\pgfkeysvalueof{/data point/x}<0}%
-            %    \ifpgfmathfloatcomparison
-            %        \pgfmathparse{\pgfkeysvalueof{/data point/y}<0}%
-            %        \ifpgfmathfloatcomparison
-            %            \pgfkeyssetvalue{/data point/x}{nan}%
-            %        \fi
-            %    \fi
-            %},
-        ] table[x=real(z), y=imag(z)] \zerosTable;
+            point meta=explicit symbolic,
+            nodes near coords,
+        ] table[data cs=polarrad,y=abs(z), x=angle(z), meta=count] \zerosTable;
     \end{axis}
 \end{tikzpicture}
 
 \end{document}
-freqzCIC-as-FIR.txt
