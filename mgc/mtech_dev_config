@@ -1,0 +1,94 @@
+# Created by mtech_make_env_config
+# by user  : raphael.frey
+# at time  : 29/03/17  15:36:25
+
+
+############################################################################################
+############################################################################################
+##### Introduction
+############################################################################################
+############################################################################################
+# This configuration file is used when ever a mtech terminal is opened. It allows you to
+# specify various settings where the defaults are not applicable for you.
+#
+
+
+
+############################################################################################
+##### MTECH_WINDOW_SIZE
+############################################################################################
+# Define here your personal size of your project windows ...
+# If will be used for command : gnome-terminal --geometry 
+# Scale is in chars and lines : "WIDTH-IN-CAHRS x HIGHT-IN-LINES"
+# syntax example is : "209x50"
+# default is : none
+#MTECH_WINDOW_SIZE=209x50
+#
+
+
+
+############################################################################################
+##### HDL_PROJECT_NAME
+############################################################################################
+# There are some special project settings where to HDL_POJECT_NAME is not equal to the
+# project or repository name. For those cases you can define here your personal
+# HDL_PROJECT_NAME.
+# default is : "git"
+#HDL_PROJECT_NAME=schiva
+#
+
+############################################################################################
+##### DESIGN_DIGITAL_HDS_PATH
+############################################################################################
+# default is : "/home/edu/raphael.frey/projects/default/design_digital/2_hdldesigner"
+#DESIGN_DIGITAL_HDS_PATH=~/svn/dev/2_my_hds_location
+#
+
+############################################################################################
+##### DESIGN_DIGITAL_QUESTA_PATH
+############################################################################################
+# default is : "/home/edu/raphael.frey/projects/default/design_digital/3_questasim"
+#DESIGN_DIGITAL_QUESTA_PATH=~/svn/dev/3_my_questasim_location
+#
+
+
+
+############################################################################################
+##### eda_libs
+############################################################################################
+# Questa and HDLdesigner use common precompiled libraries. You may use personal
+# compiled libraries e.g. with command:
+# - mtech_setup_digital_flow -r -dp /home/edu/raphael.frey/svn/dev/design_digital/eda_libs
+# default is : "/shared/eda/eda_libs"
+#eda_libs=~/svn/dev/design_digital/eda_libs
+#
+
+
+
+############################################################################################
+##### SVN_SERVER
+############################################################################################
+# default for domain adm users is : "wi18as33037"
+# default for domain for users is : "wi18as33041"
+#SVN_SERVER=wi18as33041
+#
+
+############################################################################################
+##### REPO_PROTOCOL
+############################################################################################
+# valid values are : "https", "svn"
+# default is : "https"
+#REPO_PROTOCOL=svn
+#
+
+############################################################################################
+##### REPO_NAME
+############################################################################################
+# The name of the local working copy folder is not always the same as the repository name
+# e.g. if you checkout a tag. Then the folder's name could be e.g. "dev_m1"
+# or so. here you can specify the name of the repository root
+# default is : "default"
+#REPO_NAME=default
+#
+REPO_NAME=2016_HS_P5_P6_FESP
+
