@@ -1,0 +1,7 @@
+Main.ctr
+*.log
+*.toc
+*.pdf
+*.aux
+*.auxlock
+Main.out
