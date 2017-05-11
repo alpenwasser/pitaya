@@ -1,0 +1,70 @@
+\documentclass{alpenthesis/alpenthesis}
+\hexfalse
+\paperfalse
+\chapterstyle{alpenthesis}
+
+\usepackage{lipsum}
+\begin{document}
+\tableofcontents*
+
+\chapter{Introduction}
+\begin{itemize}\firmlist
+    \item Rationale (Why?)
+    \item What is the general approach to solve this problem?
+    \item What has been done so far?
+    \item Results of previous work
+    \item What are we going to do?
+    \item What are the contents of this report?
+\end{itemize}
+
+\part{System Analysis}
+\chapter{Requirements}
+\begin{itemize}\firmlist
+    \item Detailed List of Specifications
+\end{itemize}
+
+\chapter{Existing Solution}
+\section{Previous Work}
+\section{Red Pitaya Platform}
+General Info about Red Pitaya Project:
+\begin{itemize}\firmlist
+    \item How is the PITA project structured? (logically, license-wise, philosophically)
+    \item Why do we care about this?
+\end{itemize}
+\subsection{FPGA}
+\subsection{Linux}
+
+\chapter{Conclusions}
+Decision matrix
+
+
+\part{User Guide}
+
+\part{Developer Guide}
+\chapter{IP Core}
+Documentation of our FPGA Project (structure, interfaces, registers \ldots)
+\chapter{Linux}
+Kernel module, server
+
+\chapter{Tool Chain}
+Vivado, Build Box, ARM Linux, TCL, Makefiles, Libs for building server application
+
+\part{Implementation}
+\chapter{Data Acquisition System}
+\section{FPGA}
+\section{Kernel Module}
+
+\chapter{Filters}
+\chapter{Graphical Front End}
+\chapter{Server}
+
+\part{Theoretical Background}
+\chapter{Filters}
+FIR, IIR, CIC, Half-band, \ldots
+\begin{itemize}
+    \item downsampling: Aliasing into passband
+    \item FIR, IIR: Pros, Cons, not much detail
+    \item CIC, half-band: More detailled
+\end{itemize}
+
+\end{document}
