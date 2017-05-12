@@ -1,4 +1,5 @@
-CPP_OPENSSL_ARM = -I/vagrant/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/include -L/vagrant/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/lib
+CPP_SHARED := -std=c++11 -O3 -I src -shared -fPIC src/Extensions.cpp src/Group.cpp src/Networking.cpp src/Hub.cpp src/Node.cpp src/WebSocket.cpp src/HTTPSocket.cpp src/Socket.cpp src/Epoll.cpp
+CPP_OPENSSL_ARM = -I../build/openssl/include -L../build/openssl/lib
 CPP_ARM = $(CPP_OPENSSL_ARM)
 CXX_ARM = arm-linux-gnueabihf-g++
 
