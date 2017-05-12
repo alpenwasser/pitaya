@@ -59,6 +59,7 @@ begin
           StrobexDN <= '1';
           CntxDN <= (others => '0');
         else
+          DataxDN <= DataxDP;
           CntxDN <= CntxDP + 1;
           StrobexDN <= '0';
         end if;
