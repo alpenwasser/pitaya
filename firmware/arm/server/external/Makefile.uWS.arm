@@ -1,0 +1,11 @@
+CPP_OPENSSL_ARM = -I/vagrant/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/include -L/vagrant/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/lib
+CPP_ARM = $(CPP_OPENSSL_ARM)
+CXX_ARM = arm-linux-gnueabihf-g++
+
+all:
+	$(CXX_ARM) $(CPPFLAGS) $(CFLAGS) $(CPP_SHARED) $(CPP_ARM) -s -o libuWS.so
+
+.PHONY: clean
+clean:
+	rm -f libuWS.so
+	rm -f libuWS.dylib
