@@ -90,8 +90,6 @@ endgroup
 #connect_bd_net [get_bd_pins util_ds_buf_1/IBUF_OUT] [get_bd_pins util_ds_buf_2/OBUF_IN]
 
 apply_bd_automation -rule xilinx.com:bd_rule:processing_system7 -config {make_external "FIXED_IO, DDR" Master "Disable" Slave "Disable" }  [get_bd_cells ps]
-connect_bd_net [get_bd_pins ps/M_AXI_GP0_ACLK] [get_bd_pins ps/FCLK_CLK0]
-connect_bd_net [get_bd_pins ps/S_AXI_HP0_ACLK] [get_bd_pins ps/FCLK_CLK0]
 # TODO: figure out what this does
 
 # ADC
@@ -123,23 +121,4 @@ connect_bd_net [get_bd_ports adc_clk_p_i] [get_bd_pins clk_wiz_adc/clk_in1_p]
 #apply_bd_automation -rule xilinx.com:bd_rule:axi4 -config {Master "/ps/M_AXI_GP0" Clk "Auto" }  [get_bd_intf_pins axi_gpio_0/S_AXI]
 #set_property offset 0x42000000 [get_bd_addr_segs {ps/Data/SEG_axi_gpio_0_Reg}]
 #set_property range 4K [get_bd_addr_segs {ps/Data/SEG_axi_gpio_0_Reg}]
-# TODO: figure out what this does
-
-# ====================================================================================
-# Generate output products and wrapper, add constraint 
-
-generate_target all [get_files  $bd_path/system.bd]
-make_wrapper -files [get_files $bd_path/system.bd] -top
-add_files -norecurse $bd_path/hdl/system_wrapper.v
-
-# Load RedPitaya constraint files
-set files [glob -nocomplain cfg/*.xdc]
-if {[llength $files] > 0} {
-  add_files -norecurse -fileset constrs_1 $files
-}
-
-# TODO: figure out what this does
-set_property VERILOG_DEFINE {TOOL_VIVADO} [current_fileset]
-set_property STRATEGY Flow_PerfOptimized_High [get_runs synth_1]
-set_property STRATEGY Performance_NetDelay_high [get_runs impl_1]
 # TODO: figure out what this does
