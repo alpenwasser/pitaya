@@ -3,7 +3,7 @@ PREFIX = arm-linux-gnueabihf-
 BUILD = build
 SRCDIR = src
 CFLAGS = -I/vagrant/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/include -Iexternal/uWebSockets/src/ -Iexternal/openssl-1.1.0e/include/ -std=c++11
-LFLAGS += -Lexternal/uWebSockets/ -Lexternal/openssl-1.1.0e/ -L/vagrant/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/lib -lm -luWS -lssl -lcrypto
+LFLAGS += -Lexternal/uWebSockets/ -Lexternal/openssl-1.1.0e/ -L/vagrant/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/lib -lm -luWS -lz -lssl -lcrypto
 SRC = $(wildcard $(SRCDIR)/*.c)
 OBJS = $(subst $(SRCDIR),$(BUILD),$(subst .c,.o,$(SRC)))
 
