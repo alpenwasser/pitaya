@@ -1,14 +1,34 @@
 \documentclass[a4paper,oneside]{alpenthesis/alpenthesis}
-\hexfalse
+\hextrue
 \paperfalse
-\chapterstyle{alpenthesis}
 %https://tex.stackexchange.com/a/210456/131649
 \renewcommand\partnumberlinebox[2]{#2\hspace{2em}}
 
-\usepackage{lipsum}
 \begin{document}
+\begin{titlingpage}
+    \fullhexpage{q1}{q0}
+    \flushright\sffamily
+
+    \vspace*{5em}
+    \Huge\bfseries{Red Pitaya}\\[1ex]
+    \Large\mdseries{Thesis}\\[3ex]
+
+    \normalsize\mdseries
+    
+    \vfill
+    Raphael Frey\\
+    Noah H\"usser\\[3ex]
+
+    \vspace{5em}
+
+    \today\\
+    Version 0.0.1
+\end{titlingpage}
+
+\frontmatter
 \tableofcontents*
 
+\mainmatter
 \chapter{Introduction}
 \begin{itemize}\firmlist
     \item Rationale (Why?)
