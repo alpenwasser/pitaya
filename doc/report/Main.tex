@@ -1,12 +1,13 @@
 \documentclass[a4paper,oneside]{alpenthesis/alpenthesis}
+% <<< Preamble
 \hexfalse
 \paperfalse
 %https://tex.stackexchange.com/a/210456/131649
 \renewcommand\partnumberlinebox[2]{#2\hspace{2em}}
-
 \usetikzlibrary{positioning}
+% >>>
 \begin{document}
-\begin{titlingpage}
+\begin{titlingpage} % <<<
     \fullhexpage{q1}{q0}
     \flushright\sffamily
 
@@ -24,13 +25,18 @@
 
     \today\\
     Version 0.0.1
-\end{titlingpage}
+\end{titlingpage} % >>>
 
-\frontmatter
+\frontmatter % <<<
 \tableofcontents*
+% >>>
 
 \mainmatter
-\chapter{Introduction}
+
+\chapter{Introduction} % <<< ------------------------------------------------- %
+\label{ch:intro}
+% ---------------------------------------------------------------------------- %
+
 \begin{itemize}\firmlist
     \item Rationale (Why?)
     \item What is the general approach to solve this problem?
@@ -40,7 +46,11 @@
     \item What are the contents of this report?
 \end{itemize}
 
-\part{System Overview}
+% >>>
+
+\part{System Overview} % <<< ------------------------------------------------- %
+\label{part:System_Overview}
+% ---------------------------------------------------------------------------- %
 
 Fundamental question  to answer in  this part:  \emph{What is our  system, and
 what is it good for?}
@@ -49,7 +59,9 @@ This information could also go into \emph{Introduction}?
 
 Provide supplementary theoretical background as needed.
 
-\chapter{Analog-to-Digital Data Acquisition}
+\chapter{Analog-to-Digital Data Acquisition} % <<< --------------------------- %
+\label{ch:analog-to-digital_data_aquisition}
+% ---------------------------------------------------------------------------- %
 
 \begin{itemize}
     \item
@@ -101,8 +113,11 @@ Explain processing chain (do we even have an analog LP filter here?)
     \draw[->] (addf) -- (digital);
 \end{tikzpicture}
 
+% >>>
 
-\chapter{The Red Pitaya Platform}
+\chapter{The Red Pitaya Platform} % <<< -------------------------------------- %
+\label{ch:the_red_pitaya_platform}
+% ---------------------------------------------------------------------------- %
 \section{General Information}
 General Info about Red Pitaya Project:
 \begin{itemize}\firmlist
@@ -126,7 +141,13 @@ General Info about Red Pitaya Project:
     \item Decision Matrix \& Decision
 \end{itemize}
 
-\part{Implementation}
+% >>>
+
+% >>>
+
+\part{Implementation} % <<< -------------------------------------------------- %
+\label{part:Implementation}
+% ---------------------------------------------------------------------------- %
 Implementation can be read independently of previous part, but there should be
 a  red thread  from decision  to implementation. Deals  primarily with  design
 decisions.
@@ -135,29 +156,68 @@ Present a diagram with all  system components. Then document the components in
 their respective chapters and sections.
 
 \chapter{Data Acquisition System}
+\label{ch:data_acquisition_system}
 \section{FPGA}
 \section{Kernel Module}
 
-\chapter{Filters}
-\chapter{Server}
-\chapter{Graphical Front End}
+\chapter{Filters} % <<< ------------------------------------------------------ %
+\label{ch:filters}
+% ---------------------------------------------------------------------------- %
 
-\part{Developer Guide}
+% >>>
+
+\chapter{Server} % <<< ------------------------------------------------------- %
+\label{ch:server}
+% ---------------------------------------------------------------------------- %
+
+% >>>
+
+\chapter{Graphical Front End} % <<< ------------------------------------------ %
+\label{ch:graphical_front_end}
+
+% >>>
+
+% >>>
+
+\part{Developer Guide} % <<< -------------------------------------------------- %
+\label{part:Developer_Guide}
+% ---------------------------------------------------------------------------- %
 Documentation for a person who wishes to utilize our system in their work and/or
 improve upon it?
 
 Make sure  to distinguish  between \emph{Implementation} and  this part. Lines
 seem a bit blurry to me (R.F.) at the moment (\today).
 
-\chapter{IP Core}
+\chapter{IP Core} % <<< ------------------------------------------------------ %
+\label{ch:IP_Core}
+% ---------------------------------------------------------------------------- %
 Documentation of our FPGA Project (structure, interfaces, registers \ldots)
-\chapter{Linux}
+
+% >>>
+
+\chapter{Linux} % <<< -------------------------------------------------------- %
+\label{ch:Linux}
+% ---------------------------------------------------------------------------- %
+
 Kernel module, server
 
-\chapter{Tool Chain}
+% >>>
+
+\chapter{Tool Chain} % <<< --------------------------------------------------- %
+\label{ch:Tool_Chain}
+% ---------------------------------------------------------------------------- %
 Vivado, Build Box, ARM Linux, TCL, Makefiles, Libs for building server application
 
-\part{User Guide}
+% >>>
+
+% >>>
+
+\part{User Guide} % <<< ------------------------------------------------------ %
+\label{part:User_Guide}
+% ---------------------------------------------------------------------------- %
 Documentation for the end user. Primarily concerned with the scope front-end.
 
+% >>>
+
 \end{document}
+%^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>
