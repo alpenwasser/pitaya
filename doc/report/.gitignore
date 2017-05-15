@@ -1,7 +1,9 @@
-Main.ctr
+build
+# Explicit mention, just to make the avid reader aware of this:
+build/Main.ctr
 *.log
 *.toc
 *.pdf
 *.aux
 *.auxlock
-Main.out
+*.out
