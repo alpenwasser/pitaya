@@ -24,7 +24,7 @@ tikzcache:
 # There is  a circular  dependency between tikzpics  and the
 # regular targets, so  this target needs to  be run manually
 # at the appropriate times (see README.md).
-tikzpics:
+tikz:
 	@make -j$(CORE_COUNT) -C $(OUT_DIR) -f $(DOCUMENT).makefile
 
 # Compile document without output.
@@ -43,10 +43,27 @@ debug: tikzcache
 snapshot:
 	@cp $(OUT_DIR)/$(DOCUMENT).pdf snapshots/$(DOCUMENT)--$(TIMESTAMP).pdf
 
+# Tidy up, but don't clean out cached files and pdf documents.
+tidy:
+	@rm -f $(TIKZ_DIR)
+	@rm -f $(OUT_DIR)/$(DOCUMENT).tex
+	@rm -rf $(OUT_DIR)/alpenthesis
+	@rm -f $(OUT_DIR)/Main.aux
+	@rm -f $(OUT_DIR)/Main.figlist
+	@rm -f $(OUT_DIR)/Main.lof
+	@rm -f $(OUT_DIR)/Main.log
+	@rm -f $(OUT_DIR)/Main.lol
+	@rm -f $(OUT_DIR)/Main.lot
+	@rm -f $(OUT_DIR)/Main.makefile
+	@rm -f $(OUT_DIR)/Main.mw
+	@rm -f $(OUT_DIR)/Main.out
+	@rm -f $(OUT_DIR)/Main.toc
+
 # Clean out all the files and symlinks.
 clean:
-	mv $(OUT_DIR)/Main.ctr ./
-	rm -rf $(OUT_DIR)/*
-	mv Main.ctr $(OUT_DIR)/
-	rm -f $(TIKZ_DIR)
-	rm -f $(OUT_DIR)/$(DOCUMENT).tex
+	@mv $(OUT_DIR)/Main.ctr ./
+	@rm -rf $(OUT_DIR)/*
+	@mv Main.ctr $(OUT_DIR)/
+	@rm -f $(TIKZ_DIR)
+	@rm -f $(OUT_DIR)/$(DOCUMENT).tex
+
