@@ -1,1 +1,0 @@
-TikZ Picture Cache

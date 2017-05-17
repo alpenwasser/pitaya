@@ -1,6 +1,6 @@
 \documentclass[a4paper,oneside]{alpenthesis/alpenthesis}
 % <<< Preamble
-\hexfalse
+\hextrue
 \paperfalse
 %https://tex.stackexchange.com/a/210456/131649
 \renewcommand\partnumberlinebox[2]{#2\hspace{2em}}
@@ -29,6 +29,13 @@
 
 \frontmatter % <<<
 \tableofcontents*
+\clearpage
+\listoffigures*
+\clearpage
+\listoftables*
+\clearpage
+\listoflistings
+\clearpage
 % >>>
 
 \mainmatter
@@ -183,6 +190,16 @@ their respective chapters and sections.
 \label{ch:data_acquisition_system}
 \section{FPGA}
 \section{Kernel Module}
+\begin{listing}
+    \begin{minted}{tex}
+        \begin{tabular}{ll}
+            a & b \\
+            c & d \\
+        \end{tabular}
+    \end{minted}
+    \caption{A \texttt{minted} example}
+    \label{lst:minted-example}
+\end{listing}
 
 \chapter{Filters} % <<< ------------------------------------------------------ %
 \label{ch:filters}
