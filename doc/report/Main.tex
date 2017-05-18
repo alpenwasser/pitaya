@@ -5,6 +5,7 @@
 %https://tex.stackexchange.com/a/210456/131649
 \renewcommand\partnumberlinebox[2]{#2\hspace{2em}}
 \usetikzlibrary{positioning}
+\usepackage[numbered]{matlab-prettifier}
 % >>>
 \begin{document}
 \begin{titlingpage} % <<<
@@ -190,16 +191,6 @@ their respective chapters and sections.
 \label{ch:data_acquisition_system}
 \section{FPGA}
 \section{Kernel Module}
-\begin{listing}
-    \begin{minted}{tex}
-        \begin{tabular}{ll}
-            a & b \\
-            c & d \\
-        \end{tabular}
-    \end{minted}
-    \caption{A \texttt{minted} example}
-    \label{lst:minted-example}
-\end{listing}
 
 \chapter{Filters} % <<< ------------------------------------------------------ %
 \label{ch:filters}
@@ -257,6 +248,48 @@ Vivado, Build Box, ARM Linux, TCL, Makefiles, Libs for building server applicati
 \label{part:User_Guide}
 % ---------------------------------------------------------------------------- %
 Documentation for the end user. Primarily concerned with the scope front-end.
+
+% >>>
+
+\part{Sandbox} % <<< --------------------------------------------------------- %
+\label{part:Sandbox}
+% ---------------------------------------------------------------------------- %
+
+\chapter{Code Listings}
+\section{Makefile}
+\inputminted{makefile}{code/Makefile}
+
+\section{Verilog}
+\inputminted{verilog}{code/axi_axis_reader.v}
+
+\section{VHDL}
+\inputminted{vhdl}{code/comparator.vhd}
+
+\section{TCL}
+\inputminted{tcl}{code/create_cores.tcl}
+
+\begin{listing}
+    \begin{minted}[autogobble]{vhdl}
+        entity comparator is
+            generic (
+                Width : integer := 14
+            );
+            port (
+                AxDI : in unsigned(Width - 1 downto 0);
+                BxDI : in unsigned(Width - 1 downto 0);
+                GreaterxSO : out std_logic;
+                EqualxSO : out std_logic;
+                LowerxSO : out std_logic
+            );
+        end comparator;
+    \end{minted}
+    \caption{Comparator}
+    \label{lst:vhdl:comparator}
+\end{listing}
+
+\section{Matlab}
+\inputminted{matlab}{code/filterChainDesigns.m}
+\lstinputlisting[style=Matlab-editor,title=Matlab Code,caption=Matlab Code]{code/filterChainDesigns.m}
 
 % >>>
 

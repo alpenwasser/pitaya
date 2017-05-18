@@ -7,3 +7,4 @@ build/Main.ctr
 *.aux
 *.auxlock
 *.out
+resources
