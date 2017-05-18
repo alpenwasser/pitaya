@@ -1,12 +1,13 @@
 DOCUMENT := Main
 TIMESTAMP := $(shell date '+%Y-%m-%d--%H-%M-%S')
-OUT_DIR := build
 INTERACTION := batchmode
-MINTED_DIR := _minted-Main
-TIKZ_DIR := tikzCache
 CLASS := alpenthesis
 RANDINTS := randInts
 CORE_COUNT := 4
+OUT_DIR := build
+MINTED_DIR := _minted-Main
+TIKZ_DIR := tikzCache
+META_DIR := meta
 
 
 default: simple
@@ -26,6 +27,11 @@ tikzcache:
 # at the appropriate times (see README.md).
 tikz:
 	@make -j$(CORE_COUNT) -C $(OUT_DIR) -f $(DOCUMENT).makefile
+
+.PHONY: meta
+meta:
+	@mkdir -p $(META_DIR)
+	cp $(OUT_DIR)/$(DOCUMENT).ctr $(META_DIR)/$(DOCUMENT).ctr.$(user)
 
 # Compile document without output.
 simple: tikzcache
@@ -61,9 +67,9 @@ tidy:
 
 # Clean out all the files and symlinks.
 clean:
-	@mv $(OUT_DIR)/Main.ctr ./
+	@mv $(OUT_DIR)/$(DOCUMENT).ctr ./
 	@rm -rf $(OUT_DIR)/*
-	@mv Main.ctr $(OUT_DIR)/
+	@mv $(DOCUMENT).ctr $(OUT_DIR)/
 	@rm -f $(TIKZ_DIR)
 	@rm -f $(OUT_DIR)/$(DOCUMENT).tex
 
