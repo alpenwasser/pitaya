@@ -5,7 +5,7 @@
 %https://tex.stackexchange.com/a/210456/131649
 \renewcommand\partnumberlinebox[2]{#2\hspace{2em}}
 \usetikzlibrary{positioning}
-\usepackage[numbered]{matlab-prettifier}
+\tcbuselibrary{breakable}
 % >>>
 \begin{document}
 \begin{titlingpage} % <<<
@@ -255,12 +255,39 @@ Documentation for the end user. Primarily concerned with the scope front-end.
 \label{part:Sandbox}
 % ---------------------------------------------------------------------------- %
 
+% Matlab-prettifier: Uses the lstlisting counter
+% Minted: Uses the listing counter
+
 \chapter{Code Listings}
 \section{Makefile}
-\inputminted{makefile}{code/Makefile}
+\tikzexternaldisable
+\begin{tcolorbox}[
+        breakable,
+        title={
+            \refstepcounter{listing}
+            Listing \thelisting: Makefile Code
+            \label{lst:makefile}
+            \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Makefile Code}
+        }
+    ]
+    \inputminted{makefile}{code/Makefile}
+\end{tcolorbox}
+\tikzexternalenable
 
 \section{Verilog}
+\tikzexternaldisable
+\begin{tcolorbox}[
+        breakable,
+        title={
+            \refstepcounter{listing}
+            Listing \thelisting: Verilog Code
+            \label{lst:makefile}
+            \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Verilog Code}
+        }
+    ]
 \inputminted{verilog}{code/axi_axis_reader.v}
+\end{tcolorbox}
+\tikzexternalenable
 
 \section{VHDL}
 \inputminted{vhdl}{code/comparator.vhd}
@@ -288,8 +315,19 @@ Documentation for the end user. Primarily concerned with the scope front-end.
 \end{listing}
 
 \section{Matlab}
-\inputminted{matlab}{code/filterChainDesigns.m}
-\lstinputlisting[style=Matlab-editor,title=Matlab Code,caption=Matlab Code]{code/filterChainDesigns.m}
+\tikzexternaldisable
+\begin{tcolorbox}[
+        breakable,
+        title={
+            \refstepcounter{listing}
+            Listing \thelisting: Matlab Code
+            \label{lst:makefile}
+            \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Matlab Code}
+        }
+    ]
+    \inputminted[style=solarizedlight]{matlab}{code/filterChainDesigns.m}
+\end{tcolorbox}
+\tikzexternalenable
 
 % >>>
 
