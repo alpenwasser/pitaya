@@ -1,3 +1,4 @@
+\RequirePackage{snapshot}
 \documentclass[a4paper,oneside]{alpenthesis/alpenthesis}
 % <<< Preamble
 \hexfalse
@@ -6,6 +7,8 @@
 \renewcommand\partnumberlinebox[2]{#2\hspace{2em}}
 \usetikzlibrary{positioning}
 \tcbuselibrary{breakable}
+\tcbset{shield externalize}
+\makeindex
 % >>>
 \begin{document}
 \begin{titlingpage} % <<<
@@ -79,17 +82,17 @@ Provide supplementary theoretical background as needed.
     Sampling:
         \begin{itemize}
             \item
-            Sampling in time domain: Multiplication with dirac pulse sequence
+            \index{Sampling} in time domain: Multiplication with dirac pulse sequence
             \item
             Frequency doman: Convolution of signal spectrum and dirac pulse spectrum
             \item
             ``What is spectrum of dirac pulse sequence?'' (dirac pulse sequence)
             \item
-            Consequently: Spectrum of sampled signal is repeated for each dirac pulse in the spectrum
+            Consequently: \index{Spectrum} of sampled signal is repeated for each dirac pulse in the spectrum
             \item
             \textbf{Make sure to get distances between pulses as well as heights correct!}
             \item
-            Aliasing
+            \index{Aliasing}
             \item
             LP-Filtering (Anti-Aliasing Filter)
             \item
@@ -181,8 +184,8 @@ General Info about Red Pitaya Project:
 \label{part:Implementation}
 % ---------------------------------------------------------------------------- %
 Implementation can be read independently of previous part, but there should be
-a  red thread  from decision  to implementation. Deals  primarily with  design
-decisions.
+a  red thread  from decision  to \index{implementation}. Deals  primarily with
+design decisions.
 
 Present a diagram with all  system components. Then document the components in
 their respective chapters and sections.
@@ -247,20 +250,29 @@ Vivado, Build Box, ARM Linux, TCL, Makefiles, Libs for building server applicati
 \part{User Guide} % <<< ------------------------------------------------------ %
 \label{part:User_Guide}
 % ---------------------------------------------------------------------------- %
-Documentation for the end user. Primarily concerned with the scope front-end.
+Documentation  for the  end user. Primarily  concerned with  the \index{scope}
+front-end.
 
 % >>>
 
-\part{Sandbox} % <<< --------------------------------------------------------- %
-\label{part:Sandbox}
+\cleardoublepage % <<< ---------------------------------------------APPENDICES %
+\begin{titlingpage*}
+    \fullhexpage{da2}{ct4}
+    \begin{vplace}
+        \flushright\Huge\bfseries\sffamily\appendixpagename
+    \end{vplace}
+\end{titlingpage*}
+\appendix
+\chapterstyle{alpenappendix}
 % ---------------------------------------------------------------------------- %
 
 % Matlab-prettifier: Uses the lstlisting counter
 % Minted: Uses the listing counter
 
 \chapter{Code Listings}
+\label{ch:Code_Listings}
+
 \section{Makefile}
-\tikzexternaldisable
 \begin{tcolorbox}[
         breakable,
         title={
@@ -272,10 +284,8 @@ Documentation for the end user. Primarily concerned with the scope front-end.
     ]
     \inputminted{makefile}{code/Makefile}
 \end{tcolorbox}
-\tikzexternalenable
 
 \section{Verilog}
-\tikzexternaldisable
 \begin{tcolorbox}[
         breakable,
         width=1.2\textwidth,
@@ -286,15 +296,14 @@ Documentation for the end user. Primarily concerned with the scope front-end.
             \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Verilog Code}
         }
     ]
-\inputminted{verilog}{code/axi_axis_reader.v}
+\inputminted{verilog}{./code/axi_axis_reader.v}
 \end{tcolorbox}
-\tikzexternalenable
 
 \section{VHDL}
-\inputminted{vhdl}{code/comparator.vhd}
+\inputminted{vhdl}{./code/comparator.vhd}
 
 \section{TCL}
-\inputminted{tcl}{code/create_cores.tcl}
+\inputminted{tcl}{./code/create_cores.tcl}
 
 \begin{listing}
     \begin{minted}[autogobble]{vhdl}
@@ -316,7 +325,6 @@ Documentation for the end user. Primarily concerned with the scope front-end.
 \end{listing}
 
 \section{Matlab}
-\tikzexternaldisable
 \begin{tcolorbox}[
         breakable,
         title={
@@ -326,11 +334,13 @@ Documentation for the end user. Primarily concerned with the scope front-end.
             \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Matlab Code}
         }
     ]
-    \inputminted[style=solarizedlight]{matlab}{code/filterChainDesigns.m}
+    \inputminted[style=solarizedlight]{matlab}{./code/filterChainDesigns.m}
 \end{tcolorbox}
-\tikzexternalenable
 
 % >>>
 
+\backmatter
+% Indexing: memman.pdf, pp. 302ff.
+\printindex
 \end{document}
 %^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>

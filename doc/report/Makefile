@@ -5,9 +5,10 @@ CLASS := alpenthesis
 RANDINTS := randInts
 CORE_COUNT := 4
 OUT_DIR := build
-MINTED_DIR := _minted-Main
 TIKZ_DIR := tikzCache
 META_DIR := meta
+BUNDLE_CFG := $(META_DIR)/bundledoc.cfg
+CODE_DIR := code
 
 
 default: simple
@@ -17,10 +18,11 @@ default: simple
 tikzcache:
 	@mkdir -p $(OUT_DIR)/$(TIKZ_DIR)
 	@mkdir -p $(OUT_DIR)/$(CLASS)
-	@ln -fs $(OUT_DIR)/$(TIKZ_DIR) ./$(TIKZ_DIR)
-	@ln -fs ../../$(CLASS)/$(CLASS).cls $(OUT_DIR)/$(CLASS)/$(CLASS).cls
-	@ln -fs ../../$(CLASS)/$(RANDINTS).tex $(OUT_DIR)/$(CLASS)/$(RANDINTS).tex
-	@ln -fs ../$(DOCUMENT).tex $(OUT_DIR)/$(DOCUMENT).tex
+	@[ -L $(OUT_DIR)/$(CODE_DIR) ] || ln -s ../$(CODE_DIR) $(OUT_DIR)/$(CODE_DIR)
+	@[ -L ./$(TIKZ_DIR) ] || ln -s $(OUT_DIR)/$(TIKZ_DIR) ./$(TIKZ_DIR)
+	@[ -L $(OUT_DIR)/$(CLASS)/$(CLASS).cls ] || ln -s ../../$(CLASS)/$(CLASS).cls $(OUT_DIR)/$(CLASS)/$(CLASS).cls
+	@[ -L $(OUT_DIR)/$(CLASS)/$(RANDINTS).tex ] || ln -s ../../$(CLASS)/$(RANDINTS).tex $(OUT_DIR)/$(CLASS)/$(RANDINTS).tex
+	@[ -L $(OUT_DIR)/$(DOCUMENT).tex ] || ln -s ../$(DOCUMENT).tex $(OUT_DIR)/$(DOCUMENT).tex
 
 # There is  a circular  dependency between tikzpics  and the
 # regular targets, so  this target needs to  be run manually
@@ -32,6 +34,9 @@ tikz:
 meta:
 	@mkdir -p $(META_DIR)
 	cp $(OUT_DIR)/$(DOCUMENT).ctr $(META_DIR)/$(DOCUMENT).ctr.$(user)
+
+index:
+	@makeindex -o $(OUT_DIR)/$(DOCUMENT).ind $(OUT_DIR)/$(DOCUMENT).idx
 
 # Compile document without output.
 simple: tikzcache
@@ -49,21 +54,39 @@ debug: tikzcache
 snapshot:
 	@cp $(OUT_DIR)/$(DOCUMENT).pdf snapshots/$(DOCUMENT)--$(TIMESTAMP).pdf
 
+# Collect  all necessary TeX  and project files  and archive
+# them. See README.md .
+bundle:
+	@cat $(OUT_DIR)/$(DOCUMENT).dep | grep -v $(DOCUMENT) > $(OUT_DIR)/$(DOCUMENT).dep.2
+	@mv $(OUT_DIR)/$(DOCUMENT).dep.2 $(OUT_DIR)/$(DOCUMENT).dep
+	@bundledoc --texfile=$(DOCUMENT).tex --config=$(BUNDLE_CFG) ./$(OUT_DIR)/$(DOCUMENT).dep
+	@tar -C $(META_DIR) -xf $(OUT_DIR)/$(DOCUMENT).tar
+	@rm $(OUT_DIR)/$(DOCUMENT).tar
+	@cp -r $(CODE_DIR) $(META_DIR)/$(DOCUMENT)
+	@cp Makefile $(META_DIR)/$(DOCUMENT)
+	@tar -C $(META_DIR) -cf - $(DOCUMENT) | xz --best > $(META_DIR)/$(DOCUMENT)--$(TIMESTAMP).tar.xz 
+	@rm -r $(META_DIR)/$(DOCUMENT)
+
 # Tidy up, but don't clean out cached files and pdf documents.
 tidy:
 	@rm -f $(TIKZ_DIR)
+	@rm -f $(OUT_DIR)/$(CODE_DIR)
 	@rm -f $(OUT_DIR)/$(DOCUMENT).tex
 	@rm -rf $(OUT_DIR)/alpenthesis
-	@rm -f $(OUT_DIR)/Main.aux
-	@rm -f $(OUT_DIR)/Main.figlist
-	@rm -f $(OUT_DIR)/Main.lof
-	@rm -f $(OUT_DIR)/Main.log
-	@rm -f $(OUT_DIR)/Main.lol
-	@rm -f $(OUT_DIR)/Main.lot
-	@rm -f $(OUT_DIR)/Main.makefile
-	@rm -f $(OUT_DIR)/Main.mw
-	@rm -f $(OUT_DIR)/Main.out
-	@rm -f $(OUT_DIR)/Main.toc
+	@rm -f $(OUT_DIR)/$(DOCUMENT).aux
+	@rm -f $(OUT_DIR)/$(DOCUMENT).figlist
+	@rm -f $(OUT_DIR)/$(DOCUMENT).lof
+	@rm -f $(OUT_DIR)/$(DOCUMENT).log
+	@rm -f $(OUT_DIR)/$(DOCUMENT).lol
+	@rm -f $(OUT_DIR)/$(DOCUMENT).lot
+	@rm -f $(OUT_DIR)/$(DOCUMENT).makefile
+	@rm -f $(OUT_DIR)/$(DOCUMENT).mw
+	@rm -f $(OUT_DIR)/$(DOCUMENT).out
+	@rm -f $(OUT_DIR)/$(DOCUMENT).toc
+	@rm -f $(OUT_DIR)/$(DOCUMENT).ind
+	@rm -f $(OUT_DIR)/$(DOCUMENT).ilg
+	@rm -f $(OUT_DIR)/$(DOCUMENT).idx
+	@rm -f $(OUT_DIR)/$(DOCUMENT).dep
 
 # Clean out all the files and symlinks.
 clean:
@@ -72,4 +95,3 @@ clean:
 	@mv $(DOCUMENT).ctr $(OUT_DIR)/
 	@rm -f $(TIKZ_DIR)
 	@rm -f $(OUT_DIR)/$(DOCUMENT).tex
-

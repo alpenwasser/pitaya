@@ -8,3 +8,4 @@ build/Main.ctr
 *.auxlock
 *.out
 resources
+tikzCache
