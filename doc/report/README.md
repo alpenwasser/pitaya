@@ -77,10 +77,10 @@ which is used as the input for `makeindex`.
 
 ## bundledoc
 For archival purposes, `snapshot` and  `bundledoc` can be used. The `snapshot`
-package creates a list of all  dependencies of the document (class files, font
-files, etc.),  while the `bundledoc`  utility (a Perl  script) can be  used to
-gather all files from that list and pack them, and all else which is needed to
-build the document, into an archive.
+package  creates a  list of  all dependencies  of the  document (class  files,
+package  files, font  files,  etc.),  while the  `bundledoc`  utility (a  Perl
+script) can be used to gather all files  from that list and pack them, and all
+else which is needed to build the document, into an archive.
 
 ### Creating an Archive
 `snapshot` 's  dependency list file  will be placed  in `build/Main.dep`. Each
@@ -95,7 +95,9 @@ which will then raise an error because they cannot be found:
 
 The  `make  bundle`  target  from   the  Makefile  automatically  filters  out
 any  entries   from  `build/Main.dep`  containing  `Main`   to  prevent  these
-errors. Create the bundle file via:
+errors. Before running the `bundle` target,  make sure to compile the document
+at  least once  before to  create the  `build/Main.dep` file. Then  create the
+bundle file via:
 ```
 make bundle
 ```
