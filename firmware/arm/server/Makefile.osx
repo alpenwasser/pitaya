@@ -1,3 +1,17 @@
+# ---------------------------------------------------------------------------- #
+# Builds server for macoOS platform.
+#
+# Makefile for firmware/arm/server
+# Location:    firmware/arm/server/Makefile.osx
+# 
+# Authors: Noah Huesser <yatekii@yatekii.ch>
+#
+# Date:   2017-05-12
+# 
+# Called by: firmware/arm/server/Makefile (osx target)
+#
+# Working Directory: firmware/arm/server
+# ---------------------------------------------------------------------------- #
 TARGET = server
 BUILD = build
 SRCDIR = src
