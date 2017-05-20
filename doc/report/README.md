@@ -123,3 +123,8 @@ Resources
 =========
 VHDL Listings:
 https://tex.stackexchange.com/a/369808/131649
+
+Install solarized theme for pygments:
+```
+# pip install pygments-style-solarized
+```
