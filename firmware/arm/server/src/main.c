@@ -90,7 +90,7 @@ int main(int argc, char* argv[]) {
         trg.trg_id = 1;
         trg.trg_option = 4;
         trg.trg_slot_id = 1;
-        trg.trg_value = 0xDAC036B3;
+        trg.trg_value = 0x000036B3;
         ioctl(fd, WRITE_TRG, &trg);
 
         trg.trg_id = 1;
@@ -159,15 +159,45 @@ int main(int argc, char* argv[]) {
                 default:
                 case modes::POLLING:{
                     int ret;
+                    struct reg_instruction instruction;
+                    // Count pre
+                    instruction.reg_id = 3;
+                    instruction.reg_value = s->frameSize / 2;
+                    ioctl(s->fd, WRITE_REG, &instruction);
+
+                    // Count suf
+                    instruction.reg_id = 4;
+                    instruction.reg_value = s->frameSize / 2;
+                    ioctl(s->fd, WRITE_REG, &instruction);
+
                     ioctl(s->fd, START_REC, NULL);
+
                     struct data_instruction d_instruction;
                     d_instruction.resolution = 1;
                     d_instruction.channel = 1;
                     ioctl(s->fd, DATA_SETTINGS, &d_instruction);
-                    usleep(5 * 1000);
-                    ioctl(s->fd, STOP_REC, NULL);
+                    // usleep(5 * 1000);
+                    // ioctl(s->fd, STOP_REC, NULL);
                     lseek(s->fd, 0, SEEK_SET);
                     ret = read(s->fd, &s->data[0], s->frameSize);
+
+                    printf("Read number of recorded samples ...\n");
+                    instruction.reg_id = 11;
+                    ioctl(s->fd, READ_REG, &instruction);
+                    printf("Return value: %u\n", instruction.reg_value);
+                    instruction.reg_id = 12;
+                    ioctl(s->fd, READ_REG, &instruction);
+                    printf("Return value: %u\n", instruction.reg_value);
+                    printf("Checking error code ... ");
+                    instruction.reg_id = 8;
+                    ioctl(s->fd, READ_REG, &instruction);
+                    printf("Return value: %u\n", instruction.reg_value);
+
+                    printf("Checking faulty address ... ");
+                    instruction.reg_id = 9;
+                    ioctl(s->fd, READ_REG, &instruction);
+                    printf("Return value: %u\n", instruction.reg_value);
+
                     if(ret < 0){
                         std::cout << "Read failed, consult kernel log." << std::endl;
                     }

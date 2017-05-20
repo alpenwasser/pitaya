@@ -11,7 +11,7 @@
 +		reg = <0x43c40000 0x00010000>, <0x1e000000 0x2000000>; /* use 64kByte addess space for the core's registers and 64MBytes for samples */
 +		/* configure which interrupt line is used */
 +		interrupt-parent = <&intc>;
-+		interrupts = <0 31 4>;  // 29: F2P[0]
++		interrupts = <0 29 4>;  // 29: F2P[0]
 +		/* add more parameters here as needed */
 +	};
  };

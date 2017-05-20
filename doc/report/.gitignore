@@ -9,3 +9,5 @@ build/Main.ctr
 *.out
 resources
 tikzCache
+meta/machine-id
+meta/hostname

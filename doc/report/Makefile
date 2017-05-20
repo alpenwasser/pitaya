@@ -3,12 +3,28 @@ TIMESTAMP := $(shell date '+%Y-%m-%d--%H-%M-%S')
 INTERACTION := batchmode
 CLASS := alpenthesis
 RANDINTS := randInts
-CORE_COUNT := 4
+CORE_COUNT := $(shell nproc 2>/dev/null || echo 1)
 OUT_DIR := build
 TIKZ_DIR := tikzCache
 META_DIR := meta
 BUNDLE_CFG := $(META_DIR)/bundledoc.cfg
 CODE_DIR := code
+
+# Generate host-specific identifiers, or
+# default ones if unailable.
+# http://stackoverflow.com/a/20566812
+ifneq ("$(wildcard meta/machine-id)","")
+	# file exists
+	HOST_ID := $(shell cat meta/machine-id)
+else
+	# file does not exist
+	HOST_ID := $(shell date +%s)
+endif
+ifneq ("$(wildcard meta/hostname)","")
+	HOST_NAME := $(shell cat meta/hostname)
+else
+	HOST_NAME := unknown_host
+endif
 
 
 default: simple
@@ -33,7 +49,8 @@ tikz:
 .PHONY: meta
 meta:
 	@mkdir -p $(META_DIR)
-	cp $(OUT_DIR)/$(DOCUMENT).ctr $(META_DIR)/$(DOCUMENT).ctr.$(user)
+	@cp $(OUT_DIR)/$(DOCUMENT).ctr $(META_DIR)/$(DOCUMENT).ctr.$(HOST_ID)
+	@echo "%% host name: $(HOST_NAME)" >> $(META_DIR)/$(DOCUMENT).ctr.$(HOST_ID)
 
 index:
 	@makeindex -o $(OUT_DIR)/$(DOCUMENT).ind $(OUT_DIR)/$(DOCUMENT).idx
