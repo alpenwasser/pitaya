@@ -7,3 +7,7 @@ build/Main.ctr
 *.aux
 *.auxlock
 *.out
+resources
+tikzCache
+meta/machine-id
+meta/hostname
