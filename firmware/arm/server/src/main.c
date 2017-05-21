@@ -33,6 +33,8 @@ struct state {
     size_t connections;
     enum modes mode;
     int fd;
+    bool configuring;
+    bool reading;
 };
 
 int main(int argc, char* argv[]) {
@@ -44,6 +46,8 @@ int main(int argc, char* argv[]) {
     s.connections = 0;
     s.mode = modes::DEMO;
     s.data.resize(s.frameSize);
+    s.configuring = 0;
+    s.reading = 0;
 
 
     std::cout << "[Server started]" << std::endl;
@@ -99,6 +103,9 @@ int main(int argc, char* argv[]) {
                 // Changes the configuration of a frame
                 // frame size, pre/suf count, packetSize
                 if(j["frameConfiguration"] != NULL){
+                    // Block until current frame was read (maybe there is a better way to do this)
+                    while(s.reading);
+                    s.configuring = true;
                     try {
                         auto conf = j["frameConfiguration"];
                         if(conf["frameSize"] != NULL){
@@ -128,6 +135,9 @@ int main(int argc, char* argv[]) {
 
                 // Write a trigger into a pipeline
                 if(j["triggerOn"] != NULL){
+                    // Block until current frame was read (maybe there is a better way to do this)
+                    while(s.reading);
+                    s.configuring = true;
                     try {
                         struct trg_instruction trg;
                         auto t = j["triggerOn"]; 
@@ -175,6 +185,9 @@ int main(int argc, char* argv[]) {
 
                 // Select the number of channels that is recorded and transmitted
                 if(j["selectChannels"] != NULL){
+                    // Block until current frame was read (maybe there is a better way to do this)
+                    while(s.reading);
+                    s.configuring = true;
                     try {
                         instruction.reg_id = 5;
                         instruction.reg_value = j["selectChannels"].get<size_t>() & ~1;
@@ -188,6 +201,9 @@ int main(int argc, char* argv[]) {
 
                 // Request a new frame of data
                 if(j["requestFrame"] != NULL){
+                    // Block until configuration was done (maybe there is a better way to do this)
+                    while(s.configuring);
+                    s.reading = true;
                     try {
                         ioctl(s.fd, START_REC, NULL);
                         std::cout << "Started a new Frame." << std::endl;
@@ -198,6 +214,8 @@ int main(int argc, char* argv[]) {
 
                 // Force a trigger
                 if(j["forceTrigger"] != NULL){
+                    // Block until configuration was done (maybe there is a better way to do this)
+                    while(s.configuring);
                     try {
                         ioctl(s.fd, STOP_REC, NULL);
                         std::cout << "Forced a new Frame." << std::endl;
