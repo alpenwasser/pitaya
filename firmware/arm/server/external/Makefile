@@ -92,7 +92,7 @@ clean:
 	make -C $(OSSL_DIR) clean
 	make -C $(ZL_DIR) clean
 	make -C $(UWS_DIR) -f $(UWS_MF) clean
-	rm -rf $(BUILD)
+	rm -rf $(BUILD_DIR)
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
