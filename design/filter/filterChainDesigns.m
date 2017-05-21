@@ -1,4 +1,4 @@
-% ---------------------------------------------------------------------------- %
+% ------------------------------------------------------------------------ %
 % FILTER DESIGN ITERATIONS
 %
 % DESCRIPTION
@@ -9,7 +9,7 @@
 %
 % DATE:
 % 2017-MAY-12
-% ---------------------------------------------------------------------------- %
+% ------------------------------------------------------------------------ %
 
 % Parameter Description
 % R: rate decimation
@@ -26,7 +26,7 @@
 %                                   50 kHz (R = 5^4 * 2^2 = 2500)
 
 
-%% ========================================================= FIR: Target: 25 MHz
+%% ===================================================== FIR: Target: 25 MHz
 %
 % Specify a number of FIR lowpass filters for a permutation of:
 % - Start Frequency of the pass band (upper edge)
@@ -57,40 +57,40 @@
  
 
 clear all;close all;clc;
-% ----------------------------------------------- Input Sampling Frequency in Hz
+% ------------------------------------------- Input Sampling Frequency in Hz
 Fs  = 125e6;
 
-% ------------------------------------------------------------ Decimation Factor
+% -------------------------------------------------------- Decimation Factor
 R   = 5;
 
-% -------------------------- Frequency at the Start of the Pass Band; Normalized
-% NOTE: The smallest number in Fp must be smaller than the smallest number in
-%       Fst (see below).
+% ---------------------- Frequency at the Start of the Pass Band; Normalized
+% NOTE: The smallest number in Fp must be smaller than the smallest number
+%       in Fst (see below).
 Fp  = [0.1 0.15 0.2];
 
-% --------------------------- Stop band frequencies ("How steep is the filter?")
+% ----------------------- Stop band frequencies ("How steep is the filter?")
 % NOTE: The smallest number in Fst must be larger than the largest number in
 %       Fp (see above).
 Fst = [0.21 0.22];
 
-% ----------------------------------------------------- Ripple in Passband in dB
+% ------------------------------------------------- Ripple in Passband in dB
 Ap  = [0.25 0.5 1];
 
-% ----------------------------------------------- Attenuation in Stop Band in dB
+% ------------------------------------------- Attenuation in Stop Band in dB
 Ast = [20 40 60 80];
 
-% -------------------------------------------------------- Filter Design Objects
+% ---------------------------------------------------- Filter Design Objects
 Hd  = cell(length(Fp),length(Ap),length(Fst),length(Ast),2);
 
-% ------------------------------ Lengths of Numerators for the Different Filters
-% Saves the length of the numerator for each permutation of Fp, Ap, Fst and Ast,
-% along with those parameters themselves. Each filter gets a number as well (see
-% 't' below).
+% -------------------------- Lengths of Numerators for the Different Filters
+% Saves the length of the numerator for each permutation of Fp, Ap, Fst and
+% Ast, along with those parameters themselves. Each filter gets a number as
+% well (see 't' below).
 NumL  = cell(length(Fp),length(Ap),length(Fst),length(Ast),6);
 
-% --------------- Same Thing, for more convenient extraction to file or somesuch
-% Saves the length of the numerator for each permutation of Fp, Ap, Fst and Ast,
-% but without those parameters.
+% ----------- Same Thing, for more convenient extraction to file or somesuch
+% Saves the length of the numerator for each permutation of Fp, Ap, Fst and
+% Ast, but without those parameters.
 NumL2 = [];
 
 % Plot as we proceed. This enables color cycling by default.

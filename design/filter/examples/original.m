@@ -1,5 +1,8 @@
 clear all;close all;clc
 
+% Mathworks website:
+% https://ch.mathworks.com/help/dsp/ref/fdesign.ciccomp.html
+
 fs = 96e3;   % Input sampling frequency.
 fpass = 4e3; % Frequency band of interest.
 m = 6;  % Decimation factor.
