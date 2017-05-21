@@ -39,6 +39,8 @@ FPGA_DIR    = fpga
 SERVER_DIR := $(ARM_DIR)/server
 LOGGER_DIR := $(FPGA_DIR)/zynq_logger
 
+VIVADO_VER  = 2016.4
+
 .DEFAULT: init
 
 init: cores linux kernel_module kernel_module_test server
@@ -48,13 +50,13 @@ cores:
 	make -C $(FPGA_DIR) zynq_logger
 
 linux:
-	make -C $(ARM_DIR) boot.bin
-	make -C $(ARM_DIR) uImage
-	make -C $(ARM_DIR) devicetree.dtb
-	make -C $(ARM_DIR) fw_printenv
+	make -C $(ARM_DIR) VIVADO_VER=$(VIVADO_VER) boot.bin
+	make -C $(ARM_DIR) VIVADO_VER=$(VIVADO_VER) uImage
+	make -C $(ARM_DIR) VIVADO_VER=$(VIVADO_VER) devicetree.dtb
+	make -C $(ARM_DIR) VIVADO_VER=$(VIVADO_VER) fw_printenv
 
 kernel_module:
-	make -C $(LOGGER_DIR) kernel_module
+	make -C $(LOGGER_DIR) VIVADO_VER=$(VIVADO_VER) kernel_module
 
 kernel_module_test:
 	make -C $(LOGGER_DIR) kernel_module_test

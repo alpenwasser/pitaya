@@ -20,7 +20,7 @@ VIVADO = vivado -nolog -nojournal -mode batch
 HSI    = hsi -nolog -nojournal -mode batch
 RM     = rm -rf
 
-VIVADO_VER  = 2016.4
+VIVADO_VER ?= 2016.4
 UBOOT_TAG  := xilinx-v$(VIVADO_VER)
 LINUX_TAG  := xilinx-v$(VIVADO_VER)
 DTREE_TAG  := xilinx-v$(VIVADO_VER)

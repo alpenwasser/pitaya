@@ -44,7 +44,7 @@ Builds the IP cores.
 make linux
 ```
 
-Builds the Linux OS, without rebuilding the IP cores.
+Builds the Linux OS without rebuilding the IP cores.
 
 
 ```
@@ -71,6 +71,17 @@ make clean
 ```
 
 Cleans out everything.
+
+
+Build Times
+===========
+
+Macbook Pro, Intel i7-4770HQ (Turbo on), 4C assigned to buildbox:
+
+```
+make init  1038.40s user 681.94s system 131% cpu 21:46.73 total
+make server  223.69s user 1372.28s system 128% cpu 20:41.91 total
+```
 
 
 TODO
