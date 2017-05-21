@@ -111,6 +111,13 @@ int main(int argc, char* argv[]) {
                         if(conf["frameSize"] != NULL){
                             s.frameSize = conf["frameSize"].get<size_t>();
                             std::cout << "New Frame Size is " << s.frameSize << std::endl;
+                            if(conf["packetSize"] != NULL){
+                                s.packetSize = conf["packetSize"].get<size_t>();
+                                std::cout << "New Packet Size is " << s.packetSize << std::endl;
+                            } else {
+                                s.packetSize = s.frameSize;
+                                std::cout << "New Packet Size is " << s.frameSize << std::endl;
+                            }
                         }
                         if(conf["pre"] != NULL){
                             instruction.reg_id = 3;
@@ -123,10 +130,6 @@ int main(int argc, char* argv[]) {
                             instruction.reg_value = conf["suf"];
                             ioctl(s.fd, WRITE_REG, &instruction);
                             std::cout << "New Suf is " << instruction.reg_value << std::endl;
-                        }
-                        if(conf["packetSize"] != NULL){
-                            s.packetSize = conf["packetSize"].get<size_t>();
-                            std::cout << "New Packet Size is " << s.packetSize << std::endl;
                         }
                     } catch(int e){
                         std::cout << "Failed to set Frame Configuration." << std::endl;
