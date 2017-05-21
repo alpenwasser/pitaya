@@ -210,6 +210,18 @@ int main(int argc, char* argv[]) {
                     try {
                         ioctl(s.fd, START_REC, NULL);
                         std::cout << "Started a new Frame." << std::endl;
+                        // TODO:
+                        // We will need to read frameSize * 2 bytes;
+                        // but we need to send packetSize * 2 bytes at a time;
+                        size_t _read = 0;
+                        while(_read < s.frameSize * 2){
+                            size_t toRead = s.frameSize * 2 - _read;
+                            toRead = toRead < s.packetSize * 2 ? toRead : s.packetSize * 2;
+                            lseek(s.fd, _read, SEEK_SET);
+                            size_t ret = read(s.fd, &s.data[0], toRead);
+                            _read += ret;
+                            s.sock->send((char*)&s.data[0], ret, uWS::OpCode::BINARY);
+                        }
                     } catch(int e){
                         std::cout << "Failed to start a new Frame." << std::endl;
                     }
