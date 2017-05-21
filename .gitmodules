@@ -1,6 +1,8 @@
 [submodule "firmware/fpga/zynq_logger"]
 	path = firmware/fpga/zynq_logger
-	url = git@github.com:Yatekii/zynq_logger.git
+	url = ssh://git@github.com:22/Yatekii/zynq_logger.git
+    #url = https://github.com/Yatekii/zynq_logger.git
 [submodule "doc/report/alpenthesis"]
 	path = doc/report/alpenthesis
-	url = https://github.com/alpenwasser/alpenthesis
+	url = ssh://git@github.com:22/alpenwasser/alpenthesis.git
+    #url = https://github.com/alpenwasser/alpenthesis.git
