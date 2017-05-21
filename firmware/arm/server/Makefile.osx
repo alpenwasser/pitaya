@@ -16,7 +16,7 @@ TARGET = server
 BUILD = build
 SRCDIR = src
 CFLAGS = -I/usr/local/opt/openssl/include -Iexternal/uWebSockets/src/ -std=c++11
-LFLAGS = -L/usr/local/opt/openssl/lib -Lexternal/uWebSockets/-lm -luWS -lssl -lcrypto
+LFLAGS = -L/usr/local/opt/openssl/lib -Lexternal/uWebSockets/ -lm -luWS -luv -lz -lssl -lcrypto
 SRC = $(wildcard $(SRCDIR)/*.c)
 OBJS = $(subst $(SRCDIR),$(BUILD),$(subst .c,.o,$(SRC)))
 
