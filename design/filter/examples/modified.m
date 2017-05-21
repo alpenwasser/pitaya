@@ -1,10 +1,9 @@
 clear all;close all;clc;
 
 % https://ch.mathworks.com/help/dsp/ref/fdesign.ciccomp.html
-
 fs     = 125e6;    % Input sampling frequency.
-fpass  = 49e3;   % Frequency band of interest. (End of Pass Band)
-f_stop = 50e3;    % Start of Stop Band
+fpass  = 49e3;     % Frequency band of interest. (End of Pass Band)
+f_stop = 50e3;     % Start of Stop Band
 R      = 625;      % Decimation factor.
 sbA    = 30;       % Stop band attenuation
 M      = 1;        % Differential Delay
@@ -23,7 +22,7 @@ hcomp = design(...
         fs/R...
     ),'SystemObject',true);
 
-
+% https://ch.mathworks.com/matlabcentral/answers/160697-how-to-save-fvtool-diagram-as-a-matlab-figure
 hfvt = fvtool(hcic,hcomp,...
     cascade(hcic,hcomp),'ShowReference','off','Fs',[fs fs/R fs])
 set(hfvt, 'NumberofPoints', hfvt_noP);
