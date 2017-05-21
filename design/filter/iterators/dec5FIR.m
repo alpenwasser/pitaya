@@ -1,30 +1,15 @@
 % ------------------------------------------------------------------------ %
-% FILTER DESIGN ITERATIONS
+% FILTER DESIGN ITERATOR
 %
 % DESCRIPTION
-% Designs and showcases various filter chains for evaluation.
-% 
+% Designs FIR Filters for Decimation Ratio of 5
+%
 % AUTHORS:
 % Raphael Frey, <rmfrey@alpenwasser.net>
 %
 % DATE:
-% 2017-MAY-12
+% 2017-MAY-21
 % ------------------------------------------------------------------------ %
-
-% Parameter Description
-% R: rate decimation
-% N: Number of CIC filter stages
-% M: differential delay in CIC combs
-
-% Global Input Sampling Frequency: 125 MHz
-%
-% Desired Target Frequencies:       25 MHz (R =                5)
-%                                    5 MHz (R = 5^2       =   25)
-%                                    1 MHz (R = 5^3       =  125)
-%                                  200 kHz (R = 5^4       =  625)
-%                                  100 kHz (R = 5^4 * 2   = 1250)
-%                                   50 kHz (R = 5^4 * 2^2 = 2500)
-
 
 %% ===================================================== FIR: Target: 25 MHz
 %
@@ -38,8 +23,8 @@
 % ASCII Diagram of Parameter Meanings:
 %
 % ^ Mag (dB)¬
-% |¬
-% |¬                                                                                                                                                                                                                                     
+% |
+% |
 % |XXXXXXXXXXXXX        _¬
 % |                     _ Apass                   ___¬
 % |XXXXXXXXXXXXX                                   ^¬
@@ -54,9 +39,8 @@
 % See also:
 % https://ch.mathworks.com/help/signal/ref/fdesign.lowpass.html
 % https://ch.mathworks.com/help/dsp/ref/fdesign.decimator.html
- 
 
-clear all;close all;clc;
+
 % ------------------------------------------- Input Sampling Frequency in Hz
 Fs  = 125e6;
 
@@ -115,7 +99,7 @@ for fp = Fp
 
                 Hd{l,i,j,k,1} = design(d,'SystemObject',true);
                 Hd{l,i,j,k,2} = t;
-                
+
                 NumL{l,i,j,k,1} = fp;
                 NumL{l,i,j,k,2} = ap;
                 NumL{l,i,j,k,3} = fst;
