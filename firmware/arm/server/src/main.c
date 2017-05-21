@@ -20,8 +20,7 @@ using json = nlohmann::json;
 
 enum modes {
     DEMO,
-    POLLING,
-    INTERRUPT
+    REAL
 };
 
 struct state {
@@ -29,20 +28,21 @@ struct state {
     bool sock_open;
     std::vector<unsigned short> data;
     size_t frameSize;
+    size_t packetSize;
+    size_t numberOfChannels;
     size_t connections;
     enum modes mode;
     int fd;
 };
 
 int main(int argc, char* argv[]) {
-    struct reg_instruction instruction;
-    struct trg_instruction trg;
     uWS::Hub h;
     struct state s;
     s.sock_open = false;
-    s.frameSize = 2000;
+    s.frameSize = 2048;
+    s.packetSize = 2048;
     s.connections = 0;
-    s.mode = modes::POLLING;
+    s.mode = modes::DEMO;
     s.data.resize(s.frameSize);
 
 
@@ -52,53 +52,20 @@ int main(int argc, char* argv[]) {
 
         std::cout << "Preparing logger ..." << std::endl;
 
+        // open the logger file and remember it
         s.fd = open("/dev/logger0", O_RDWR);
         if(s.fd < 0){
             printf("Failed to open /dev/logger0 file!\n");
             return 1;
         }
 
-        int fd = s.fd;
-
-        // Count pre
-        instruction.reg_id = 3;
-        instruction.reg_value = s.frameSize / 2;
-        ioctl(fd, WRITE_REG, &instruction);
-
-        // Count suf
-        instruction.reg_id = 4;
-        instruction.reg_value = s.frameSize / 2;
-        ioctl(fd, WRITE_REG, &instruction);
-
-        // No test mode
+        // Make sure test mode is not on
+        struct reg_instruction instruction;
         instruction.reg_id = 10;
         instruction.reg_value = 0;
-        ioctl(fd, WRITE_REG, &instruction);
+        ioctl(s.fd, WRITE_REG, &instruction);
 
-        // 2 channel
-        instruction.reg_id = 5;
-        instruction.reg_value = 2;
-        ioctl(fd, WRITE_REG, &instruction);
-
-        // Rising edge trigger
-        trg.trg_id = 1;
-        trg.trg_option = 4;
-        trg.trg_slot_id = 0;
-        trg.trg_value = 0x22;
-        ioctl(fd, WRITE_TRG, &trg);
-
-        trg.trg_id = 1;
-        trg.trg_option = 4;
-        trg.trg_slot_id = 1;
-        trg.trg_value = 0x000036B3;
-        ioctl(fd, WRITE_TRG, &trg);
-
-        trg.trg_id = 1;
-        trg.trg_option = 4;
-        trg.trg_slot_id = 2;
-        trg.trg_value = 2;
-        ioctl(fd, WRITE_TRG, &trg);
-        printf("Wrote triggers.\n");
+        std::cout << "Initialized logger." << std::endl;
     }
 
     h.onHttpRequest([](uWS::HttpResponse *res, uWS::HttpRequest req, char *data, size_t length, size_t remainingBytes) {
@@ -107,7 +74,6 @@ int main(int argc, char* argv[]) {
 
     h.onConnection([&s](uWS::WebSocket<uWS::SERVER> *ws, uWS::HttpRequest req) mutable {
         if(s.sock_open){
-            
             s.sock->close();
         }
         s.sock = ws;
@@ -118,20 +84,131 @@ int main(int argc, char* argv[]) {
     h.onMessage([&s](uWS::WebSocket<uWS::SERVER> *ws, char *message, size_t length, uWS::OpCode opCode) {
         // Only react to textmessages
         if(opCode == uWS::OpCode::TEXT){
+            struct reg_instruction instruction;
+            // Parse the JSON query that was received
             std::string str;
             str.append(message, length);
             std::cout << "[Message] " << str << std::endl;
             auto j = json::parse(str);
 
-            // Change framesize if it was in the query
-            if(j["frameSize"] != NULL){
-                try {
-                    s.frameSize = j["frameSize"].get<size_t>();
-                    s.data.resize(s.frameSize);
-                    std::cout << "Frame Size changed to " << j["frameSize"] << "." << std::endl;
-                } catch(int e){
-                    std::cout << "Failed to set Frame Size." << std::endl;
+            switch(s.mode){
+            case modes::DEMO:
+                // TODO: implement
+                break;
+            case modes::REAL:
+                // Changes the configuration of a frame
+                // frame size, pre/suf count, packetSize
+                if(j["frameConfiguration"] != NULL){
+                    try {
+                        auto conf = j["frameConfiguration"];
+                        if(conf["frameSize"] != NULL){
+                            s.frameSize = conf["frameSize"].get<size_t>();
+                            std::cout << "New Frame Size is " << s.frameSize << std::endl;
+                        }
+                        if(conf["pre"] != NULL){
+                            instruction.reg_id = 3;
+                            instruction.reg_value = conf["pre"];
+                            ioctl(s.fd, WRITE_REG, &instruction);
+                            std::cout << "New Pre is " << instruction.reg_value << std::endl;
+                        }
+                        if(conf["suf"] != NULL){
+                            instruction.reg_id = 4;
+                            instruction.reg_value = conf["suf"];
+                            ioctl(s.fd, WRITE_REG, &instruction);
+                            std::cout << "New Suf is " << instruction.reg_value << std::endl;
+                        }
+                        if(conf["packetSize"] != NULL){
+                            s.packetSize = conf["packetSize"].get<size_t>();
+                            std::cout << "New Packet Size is " << s.packetSize << std::endl;
+                        }
+                    } catch(int e){
+                        std::cout << "Failed to set Frame Configuration." << std::endl;
+                    }
                 }
+
+                // Write a trigger into a pipeline
+                if(j["triggerOn"] != NULL){
+                    try {
+                        struct trg_instruction trg;
+                        auto t = j["triggerOn"]; 
+                        
+                        if(t["type"] == "risingEdge" && t["level"] != NULL && t["channel"] != NULL){
+                            size_t channel = t["channel"].get<size_t>();
+                            std::cout << "Setting trigger for channel " << t["channel"] << std::endl;
+
+                            // Set hysteresis
+                            if(t["hysteresis"] != NULL){
+                                trg.trg_id = channel;
+                                trg.trg_option = 4;
+                                trg.trg_slot_id = 0;
+                                trg.trg_value = (t["hysteresis"].get<size_t>() << 4) & 4 ;
+                                ioctl(s.fd, WRITE_TRG, &trg);
+                                std::cout << "Set a hysteresis of " << t["hysteresis"] << std::endl;    
+                            }
+
+                            // Determine slope
+                            size_t slope = 0;
+                            if(t["slope"] != NULL){
+                                slope = t["slope"].get<size_t>();
+                            }
+
+                            // Set trigger
+                            trg.trg_id = channel;
+                            trg.trg_option = 4;
+                            trg.trg_slot_id = 1;
+                            trg.trg_value = (slope << 20) & (t["level"].get<size_t>() << 4) & 3; 
+                            ioctl(s.fd, WRITE_TRG, &trg);
+
+                            // Set stop instruction
+                            trg.trg_id = 1;
+                            trg.trg_option = 4;
+                            trg.trg_slot_id = 2;
+                            trg.trg_value = 2;
+                            ioctl(s.fd, WRITE_TRG, &trg);
+                            
+                            std::cout << "Wrote a Rising Edge Trigger at Level " << t["level"] << std::endl;
+                        }
+                    } catch(int e){
+                        std::cout << "Failed to write the Trigger." << std::endl;
+                    }
+                }
+
+                // Select the number of channels that is recorded and transmitted
+                if(j["selectChannels"] != NULL){
+                    try {
+                        instruction.reg_id = 5;
+                        instruction.reg_value = j["selectChannels"].get<size_t>() & ~1;
+                        ioctl(s.fd, WRITE_REG, &instruction);
+                        s.numberOfChannels = j["selectChannels"].get<size_t>();
+                        std::cout << "Logger now has " << instruction.reg_value << "Channels. " << s.numberOfChannels << " will be transmitted." << std::endl;
+                    } catch(int e){
+                        std::cout << "Failed to select the channels." << std::endl;
+                    }
+                }
+
+                // Request a new frame of data
+                if(j["requestFrame"] != NULL){
+                    try {
+                        ioctl(s.fd, START_REC, NULL);
+                        std::cout << "Started a new Frame." << std::endl;
+                    } catch(int e){
+                        std::cout << "Failed to start a new Frame." << std::endl;
+                    }
+                }
+
+                // Force a trigger
+                if(j["forceTrigger"] != NULL){
+                    try {
+                        ioctl(s.fd, STOP_REC, NULL);
+                        std::cout << "Forced a new Frame." << std::endl;
+                    } catch(int e){
+                        std::cout << "Failed to force a new Frame." << std::endl;
+                    }
+                }
+                break;
+            default:
+                // Do nothing if mode somehow is not set (should never happen)
+                break;
             }
         }
     });
@@ -150,14 +227,14 @@ int main(int argc, char* argv[]) {
             switch(s->mode){
                 case modes::DEMO:{
                     for(size_t i = 0; i < s->frameSize; i++){
-                        s->data[i] = (16384 + 7000 * sin((float)i/s->frameSize*40*M_PI));
+                        s->data[i] = (8192 + 7000 * sin((float)i/s->frameSize*40*M_PI));
                     } 
                     std::cout << "Send: " << s->data.size() << std::endl;
                     s->sock->send((char*)&s->data[0], s->data.size(), uWS::OpCode::BINARY);
                     break;
                 }
                 default:
-                case modes::POLLING:{
+                case modes::REAL:{
                     int ret;
                     struct reg_instruction instruction;
                     // Count pre
