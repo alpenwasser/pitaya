@@ -10,36 +10,36 @@ There are two basic workflows which are supported:
 - Invocation of Matlab via command line.
 
 The core for both of these approaches is the same: Filter design scripts
-in the `iterators/` directory.
+in the `generators/` directory.
 
 
-Iterators
+generators
 =========
 
 These are filter design scripts which produce various filter designs
 through iteration (though not optimization (yet)). They may or may not 
 write their results to files or display them in Matlab figures.
 
-The iterators are the backbone of the filter design toolchain; the
+The generators are the backbone of the filter design toolchain; the
 main work happens there.
 
 
 Graphical Mode
 ==============
 
-Graphical wrapper for working with the iterators.
+Graphical wrapper for working with the generators.
 
 Straightforward:
-- Write your filter design script, put it into the `iterators/` directory.
+- Write your filter design script, put it into the `generators/` directory.
 - Open `guiDispatcher.m` in Matlab and call your iterator from there.
 
 
 Commandline Mode
 ================
 
-CLI wrapper for working with the iterators.
+CLI wrapper for working with the generators.
 
-- Write your filter design script, put it into the `iterators/` directory.
+- Write your filter design script, put it into the `generators/` directory.
 - Make an entry for your script in the `cliDispatcher.m` file.
 - Make an entry in the `Makefile` which calls `cliDispatcher.m` with
 the appropriate arguments.
@@ -55,9 +55,9 @@ I like Vim, and prefer it to Matlab's text editor, so the CLI approach
 suits me well. But I acknowledge that this is not everyone's preference;
 hence the `guiDispatcher.m` script.
 
-## How to Write Iterators?
+## How to Write generators?
 
-However you like. As said, I like Vim; you may create your iterators
+However you like. As said, I like Vim; you may create your generators
 directly in Matlab or in another editor of your choosing. I've heard
 good things about `ex`. ;-)
 

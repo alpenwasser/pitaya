@@ -3,8 +3,8 @@
 %
 % DESCRIPTION
 % Designs and showcases various filter chains for evaluation through
-% iteration. The iterators for various filter types are in a separate
-% subdirectory ('iterators/').
+% iteration. The generators for various filter types are in a separate
+% subdirectory ('generators/').
 %
 % Environment Variables: filtertype
 %
@@ -24,5 +24,5 @@
 % ------------------------------------------------------------------------ %
 
 if strcmp(filtertype,'FIR5')
-    run iterators/dec5FIR;
+    run generators/dec5FIR;
 end

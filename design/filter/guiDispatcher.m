@@ -2,7 +2,7 @@
 % guiDispatcher.m
 %
 % DESCRIPTION
-% Calls various filter iterators (located in the 'iterators/' subdirecotry)
+% Calls various filter generators (located in the 'generators/' subdirecotry)
 % with the appropriate parameters. Fulfills the same role as the combination
 % of Makefile and clidispatcher.m on the command line, but from Matlab's
 % graphical user interface.
@@ -14,5 +14,7 @@
 % 2017-MAY-21
 % ------------------------------------------------------------------------ %
 
+%% Fir: R = 5
+clear all;close all;clc;
 filtertype='FIR5';
-run iterators/dec5FIR;
+run generators/dec5FIR;

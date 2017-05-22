@@ -40,6 +40,8 @@
 % https://ch.mathworks.com/help/signal/ref/fdesign.lowpass.html
 % https://ch.mathworks.com/help/dsp/ref/fdesign.decimator.html
 
+% --------------------------Width of Fixed-Point Filter Coefficients in Bits
+coeff_width = 16;
 
 % ------------------------------------------- Input Sampling Frequency in Hz
 Fs  = 125e6;
@@ -52,7 +54,7 @@ R   = 5;
 %       in Fst (see below).
 Fp  = [0.1 0.15 0.2];
 
-% ----------------------- Stop band frequencies ("How steep is the filter?")
+% ------------- ---------- Stop band frequencies ("How steep is the filter?")
 % NOTE: The smallest number in Fst must be larger than the largest number in
 %       Fp (see above).
 Fst = [0.21 0.22];
@@ -76,6 +78,10 @@ NumL  = cell(length(Fp),length(Ap),length(Fst),length(Ast),6);
 % Saves the length of the numerator for each permutation of Fp, Ap, Fst and
 % Ast, but without those parameters.
 NumL2 = [];
+
+% Output Directory
+directory='dec5FIR';
+mkdir(directory);
 
 % Plot as we proceed. This enables color cycling by default.
 figure;hold on;
@@ -108,6 +114,33 @@ for fp = Fp
                 NumL{l,i,j,k,6} = length(Hd{l,i,j,k,1}.Numerator);
                 NumL2 = [NumL2 NumL{l,i,j,k,6}];
                 scatter(t,NumL{l,i,j,k,6});
+                
+                fileName = strcat(...
+                    directory,'/',...
+                    'fs-', num2str(l),'--',...
+                    'ap-',num2str(i),'--',...
+                    'fst-',num2str(j),'--',...
+                    'ast-',num2str(k),'.coe');
+                
+                fh = fopen(fileName, 'w');
+                if fh ~= -1
+                    fprintf(fh, 'radix=10;\n');
+                    fprintf(fh, 'coefdata=\n');
+                    fprintf(...
+                        fh,...
+                        [...
+                            repmat(...
+                            '%d,\n',...
+                            1,...
+                            numel(Hd{l,i,j,k,1}.Numerator) - 1),...
+                            '%d;\n'...
+                        ],...
+                        round(...
+                            Hd{l,i,j,k,1}.Numerator *...
+                            power(2,coeff_width)-1)...
+                    );
+                    fclose(fh);
+                end
                 k = k+1;
                 t = t+1;
             end
@@ -118,3 +151,13 @@ for fp = Fp
     l = l+1;
 end
 % hfvt = fvtool(Hd{:,:,:,:,1},'ShowReference','off','Fs',[Fs]);
+% hfvt = fvtool(hcic,hcomp,...
+%     cascade(hcic,hcomp),'ShowReference','off','Fs',[fs fs/R fs])
+% set(hfvt, 'NumberofPoints', hfvt_noP);
+% legend('CIC Decimator','CIC Compensator','Resulting Cascade Filter');
+% s = get(hfvt);
+% hchildren = s.Children;
+% haxes = hchildren(strcmpi(get(hchildren,'type'),'axes'));
+% hline = get(haxes,'children');
+% x = get(hline,'XData');
+% y = get(hline,'YData');
