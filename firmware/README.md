@@ -30,8 +30,18 @@ in the correct order:
 - `make kernel_module_test`
 - `make server`
 
+There is also
+
+```
+make project
+```
+
+which builds the cores as well as the Vivado project. Use this if you don't need 
+the Linux part, but want to work on the FPGA side of things.
+
 
 ## Partial Targets
+
 
 ```
 make cores
@@ -65,6 +75,7 @@ make server
 ```
 
 Builds the server. Standalone target.
+
 
 ```
 make clean
