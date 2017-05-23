@@ -1,4 +1,4 @@
-function [Hd] = decFIR(R, Fs, Fp, Fst, Ap, Ast, genDir)
+function [Hd] = decFIR(R, Fs, Fp, Fst, Ap, Ast, coefDir, plotDir)
 %FILTER DESIGNER
 %
 % DESCRIPTION
@@ -10,8 +10,10 @@ function [Hd] = decFIR(R, Fs, Fp, Fst, Ap, Ast, genDir)
 % DATE:
 % 2017-MAY-21
 
-outDir=strcat(genDir,'/','decFIR');
-mkdir(outDir);
+coefDir=strcat(coefDir,'/','decFIR');
+plotDir=strcat(plotDir,'/','decFIR');
+mkdir(coefDir);
+mkdir(plotDir);
 
 % ---------------------------------------------------- Filter Design Objects
 Hd  = cell(length(Fp),length(Ap),length(Fst),length(Ast),7);
@@ -25,6 +27,8 @@ for fp = Fp
         for fst = Fst
             k = 1; % cell index for Ast
             for ast = Ast
+
+                % Specify Filter
                 d = fdesign.decimator(...
                     R,...
                     'lowpass',...
@@ -34,7 +38,10 @@ for fp = Fp
                     ap,...
                     ast);
 
+                % Design Filter
                 Hd{l,i,j,k,1} = design(d,'SystemObject',true);
+
+                % Store additional Data for Filter
                 Hd{l,i,j,k,2} = R;
                 Hd{l,i,j,k,3} = fp;
                 Hd{l,i,j,k,4} = ap;
@@ -42,15 +49,26 @@ for fp = Fp
                 Hd{l,i,j,k,6} = ast;
                 Hd{l,i,j,k,7} = t;
 
-                fileName = strcat(...
-                    outDir,'/',...
+                % Generate output file names
+                basename = strcat(...
                     'r-',  num2str(R),'--',...
                     'fs-', num2str(l),'--',...
                     'ap-', num2str(i),'--',...
                     'fst-',num2str(j),'--',...
-                    'ast-',num2str(k),'.coe');
+                    'ast-',num2str(k));
 
-                fh = fopen(fileName, 'w');
+                coefFile = strcat(...
+                    coefDir,'/',...
+                    basename,...
+                    '.coe');
+
+                plotFile = strcat(...
+                    plotDir,'/',...
+                    basename,...
+                    '.csv');
+
+                % Save Filter Coefficients
+                fh = fopen(coefFile, 'w');
                 if fh ~= -1
                     fprintf(fh, 'radix=10;\n');
                     fprintf(fh, 'coefdata=\n');
@@ -67,6 +85,22 @@ for fp = Fp
                     );
                     fclose(fh);
                 end
+
+                % Save Filter Plot Data
+                [H,W] = freqz(Hd{l,i,j,k,1}, 1e3);
+                fh = fopen(plotFile, 'w');
+                if fh ~= -1
+                    fprintf(fh, '%s,%s,%s\n', 'abs(H)', 'angle(H)', 'W');
+                    fclose(fh);
+                end
+                dlmwrite(...
+                    plotFile,...
+                    [abs(H) unwrap(angle(H)) W],...
+                    '-append',...
+                    'delimiter', ',',...
+                    'newline', 'unix'...
+                );
+
                 k = k+1;
                 t = t+1;
             end
@@ -77,15 +111,3 @@ for fp = Fp
     l = l+1;
 end
 end % End of Function
-
-% hfvt = fvtool(Hd{:,:,:,:,1},'ShowReference','off','Fs',[Fs]);
-% hfvt = fvtool(hcic,hcomp,...
-%     cascade(hcic,hcomp),'ShowReference','off','Fs',[fs fs/R fs])
-% set(hfvt, 'NumberofPoints', hfvt_noP);
-% legend('CIC Decimator','CIC Compensator','Resulting Cascade Filter');
-% s = get(hfvt);
-% hchildren = s.Children;
-% haxes = hchildren(strcmpi(get(hchildren,'type'),'axes'));
-% hline = get(haxes,'children');
-% x = get(hline,'XData');
-% y = get(hline,'YData');

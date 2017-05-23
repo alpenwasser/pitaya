@@ -23,9 +23,9 @@
 % 2017-MAY-21
 % ------------------------------------------------------------------------ %
 genDir = 'generators';
-helperDir = 'helpers';
+coefDir = 'coefData';
+plotDir = 'plotData';
 addpath(genDir);
-addpath(helperDir);
 
 if strcmp(filtertype,'FIR5')
 
@@ -64,23 +64,23 @@ if strcmp(filtertype,'FIR5')
     % ---------------------- Frequency at the Start of the Pass Band; Normalized
     % NOTE: The smallest number in Fp must be smaller than the smallest number
     %       in Fst (see below).
-    %Fp  = [0.1 0.15 0.2];
-    Fp  = [0.2];
+    Fp  = [0.1 0.15 0.2];
+    %Fp  = [0.2];
 
     % ------------- ---------- Stop band frequencies ("How steep is the filter?")
     % NOTE: The smallest number in Fst must be larger than the largest number in
     %       Fp (see above).
-    %Fst = [0.21 0.22];
-    Fst = [0.22];
+    Fst = [0.21 0.22];
+    %Fst = [0.22];
 
     % ------------------------------------------------- Ripple in Passband in dB
-    %Ap  = [0.25 0.5 1];
-    Ap  = [1];
+    Ap  = [0.25 0.5 1];
+    %Ap  = [1];
 
     % ------------------------------------------- Attenuation in Stop Band in dB
-    %Ast = [20 40 60 80];
-    Ast = [80 40];
+    Ast = [20 40 60 80];
+    %Ast = [80 40];
 
     % Hd: Contains the Filter Objects along with their properties (R, Fs, Fp,...)
-    Hd = decFIR(R, Fs, Fp, Fst, Ap, Ast, genDir);
+    Hd = decFIR(R, Fs, Fp, Fst, Ap, Ast, coefDir, plotDir);
 end
