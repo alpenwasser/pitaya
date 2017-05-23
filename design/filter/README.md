@@ -14,7 +14,7 @@ in the `generators/` directory.
 
 
 generators
-=========
+==========
 
 These are filter design scripts which produce various filter designs
 through iteration (though not optimization (yet)). They may or may not 
@@ -44,6 +44,20 @@ CLI wrapper for working with the generators.
 - Make an entry in the `Makefile` which calls `cliDispatcher.m` with
 the appropriate arguments.
 - Invoke via `make <yourtarget>`.
+
+
+Coefficient Data
+================
+
+Each filter will store its coefficients in an appropriately subdirectory
+in the `coefData` directory.
+
+
+Plot Data
+=========
+
+Plotting data from the `fvtool` for further processing (for example
+with `pgfplots` in LaTeX) can be found in the `plotData` directory.
 
 
 FAQ

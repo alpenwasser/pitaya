@@ -17,8 +17,15 @@
 #       (figures disabled, of course).
 MATLAB     = matlab -nosplash -nodesktop -r
 DISPATCHER = cliDispatcher
+PLOT_DIR   = plotData
+COEF_DIR   = coefData
+RM         = rm -rf
 
 .DEFAULT: fir5
 
 fir5:
 	@$(MATLAB) "filtertype='FIR5';$(DISPATCHER)"
+
+clean:
+	$(RM) $(PLOT_DIR)
+	$(RM) $(COEF_DIR)
