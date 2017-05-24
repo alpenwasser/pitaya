@@ -92,3 +92,41 @@ TODO
 - write filter coefficients to files for further processing (and plotting 
 in LaTeX)
 - export fvtool filter plots to data, then to files, for plotting in LaTeX
+
+
+Side Note on Downsampling to Audio CD
+=====================================
+
+Hypothetically, if we were to want to downsample to 44.1 kHz:
+ 
+```
+125000000 = 2*2*2*2*2*2    *5*5*5*5*5*5*5*5*5     = 2^6 * 5^9
+    44100 =         2*2*3*3*5*5              *7*7 = 2^2 * 3^2 * 5^2 * 7^2
+
+Sought:
+        L
+125e6 * - = 44.1e3
+        R
+```
+
+Therefore:
+```
+125e6    R
+------ = -
+44.1e3   L
+```
+
+Decomposing into prime factors and determining the rate change fraction:
+
+```
+2^6 * 5^9               2^4 * 5^7   1.25e6   R
+--------------------- = --------- = ------ = -
+2^2 * 3^2 * 5^2 * 7^2   3^2 * 7^2     441    L
+
+R = 1.25e6
+L =  441
+
+125e6 * 441 = 5.4466e10
+```
+
+The frequency before sampling down is therefore __5.5566e10__!
