@@ -26,6 +26,9 @@ RM         = rm -rf
 fir5:
 	@$(MATLAB) "filtertype='FIR5';$(DISPATCHER)"
 
+dec6:
+	@$(MATLAB) "filtertype='DEC6';$(DISPATCHER)"
+
 clean:
 	$(RM) $(PLOT_DIR)
 	$(RM) $(COEF_DIR)

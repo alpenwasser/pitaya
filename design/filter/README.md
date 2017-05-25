@@ -92,6 +92,8 @@ TODO
 - write filter coefficients to files for further processing (and plotting 
 in LaTeX)
 - export fvtool filter plots to data, then to files, for plotting in LaTeX
+- Generate filenames not based on iterative indices (`i`, `k`, etc.), but on
+parameters used in generation (`Fst`, `Ast`, etc.).
 
 
 Side Note on Downsampling to Audio CD
