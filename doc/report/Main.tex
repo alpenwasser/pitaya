@@ -32,6 +32,7 @@
 \end{titlingpage} % >>>
 
 \frontmatter % <<<
+% https://en.wikipedia.org/wiki/Edition_notice
 \tableofcontents*
 \clearpage
 \listoffigures*
@@ -278,6 +279,11 @@ front-end.
 
 \chapter{Code Listings}
 \label{ch:Code_Listings}
+
+Shell commands can be type thusly:
+\begin{commandshell}
+    user:> if [ -f "${myfile}" ];then echo "${myfile} exists!"
+\end{commandshell}
 
 \section{Makefile}
 \begin{tcolorbox}[

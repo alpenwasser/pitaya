@@ -1,0 +1,452 @@
+\documentclass[a4paper,10pt]{article}
+
+
+% ---------------------------------------------------------------------------- %
+% Packages
+% ---------------------------------------------------------------------------- %
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[a4paper,height=270mm,width=200mm]{geometry}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage[light,nott]{kpfonts}
+%\renewcommand\familydefault{\ttdefault}
+%\usepackage{mathastext}
+\usepackage{bytefield}
+\usepackage{xcolor}
+%\renewcommand\familydefault{\rmdefault}
+\setlength{\parindent}{0mm}
+\pagenumbering{gobble}
+
+
+% ---------------------------------------------------------------------------- %
+% Macros
+% ---------------------------------------------------------------------------- %
+\def\code#1{\texttt{#1}}
+\newcommand*\bitset{\textcolor{red}{1}}
+\newcommand*\bitunset{\textcolor{gray}{0}}
+
+% ---------------------------------------------------------------------------- %
+% Title Setup
+% ---------------------------------------------------------------------------- %
+\title{\sffamily\selectfont Binary Numbers}
+\author{\small\selectfont Raphael Frey}
+\date{\small\selectfont\today}
+
+
+% **************************************************************************** %
+% Content
+% **************************************************************************** %
+\begin{document}
+
+% ---------------------------------------------------------------------------- %
+% ---------------------------------------------------------------------------- %
+
+Endianness consistent with Matlab documentation:\newline
+\texttt{https://ch.mathworks.com/help/matlab/matlab\_prog/floating-point-numbers.html}
+
+Other Ressources:
+\begin{itemize}
+    \item
+    \texttt{https://en.wikipedia.org/wiki/Double-precision\_floating-point\_format}
+    \item
+    \texttt{https://en.wikipedia.org/wiki/IEEE\_754-1985}
+    \item
+    \texttt{http://matlabgeeks.com/tips-tutorials/floating-point-numbers-in-matlab-2/}
+    \item
+    \texttt{https://stackoverflow.com/questions/33168975/matlab-double-precision-digits-variable-editor-vs-fprintf}
+    \item
+    \texttt{https://ch.mathworks.com/help/symbolic/digits.html}
+    \item
+    \texttt{http://speleotrove.com/decimal/decifaq6.html}
+\end{itemize}
+
+\section{Concept}
+
+
+\begin{itemize}
+    \item
+    Exponent bias in single-precision: 127
+    \item
+    Exponent bias in double-precision: 1023
+\end{itemize}
+\begin{center}\ttfamily
+    %\begin{bytefield}[bitwidth=1.1em]{34}
+    \begin{bytefield}[endianness=big]{64}
+        \bitheader{0-63}\\
+        \bitbox{1}{s}
+        \bitbox{11}{exponent}
+        \bitbox{52}{significand}
+        \\
+        %\bitheader[endianness=little]{0}
+        %\bitheader[endianness=little,lsb=63]{0-10}
+        %\bitheader[endianness=little,lsb=116]{0-51}
+        \bitheader[lsb=-63]{0}
+        \bitheader[lsb=-116]{0-10}
+        \bitheader[lsb=-128]{0-51}
+        \\
+    \end{bytefield}
+\end{center}
+
+\section{Smallest Representable Value Larger Than One}
+\begin{itemize}
+    \item Sign: $0$
+    \item Actual Exponent: $0$
+    \item Biased Exponent: $1023$
+    \item Significand: $2^{-52}$ ($LSB = 1$, otherwise $0$)
+    \item Result: $2^{-52} \cdot 2^{0}$
+\end{itemize}
+\begin{verbatim}
+EDU>> eps(1),2^-52
+
+ans =
+
+     2.220446049250313e-16
+
+
+ans =
+
+     2.220446049250313e-16
+\end{verbatim}
+
+$1 = $
+\begin{center}\ttfamily
+    \begin{bytefield}[endianness=big]{64}
+        \bitheader{0-63}\\
+        \bitbox{1}{\bitunset}% Sign
+        \bitbox{1}{\bitunset}% Exponent Start
+        \bitbox{1}{\bitset}
+        \bitbox{1}{\bitset}
+        \bitbox{1}{\bitset}
+        \bitbox{1}{\bitset}
+        \bitbox{1}{\bitset}
+        \bitbox{1}{\bitset}
+        \bitbox{1}{\bitset}
+        \bitbox{1}{\bitset}
+        \bitbox{1}{\bitset}
+        \bitbox{1}{\bitset}
+        \bitbox{1}{\bitunset}% Significant Start
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \\
+        \bitheader[lsb=-63]{0}
+        \bitheader[lsb=-116]{0-10}
+        \bitheader[lsb=-128]{0-51}
+        \\
+    \end{bytefield}
+\end{center}
+
+$1 + 2^{-52} = $
+\begin{center}\ttfamily
+    \begin{bytefield}[endianness=big]{64}
+        \bitheader{0-63}\\
+        \bitbox{1}{\bitunset}% Sign
+        \bitbox{1}{\bitunset}% Exponent Start
+        \bitbox{1}{\bitset}
+        \bitbox{1}{\bitset}
+        \bitbox{1}{\bitset}
+        \bitbox{1}{\bitset}
+        \bitbox{1}{\bitset}
+        \bitbox{1}{\bitset}
+        \bitbox{1}{\bitset}
+        \bitbox{1}{\bitset}
+        \bitbox{1}{\bitset}
+        \bitbox{1}{\bitset}
+        \bitbox{1}{\bitunset}% Significant Start
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitset}
+        \\
+        \bitheader[lsb=-63]{0}
+        \bitheader[lsb=-116]{0-10}
+        \bitheader[lsb=-128]{0-51}
+        \\
+    \end{bytefield}
+\end{center}
+
+\section{Smallest Representable Value Larger Than Zero}
+\subsection{Unnormalized}
+\begin{itemize}
+    \item Sign: $0$
+    \item Actual Exponent: $-1022$
+    \item Biased Exponent: $0$
+    \item Significand: $2^{-52}$ (
+    \item Result: $2^{-1022} \cdot 2^{-52} = 2^{-1074}$
+\end{itemize}
+
+$2^{-1074} = $
+\begin{center}\ttfamily
+    \begin{bytefield}[endianness=big]{64}
+        \bitheader{0-63}\\
+        \bitbox{1}{\bitunset}% Sign
+        \bitbox{1}{\bitunset}% Exponent Start
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}% Significant Start
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitset}
+        \\
+        \bitheader[lsb=-63]{0}
+        \bitheader[lsb=-116]{0-10}
+        \bitheader[lsb=-128]{0-51}
+        \\
+    \end{bytefield}
+\end{center}
+
+\begin{verbatim}
+LIC>> eps(0)
+
+ans =
+
+    4.940656458412465e-324
+\end{verbatim}
+
+\subsection{Normalized}
+\begin{itemize}
+    \item Sign: $0$
+    \item Actual Exponent: $-1022$
+    \item Biased Exponent: $-1022 + 1023 = 1$
+    \item Significand: $1$ (implied first bit $1$, not stored explicitly)
+    \item Result: $2^{-1022} \cdot 1 = 2^{-1022}$
+\end{itemize}
+
+$1 \cdot 2^{-1022} = $
+\begin{center}\ttfamily
+    \begin{bytefield}[endianness=big]{64}
+        \bitheader{0-63}\\
+        \bitbox{1}{\bitunset}% Sign
+        \bitbox{1}{\bitunset}% Exponent Start
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitset}
+        \bitbox{1}{\bitunset}% Significant Start
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \bitbox{1}{\bitunset}
+        \\
+        \bitheader[lsb=-63]{0}
+        \bitheader[lsb=-116]{0-10}
+        \bitheader[lsb=-128]{0-51}
+        \\
+    \end{bytefield}
+\end{center}
+
+\begin{verbatim}
+LIC>> 2^(-1022)
+
+ans =
+
+    2.225073858507201e-308
+\end{verbatim}
+
+\end{document}

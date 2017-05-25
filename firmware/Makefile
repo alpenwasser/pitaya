@@ -64,6 +64,9 @@ kernel_module_test:
 server:
 	make -C $(SERVER_DIR) all
 
+project: cores
+	make -C $(FPGA_DIR) project
+
 clean:
 	make -C $(ARM_DIR) clean
 	make -C $(FPGA_DIR) clean

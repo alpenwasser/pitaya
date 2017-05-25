@@ -10,40 +10,54 @@ There are two basic workflows which are supported:
 - Invocation of Matlab via command line.
 
 The core for both of these approaches is the same: Filter design scripts
-in the `iterators/` directory.
+in the `generators/` directory.
 
 
-Iterators
-=========
+generators
+==========
 
 These are filter design scripts which produce various filter designs
 through iteration (though not optimization (yet)). They may or may not 
 write their results to files or display them in Matlab figures.
 
-The iterators are the backbone of the filter design toolchain; the
+The generators are the backbone of the filter design toolchain; the
 main work happens there.
 
 
 Graphical Mode
 ==============
 
-Graphical wrapper for working with the iterators.
+Graphical wrapper for working with the generators.
 
 Straightforward:
-- Write your filter design script, put it into the `iterators/` directory.
+- Write your filter design script, put it into the `generators/` directory.
 - Open `guiDispatcher.m` in Matlab and call your iterator from there.
 
 
 Commandline Mode
 ================
 
-CLI wrapper for working with the iterators.
+CLI wrapper for working with the generators.
 
-- Write your filter design script, put it into the `iterators/` directory.
+- Write your filter design script, put it into the `generators/` directory.
 - Make an entry for your script in the `cliDispatcher.m` file.
 - Make an entry in the `Makefile` which calls `cliDispatcher.m` with
 the appropriate arguments.
 - Invoke via `make <yourtarget>`.
+
+
+Coefficient Data
+================
+
+Each filter will store its coefficients in an appropriately subdirectory
+in the `coefData` directory.
+
+
+Plot Data
+=========
+
+Plotting data from the `fvtool` for further processing (for example
+with `pgfplots` in LaTeX) can be found in the `plotData` directory.
 
 
 FAQ
@@ -55,9 +69,9 @@ I like Vim, and prefer it to Matlab's text editor, so the CLI approach
 suits me well. But I acknowledge that this is not everyone's preference;
 hence the `guiDispatcher.m` script.
 
-## How to Write Iterators?
+## How to Write generators?
 
-However you like. As said, I like Vim; you may create your iterators
+However you like. As said, I like Vim; you may create your generators
 directly in Matlab or in another editor of your choosing. I've heard
 good things about `ex`. ;-)
 
@@ -78,3 +92,43 @@ TODO
 - write filter coefficients to files for further processing (and plotting 
 in LaTeX)
 - export fvtool filter plots to data, then to files, for plotting in LaTeX
+- Generate filenames not based on iterative indices (`i`, `k`, etc.), but on
+parameters used in generation (`Fst`, `Ast`, etc.).
+
+
+Side Note on Downsampling to Audio CD
+=====================================
+
+Hypothetically, if we were to want to downsample to 44.1 kHz:
+ 
+```
+125000000 = 2*2*2*2*2*2    *5*5*5*5*5*5*5*5*5     = 2^6 * 5^9
+    44100 =         2*2*3*3*5*5              *7*7 = 2^2 * 3^2 * 5^2 * 7^2
+
+Sought:
+        L
+125e6 * - = 44.1e3
+        R
+```
+
+Therefore:
+```
+125e6    R
+------ = -
+44.1e3   L
+```
+
+Decomposing into prime factors and determining the rate change fraction:
+
+```
+2^6 * 5^9               2^4 * 5^7   1.25e6   R
+--------------------- = --------- = ------ = -
+2^2 * 3^2 * 5^2 * 7^2   3^2 * 7^2     441    L
+
+R = 1.25e6
+L =  441
+
+125e6 * 441 = 5.4466e10
+```
+
+The frequency before sampling down is therefore __5.5566e10__!
