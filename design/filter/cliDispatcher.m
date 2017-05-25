@@ -64,7 +64,7 @@ switch filtertype
         coefDir = 'coefData';
         plotDir = 'plotData';
 
-        disp('Desining Chain for R = 5')
+        disp('Designing Chain for R = 5')
 
         % ------------------------------------------- Input Sampling Frequency in Hz
         Fs  = 125e6;
@@ -102,7 +102,7 @@ switch filtertype
         coefDir = 'coefData';
         plotDir = 'plotData';
 
-        disp('Desining Chain for R = 6')
+        disp('Designing Chain for R = 6')
 
         % -------------------------------------------------------- Decimation Factor
         R1  = 3; % T1 = 24 ns
@@ -157,20 +157,20 @@ switch filtertype
         stages = cell(2,1);
         stages{1} = Hd1;
         stages{2} = Hd2;
-        Hcasc = cascador(R, Fs, Fp, Fst, Ap, Ast, coefDir, plotDir, stages);
+        Hcasc = cascador(R, Fs, Fp, Fst, Ap, Ast, plotDir, stages);
     case 'DEC25'
         % 5 MHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
         % -> 25 ->
         % -> 5 -> 5 ->
-        disp('Desining Chain for R = 25')
+        disp('Designing Chain for R = 25')
     case 'DEC125'
         % 1 MHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
         % -> 125 ->
         % -> 25 -> 5 ->
         % -> 5 -> 5 -> 5 ->
-        disp('Desining Chain for R = 125')
+        disp('Designing Chain for R = 125')
     case 'DEC625'
         % 200 kHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
@@ -178,7 +178,7 @@ switch filtertype
         % -> 125 -> 5 ->
         % -> 25 -> 5 -> 5
         % -> 5 -> 5 -> 5 -> 5 ->
-        disp('Desining Chain for R = 625')
+        disp('Designing Chain for R = 625')
     case 'DEC1250'
         % 100 kHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
@@ -187,7 +187,7 @@ switch filtertype
         % -> 125 -> 5 -> 2 ->
         % -> 25 -> 5 -> 5 2 ->
         % -> 5 -> 5 -> 5 -> 5 -> 2 ->
-        disp('Desining Chain for R = 1250')
+        disp('Designing Chain for R = 1250')
     case 'DEC2500'
         % 50 kHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
@@ -197,13 +197,13 @@ switch filtertype
         % -> 125 -> 5 -> 2 ->
         % -> 25 -> 5 -> 5 2 ->
         % -> 5 -> 5 -> 5 -> 5 -> 2 -> 2 ->
-        disp('Desining Chain for R = 2500')
+        disp('Designing Chain for R = 2500')
     case 'DEC4'
         % 31.25 MHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
         % -> 4 ->
         % -> 2 -> 2 ->
-        disp('Desining Chain for R = 4')
+        disp('Designing Chain for R = 4')
     case 'DEC24'
         % 5.2803 MHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
@@ -212,7 +212,7 @@ switch filtertype
         % -> 6 -> 4 ->
         % -> 6 -> 2 -> 2 ->
         % -> 4 -> 3 -> 2 ->
-        disp('Desining Chain for R = 24')
+        disp('Designing Chain for R = 24')
     case 'DEC120'    
         % 1.0417 MHz 
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
@@ -222,7 +222,7 @@ switch filtertype
         % -> 30 -> 2 -> 2 ->
         % -> 24 -> 5 ->
         % -> 20 -> 3 -> 2 ->
-        disp('Desining Chain for R = 120')
+        disp('Designing Chain for R = 120')
     case 'DEC600'    
         % 208.3 kHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
@@ -236,7 +236,7 @@ switch filtertype
         % -> 50 -> 3 -> 2 -> 2 ->
         % -> 40 -> 5 -> 3 ->
         % -> 30 -> 5 -> 2 -> 2 ->
-        disp('Desining Chain for R = 600')
+        disp('Designing Chain for R = 600')
     case 'DEC1200'   
         % 104.2 kHz 
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
@@ -258,7 +258,7 @@ switch filtertype
         % ->   40 -> 5 -> 3 ->  2 ->
         % ->   30 -> 8 -> 5 ->  
         % ->   30 -> 5 -> 2 ->  2 -> 2 ->
-        disp('Desining Chain for R = 1200')
+        disp('Designing Chain for R = 1200')
     case 'DEC2400'   
         % 52.1 kHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
@@ -285,7 +285,7 @@ switch filtertype
         % ->   40 -> 5 -> 3 ->  2 -> 2 ->
         % ->   30 -> 8 -> 5 ->   2 ->
         % ->   30 -> 5 -> 2 ->  2 -> 2 -> 2 ->
-        disp('Desining Chain for R = 2400')
+        disp('Designing Chain for R = 2400')
     otherwise
         error('No valid filter type specified. Please assign a valid value to filtertype')
 end

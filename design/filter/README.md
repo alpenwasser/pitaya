@@ -61,18 +61,49 @@ make all
 ```
 
 
-Coefficient Data
-================
+Output Files
+============
 
-Each filter will store its coefficients in an appropriately subdirectory
-in the `coefData` directory.
+Output files with filter coefficients and plot data are stores in two directories:
+
+```
+coefData
+plotData
+```
+(These directories will be created when the script is run if they do not already
+exist.)
+
+`coefData` contains coefficient files for filter types which have coefficients.
+The format complies with `.coe` files for Xilinx.
+
+`plotData` are data points from the `fvtool` utility for further processing
+with other tools (e.g. `pgfplots` in LaTeX, or whatever one's heart desires).
+
+Note that these directories are in the `.gitignore` file and will be ignored
+by Git unless you remove them.
 
 
-Plot Data
-=========
+Filename Specification
+----------------------
 
-Plotting data from the `fvtool` for further processing (for example
-with `pgfplots` in LaTeX) can be found in the `plotData` directory.
+The filenames in these directories correspond to the following scheme:
+```
+r-VVV--fp-WWW--fst-XXX--ap-YYY--ast-ZZ.ext
+r-VVV--fp-WWW--fst-XXX--ap-YYY--ast-ZZ--stages-S.ext
+```
+
+Where:
+```
+ VVV: Three digits indicating decimation factor, zero-padded from left.
+ WWW: Three digits inticating pass band edge, normalized, multiplied by 1000.
+      Example: 250 corresponds to Fp = 0.250
+ XXX: Stop band edge frequency, normalized, multiplied by 1000. Same as WWW.
+ YYY: Passband ripple in dB, multiplied by 1000.
+      Example: 300 corresponds to 0.3 dB passband ripple
+  ZZ: Stop band attenuation in dB, zero-padded to two digits.
+   S: Number of stages in case of a cascade file
+ ext: File extension.
+```
 
 
 FAQ
@@ -107,8 +138,6 @@ TODO
 - write filter coefficients to files for further processing (and plotting 
 in LaTeX)
 - export fvtool filter plots to data, then to files, for plotting in LaTeX
-- Generate filenames not based on iterative indices (`i`, `k`, etc.), but on
-parameters used in generation (`Fst`, `Ast`, etc.).
 - Add `help` to functions.
 
 
@@ -147,4 +176,4 @@ L =  441
 125e6 * 441 = 5.4466e10
 ```
 
-The frequency before sampling down is therefore __5.5566e10__!
+The frequency before sampling down is therefore __5.5566e10__.
