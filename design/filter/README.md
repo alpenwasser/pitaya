@@ -41,9 +41,24 @@ CLI wrapper for working with the generators.
 
 - Write your filter design script, put it into the `generators/` directory.
 - Make an entry for your script in the `cliDispatcher.m` file.
-- Make an entry in the `Makefile` which calls `cliDispatcher.m` with
+- Create a new target in the `Makefile` which calls `cliDispatcher.m` with
 the appropriate arguments.
 - Invoke via `make <yourtarget>`.
+
+Building Everything
+-------------------
+
+There is a special `make all` target which uses a single Matlab instance
+to generate all filters. Using this is therefore much more efficient if
+you want to generate all filters, since if you launch each filter design
+command with its own `make` target, a single Matlab instance will be launched
+for each target.
+
+It also does not launch the JVM and exits after completion. As usual, invoke via:
+
+```
+make all
+```
 
 
 Coefficient Data
@@ -94,6 +109,7 @@ in LaTeX)
 - export fvtool filter plots to data, then to files, for plotting in LaTeX
 - Generate filenames not based on iterative indices (`i`, `k`, etc.), but on
 parameters used in generation (`Fst`, `Ast`, etc.).
+- Add `help` to functions.
 
 
 Side Note on Downsampling to Audio CD

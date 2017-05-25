@@ -10,7 +10,9 @@ function [Hcasc] = cascador(R, Fs, Fp, Fst, Ap, Ast, coefDir, plotDir, stages)
 % 2017-MAY-25
 
 plotDir=strcat(plotDir,'/','cascador');
-mkdir(plotDir);
+if ~exist(plotDir,'dir')
+    mkdir(plotDir);
+end
 
 % NOTE: This will not catch the error of stages having enough cells,
 % but those cells not having been filled.

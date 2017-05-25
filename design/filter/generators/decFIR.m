@@ -12,8 +12,12 @@ function [Hd] = decFIR(R, Fs, Fp, Fst, Ap, Ast, coefDir, plotDir)
 
 coefDir=strcat(coefDir,'/','decFIR');
 plotDir=strcat(plotDir,'/','decFIR');
-mkdir(coefDir);
-mkdir(plotDir);
+if ~exist(coefDir,'dir')
+    mkdir(coefDir);
+end
+if ~exist(plotDir,'dir')
+    mkdir(plotDir);
+end
 
 % ---------------------------------------------------- Filter Design Objects
 Hd  = cell(length(Fp),length(Ap),length(Fst),length(Ast),7);
