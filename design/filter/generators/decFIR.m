@@ -1,14 +1,51 @@
 function [Hd] = decFIR(R, Fs, Fp, Fst, Ap, Ast, coefDir, plotDir)
-%FILTER DESIGNER
+%DECFIR Iteratively design FIR decimators.
+%   Hd = decFIR(R, Fs, Fp, Fst, Ap, Ast, coefDir, plotDir)
 %
-% DESCRIPTION
-% Designs FIR Filters for Decimation Ratio of 5
+%   INPUT ARGUMENTS
+%       R:  decimation factor
+%       Fs: Sampling frequency
 %
-% AUTHORS:
-% Raphael Frey, <rmfrey@alpenwasser.net>
+%       Iteration Parameters
+%       Fp:  pass band edge frequencies (normalized) (array)
+%       Fst: stop band edge frequencies (normalized) (array)
+%       Ap:  pass band ripples in dB (array)
+%       Ast: stop band attenuation in dB (array)
 %
-% DATE:
-% 2017-MAY-21
+%       coefDir: directory in which to store coefficients
+%       plotDir: directory in which to store output plot points
+%
+%   RETURN VALUE
+%       Hd:  5-D cell array
+%       Structure:
+%       Hd{l,i,j,k,:}
+%
+%       Its first four coordinates are:
+%       l: cell index for Fp
+%       i: cell index for Ap
+%       j: cell index for Fst
+%       k: cell index for Ast
+%
+%       Finally, in the last coordinate, we store the actual
+%       information (yes a Map would also be a way to implement
+%       this, but that carries its own pitfalls and drawbacks
+%       in the Matlab world).
+%       Hd{l,i,j,k,1}       FIR decimator object
+%       Hd{l,i,j,k,2}:   R: decimation factor
+%       Hd{l,i,j,k,3}:  Fp: pass band edge frequency
+%       Hd{l,i,j,k,4}:  Ap: pass band ripple in dB
+%       Hd{l,i,j,k,5}: Fst: stop band edge frequency
+%       Hd{l,i,j,k,6}: Ast: stop band attenuation in dB
+%       Hd{l,i,j,k,7}:   t: filter number in iteration
+%
+%   SEE ALSO
+%       help cascador
+%
+%   AUTHORS:
+%       Raphael Frey, <rmfrey@alpenwasser.net>
+%
+%   DATE:
+%       2017-MAY-21
 
 coefDir = fullfile(coefDir,'decFIR');
 plotDir = fullfile(plotDir,'decFIR');

@@ -1,13 +1,37 @@
 function [Hcasc] = cascador(R, Fs, Fp, Fst, Ap, Ast, plotDir, stages)
-%Cascade Generator
+%CASCADOR Cascade filters.
+%   Hcasc = cascador(R, Fs, Fp, Fst, Ap, Ast, plotDir, stages)
+%       Take a number of iteration parameters and filters and
+%       cascade the filters.
 %
-% Takes a number of filters and cascades them
+%   INPUT ARGUMENTS
+%       R:  decimation factor
+%       Fs: Sampling frequency
 %
-% AUTHORS:
-% Raphael Frey, <rmfrey@alpenwasser.net>
+%       Iteration Parameters
+%       Fp:  pass band edge frequencies (normalized) (array)
+%       Fst: stop band edge frequencies (normalized) (array)
+%       Ap:  pass band ripples in dB (array)
+%       Ast: stop band attenuation in dB (array)
 %
-% DATE:
-% 2017-MAY-25
+%       plotDir: directory in which to store output plot points
+%
+%       stages: Nx1 cell array containing 5-D cell arrays with
+%               filters and meta information.
+%               The 5-D cell arrays are of the type returned by
+%               decFIR.m
+%
+%   RETURN VALUE
+%       Hcasc:  5-D cell array as returned by decFIR.m
+%
+%   SEE ALSO
+%       help decFIR
+%
+%   AUTHORS:
+%       Raphael Frey, <rmfrey@alpenwasser.net>
+%
+%   DATE:
+%       2017-MAY-25
 
 plotDir=fullfile(plotDir,'cascador');
 if ~exist(plotDir,'dir')
