@@ -60,6 +60,11 @@ ZL_CONF    := CC=$(CROSS)gcc LD=$(CROSS)ld AS=$(CROSS)as ./configure \
               --prefix=$(PWD)/$(BUILD_DIR)/zlib
 
 
+UV_URL     := https://github.com/libuv/libuv
+UV_DIR     := libuv
+UV_CONF    := ./configure --build=i686-pc-linux-gnu --host=arm-linux-gnueabihf --prefix $(pwd)/../build/uv
+
+
 UWS_URL    := https://github.com/uWebSockets/uWebSockets.git
 UWS_DIR    := uWebSockets
 UWS_MF     := $(PWD)/Makefile.uWS.arm
@@ -82,6 +87,10 @@ zlib: $(BUILD_DIR)
 	cd $(ZL_DIR) && $(ZL_CONF)
 	make -C $(ZL_DIR)
 	make -C $(ZL_DIR) install
+
+uv: $(BUILD_DIR)
+	mkdir -p $(BUILD_DIR)/uv
+	# TODO
 
 uws: $(BUILD_DIR)
 	[ -d $(UWS_DIR) ] || git clone $(UWS_URL)

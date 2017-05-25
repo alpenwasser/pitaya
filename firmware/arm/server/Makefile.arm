@@ -27,6 +27,7 @@ ZL_VER    ?= 1.2.11
 OSSL_DIR  := $(EXT_DIR)/openssl-$(OSSL_VER)
 ZL_DIR    := $(EXT_DIR)/zlib-$(ZL_VER)
 UWS_DIR   := $(EXT_DIR)/uWebSockets# No version required; git clone
+UV_DIR    := $(EXT_DIR)/build/uv/lib   
 
 PREFIX      := arm-linux-gnueabihf
 CROSS       := $(PREFIX)-
@@ -36,8 +37,8 @@ GCC_ARM_DIR := $(XILINX_DIR)/SDK/$(VIDADO_VER)/gnu/aarch32/lin/$(PREFIX)
 CFLAGS      := -I$(GCC_ARM_DIR)/include \
                -I$(UWS_DIR)/src/ -I$(OSSL_DIR)/include/ -I$(ZL_DIR)/ \
                -std=c++11
-LFLAGS      += -L$(UWS_DIR) -L$(OSSL_DIR) -L$(ZL_DIR) -L$(GCC_ARM_DIR)/lib \
-               -lm -luWS -lz -lssl -lcrypto
+LFLAGS      += -L$(UWS_DIR) -L$(OSSL_DIR) -L$(ZL_DIR) -L$(UV_DIR) -L$(GCC_ARM_DIR)/lib \
+               -lm -luWS -lz -lssl -lcrypto -lpthread
 
 SRC  := $(wildcard $(SRC_DIR)/*.c)
 OBJS := $(subst $(SRC_DIR),$(BUILD_DIR),$(subst .c,.o,$(SRC)))

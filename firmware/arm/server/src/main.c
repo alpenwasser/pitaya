@@ -7,6 +7,7 @@
 #include <string>
 #include "logger_types.h"
 #include <sys/ioctl.h>
+#include <thread>
 
 #define MAGIC_NUMBER 42
 #define DATA_SETTINGS _IOWR(MAGIC_NUMBER, 0, void*)
@@ -37,6 +38,70 @@ struct state {
     bool reading;
 };
 
+void waitForFrame(state* s){
+    // Block until configuration was done (maybe there is a better way to do this)
+    while(s->configuring || s->reading);
+    s->reading = true;
+    try {
+        ioctl(s->fd, START_REC, NULL);
+        std::cout << "Started a new Frame." << std::endl;
+        std::cout << s->frameSize << " " << s->packetSize << " " << s->numberOfChannels << " " << s->data.size() << std::endl;
+
+        // TODO: change to c=0 after testing!
+        for(size_t c = 1; c < s->numberOfChannels; c++){
+            struct data_instruction d_instruction;
+            d_instruction.resolution = 1;
+            d_instruction.channel = c;
+            ioctl(s->fd, DATA_SETTINGS, &d_instruction);
+
+            size_t _read = 0;
+            while(_read < s->frameSize * 2){
+                size_t toRead = s->frameSize * 2 - _read;
+                toRead = toRead < s->packetSize * 2 ? toRead : s->packetSize * 2;
+                lseek(s->fd, _read, SEEK_SET);
+                size_t ret = read(s->fd, &s->data[0], toRead);
+
+                std::cout << "--------- " << c << "--------- " << std::endl;
+
+                for(int k=2048; k < 2048+10; k++)
+                    std::cout << s->data[k];
+                std::cout << std::endl;
+
+                struct reg_instruction instruction;
+                printf("Read number of recorded samples ... \n");
+                instruction.reg_id = 11;
+                ioctl(s->fd, READ_REG, &instruction);
+                printf("Return value: %u\n", instruction.reg_value);
+                instruction.reg_id = 12;
+                ioctl(s->fd, READ_REG, &instruction);
+                printf("Return value: %u\n", instruction.reg_value);
+
+                printf("Checking error code ... ");
+                instruction.reg_id = 8;
+                ioctl(s->fd, READ_REG, &instruction);
+                printf("Return value: %u\n", instruction.reg_value);
+
+                printf("Checking faulty address ... ");
+                instruction.reg_id = 9;
+                ioctl(s->fd, READ_REG, &instruction);
+                printf("Return value: %u\n", instruction.reg_value);
+
+
+
+                _read += ret;
+                std::cout << "read" << ret << "/" << toRead << std::endl;
+                std::cout << s->data.size() << "/" << ret << std::endl;
+                s->sock->send((char*)&s->data[0], ret, uWS::OpCode::BINARY);
+            }
+        }
+        std::cout << "sent frame" << std::endl;
+    } catch(int e){
+        std::cout << "Failed to start a new Frame." << std::endl;
+    }
+    
+    s->reading = false;
+};
+
 int main(int argc, char* argv[]) {
     uWS::Hub h;
     struct state s;
@@ -44,7 +109,7 @@ int main(int argc, char* argv[]) {
     s.frameSize = 2048;
     s.packetSize = 2048;
     s.connections = 0;
-    s.mode = modes::DEMO;
+    s.mode = modes::REAL;
     s.data.resize(s.frameSize);
     s.configuring = 0;
     s.reading = 0;
@@ -62,6 +127,9 @@ int main(int argc, char* argv[]) {
             printf("Failed to open /dev/logger0 file!\n");
             return 1;
         }
+
+        // Make sure the logger is not running, otherwise setting instructions will be ignored
+        ioctl(s.fd, STOP_REC, NULL);
 
         // Make sure test mode is not on
         struct reg_instruction instruction;
@@ -102,27 +170,29 @@ int main(int argc, char* argv[]) {
 
             switch(s.mode){
             case modes::DEMO:
-                if(j["frameConfiguration"] != NULL){
+                if(!j["frameConfiguration"].is_null()){
+                    std::cout << "Setting new Frame Configuration" << std::endl;
                     // Block until current frame was read (maybe there is a better way to do this)
                     while(s.reading);
                     s.configuring = true;
                     try {
                         auto conf = j["frameConfiguration"];
-                        if(conf["frameSize"] != NULL){
+                        if(!conf["frameSize"].is_null()){
                             s.frameSize = conf["frameSize"].get<size_t>();
                             std::cout << "New Frame Size is " << s.frameSize << std::endl;
-                            if(conf["packetSize"] != NULL){
+                            if(!conf["packetSize"].is_null()){
                                 s.packetSize = conf["packetSize"].get<size_t>();
                                 std::cout << "New Packet Size is " << s.packetSize << std::endl;
                             } else {
                                 s.packetSize = s.frameSize;
                                 std::cout << "New Packet Size is " << s.frameSize << std::endl;
                             }
+                            s.data.resize(s.packetSize);
                         }
-                        if(conf["pre"] != NULL){
+                        if(!conf["pre"].is_null()){
                             // Ignore pre in demo mode
                         }
-                        if(conf["suf"] != NULL){
+                        if(!conf["suf"].is_null()){
                             // Ignore suf in demo mode
                         }
                     } catch(int e){
@@ -132,7 +202,8 @@ int main(int argc, char* argv[]) {
                 }
 
                 // Write a trigger into a pipeline
-                if(j["triggerOn"] != NULL){
+                if(!j["triggerOn"].is_null()){
+                    std::cout << "Setting new Trigger" << std::endl;
                     // Block until current frame was read (maybe there is a better way to do this)
                     while(s.reading);
                     s.configuring = true;
@@ -146,12 +217,13 @@ int main(int argc, char* argv[]) {
                 }
 
                 // Select the number of channels that is recorded and transmitted
-                if(j["selectChannels"] != NULL){
+                if(!j["setNumberOfChannels"].is_null()){
+                    std::cout << "Setting number of Channels" << std::endl;
                     // Block until current frame was read (maybe there is a better way to do this)
                     while(s.reading);
                     s.configuring = true;
                     try {
-                        s.numberOfChannels = j["selectChannels"].get<size_t>();
+                        s.numberOfChannels = j["setNumberOfChannels"].get<size_t>();
                         std::cout << s.numberOfChannels << " will be transmitted." << std::endl;
                     } catch(int e){
                         std::cout << "Failed to select the channels." << std::endl;
@@ -160,7 +232,8 @@ int main(int argc, char* argv[]) {
                 }
 
                 // Request a new frame of data
-                if(j["requestFrame"] != NULL){
+                if(!j["requestFrame"].is_null()){
+                    std::cout << "Requesting Frame" << std::endl;
                     // Block until configuration was done (maybe there is a better way to do this)
                     while(s.configuring);
                     s.reading = true;
@@ -168,16 +241,21 @@ int main(int argc, char* argv[]) {
                         ioctl(s.fd, START_REC, NULL);
                         std::cout << "Started a new Frame." << std::endl;
                         // Instantly generate a new sample
-                        size_t _read = 0;
-                        while(_read < s.frameSize){
-                            size_t toRead = s.frameSize - _read;
-                            toRead = toRead < s.packetSize ? toRead : s.packetSize;
-                            size_t i = 0;
-                            for(; i < toRead; i++){
-                                s.data[i] = (8192 + 7000 * sin((float)(_read + i)/s.frameSize*40*M_PI));
+                        std::cout << s.frameSize << " " << s.packetSize << " " << s.numberOfChannels << " " << s.data.size() << std::endl;
+                        // TODO: change to c=0 after testing!
+                        for(size_t c = 1; c < s.numberOfChannels; c++){
+                            size_t _read = 0;
+                            while(_read < s.frameSize){
+                                size_t toRead = s.frameSize - _read;
+                                toRead = toRead < s.packetSize ? toRead : s.packetSize;
+                                size_t i = 0;
+                                for(; i < toRead; i++){
+                                    s.data[i] = (8192 + 7000 * sin((float)(_read + i)/s.frameSize*40*M_PI + c * M_PI));
+                                }
+                                _read += i;
+                                std::cout << s.data.size() << "/" << _read * 2 << std::endl;
+                                s.sock->send((char*)&s.data[0], _read * 2, uWS::OpCode::BINARY);
                             }
-                            _read += i;
-                            s.sock->send((char*)&s.data[0], _read * 2, uWS::OpCode::BINARY);
                         }
                     } catch(int e){
                         std::cout << "Failed to start a new Frame." << std::endl;
@@ -186,7 +264,8 @@ int main(int argc, char* argv[]) {
                 }
 
                 // Force a trigger
-                if(j["forceTrigger"] != NULL){
+                if(!j["forceTrigger"].is_null()){
+                    std::cout << "Forcing Trigger" << std::endl;
                     // Block until configuration was done (maybe there is a better way to do this)
                     while(s.configuring);
                     try {
@@ -200,32 +279,33 @@ int main(int argc, char* argv[]) {
             case modes::REAL:
                 // Changes the configuration of a frame
                 // frame size, pre/suf count, packetSize
-                if(j["frameConfiguration"] != NULL){
+                if(!j["frameConfiguration"].is_null()){
                     // Block until current frame was read (maybe there is a better way to do this)
                     while(s.reading);
                     s.configuring = true;
                     try {
                         auto conf = j["frameConfiguration"];
-                        if(conf["frameSize"] != NULL){
+                        if(!conf["frameSize"].is_null()){
                             s.frameSize = conf["frameSize"].get<size_t>();
                             std::cout << "New Frame Size is " << s.frameSize << std::endl;
-                            if(conf["packetSize"] != NULL){
+                            if(!conf["packetSize"].is_null()){
                                 s.packetSize = conf["packetSize"].get<size_t>();
                                 std::cout << "New Packet Size is " << s.packetSize << std::endl;
                             } else {
                                 s.packetSize = s.frameSize;
                                 std::cout << "New Packet Size is " << s.frameSize << std::endl;
                             }
+                            s.data.resize(s.packetSize);
                         }
-                        if(conf["pre"] != NULL){
+                        if(!conf["pre"].is_null()){
                             instruction.reg_id = 3;
-                            instruction.reg_value = conf["pre"];
+                            instruction.reg_value = conf["pre"].get<size_t>();
                             ioctl(s.fd, WRITE_REG, &instruction);
                             std::cout << "New Pre is " << instruction.reg_value << std::endl;
                         }
-                        if(conf["suf"] != NULL){
+                        if(!conf["suf"].is_null()){
                             instruction.reg_id = 4;
-                            instruction.reg_value = conf["suf"];
+                            instruction.reg_value = conf["suf"].get<size_t>();
                             ioctl(s.fd, WRITE_REG, &instruction);
                             std::cout << "New Suf is " << instruction.reg_value << std::endl;
                         }
@@ -236,7 +316,7 @@ int main(int argc, char* argv[]) {
                 }
 
                 // Write a trigger into a pipeline
-                if(j["triggerOn"] != NULL){
+                if(!j["triggerOn"].is_null()){
                     // Block until current frame was read (maybe there is a better way to do this)
                     while(s.reading);
                     s.configuring = true;
@@ -244,23 +324,23 @@ int main(int argc, char* argv[]) {
                         struct trg_instruction trg;
                         auto t = j["triggerOn"]; 
                         
-                        if(t["type"] == "risingEdge" && t["level"] != NULL && t["channel"] != NULL){
+                        if(t["type"] == "risingEdge" && !t["level"].is_null() && !t["channel"].is_null()){
                             size_t channel = t["channel"].get<size_t>();
                             std::cout << "Setting trigger for channel " << t["channel"] << std::endl;
 
                             // Set hysteresis
-                            if(t["hysteresis"] != NULL){
+                            if(!t["hysteresis"].is_null()){
                                 trg.trg_id = channel;
                                 trg.trg_option = 4;
                                 trg.trg_slot_id = 0;
-                                trg.trg_value = (t["hysteresis"].get<size_t>() << 4) & 4 ;
+                                trg.trg_value = (t["hysteresis"].get<size_t>() << 4) | 4 ;
                                 ioctl(s.fd, WRITE_TRG, &trg);
                                 std::cout << "Set a hysteresis of " << t["hysteresis"] << std::endl;    
                             }
 
                             // Determine slope
                             size_t slope = 0;
-                            if(t["slope"] != NULL){
+                            if(!t["slope"].is_null()){
                                 slope = t["slope"].get<size_t>();
                             }
 
@@ -268,11 +348,11 @@ int main(int argc, char* argv[]) {
                             trg.trg_id = channel;
                             trg.trg_option = 4;
                             trg.trg_slot_id = 1;
-                            trg.trg_value = (slope << 20) & (t["level"].get<size_t>() << 4) & 3; 
+                            trg.trg_value = (slope << 20) | (t["level"].get<size_t>() << 4) | 3; 
                             ioctl(s.fd, WRITE_TRG, &trg);
 
                             // Set stop instruction
-                            trg.trg_id = 1;
+                            trg.trg_id = channel;
                             trg.trg_option = 4;
                             trg.trg_slot_id = 2;
                             trg.trg_value = 2;
@@ -287,16 +367,13 @@ int main(int argc, char* argv[]) {
                 }
 
                 // Select the number of channels that is recorded and transmitted
-                if(j["selectChannels"] != NULL){
+                if(!j["setNumberOfChannels"].is_null()){
                     // Block until current frame was read (maybe there is a better way to do this)
                     while(s.reading);
                     s.configuring = true;
                     try {
-                        instruction.reg_id = 5;
-                        instruction.reg_value = j["selectChannels"].get<size_t>() & ~1;
-                        ioctl(s.fd, WRITE_REG, &instruction);
-                        s.numberOfChannels = j["selectChannels"].get<size_t>();
-                        std::cout << "Logger now has " << instruction.reg_value << "Channels. " << s.numberOfChannels << " will be transmitted." << std::endl;
+                        s.numberOfChannels = j["setNumberOfChannels"].get<size_t>();
+                        std::cout << s.numberOfChannels << " will be transmitted." << std::endl;
                     } catch(int e){
                         std::cout << "Failed to select the channels." << std::endl;
                     }
@@ -304,30 +381,15 @@ int main(int argc, char* argv[]) {
                 }
 
                 // Request a new frame of data
-                if(j["requestFrame"] != NULL){
-                    // Block until configuration was done (maybe there is a better way to do this)
-                    while(s.configuring);
-                    s.reading = true;
-                    try {
-                        ioctl(s.fd, START_REC, NULL);
-                        std::cout << "Started a new Frame." << std::endl;
-                        size_t _read = 0;
-                        while(_read < s.frameSize * 2){
-                            size_t toRead = s.frameSize * 2 - _read;
-                            toRead = toRead < s.packetSize * 2 ? toRead : s.packetSize * 2;
-                            lseek(s.fd, _read, SEEK_SET);
-                            size_t ret = read(s.fd, &s.data[0], toRead);
-                            _read += ret;
-                            s.sock->send((char*)&s.data[0], ret, uWS::OpCode::BINARY);
-                        }
-                    } catch(int e){
-                        std::cout << "Failed to start a new Frame." << std::endl;
-                    }
-                    s.reading = false;
+                if(!j["requestFrame"].is_null()){
+                    sleep(1);
+                    std::thread t1(waitForFrame, &s);
+                    // TODO: do not detach but join
+                    t1.detach();
                 }
 
                 // Force a trigger
-                if(j["forceTrigger"] != NULL){
+                if(!j["forceTrigger"].is_null()){
                     // Block until configuration was done (maybe there is a better way to do this)
                     while(s.configuring);
                     try {

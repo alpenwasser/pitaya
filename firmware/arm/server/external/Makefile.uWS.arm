@@ -20,7 +20,8 @@ CPP_SHARED      := -std=c++11 -O3 -I src -shared -fPIC src/Extensions.cpp \
                    src/Epoll.cpp
 CPP_OPENSSL_ARM := -I$(BUILD_DIR)/openssl/include -L$(BUILD_DIR)/openssl/lib
 CPP_ZLIB_ARM    := -I$(BUILD_DIR)/zlib/include    -L$(BUILD_DIR)/zlib/lib
-CPP_ARM         := $(CPP_OPENSSL_ARM) $(CPP_ZLIB_ARM)
+#CPP_LIBUV_ARM   := -I$(BUILD_DIR)/uv/include    -L$(BUILD_DIR)/uv/lib
+CPP_ARM         := $(CPP_OPENSSL_ARM) $(CPP_ZLIB_ARM) $(CPP_LIBUV_ARM)
 CXX_ARM         := arm-linux-gnueabihf-g++
 
 all:
