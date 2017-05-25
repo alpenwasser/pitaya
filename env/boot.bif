@@ -1,0 +1,1 @@
+img:{[bootloader] executable.elf system_wrapper.bit u-boot.elf}
