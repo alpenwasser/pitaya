@@ -25,6 +25,8 @@ EXIT      ?=
 # For the all target, don't launch the jvm and exit when done.
 all: JVM  = -nojvm
 all: EXIT = exit
+parallel: JVM  = -nojvm
+parallel: EXIT = exit
 # NOTE: Do not change the assignment operator to ':=' here! JVM gets
 # modified by some targets.
 MATLAB     = matlab -nosplash -nodesktop $(JVM) -r
@@ -53,6 +55,12 @@ all:
 	            filtertype='DEC600'; $(DISPATCHER);\
 	            filtertype='DEC1200';$(DISPATCHER);\
 	            filtertype='DEC2400';$(DISPATCHER);$(EXIT)"
+
+# Invoke with -j<cores count> to launch multiple Matlab
+# instances concurrently. If you have enough cores, this
+# is the most efficient way to do things.
+parallel: dec5 dec25 dec625 dec1250 dec2500 \
+	  dec4 dec6 dec24 dec120 dec600 dec1200 dec2400
 
 dec5:
 	@$(MATLAB) "filtertype='DEC5';$(DISPATCHER);$(EXIT)"
