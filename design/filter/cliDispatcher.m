@@ -96,7 +96,7 @@ switch filtertype
         Hd = decFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir);
     case 'DEC6'
         % Cleanup if the script is called multiple times from the same Matlab instance.
-        clear all;%close all;
+        clear all;close all;
         filtertype='DEC6';
         genDir  = 'generators';
         coefDir = 'coefData';
@@ -170,7 +170,7 @@ switch filtertype
 
         % -------------------------------------------------------- Decimation Factor
         R1  = 5; % T1 = 24 ns
-        R2  = 3; % T2 = 24 ns * 2 = 48 ns
+        R2  = 5; % T2 = 24 ns * 2 = 48 ns
         R = R1 * R2;
 
         % ------------------------------------------- Input Sampling Frequency in Hz
