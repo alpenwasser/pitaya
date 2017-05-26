@@ -1,10 +1,9 @@
-function [Hd] = decFIR(R, Fs, Fp, Fst, Ap, Ast, coefDir, plotDir)
+function [Hd] = decFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir)
 %DECFIR Iteratively design FIR decimators.
-%   Hd = decFIR(R, Fs, Fp, Fst, Ap, Ast, coefDir, plotDir)
+%   Hd = decFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir)
 %
 %   INPUT ARGUMENTS
 %       R:  decimation factor
-%       Fs: Sampling frequency
 %
 %       Iteration Parameters
 %       Fp:  pass band edge frequencies (normalized) (array)

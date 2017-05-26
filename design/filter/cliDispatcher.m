@@ -49,7 +49,7 @@
 % https://ch.mathworks.com/help/signal/ref/fdesign.lowpass.html
 % https://ch.mathworks.com/help/dsp/ref/fdesign.decimator.html
 
-genDir = 'generators';
+genDir  = 'generators';
 coefDir = 'coefData';
 plotDir = 'plotData';
 addpath(genDir);
@@ -76,24 +76,24 @@ switch filtertype
         % NOTE: The smallest number in Fp must be smaller than the smallest number
         %       in Fst (see below).
         %Fp  = [0.1 0.15 0.2];
-        Fp  = [0.2];
+        Fp  = 0.2;
 
         % ------------- ---------- Stop band frequencies ("How steep is the filter?")
         % NOTE: The smallest number in Fst must be larger than the largest number in
         %       Fp (see above).
         %Fst = [0.21 0.22];
-        Fst = [0.22];
+        Fst = 0.22;
 
         % ------------------------------------------------- Ripple in Passband in dB
         %Ap  = [0.25 0.5 1];
-        Ap  = [0.25];
+        Ap  = 0.25;
 
         % ------------------------------------------- Attenuation in Stop Band in dB
         %Ast = [20 40 60 80];
         Ast = [40 60];
 
         % Hd: Contains the Filter Objects along with their properties (R, Fs, Fp,...)
-        Hd = decFIR(R, Fs, Fp, Fst, Ap, Ast, coefDir, plotDir);
+        Hd = decFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir);
     case 'DEC6'
         % Cleanup if the script is called multiple times from the same Matlab instance.
         clear all;close all;
@@ -115,12 +115,12 @@ switch filtertype
         Fs2  = Fs1/R1; % Input of second stage
 
         % ---------------------- Frequency at the Start of the Pass Band; Normalized
-        Fp  = [1/R];   % Single stage
-        Fp1 = [1/R1];  % First stage
-        Fp2 = [1/R2];  % second stage
+        Fp  = 1/R;   % Single stage
+        Fp1 = 1/R1;  % First stage
+        Fp2 = 1/R2;  % second stage
 
         % ------------- ---------- Stop band frequencies ("How steep is the filter?")
-        TBw = [0.02:0.02:0.06];       % Transition band widths (normalized)
+        TBw = 0.02:0.02:0.06;        % Transition band widths (normalized)
         Fst = Fp + TBw;              % NOTE: This only works if Fp is a scalar or
                                      % has same length as TBw!
         TBwHz = TBw * Fs;            % Transition band widths in Hz
@@ -138,9 +138,9 @@ switch filtertype
         Fst2 = Fp2 + TBw2;
 
         % ------------------------------------------------- Ripple in Passband in dB
-        Ap1 = [0.125]; % NOTE: Cascaded filters amplify each other's riple in PB
-        Ap2 = [0.125];
-        Ap  = [0.250]; % Single-stage ripple can therefore be twice as big.
+        Ap1 = 0.125; % NOTE: Cascaded filters amplify each other's riple in PB
+        Ap2 = 0.125;
+        Ap  = 0.250; % Single-stage ripple can therefore be twice as big.
 
         % ------------------------------------------- Attenuation in Stop Band in dB
         %Ast = [20 40 60 80];
@@ -149,15 +149,15 @@ switch filtertype
         Ast  = [40 60 80];
 
         % Hd: Contains the Filter Objects along with their properties (R, Fs, Fp,...)
-        Hd  = decFIR(R , Fs , Fp , Fst , Ap , Ast , coefDir, plotDir);
-        Hd1 = decFIR(R1, Fs1, Fp1, Fst1, Ap1, Ast1, coefDir, plotDir);
-        Hd2 = decFIR(R2, Fs2, Fp2, Fst2, Ap2, Ast2, coefDir, plotDir);
+        Hd  = decFIR(R , Fp , Fst , Ap , Ast , coefDir, plotDir);
+        Hd1 = decFIR(R1, Fp1, Fst1, Ap1, Ast1, coefDir, plotDir);
+        Hd2 = decFIR(R2, Fp2, Fst2, Ap2, Ast2, coefDir, plotDir);
 
         % ---------------------------------------------------- Filter Design Objects
         stages = cell(2,1);
         stages{1} = Hd1;
         stages{2} = Hd2;
-        Hcasc = cascador(R, Fs, Fp, Fst, Ap, Ast, plotDir, stages);
+        Hcasc = cascador(R, Fp, Fst, Ap, Ast, plotDir, stages);
     case 'DEC25'
         % 5 MHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:

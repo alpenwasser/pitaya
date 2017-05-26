@@ -1,12 +1,11 @@
-function [Hcasc] = cascador(R, Fs, Fp, Fst, Ap, Ast, plotDir, stages)
+function [Hcasc] = cascador(R, Fp, Fst, Ap, Ast, plotDir, stages)
 %CASCADOR Cascade filters.
-%   Hcasc = cascador(R, Fs, Fp, Fst, Ap, Ast, plotDir, stages)
+%   Hcasc = cascador(R, Fp, Fst, Ap, Ast, plotDir, stages)
 %       Take a number of iteration parameters and filters and
 %       cascade the filters.
 %
 %   INPUT ARGUMENTS
 %       R:  decimation factor
-%       Fs: Sampling frequency
 %
 %       Iteration Parameters
 %       Fp:  pass band edge frequencies (normalized) (array)
