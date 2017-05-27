@@ -73,22 +73,22 @@ switch filtertype
         % ---------------------- Frequency at the Start of the Pass Band; Normalized
         % NOTE: The smallest number in Fp must be smaller than the smallest number
         %       in Fst (see below).
-        %Fp  = [0.1 0.15 0.2];
-        Fp  = 0.2;
+        Fp  = [0.1 0.15 0.2];
+        %Fp  = 0.2;
 
         % ------------- ---------- Stop band frequencies ("How steep is the filter?")
         % NOTE: The smallest number in Fst must be larger than the largest number in
         %       Fp (see above).
-        %Fst = [0.21 0.22];
-        Fst = 0.22;
+        Fst = [0.21 0.22];
+        %Fst = 0.22;
 
         % ------------------------------------------------- Ripple in Passband in dB
-        %Ap  = [0.25 0.5 1];
-        Ap  = 0.25;
+        Ap  = [0.25 0.5 1];
+        %Ap  = 0.25;
 
         % ------------------------------------------- Attenuation in Stop Band in dB
-        %Ast = [20 40 60 80];
-        Ast = [40 60];
+        Ast = [20 40 60 80];
+        %Ast = [40 60];
 
         % Hd: Contains the Filter Objects along with their properties (R, Fs, Fp,...)
         Hd = decFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir);
@@ -116,7 +116,7 @@ switch filtertype
         Fp2 = 1/R2;  % second stage
 
         % ------------- ---------- Stop band frequencies ("How steep is the filter?")
-        TBw = 0.02:0.02:0.06;        % Transition band widths (normalized)
+        TBw = 0.01:0.02:0.07;        % Transition band widths (normalized)
         Fst = Fp + TBw;              % NOTE: This only works if Fp is a scalar or
                                      % has same length as TBw!
         TBwHz = TBw * Fs;            % Transition band widths in Hz
@@ -132,15 +132,15 @@ switch filtertype
         Fst1 = padding + 1/R1 * (2 - Fst2);
 
         % ------------------------------------------------- Ripple in Passband in dB
-        Ap1 = 0.125; % NOTE: Cascaded filters amplify each other's riple in PB
-        Ap2 = 0.125;
-        Ap  = 0.250; % Single-stage ripple can therefore be twice as big.
+        Ap1 = [0.125 0.0625 0.03125]; % NOTE: Cascaded filters amplify 
+        Ap2 = [0.125 0.0625 0.03125]; % each other's riple in PB.
+        Ap  = [0.250 0.125  0.0625 ]; % Single-stage ripple can therefore be twice 
+                                      % as big.
 
         % ------------------------------------------- Attenuation in Stop Band in dB
-        %Ast = [20 40 60 80];
-        Ast1 = [40 60 80];
-        Ast2 = [40 60 80];
-        Ast  = [40 60 80];
+        Ast1 = [60 80 100];
+        Ast2 = [60 80 100];
+        Ast  = [60 80 100];
 
         % Hd: Contains the Filter Objects along with their properties (R, Fs, Fp,...)
         Hd  = decFIR(R , Fp , Fst , Ap , Ast , coefDir, plotDir);
@@ -200,9 +200,9 @@ switch filtertype
         Ap  = 0.250; % Single-stage ripple can therefore be twice as big.
 
         % ------------------------------------------- Attenuation in Stop Band in dB
-        Ast1 = [60];
-        Ast2 = [60];
-        Ast  = [60];
+        Ast1 = [60 80 100];
+        Ast2 = [60 80 100];
+        Ast  = [60 80 100];
 
         % Hd: Contains the Filter Objects along with their properties (R, Fs, Fp,...)
         Hd  = decFIR(R , Fp , Fst , Ap , Ast , coefDir, plotDir);
@@ -249,6 +249,37 @@ switch filtertype
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
         % -> 4 ->
         % -> 2 -> 2 ->
+        % Cleanup if the script is called multiple times from the same Matlab instance.
+        clear all;close all;
+        filtertype='DEC5';
+        genDir = 'generators';
+        coefDir = 'coefData';
+        plotDir = 'plotData';
+
+        % ------------------------------------------- Input Sampling Frequency in Hz
+        Fs  = 125e6;
+
+        % -------------------------------------------------------- Decimation Factor
+        R   = 4; % T = 32 ns
+
+        % ---------------------- Frequency at the Start of the Pass Band; Normalized
+        % NOTE: The smallest number in Fp must be smaller than the smallest number
+        %       in Fst (see below).
+        Fp  = 0.25;
+        
+        % ------------- ---------- Stop band frequencies ("How steep is the filter?")
+        % NOTE: The smallest number in Fst must be larger than the largest number in
+        %       Fp (see above).
+        Fst = [0.26 0.27 0.28];
+
+        % ------------------------------------------------- Ripple in Passband in dB
+        Ap = [0.01 0.05 0.1 0.15];
+        
+        % ------------------------------------------- Attenuation in Stop Band in dB
+        Ast = [40 60 80 100];
+                
+        % Hd: Contains the Filter Objects along with their properties (R, Fs, Fp,...)
+        Hd = pardecFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir);
     case 'DEC24'
         % 5.2803 MHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:

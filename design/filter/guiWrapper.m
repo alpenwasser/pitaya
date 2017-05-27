@@ -51,7 +51,7 @@ disp('Designing Chain for R = 2500')
 run cliDispatcher;
 
 %% Decimation by 4
-clear all;close all;clc;
+clear all;close all;%clc;
 filtertype = 'DEC4';
 disp('Designing Chain for R = 4')
 run cliDispatcher;

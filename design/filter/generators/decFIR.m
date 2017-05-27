@@ -38,7 +38,7 @@ function [Hd] = decFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir)
 %       Hd{l,i,j,k,7}:   t: filter number in iteration
 %
 %   SEE ALSO
-%       help cascador
+%       cascador, pardecFIR
 %
 %   AUTHORS:
 %       Raphael Frey, <rmfrey@alpenwasser.net>
