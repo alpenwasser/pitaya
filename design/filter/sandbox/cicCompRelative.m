@@ -22,7 +22,7 @@ dcomp = fdesign.ciccomp(...
 );
 Hcomp = design(dcomp,'SystemObject',true);
 
-fvtool(Hd,Hcomp,cascade(Hd,Hcomp));
+fvtool(Hcic,Hcomp,cascade(Hcic,Hcomp));
 legend('CIC','CIC Reference','Comp','Cascade');
 
 % Just as a reminder: Extracting data and plotting in dB. This should

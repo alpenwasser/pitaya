@@ -56,8 +56,11 @@ Running in Graphical Mode
 Invoked via  the `guiWrapper.m`  file. Set the `filtertype`  variable as
 needed and call `cliDispatcher.m` from there from within Matlab.
 
-The basic idea is to execute a  single code block via `Ctrl` + `Return`,
-but you can run the enture script via `F5` as usual.
+The basic idea is to execute a  single code block via `Ctrl` + `Return`.
+Note  that if  you  run  the entire  script  with  `F5`, your  workspace
+variables  will only  contain  the filter  design  variables which  were
+created during the last code block. However, any filter coefficients and
+plot data will still be saved to disk.
 
 Call Structure
 --------------
@@ -127,11 +130,12 @@ Output Files
 ============
 
 Output files  with filter coefficients and  plot data are stored  in two
-directories:
+separate directories, while Matlab writes its log to a third:
 
 ```
 coefData
 plotData
+logs
 ```
 These  directories will  be  created  during execution  if  they do  not
 already exist.
@@ -143,8 +147,20 @@ coefficients.  The format complies with `.coe` files for Xilinx.
 processing with other tools (e.g. `pgfplots` in LaTeX, or whatever one's
 heart desires).
 
-Note that  these directories are  in the  `.gitignore` file and  will be
-ignored by Git unless you remove them.
+`logs` contains the Matlab console's output. Check here if anything goes
+wrong during a command line execution and Matlab's output was suppressed
+(which is the case  in the `parallel` and `all` targets,  or if you have
+manually redirected Matlab's output either via `REDIRECT=1>/dev/null` or
+by other  means). Note that  if you're running  the dispatcher  from the
+`guiWrapper.m` file, there will be no logs since they are superfluous in
+that case.
+
+__Note:__
+- These directories are in the  `.gitignore` file and will be ignored by
+Git unless you remove them.
+- If  nothing went wrong, the  log files won't contain  anything besides
+Matlab's greeting messages. So don't necessarily be alarmed if you check
+them and there is no useful info there.
 
 
 Filename Specification
@@ -160,7 +176,8 @@ Where:
 ```
  VVV: Three digits indicating decimation factor, zero-padded from left.
  WWW: Three digits inticating pass band edge, normalized, multiplied by 1000.
-      Example: 250 corresponds to Fp = 0.250
+      Left-padded with zeros.
+      Example: 025 corresponds to Fp = 0.025
  XXX: Stop band edge frequency, normalized, multiplied by 1000. Same as WWW.
  YYY: Passband ripple in dB, multiplied by 1000.
       Example: 300 corresponds to 0.3 dB passband ripple
