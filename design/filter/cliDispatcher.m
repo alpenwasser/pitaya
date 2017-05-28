@@ -279,7 +279,7 @@ switch filtertype
         Ast = [40 60 80 100];
                 
         % Hd: Contains the Filter Objects along with their properties (R, Fs, Fp,...)
-        Hd = pardecFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir);
+        Hd = decFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir);
     case 'DEC24'
         % 5.2803 MHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:

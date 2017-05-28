@@ -15,16 +15,16 @@ function Hd = pardecFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir)
 %       plotDir: directory in which to store output plot points (string)
 %
 %   RETURN VALUE
-%       Hd:  n x 6 cell array
+%       Hd:  N x 6 cell array
 %       Structure:
-%       Hd{n,6}
+%       Hd{N,6}
 %
 %       Where:
-%       n = k*(J*I*L) + j * (I*L) + i * (L) + l + 1;
-%       L = length(Fp);
-%       I = length(Ap);
-%       J = length(Fst);
-%       K = length(Ast);
+%       N = L*M*O*P
+%       L = length(Fp)
+%       M = length(Ap)
+%       O = length(Fst)
+%       P = length(Ast)
 %
 %       Hd{n,1}:     Fp: pass band edge frequency 
 %       Hd{n,2}:      R: decimation factor
@@ -32,9 +32,11 @@ function Hd = pardecFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir)
 %       Hd{n,4}:    Ast: stop band attenuation in dB
 %       Hd{n,5}:      R: decimation factor
 %       Hd{n,6}: Filter: FIR decimator object
+%       Where:
+%       n = p*(O*M*L) + o * (M*L) + m * (L) + l + 1;
 %
 %   SEE ALSO
-%       cascador, decFIR
+%       cascador, parcascador, decFIR
 %
 %   AUTHORS:
 %       Raphael Frey, <rmfrey@alpenwasser.net>
@@ -53,24 +55,24 @@ end
 
 % ---------------------------------------------------- Filter Design Objects
 L = length(Fp);
-I = length(Ap);
-J = length(Fst);
-K = length(Ast);
-cellsize = L*I*J*K;
+M = length(Ap);
+O = length(Fst);
+P = length(Ast);
+N = L*M*O*P;
 
-Hd  = cell(cellsize,6);
+Hd  = cell(N,6);
 
 % Unroll so that we can slice everything in a single parfor loop.
 for l = 0:L-1
-    for i = 0:I-1
-        for j = 0:J-1
-            for k = 0:K-1
-                index = k*(J*I*L) + j * (I*L) + i * (L) + l + 1;
-                Hd{index,1} =  Fp(l+1);
-                Hd{index,2} =  Ap(i+1);
-                Hd{index,3} = Fst(j+1);
-                Hd{index,4} = Ast(k+1);
-                Hd{index,5} = R;
+    for m = 0:M-1
+        for o = 0:O-1
+            for p = 0:P-1
+                n = p*(O*M*L) + o * (M*L) + m * (L) + l + 1;
+                Hd{n,1} =  Fp(l+1);
+                Hd{n,2} =  Ap(m+1);
+                Hd{n,3} = Fst(o+1);
+                Hd{n,4} = Ast(p+1);
+                Hd{n,5} = R;
             end
         end
     end
@@ -78,8 +80,8 @@ end
 
 % Design filters in parallel (this is the time-consuming part)
 gcp();
-Hpar = cell(cellsize,1);
-parfor n = 1:cellsize
+Hpar = cell(N,1);
+parfor n = 1:N
     % Specify Filter
     d = fdesign.decimator(...
         R,...
@@ -93,7 +95,7 @@ parfor n = 1:cellsize
     Hpar{n,1} = design(d,'SystemObject',true);
 
     basename = strcat(...
-        'r-',  num2str(R,             '%03.0f'),'--',...
+        'r-',  num2str(R              ,'%03.0f'),'--',...
         'fp-', num2str(Hd{n,1} * 1000 ,'%03.0f'),'--',...
         'fst-',num2str(Hd{n,3} * 1000 ,'%03.0f'),'--',...
         'ap-', num2str(Hd{n,2} * 1000 ,'%03.0f'),'--',...
@@ -141,7 +143,7 @@ parfor n = 1:cellsize
 end
 
 % Copy back to Hd
-for n = 1:cellsize
+for n = 1:N
     Hd{n,6} =  Hpar{n,1};
 end
 end % End of Function
