@@ -59,9 +59,9 @@ Hd = cell(N,4);
 for l = 0:L-1
     for p = 0:P-1
         n = p*L + l + 1;
-        Hd{n,1} =        R;
-        Hd{n,2} =  Tw(l+1);
-        Hd{n,3} = Ast(p+1);
+        Hd{n,2} =        R;
+        Hd{n,3} =  Tw(l+1);
+        Hd{n,4} = Ast(p+1);
     end
 end
 
@@ -73,8 +73,8 @@ parfor n = 1:N
         R,...
         'halfband',...
         'Tw,Ast',...
-        Hd{n,2},...
-        Hd{n,3});
+        Hd{n,3},...
+        Hd{n,4});
 
     % Design Filter
     Hpar{n,1} = design(d,'SystemObject',true);
@@ -82,8 +82,8 @@ parfor n = 1:N
     % Generate output file names
     basename = strcat(...
         'r-',  num2str(R              ,'%03.0f'),'--',...
-        'tw-', num2str(Hd{n,2} * 1000 ,'%03.0f'),'--',...
-        'ast-',num2str(Hd{n,3}        ,'%02.0f'));
+        'tw-', num2str(Hd{n,3} * 1000 ,'%03.0f'),'--',...
+        'ast-',num2str(Hd{n,4}        ,'%02.0f'));
 
     coefBasename = strcat(basename,'.coe');
     plotBasename = strcat(basename,'.csv');
@@ -128,6 +128,6 @@ end
 
 % Copy back to Hd
 for n = 1:N
-    Hd{n,4} =  Hpar{n,1};
+    Hd{n,1} =  Hpar{n,1};
 end
 end % End of Function

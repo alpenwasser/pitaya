@@ -151,7 +151,7 @@ switch filtertype
         stages = cell(2,1);
         stages{1} = Hd1;
         stages{2} = Hd2;
-        Hcasc = cascador(R, Fp, Fst, Ap, Ast, plotDir, stages);
+        Hcasc = cascador(R, Fp, Fst, Ap, Ast, 1, plotDir, stages);
     case 'DEC25'
         % 5 MHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
@@ -213,7 +213,7 @@ switch filtertype
         stages = cell(2,1);
         stages{1} = Hd1;
         stages{2} = Hd2;
-        Hcasc = cascador(R, Fp, Fst, Ap, Ast, plotDir, stages);
+        Hcasc = cascador(R, Fp, Fst, Ap, Ast, 1, plotDir, stages);
     case 'DEC125'
         % 1 MHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
@@ -245,13 +245,13 @@ switch filtertype
         % -> 25 -> 5 -> 5 2 ->
         % -> 5 -> 5 -> 5 -> 5 -> 2 -> 2 ->
     case 'DEC4'
-        % 31.25 MHz
+        % 31.25 MHz, T = 32 ns
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
         % -> 4 ->
         % -> 2 -> 2 ->
         % Cleanup if the script is called multiple times from the same Matlab instance.
         clear all;close all;
-        filtertype='DEC5';
+        filtertype='DEC4';
         genDir = 'generators';
         coefDir = 'coefData';
         plotDir = 'plotData';
@@ -260,7 +260,7 @@ switch filtertype
         Fs  = 125e6;
 
         % -------------------------------------------------------- Decimation Factor
-        R   = 4; % T = 32 ns
+        R   = 4;
 
         % ---------------------- Frequency at the Start of the Pass Band; Normalized
         % NOTE: The smallest number in Fp must be smaller than the smallest number
@@ -285,7 +285,7 @@ switch filtertype
         stages=cell(2,1);
         stages{1} = HdHB;
         stages{2} = HdHB;
-        Hcasc = cascador(R, Fp, Fst, 1, Ast, plotDir, stages);
+        Hcasc = cascador(R, Fp, Fst, 1, Ast, 1, plotDir, stages);
     case 'DEC24'
         % 5.2803 MHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
@@ -295,7 +295,7 @@ switch filtertype
         % -> 6 -> 2 -> 2 ->
         % -> 4 -> 3 -> 2 ->
     case 'DEC120'
-        % 1.0417 MHz
+        % 1.0417 MHz, T = 960 ns
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
         % -> 120 ->
         % -> 60 -> 2 ->
@@ -303,6 +303,56 @@ switch filtertype
         % -> 30 -> 2 -> 2 ->
         % -> 24 -> 5 ->
         % -> 20 -> 3 -> 2 ->
+        clear all;close all;
+        filtertype='DEC120';
+        genDir  = 'generators';
+        coefDir = 'coefData';
+        plotDir = 'plotData';
+
+        % ------------------------------------------- Input Sampling Frequency in Hz
+        Fs  = 125e6;
+
+        % -------------------------------------------------------- Decimation Factor
+        R   = 120;  % overall decimation rate
+        Rcic = R/4; % decimation rate in CIC
+
+        % ---------------------- Frequency at the Start of the Pass Band; Normalized
+        % NOTE: The smallest number in Fp must be smaller than the smallest number
+        %       in Fst (see below).
+        Fp  = 1/R;
+        
+        % ------------- ---------- Stop band frequencies ("How steep is the filter?")
+        % NOTE: The smallest number in Fst must be larger than the largest number in
+        %       Fp (see above).
+        Fst = Fp * 1.1;
+        Tw  = Fst - Fp; % Only works if Fst and Fp are same length or one is a scalar.
+
+        % ------------------------------------------------- Ripple in Passband in dB
+        Ap = [0.05 0.1 0.15];
+        
+        % ------------------------------------------- Attenuation in Stop Band in dB
+        Ast = [40 60 80];
+
+        % ----------------------------------------------- Differential Delay for CIC
+        DL = [1 2];
+
+        Hcic =  decCIC(Rcic, Fp, Ast, DL, plotDir);
+        Hd   = compCIC(Rcic, Fp, Fst, Ap, Ast, DL, Hcic, coefDir, plotDir);
+
+        slopeFactor = 4; % arbitrary slope weakener for first HB
+        HdHB1 = halfbandFIR(2, Tw * Rcic * slopeFactor, Ast, coefDir, plotDir);
+        HdHB2 = halfbandFIR(2, Tw * Rcic              , Ast, coefDir, plotDir);
+
+        % Hd is going to have more filters if DL is longer than 1 element
+        % Compensate for that by repeating the HB filters.
+        sizeHd  = size(Hd);
+        sizeHB1 = size(HdHB1);
+        sizeHB2 = size(HdHB2);
+        stages    = cell(3,1);
+        stages{1} = Hd;
+        stages{2} = repmat(HdHB1, [sizeHd(1) / sizeHB1(1),1]);
+        stages{3} = repmat(HdHB2, [sizeHd(1) / sizeHB2(1),1]);
+        Hcasc = cascador(R, Fp, Fst, Ap, Ast, DL, plotDir, stages);
     case 'DEC600'
         % 208.3 kHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:

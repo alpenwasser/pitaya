@@ -6,9 +6,9 @@ function Hd = decCIC(R, Fp, Ast, DL, plotDir)
 %       R:  decimation factor
 %
 %       Iteration Parameters
-%       Fp:  pass band edge frequencies (normalized) (array)
-%       Ast: stop band attenuation in dB (array)
-%       DL:  differential delay
+%       Fp:  pass band of interest (normalized) (double array)
+%       Ast: stop band attenuation in dB        (double array)
+%       DL:  differential delay                 (double array)
 %
 %       plotDir: directory in which to store output plot points
 %

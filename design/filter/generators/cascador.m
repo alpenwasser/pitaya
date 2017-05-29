@@ -1,4 +1,4 @@
-function Hcasc = cascador(R, Fp, Fst, Ap, Ast, plotDir, stages)
+function Hcasc = cascador(R, Fp, Fst, Ap, Ast, DL, plotDir, stages)
 %CASCADOR Cascade filters.
 %   Hcasc = cascador(R, Fp, Fst, Ap, Ast, plotDir, stages)
 %       Take a number of iteration parameters and filters and
@@ -12,6 +12,7 @@ function Hcasc = cascador(R, Fp, Fst, Ap, Ast, plotDir, stages)
 %       Fst: stop band edge frequencies (normalized) (array)
 %       Ap:  pass band ripples in dB (array)
 %       Ast: stop band attenuation in dB (array)
+%       DL   differential delay in case of CIC (set to 1 otherwise)
 %
 %       plotDir: directory in which to store output plot points
 %
@@ -49,62 +50,67 @@ L = length(Fp);
 M = length(Ap);
 O = length(Fst);
 P = length(Ast);
-N = L*M*O*P;
+Q = length(DL);
+N = L*M*O*P*Q;
 
-Hcasc  = cell(N,6);
+Hcasc  = cell(N,7);
 
 for l = 0:L-1
     for m = 0:M-1
         for o = 0:O-1
             for p = 0:P-1
-                n = p*(O*M*L) + o * (M*L) + m * (L) + l + 1;
+                for q = 0:Q-1
+                n = q*(P*O*M*L) + p*(O*M*L) + o * (M*L) + m * (L) + l + 1;
 
-                Hcasc{n,2} =  Fp(l+1);
-                Hcasc{n,3} =  Ap(m+1);
-                Hcasc{n,4} = Fst(o+1);
-                Hcasc{n,5} = Ast(p+1);
-                Hcasc{n,6} = R;
+                    Hcasc{n,2} =  Fp(l+1);
+                    Hcasc{n,3} =  Ap(m+1);
+                    Hcasc{n,4} = Fst(o+1);
+                    Hcasc{n,5} = Ast(p+1);
+                    Hcasc{n,6} =  DL(q+1);
+                    Hcasc{n,7} =        R;
 
-                % First, we create a two-stage cascade
-                Hcasc{n,1} = cascade(...
-                    stages{1}{n,1},...
-                    stages{2}{n,1}...
-                );
-                % If there are more stages, we append them
-                % to the existing cascade.
-                if length(stages) > 2
-                    for stage = 3:length(stages)
-                        Hcasc{n,1}.addStage(stages{stage}{n,1});
+                    % First, we create a two-stage cascade
+                    Hcasc{n,1} = cascade(...
+                        stages{1}{n,1},...
+                        stages{2}{n,1}...
+                    );
+                    % If there are more stages, we append them
+                    % to the existing cascade.
+                    if length(stages) > 2
+                        for stage = 3:length(stages)
+                            Hcasc{n,1}.addStage(stages{stage}{n,1});
+                        end
                     end
+
+                    % Generate output file names
+                    basename = strcat(...
+                        'r-',  num2str(R              ,'%03.0f'),'--',...
+                        'fp-', num2str(Hcasc{n,2} * 1000 ,'%03.0f'),'--',...
+                        'fst-',num2str(Hcasc{n,3} * 1000 ,'%03.0f'),'--',...
+                        'ap-', num2str(Hcasc{n,4} * 1000 ,'%03.0f'),'--',...
+                        'ast-',num2str(Hcasc{n,5}        ,'%02.0f'),'--',...
+                        'dl-' ,num2str(Hcasc{n,6}        ,'%d')    ,'--',...
+                        'stages-',num2str(length(stages))            ,...
+                        '.csv');
+
+                    plotFile = fullfile(plotDir, basename);
+
+                    % Save Filter Plot Data
+                    [H,W] = freqz(Hcasc{n,1}, 1e3);
+                    fh = fopen(plotFile, 'w');
+                    if fh ~= -1
+                        fprintf(fh, '%s,%s,%s\n', 'abs(H)', 'angle(H)', 'W');
+                        fclose(fh);
+                    end
+                    dlmwrite(...
+                        plotFile,...
+                        [abs(H) unwrap(angle(H)) W],...
+                        '-append',...
+                        'delimiter', ',',...
+                        'newline', 'unix'...
+                    );
+
                 end
-
-                % Generate output file names
-                basename = strcat(...
-                    'r-',  num2str(R              ,'%03.0f'),'--',...
-                    'fp-', num2str(Hcasc{n,2} * 1000 ,'%03.0f'),'--',...
-                    'fst-',num2str(Hcasc{n,3} * 1000 ,'%03.0f'),'--',...
-                    'ap-', num2str(Hcasc{n,4} * 1000 ,'%03.0f'),'--',...
-                    'ast-',num2str(Hcasc{n,5}        ,'%02.0f'),'--',...
-                    'stages-',num2str(length(stages))            ,...
-                    '.csv');
-
-                plotFile = fullfile(plotDir, basename);
-
-                % Save Filter Plot Data
-                [H,W] = freqz(Hcasc{n,1}, 1e3);
-                fh = fopen(plotFile, 'w');
-                if fh ~= -1
-                    fprintf(fh, '%s,%s,%s\n', 'abs(H)', 'angle(H)', 'W');
-                    fclose(fh);
-                end
-                dlmwrite(...
-                    plotFile,...
-                    [abs(H) unwrap(angle(H)) W],...
-                    '-append',...
-                    'delimiter', ',',...
-                    'newline', 'unix'...
-                );
-
             end
         end
     end
