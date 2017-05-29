@@ -1,8 +1,8 @@
 Filter Design
 =============
 
-This directory containts the filter design toolchain. It is primarily based
-on Matlab.
+This directory  containts the  filter design toolchain. It  is primarily
+based on Matlab.
 
 There are two basic workflows which are supported:
 
@@ -16,45 +16,51 @@ in the `generators/` directory.
 Generators
 ==========
 
-These are filter design scripts which produce various filter designs
-through iteration (though not optimization (yet)). They may or may not
+These are  filter design  scripts which  produce various  filter designs
+through iteration (though  not optimization (yet)). They may  or may not
 write their results to files or display them in Matlab figures.
 
-The generators are the backbone of the filter design toolchain; the
-main work happens there.
+The generators are the backbone of the filter design toolchain; the main
+work happens there.
 
 Adding New Generators
 ---------------------
 
-- Write a new generator script and put it into the `generators/` directory.
+-  Write a  new  generator  script and  put  it  into the  `generators/`
+directory.
 - Write the dispatching script part into `cliDispatcher.m`. This part is
 responsible for setting the filter design parameters:
   - pass band ripple
   - stop band attenuation
   - pass band edge frequency
   - stop band edge frequency
-- Add an invocation of `cliDispatcher.m` to the `Makefile` and to `guiwrapper.m`.
-You don't technically need to do both, but it keeps things nice and proper and 
-allows anyone else who might ever want to work with this to have both options.
+-  Add an  invocation  of  `cliDispatcher.m` to  the  `Makefile` and  to
+`guiwrapper.m`.  You  don't technically  need to do  both, but  it keeps
+things nice  and proper and  allows anyone else  who might ever  want to
+work with this to have both options.
 
 
 Designing New Filters With Existing Generators
 ----------------------------------------------
 
-If you want to design new filtes but have no need to write a new generator,
-as the above section might have you suspect, you can this as follows: Write
-the appropriate dispatching script section in `cliDispatcher.m` and add the
-calling commands to the `Makefile` and `guiWrapper.m`.
+If  you want  to design  new filtes  but  have no  need to  write a  new
+generator,  as  the  above  section  might have  you  suspect,  you  can
+this  as follows: Write  the appropriate  dispatching script  section in
+`cliDispatcher.m` and  add the  calling commands  to the  `Makefile` and
+`guiWrapper.m`.
 
 
 Running in Graphical Mode
 =========================
 
-Invoked via the `guiWrapper.m` file. Set the `filtertype` variable as
-needed and call `cliDispatcher.m` from there from within Matlab. 
+Invoked via  the `guiWrapper.m`  file. Set the `filtertype`  variable as
+needed and call `cliDispatcher.m` from there from within Matlab.
 
-The basic idea is to execute a single code block via `Ctrl` + `Return`,
-but you can run the enture script via `F5` as usual.
+The basic idea is to execute a  single code block via `Ctrl` + `Return`.
+Note  that if  you  run  the entire  script  with  `F5`, your  workspace
+variables  will only  contain  the filter  design  variables which  were
+created during the last code block. However, any filter coefficients and
+plot data will still be saved to disk.
 
 Call Structure
 --------------
@@ -94,39 +100,67 @@ Building Everything
 -------------------
 
 There is a special `make all` target which uses a single Matlab instance
-to generate all filters. Using this is therefore much more efficient if
+to generate all filters. Using this  is therefore much more efficient if
 you want to generate all filters, since if you launch each filter design
-command with its own `make` target, a single Matlab instance will be launched
-for each target.
+command with  its own `make`  target, a  single Matlab instance  will be
+launched for each target.
 
-It also does not launch the JVM and exits after completion. As usual, 
+It also  does not launch the  JVM and exits after  completion. As usual,
 invoke via:
 
 ```
 make all
 ```
 
+Alternatively, there  is the  `parallel` target,  which also  builds all
+filters,  but can  take advantage  of multi-core  machines by  launching
+multiple Matlab instances concurrently. It also  does not launch the JVM
+and exits once it has run.
+
+```
+make -j<core count> parallel
+```
+
+Where `<core count>` is specific to your machine. Note that the terminal
+output  will get  very messy  due to  all those  Matlab instances  still
+outputting launch and greeting messages.
+
 
 Output Files
 ============
 
-Output files with filter coefficients and plot data are stored in two directories:
+Output files  with filter coefficients and  plot data are stored  in two
+separate directories, while Matlab writes its log to a third:
 
 ```
 coefData
 plotData
+logs
 ```
-These directories will be created during execution if they do not already
-exist.
+These  directories will  be  created  during execution  if  they do  not
+already exist.
 
-`coefData` contains coefficient files for filter types which have coefficients.
-The format complies with `.coe` files for Xilinx.
+`coefData`  contains  coefficient  files  for filter  types  which  have
+coefficients.  The format complies with `.coe` files for Xilinx.
 
-`plotData` are data points from the `fvtool` utility for further processing
-with other tools (e.g. `pgfplots` in LaTeX, or whatever one's heart desires).
+`plotData`  are  data  points  from the  `fvtool`  utility  for  further
+processing with other tools (e.g. `pgfplots` in LaTeX, or whatever one's
+heart desires).
 
-Note that these directories are in the `.gitignore` file and will be ignored
-by Git unless you remove them.
+`logs` contains the Matlab console's output. Check here if anything goes
+wrong during a command line execution and Matlab's output was suppressed
+(which is the case  in the `parallel` and `all` targets,  or if you have
+manually redirected Matlab's output either via `REDIRECT=1>/dev/null` or
+by other  means). Note that  if you're running  the dispatcher  from the
+`guiWrapper.m` file, there will be no logs since they are superfluous in
+that case.
+
+__Note:__
+- These directories are in the  `.gitignore` file and will be ignored by
+Git unless you remove them.
+- If  nothing went wrong, the  log files won't contain  anything besides
+Matlab's greeting messages. So don't necessarily be alarmed if you check
+them and there is no useful info there.
 
 
 Filename Specification
@@ -142,7 +176,8 @@ Where:
 ```
  VVV: Three digits indicating decimation factor, zero-padded from left.
  WWW: Three digits inticating pass band edge, normalized, multiplied by 1000.
-      Example: 250 corresponds to Fp = 0.250
+      Left-padded with zeros.
+      Example: 025 corresponds to Fp = 0.025
  XXX: Stop band edge frequency, normalized, multiplied by 1000. Same as WWW.
  YYY: Passband ripple in dB, multiplied by 1000.
       Example: 300 corresponds to 0.3 dB passband ripple
@@ -155,31 +190,34 @@ Where:
 FAQ
 ===
 
-## Why So Convoluted?
+Why So Convoluted?
+------------------
 
-We are trying to keep everything in this project as flexible and scriptable
-as possible. Besides that,I like Vim, and prefer it to Matlab's text editor,
-so the CLI approach suits me well. But I acknowledge that this is not
-everyone's preference; hence the `guiWrapper.m` script.
+We  are trying  to  keep  everything in  this  project  as flexible  and
+scriptable  as   possible. Besides  that,I  like  Vim,   and  prefer  it
+to  Matlab's  text  editor,  so  the CLI  approach  suits  me  well. But
+I  acknowledge  that  this  is  not  everyone's  preference;  hence  the
+`guiWrapper.m` script.
 
-## How to Write generators?
+How to Write generators?
+------------------------
 
-However you like. As said, I like Vim; you may create your generators
-directly in Matlab or in another editor of your choosing. I've heard
+However you  like. As said, I like  Vim; you may create  your generators
+directly in  Matlab or  in another editor  of your  choosing. I've heard
 good things about `ex`. ;-)
 
-The basic idea behind the generators is that they iterate through a number
-of filter design parameters. There is nothing technically binding you to
-that though.
+The basic  idea behind  the generators  is that  they iterate  through a
+number of filter design parameters. There is nothing technically binding
+you to that though.
 
 
 Secondary Material
 ==================
 
-- `examples` contains examples from other sources, either unchanged or
+- `examples` contains  examples from other sources,  either unchanged or
 slightly modified.
 - `deprecated` contains old design and sandbox files which are no longer
-relevant for the system implementation, but might still have some
+relevant  for  the system  implementation,  but  might still  have  some
 illustrative purpose, and are therefore kept around.
 
 

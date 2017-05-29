@@ -15,30 +15,28 @@ function [Hd] = decFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir)
 %       plotDir: directory in which to store output plot points
 %
 %   RETURN VALUE
-%       Hd:  5-D cell array
+%       Hd:  N x 6 cell array
 %       Structure:
-%       Hd{l,i,j,k,:}
+%       Hd{N,6}
 %
-%       Its first four coordinates are:
-%       l: cell index for Fp
-%       i: cell index for Ap
-%       j: cell index for Fst
-%       k: cell index for Ast
+%       Where:
+%       N = L*M*O*P
+%       L = length(Fp)
+%       M = length(Ap)
+%       O = length(Fst)
+%       P = length(Ast)
 %
-%       Finally, in the last coordinate, we store the actual
-%       information (yes a Map would also be a way to implement
-%       this, but that carries its own pitfalls and drawbacks
-%       in the Matlab world).
-%       Hd{l,i,j,k,1}       FIR decimator object
-%       Hd{l,i,j,k,2}:   R: decimation factor
-%       Hd{l,i,j,k,3}:  Fp: pass band edge frequency
-%       Hd{l,i,j,k,4}:  Ap: pass band ripple in dB
-%       Hd{l,i,j,k,5}: Fst: stop band edge frequency
-%       Hd{l,i,j,k,6}: Ast: stop band attenuation in dB
-%       Hd{l,i,j,k,7}:   t: filter number in iteration
+%       Hd{n,1}: Filter: FIR decimator object
+%       Hd{n,2}:     Fp: pass band edge frequency 
+%       Hd{n,3}:      R: decimation factor
+%       Hd{n,4}:    Fst: stop band edge frequency
+%       Hd{n,5}:    Ast: stop band attenuation in dB
+%       Hd{n,6}:      R: decimation factor
+%       Where:
+%       n = p*(O*M*L) + o * (M*L) + m * (L) + l + 1;
 %
 %   SEE ALSO
-%       help cascador
+%       cascador, parcascador, pardecFIR, halfbandFIR, parhalfbandFIR
 %
 %   AUTHORS:
 %       Raphael Frey, <rmfrey@alpenwasser.net>
@@ -56,46 +54,47 @@ if ~exist(plotDir,'dir')
 end
 
 % ---------------------------------------------------- Filter Design Objects
-Hd  = cell(length(Fp),length(Ap),length(Fst),length(Ast),7);
+L = length(Fp);
+M = length(Ap);
+O = length(Fst);
+P = length(Ast);
+N = L*M*O*P;
 
-t = 0;             % total number of filters; filter number
-l = 1;             % cell index for Fp
-for fp = Fp
-    i = 1;         % cell index for Ap
-    for ap = Ap
-        j = 1;     % cell index for Fst
-        for fst = Fst
-            k = 1; % cell index for Ast
-            for ast = Ast
+Hd = cell(N,6);
+
+
+for l = 0:L-1
+    for m = 0:M-1
+        for o = 0:O-1
+            for p = 0:P-1
+                n = p*(O*M*L) + o * (M*L) + m * (L) + l + 1;
+
+                Hd{n,2} =  Fp(l+1);
+                Hd{n,3} =  Ap(m+1);
+                Hd{n,4} = Fst(o+1);
+                Hd{n,5} = Ast(p+1);
+                Hd{n,6} = R;
 
                 % Specify Filter
                 d = fdesign.decimator(...
                     R,...
                     'lowpass',...
                     'Fp,Fst,Ap,Ast',...
-                    fp,...
-                    fst,...
-                    ap,...
-                    ast);
+                    Hd{n,2},...
+                    Hd{n,4},...
+                    Hd{n,3},...
+                    Hd{n,5});
 
                 % Design Filter
-                Hd{l,i,j,k,1} = design(d,'SystemObject',true);
-
-                % Store additional Data for Filter
-                Hd{l,i,j,k,2} = R;
-                Hd{l,i,j,k,3} = fp;
-                Hd{l,i,j,k,4} = ap;
-                Hd{l,i,j,k,5} = fst;
-                Hd{l,i,j,k,6} = ast;
-                Hd{l,i,j,k,7} = t;
+                Hd{n,1} = design(d,'SystemObject',true);
 
                 % Generate output file names
                 basename = strcat(...
-                    'r-',  num2str(R,         '%03.0f'),'--',...
-                    'fp-', num2str(fp  * 1000,  '%.0f'),'--',...
-                    'fst-',num2str(fst * 1000,  '%.0f'),'--',...
-                    'ap-', num2str(ap  * 1000,  '%.0f'),'--',...
-                    'ast-',num2str(ast       ,'%02.0f'));
+                    'r-',  num2str(R              ,'%03.0f'),'--',...
+                    'fp-', num2str(Hd{n,2} * 1000 ,'%03.0f'),'--',...
+                    'fst-',num2str(Hd{n,4} * 1000 ,'%03.0f'),'--',...
+                    'ap-', num2str(Hd{n,3} * 1000 ,'%03.0f'),'--',...
+                    'ast-',num2str(Hd{n,5}        ,'%02.0f'));
 
                 coefBasename = strcat(basename,'.coe');
                 plotBasename = strcat(basename,'.csv');
@@ -114,16 +113,16 @@ for fp = Fp
                             repmat(...
                             '%.16f,\n',...
                             1,...
-                            numel(Hd{l,i,j,k,1}.Numerator) - 1),...
+                            numel(Hd{n,1}.Numerator) - 1),...
                             '%.16f;\n'...
                         ],...
-                        Hd{l,i,j,k,1}.Numerator ...
+                        Hd{n,1}.Numerator ...
                     );
                     fclose(fh);
                 end
 
                 % Save Filter Plot Data
-                [H,W] = freqz(Hd{l,i,j,k,1}, 1e3);
+                [H,W] = freqz(Hd{n,1}, 1e3);
                 fh = fopen(plotFile, 'w');
                 if fh ~= -1
                     fprintf(fh, '%s,%s,%s\n', 'abs(H)', 'angle(H)', 'W');
@@ -137,13 +136,8 @@ for fp = Fp
                     'newline', 'unix'...
                 );
 
-                k = k+1;
-                t = t+1;
             end
-            j = j+1;
         end
-        i = i+1;
     end
-    l = l+1;
 end
 end % End of Function
