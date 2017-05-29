@@ -36,7 +36,8 @@ function Hd = pardecFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir)
 %       n = p*(O*M*L) + o * (M*L) + m * (L) + l + 1;
 %
 %   SEE ALSO
-%       cascador, parcascador, decFIR, halfbandFIR, parhalfbandFIR
+%       cascador, compCIC, decCIC, decFIR, parcascador,
+%       halfbandFIR, parhalfbandFIR
 %
 %   AUTHORS:
 %       Raphael Frey, <rmfrey@alpenwasser.net>

@@ -25,7 +25,8 @@ function Hcasc = cascador(R, Fp, Fst, Ap, Ast, plotDir, stages)
 %       Hcasc:  Nx6 cell array as returned by decFIR.m
 %
 %   SEE ALSO
-%       decFIR, pardecFIR, cascador, halfbandFIR, parhalfbandFIR
+%       cascador, compCIC, decCIC, decFIR, pardecFIR
+%       halfbandFIR, parhalfbandFIR
 %
 %   AUTHORS:
 %       Raphael Frey, <rmfrey@alpenwasser.net>

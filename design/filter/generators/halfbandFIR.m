@@ -30,7 +30,8 @@ function Hd = halfbandFIR(R, Tw, Ast, coefDir, plotDir)
 %       n = p*L + l + 1;
 %
 %   SEE ALSO
-%       decFIR, cascador, parcascador, pardecFIR, parhalfbandFIR
+%       cascador, parcascador, compCIC, decCIC, decFIR,
+%       pardecFIR, parhalfbandFIR
 %
 %   AUTHORS:
 %       Raphael Frey, <rmfrey@alpenwasser.net>

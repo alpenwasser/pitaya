@@ -36,7 +36,8 @@ function [Hd] = decFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir)
 %       n = p*(O*M*L) + o * (M*L) + m * (L) + l + 1;
 %
 %   SEE ALSO
-%       cascador, parcascador, pardecFIR, halfbandFIR, parhalfbandFIR
+%       cascador, parcascador, compCIC, decCIC, pardecFIR, 
+%       halfbandFIR, parhalfbandFIR
 %
 %   AUTHORS:
 %       Raphael Frey, <rmfrey@alpenwasser.net>
@@ -53,7 +54,6 @@ if ~exist(plotDir,'dir')
     mkdir(plotDir);
 end
 
-% ---------------------------------------------------- Filter Design Objects
 L = length(Fp);
 M = length(Ap);
 O = length(Fst);
@@ -61,7 +61,6 @@ P = length(Ast);
 N = L*M*O*P;
 
 Hd = cell(N,6);
-
 
 for l = 0:L-1
     for m = 0:M-1

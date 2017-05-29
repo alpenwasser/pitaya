@@ -9,7 +9,7 @@ Fstop     = 1.1 * Fpass;  % Stop band edge; normalized to  higher sampling
                           % end. Used for compensation filter.
 Apass     = 0.01;         % Pass band ripple in dB
 
-dcic = fdesign.decimator(Rcic,'cic',1,'Fp,Ast',Fpass,Astop);
+dcic = fdesign.decimator(Rcic,'cic',diffDelay,'Fp,Ast',Fpass,Astop);
 Hcic = design(dcic,'SystemObject',true);
 
 dcomp = fdesign.ciccomp(...
