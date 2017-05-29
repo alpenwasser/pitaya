@@ -1,6 +1,6 @@
 function Hcasc = cascador(R, Fp, Fst, Ap, Ast, plotDir, stages)
-%CASCADOR Cascade filters.
-%   Hcasc = cascador(R, Fp, Fst, Ap, Ast, plotDir, stages)
+%PARCASCADOR Cascade filters.
+%   Hcasc = parcascador(R, Fp, Fst, Ap, Ast, plotDir, stages)
 %       Take a number of iteration parameters and filters and
 %       cascade the filters.
 %
