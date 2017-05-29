@@ -16,7 +16,8 @@ function Hcasc = cascador(R, Fp, Fst, Ap, Ast, plotDir, stages)
 %       plotDir: directory in which to store output plot points
 %
 %       stages: Mx1 cell array containing Nx6 cell arrays with
-%               filters and meta information.
+%               filters and meta information, where M corresponds
+%               to the number of stages to cascade.
 %               The Nx6 cell arrays are of the type returned by
 %               decFIR.m and pardecFIR.m
 %
@@ -24,7 +25,7 @@ function Hcasc = cascador(R, Fp, Fst, Ap, Ast, plotDir, stages)
 %       Hcasc:  Nx6 cell array as returned by decFIR.m
 %
 %   SEE ALSO
-%       decFIR, pardecFIR, parcascador
+%       decFIR, pardecFIR, parcascador, halfbandFIR, parhalfbandFIR
 %
 %   AUTHORS:
 %       Raphael Frey, <rmfrey@alpenwasser.net>
@@ -57,39 +58,39 @@ for l = 0:L-1
             for p = 0:P-1
                 n = p*(O*M*L) + o * (M*L) + m * (L) + l + 1;
 
-                Hcasc{n,1} =  Fp(l+1);
-                Hcasc{n,2} =  Ap(m+1);
-                Hcasc{n,3} = Fst(o+1);
-                Hcasc{n,4} = Ast(p+1);
-                Hcasc{n,5} = R;
+                Hcasc{n,2} =  Fp(l+1);
+                Hcasc{n,3} =  Ap(m+1);
+                Hcasc{n,4} = Fst(o+1);
+                Hcasc{n,5} = Ast(p+1);
+                Hcasc{n,6} = R;
 
                 % First, we create a two-stage cascade
-                Hcasc{n,6} = cascade(...
-                    stages{1}{n,6},...
-                    stages{2}{n,6}...
+                Hcasc{n,1} = cascade(...
+                    stages{1}{n,1},...
+                    stages{2}{n,1}...
                 );
                 % If there are more stages, we append them
                 % to the existing cascade.
                 if length(stages) > 2
                     for stage = 3:length(stages)
-                        Hcasc{n,6}.addStage(stages{stage}{n,6});
+                        Hcasc{n,1}.addStage(stages{stage}{n,1});
                     end
                 end
 
                 % Generate output file names
                 basename = strcat(...
                     'r-',  num2str(R              ,'%03.0f'),'--',...
-                    'fp-', num2str(Hcasc{n,1} * 1000 ,'%03.0f'),'--',...
+                    'fp-', num2str(Hcasc{n,2} * 1000 ,'%03.0f'),'--',...
                     'fst-',num2str(Hcasc{n,3} * 1000 ,'%03.0f'),'--',...
-                    'ap-', num2str(Hcasc{n,2} * 1000 ,'%03.0f'),'--',...
-                    'ast-',num2str(Hcasc{n,4}        ,'%02.0f'),'--',...
+                    'ap-', num2str(Hcasc{n,4} * 1000 ,'%03.0f'),'--',...
+                    'ast-',num2str(Hcasc{n,5}        ,'%02.0f'),'--',...
                     'stages-',num2str(length(stages))            ,...
                     '.csv');
 
                 plotFile = fullfile(plotDir, basename);
 
                 % Save Filter Plot Data
-                [H,W] = freqz(Hcasc{n,6}, 1e3);
+                [H,W] = freqz(Hcasc{n,1}, 1e3);
                 fh = fopen(plotFile, 'w');
                 if fh ~= -1
                     fprintf(fh, '%s,%s,%s\n', 'abs(H)', 'angle(H)', 'W');

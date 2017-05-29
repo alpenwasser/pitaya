@@ -26,17 +26,17 @@ function Hd = pardecFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir)
 %       O = length(Fst)
 %       P = length(Ast)
 %
-%       Hd{n,1}:     Fp: pass band edge frequency 
-%       Hd{n,2}:      R: decimation factor
-%       Hd{n,3}:    Fst: stop band edge frequency
-%       Hd{n,4}:    Ast: stop band attenuation in dB
-%       Hd{n,5}:      R: decimation factor
-%       Hd{n,6}: Filter: FIR decimator object
+%       Hd{n,1}: Filter: FIR decimator object
+%       Hd{n,2}:     Fp: pass band edge frequency 
+%       Hd{n,3}:      R: decimation factor
+%       Hd{n,4}:    Fst: stop band edge frequency
+%       Hd{n,5}:    Ast: stop band attenuation in dB
+%       Hd{n,6}:      R: decimation factor
 %       Where:
 %       n = p*(O*M*L) + o * (M*L) + m * (L) + l + 1;
 %
 %   SEE ALSO
-%       cascador, parcascador, decFIR
+%       cascador, parcascador, decFIR, halfbandFIR, parhalfbandFIR
 %
 %   AUTHORS:
 %       Raphael Frey, <rmfrey@alpenwasser.net>
@@ -68,11 +68,11 @@ for l = 0:L-1
         for o = 0:O-1
             for p = 0:P-1
                 n = p*(O*M*L) + o * (M*L) + m * (L) + l + 1;
-                Hd{n,1} =  Fp(l+1);
-                Hd{n,2} =  Ap(m+1);
-                Hd{n,3} = Fst(o+1);
-                Hd{n,4} = Ast(p+1);
-                Hd{n,5} = R;
+                Hd{n,2} =  Fp(l+1);
+                Hd{n,3} =  Ap(m+1);
+                Hd{n,4} = Fst(o+1);
+                Hd{n,5} = Ast(p+1);
+                Hd{n,6} = R;
             end
         end
     end
@@ -87,19 +87,19 @@ parfor n = 1:N
         R,...
         'lowpass',...
         'Fp,Fst,Ap,Ast',...
-        Hd{n,1},...
-        Hd{n,3},...
         Hd{n,2},...
-        Hd{n,4});
+        Hd{n,4},...
+        Hd{n,3},...
+        Hd{n,5});
         
     Hpar{n,1} = design(d,'SystemObject',true);
 
     basename = strcat(...
         'r-',  num2str(R              ,'%03.0f'),'--',...
-        'fp-', num2str(Hd{n,1} * 1000 ,'%03.0f'),'--',...
-        'fst-',num2str(Hd{n,3} * 1000 ,'%03.0f'),'--',...
-        'ap-', num2str(Hd{n,2} * 1000 ,'%03.0f'),'--',...
-        'ast-',num2str(Hd{n,4}        ,'%02.0f'));
+        'fp-', num2str(Hd{n,2} * 1000 ,'%03.0f'),'--',...
+        'fst-',num2str(Hd{n,4} * 1000 ,'%03.0f'),'--',...
+        'ap-', num2str(Hd{n,3} * 1000 ,'%03.0f'),'--',...
+        'ast-',num2str(Hd{n,5}        ,'%02.0f'));
     
     coefBasename = strcat(basename,'.coe');
     plotBasename = strcat(basename,'.csv');
@@ -144,6 +144,6 @@ end
 
 % Copy back to Hd
 for n = 1:N
-    Hd{n,6} =  Hpar{n,1};
+    Hd{n,1} =  Hpar{n,1};
 end
 end % End of Function

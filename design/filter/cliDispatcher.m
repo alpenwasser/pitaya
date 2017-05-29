@@ -271,15 +271,21 @@ switch filtertype
         % NOTE: The smallest number in Fst must be larger than the largest number in
         %       Fp (see above).
         Fst = [0.26 0.27 0.28];
+        Tw  = Fst - Fp; % Only works if Fst and Fp are same length or one is a scalar.
 
         % ------------------------------------------------- Ripple in Passband in dB
-        Ap = [0.01 0.05 0.1 0.15];
+        Ap = [0.05 0.1 0.15];
         
         % ------------------------------------------- Attenuation in Stop Band in dB
-        Ast = [40 60 80 100];
+        Ast = [40 60 80];
                 
         % Hd: Contains the Filter Objects along with their properties (R, Fs, Fp,...)
-        Hd = decFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir);
+        Hd   =      decFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir);
+        HdHB = halfbandFIR(2, Tw,          Ast, coefDir, plotDir);
+        stages=cell(2,1);
+        stages{1} = HdHB;
+        stages{2} = HdHB;
+        Hcasc = cascador(R, Fp, Fst, 1, Ast, plotDir, stages);
     case 'DEC24'
         % 5.2803 MHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
