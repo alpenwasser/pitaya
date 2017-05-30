@@ -328,13 +328,13 @@ switch filtertype
         Tw  = Fst - Fp; % Only works if Fst and Fp are same length or one is a scalar.
 
         % ------------------------------------------------- Ripple in Passband in dB
-        Ap = [0.05 0.1 0.15];
+        Ap = [0.05 0.1];
         
         % ------------------------------------------- Attenuation in Stop Band in dB
-        Ast = [40 60 80];
+        Ast = [40 60];
 
         % ----------------------------------------------- Differential Delay for CIC
-        DL = [1 2];
+        DL = [1];
 
         Hcic =  decCIC(Rcic, Fp, Ast, DL, plotDir);
         Hd   = compCIC(Rcic, Fp, Fst, Ap, Ast, DL, Hcic, coefDir, plotDir);

@@ -66,7 +66,7 @@ for l = 0:L-1
                     Hcasc{n,4} = Fst(o+1);
                     Hcasc{n,5} = Ast(p+1);
                     Hcasc{n,6} =  DL(q+1);
-                    Hcasc{n,7} = R;
+                    Hcasc{n,7} =        R;
                 end
             end
         end
@@ -76,15 +76,30 @@ end
 gcp();
 Hpar = cell(N,1);
 parfor n = 1:N
-    % First, we create a two-stage cascade
-    Hpar{n,1} = cascade(...
-        stages{1}{n,1},...
-        stages{2}{n,1}...
-    );
-    % If there are more stages, we append them
-    % to the existing cascade.
-    if length(stages) > 2
-        for stage = 3:length(stages)
+    % NOTE: Must use 'clone' here, or else it will be a
+    % reference and the original objects will be modified.
+    if stages{1}{n,1}.isFilterCascade
+        % If first element is a cascade, don't create a new
+        % one, but use that.
+        Hpar{n,1} = stages{1}{n,1}.clone;
+    else
+        % If not, create a new cascade with a single stage.
+        Hpar{n,1} = cascade(stages{1}{n,1}.clone);
+    end
+
+    % Append the remaining stages.
+    for stage = 2:length(stages)
+        if stages{stage}{n,1}.isFilterCascade
+            % If we have a filter cascade, dive into it
+            % (only one level).
+            cascLength = stages{stage}{n,1}.getNumStages;
+            for subStage = 1:cascLength
+                Hpar{n,1}.addStage(...
+                    stages{stage}{n,1}.(...
+                        strcat('Stage', num2str(subStage))));
+            end
+        else
+            % Otherwise, just append the filter.
             Hpar{n,1}.addStage(stages{stage}{n,1});
         end
     end
