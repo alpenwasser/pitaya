@@ -1,3 +1,4 @@
+\RequirePackage{snapshot}
 \documentclass[a4paper,oneside]{alpenthesis/alpenthesis}
 % <<< Preamble
 \hexfalse
@@ -5,6 +6,9 @@
 %https://tex.stackexchange.com/a/210456/131649
 \renewcommand\partnumberlinebox[2]{#2\hspace{2em}}
 \usetikzlibrary{positioning}
+\tcbuselibrary{breakable}
+\tcbset{shield externalize}
+\makeindex
 % >>>
 \begin{document}
 \begin{titlingpage} % <<<
@@ -28,7 +32,15 @@
 \end{titlingpage} % >>>
 
 \frontmatter % <<<
+% https://en.wikipedia.org/wiki/Edition_notice
 \tableofcontents*
+\clearpage
+\listoffigures*
+\clearpage
+\listoftables*
+\clearpage
+\listoflistings
+\clearpage
 % >>>
 
 \mainmatter
@@ -71,17 +83,17 @@ Provide supplementary theoretical background as needed.
     Sampling:
         \begin{itemize}
             \item
-            Sampling in time domain: Multiplication with dirac pulse sequence
+            \index{Sampling} in time domain: Multiplication with dirac pulse sequence
             \item
             Frequency doman: Convolution of signal spectrum and dirac pulse spectrum
             \item
             ``What is spectrum of dirac pulse sequence?'' (dirac pulse sequence)
             \item
-            Consequently: Spectrum of sampled signal is repeated for each dirac pulse in the spectrum
+            Consequently: \index{Spectrum} of sampled signal is repeated for each dirac pulse in the spectrum
             \item
             \textbf{Make sure to get distances between pulses as well as heights correct!}
             \item
-            Aliasing
+            \index{Aliasing}
             \item
             LP-Filtering (Anti-Aliasing Filter)
             \item
@@ -173,8 +185,8 @@ General Info about Red Pitaya Project:
 \label{part:Implementation}
 % ---------------------------------------------------------------------------- %
 Implementation can be read independently of previous part, but there should be
-a  red thread  from decision  to implementation. Deals  primarily with  design
-decisions.
+a  red thread  from decision  to \index{implementation}. Deals  primarily with
+design decisions.
 
 Present a diagram with all  system components. Then document the components in
 their respective chapters and sections.
@@ -212,6 +224,13 @@ improve upon it?
 Make sure  to distinguish  between \emph{Implementation} and  this part. Lines
 seem a bit blurry to me (R.F.) at the moment (\today).
 
+\chapter{Project Structure} % <<< -------------------------------------------- %
+\label{ch:Project_Structure}
+% ---------------------------------------------------------------------------- %
+Structure of the repository. What can be found where, and what to do with it?
+
+% >>>
+
 \chapter{IP Core} % <<< ------------------------------------------------------ %
 \label{ch:IP_Core}
 % ---------------------------------------------------------------------------- %
@@ -239,9 +258,182 @@ Vivado, Build Box, ARM Linux, TCL, Makefiles, Libs for building server applicati
 \part{User Guide} % <<< ------------------------------------------------------ %
 \label{part:User_Guide}
 % ---------------------------------------------------------------------------- %
-Documentation for the end user. Primarily concerned with the scope front-end.
+Documentation  for the  end user. Primarily  concerned with  the \index{scope}
+front-end.
 
 % >>>
 
+\cleardoublepage % <<< ---------------------------------------------APPENDICES %
+\begin{titlingpage*}
+    \fullhexpage{da2}{ct4}
+    \begin{vplace}
+        \flushright\Huge\bfseries\sffamily\appendixpagename
+    \end{vplace}
+\end{titlingpage*}
+\appendix
+\chapterstyle{alpenappendix}
+% ---------------------------------------------------------------------------- %
+
+% Matlab-prettifier: Uses the lstlisting counter
+% Minted: Uses the listing counter
+
+\chapter{Code Listings}
+\label{ch:Code_Listings}
+
+Shell commands can be type thusly:
+\begin{commandshell}
+    user:> if [ -f "${myfile}" ];then echo "${myfile} exists!"
+\end{commandshell}
+
+\section{Makefile}
+\begin{tcolorbox}[
+        breakable,
+        title={
+            \refstepcounter{listing}
+            Listing \thelisting: Makefile Code
+            \label{lst:makefile}
+            \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Makefile Code}
+        }
+    ]
+    \inputminted{makefile}{code/Makefile}
+\end{tcolorbox}
+
+\section{Verilog}
+\begin{tcolorbox}[
+        breakable,
+        width=1.2\textwidth,
+        title={
+            \refstepcounter{listing}
+            Listing \thelisting: Verilog Code
+            \label{lst:makefile}
+            \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Verilog Code}
+        }
+    ]
+\inputminted{verilog}{./code/axi_axis_reader.v}
+\end{tcolorbox}
+
+\section{VHDL}
+\inputminted{vhdl}{./code/comparator.vhd}
+
+\section{TCL}
+\inputminted{tcl}{./code/create_cores.tcl}
+
+\begin{listing}
+    \begin{minted}[autogobble]{vhdl}
+        entity comparator is
+            generic (
+                Width : integer := 14
+            );
+            port (
+                AxDI : in unsigned(Width - 1 downto 0);
+                BxDI : in unsigned(Width - 1 downto 0);
+                GreaterxSO : out std_logic;
+                EqualxSO : out std_logic;
+                LowerxSO : out std_logic
+            );
+        end comparator;
+    \end{minted}
+    \caption{Comparator}
+    \label{lst:vhdl:comparator}
+\end{listing}
+
+\section{Matlab}
+Here, we shall also demonstrate breaking a code file into multiple segments
+to comment on its contents.
+
+We start with the header:
+\begin{tcolorbox}[
+        skin = octoboxfirst,
+        title={
+            \refstepcounter{listing}
+            Listing \thelisting: Matlab Code
+            \label{lst:makefile}
+            \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Matlab Code}
+        }
+    ]
+    \inputminted[
+        linenos,
+        numbersep=4pt,
+        style=solarizedlight,
+        firstline=1,
+        lastline=12,
+    ]{matlab}{./code/filterChainDesigns.m}
+\end{tcolorbox}
+In the next box, we start where we  left off previously, and we pack some more
+header information into our listing:
+\begin{tcolorbox}[
+        skin = octoboxmiddle,
+    ]
+    \inputminted[
+        linenos,
+        numbersep=4pt,
+        style=solarizedlight,
+        firstnumber=last,
+        firstline=13,
+        lastline=26,
+    ]{matlab}{./code/filterChainDesigns.m}
+\end{tcolorbox}
+
+Then we describe the target for the FIR filter:
+\begin{tcolorbox}[
+        skin = octoboxmiddle,
+    ]
+    \inputminted[
+        linenos,
+        numbersep=4pt,
+        style=solarizedlight,
+        firstnumber=29,
+        firstline=29,
+        lastline=40,
+    ]{matlab}{./code/filterChainDesigns.m}
+\end{tcolorbox}
+
+After which we start the sript proper by setting up the iteration parameters:
+\begin{tcolorbox}[
+        skin = octoboxmiddle,
+    ]
+    \inputminted[
+        linenos,
+        numbersep=4pt,
+        style=solarizedlight,
+        firstnumber=43,
+        firstline=43,
+        lastline=64,
+    ]{matlab}{./code/filterChainDesigns.m}
+\end{tcolorbox}
+
+We define some data structures to contain the filter objects for further processing:
+\begin{tcolorbox}[
+        skin = octoboxmiddle,
+    ]
+    \inputminted[
+        linenos,
+        numbersep=4pt,
+        style=solarizedlight,
+        firstnumber=66,
+        firstline=66,
+        lastline=78,
+    ]{matlab}{./code/filterChainDesigns.m}
+\end{tcolorbox}
+
+And then we iterate:
+\begin{tcolorbox}[
+        skin = octoboxlast,
+    ]
+    \inputminted[
+        linenos,
+        numbersep=4pt,
+        style=solarizedlight,
+        firstnumber=80,
+        firstline=80,
+        %lastline=78,
+    ]{matlab}{./code/filterChainDesigns.m}
+\end{tcolorbox}
+
+% >>>
+
+\backmatter
+% Indexing: memman.pdf, pp. 302ff.
+\printindex
 \end{document}
 %^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>

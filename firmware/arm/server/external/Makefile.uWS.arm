@@ -1,23 +1,43 @@
-CPP_SHARED := -std=c++11 -O3 -I src -shared -fPIC src/Extensions.cpp src/Group.cpp src/Networking.cpp src/Hub.cpp src/Node.cpp src/WebSocket.cpp src/HTTPSocket.cpp src/Socket.cpp src/Epoll.cpp
-CPP_OPENSSL_ARM = -I../build/openssl/include -L../build/openssl/lib
-CPP_ZLIB_ARM = -I../build/zlib/include -L../build/zlib/lib
-CPP_ARM = $(CPP_OPENSSL_ARM) $(CPP_ZLIB_ARM)
-CXX_ARM = arm-linux-gnueabihf-g++
-BUILD = ../build
+# ---------------------------------------------------------------------------- #
+# Builds uWebSockets Library
+#
+# Makefile for firmware/arm/server/external/uWebSockets
+# Location:    firmware/arm/server/external/Makefile.uWS.arm
+#
+# Authors: Noah Huesser <yatekii@yatekii.ch>
+#          Raphael Frey <rmfrey@alpenwasser.net>
+#
+# Date:   2017-05-20
+#
+# Called by: firmware/arm/server/external/Makefile
+# 
+# Working Directory: firmware/arm/server/external/uWebsockets
+# ---------------------------------------------------------------------------- #
+BUILD_DIR       := ../build
+CPP_SHARED      := -std=c++11 -O3 -I src -shared -fPIC src/Extensions.cpp \
+                   src/Group.cpp src/Networking.cpp src/Hub.cpp src/Node.cpp \
+                   src/WebSocket.cpp src/HTTPSocket.cpp src/Socket.cpp \
+                   src/Epoll.cpp
+CPP_OPENSSL_ARM := -I$(BUILD_DIR)/openssl/include -L$(BUILD_DIR)/openssl/lib
+CPP_ZLIB_ARM    := -I$(BUILD_DIR)/zlib/include    -L$(BUILD_DIR)/zlib/lib
+#CPP_LIBUV_ARM   := -I$(BUILD_DIR)/uv/include    -L$(BUILD_DIR)/uv/lib
+CPP_ARM         := $(CPP_OPENSSL_ARM) $(CPP_ZLIB_ARM) $(CPP_LIBUV_ARM)
+CXX_ARM         := arm-linux-gnueabihf-g++
 
 all:
 	$(CXX_ARM) $(CPPFLAGS) $(CFLAGS) $(CPP_SHARED) $(CPP_ARM) -s -o libuWS.so
 
+# Syntactic sugar for calling installARM target
 .PHONY: install
 install:
 	make -f ../Makefile.uWS.arm installARM
 
 .PHONY: installARM
 installARM:
-	mkdir -p $(BUILD)/uWS/lib
-	mkdir -p $(BUILD)/uWS/include
-	cp libuWS.so $(BUILD)/uWS/lib
-	cp src/*.h $(BUILD)/uWS/include
+	mkdir -p $(BUILD_DIR)/uWS/lib
+	mkdir -p $(BUILD_DIR)/uWS/include
+	cp libuWS.so $(BUILD_DIR)/uWS/lib
+	cp src/*.h $(BUILD_DIR)/uWS/include
 
 .PHONY: clean
 clean:
