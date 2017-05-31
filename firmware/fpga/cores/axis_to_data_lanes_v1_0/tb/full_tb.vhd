@@ -32,18 +32,18 @@ architecture Behavioral of full_tb is
     signal tbClkxC : std_logic := '0';
     signal tbRstxRB : std_logic := '0';
     signal tbDataxD : std_logic_vector(31 downto 0) := (others => '0');
-    signal tbCntxD: unsigned(13 downto 0) := (others => '0');
+    signal tbCntxD: signed(15 downto 0) := to_signed(-430, 16);
     signal tbValidxS : std_logic := '0';
     signal tbReadyxS: std_logic := '0';
-    signal tbData0xDO: std_logic_vector(13 downto 0) := (others => '0');
-    signal tbData1xDO: std_logic_vector(13 downto 0) := (others => '0');
+    signal tbData0xDO: std_logic_vector(15 downto 0) := (others => '0');
+    signal tbData1xDO: std_logic_vector(15 downto 0) := (others => '0');
     signal tbStrobexS: std_logic := '0';
     
 begin
     
     -- generate clock
     tbClkxC <= not tbClkxC after 1ns;
-    tbDataxD <= "01" & std_logic_vector(tbCntxD) & "00" & std_logic_vector(tbCntxD);
+    tbDataxD <= std_logic_vector(tbCntxD) & std_logic_vector(tbCntxD);
 
     DUT : entity work.axis_to_data_lanes
     generic map (
@@ -52,7 +52,7 @@ begin
     port map (
         ClkxCI => tbClkxC,
         RstxRBI => tbRstxRB,
-        --AxiTDataxDI=> tbDataxD,
+        AxiTDataxDI=> tbDataxD,
         AxiTValid => tbValidxS,
 
         AxiTReady => tbReadyxS,
@@ -88,7 +88,7 @@ begin
     process(tbClkxC, tbRstxRB, tbCntxD)
     begin
         if rising_edge(tbClkxC) then
-            tbCntxD <= (others => '0');
+            tbCntxD <= to_signed(-430, 16);
             if tbRstxRB = '1' then
                 tbCntxD <= tbCntxD + 1;
             end if;

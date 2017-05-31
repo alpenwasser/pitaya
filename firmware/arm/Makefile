@@ -119,7 +119,7 @@ cores:
 project: 
 	cd $(FPGA) && make project
 
-hwdef: project
+hwdef:
 	mkdir -p $(BUILD)
 	$(VIVADO) -source scripts/hwdef.tcl -tclargs $(FPGA_BUILD) $(NAME)
 

@@ -4,7 +4,8 @@ use IEEE.NUMERIC_STD.all;
 
 entity axis_to_data_lanes is
   generic (
-    Decimation: integer := 125
+    Decimation: integer := 125;
+    Offset: integer := 8192
   );
   port (
     ClkxCI: in std_logic;
@@ -13,8 +14,8 @@ entity axis_to_data_lanes is
     AxiTValid: in std_logic := '0';
 
     AxiTReady: out std_logic;
-    Data0xDO: out std_logic_vector(13 downto 0);
-    Data1xDO: out std_logic_vector(13 downto 0);
+    Data0xDO: out std_logic_vector(15 downto 0);
+    Data1xDO: out std_logic_vector(15 downto 0);
     DataStrobexDO: out std_logic
   );
 end axis_to_data_lanes;
@@ -23,11 +24,15 @@ architecture V1 of axis_to_data_lanes is
   signal DataxDP, DataxDN : std_logic_vector(31 downto 0) := (others => '0');
   signal StrobexDP, StrobexDN : std_logic := '0';
   signal CntxDP, CntxDN: unsigned(16 downto 0) := (others => '0');
+  signal X: std_logic_vector(15 downto 0);
+  signal Y: std_logic_vector(15 downto 0);
+  signal A: std_logic_vector(15 downto 0);
+  signal B: std_logic_vector(15 downto 0);
 begin
 
     -- Persistent signal mappings
-    Data0xDO <= DataxDP(13 downto 0);
-    Data1xDO <= DataxDP(29 downto 16);
+    Data0xDO <= DataxDP(15 downto 0);
+    Data1xDO <= DataxDP(31 downto 16);
     DataStrobexDO <= StrobexDP;
 
       -- FF logic
@@ -55,7 +60,12 @@ begin
       --if AxiTValid = '1' then
         -- receive every nth sample
         if CntxDP = Decimation - 1 then
-          DataxDN <= AxiTDataxDI;
+          A <= AxiTDataxDI(15 downto 0);
+          B <= AxiTDataxDI(31 downto 16);
+          X <= std_logic_vector(signed(A) + Offset);
+          Y <= std_logic_vector(signed(B) + Offset);
+          DataxDN <= Y & X;
+--          DataxDN <= AxiTDataxDI;
           StrobexDN <= '1';
           CntxDN <= (others => '0');
         else
