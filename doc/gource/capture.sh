@@ -3,7 +3,7 @@ gource                      \
     -1920x1080              \
     -r 60                   \
     --time-scale 4          \
-    --title "IK" \
+    --title "IK"            \
     --key                   \
     -o - |                  \
 ffmpeg                      \
@@ -13,7 +13,7 @@ ffmpeg                      \
     -c:v ppm                \
     -i -                    \
     -c:v libx264            \
-    -preset medium          \
+    -preset fast            \
     -pix_fmt yuv420p        \
     -crf 1                  \
     -threads 0              \
