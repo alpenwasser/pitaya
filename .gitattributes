@@ -2,3 +2,5 @@
 doc/                             linguist-documentation=false
 *.ipynb                          linguist-generated=true
 firmware/arm/server/src/json.hpp linguist-vendored=true
+*.v                              linguist-vendored=true
+firmware/arm/patches/            linguist-vendored=true
