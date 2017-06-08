@@ -1,4 +1,7 @@
-Red Pitaya
-==========
+Red Pitaya Custom DAS
+=====================
 
-Our thesis project, based on the Red Pitaya.
+A custom data acquisition system based on the Red Pitaya.
+
+- new FPGA codebase with custom custom decimation filters
+- new front-end providing a browser-based oscilloscope
