@@ -24,10 +24,6 @@ architecture V1 of axis_to_data_lanes is
   signal DataxDP, DataxDN : std_logic_vector(31 downto 0) := (others => '0');
   signal StrobexDP, StrobexDN : std_logic := '0';
   signal CntxDP, CntxDN: unsigned(16 downto 0) := (others => '0');
-  signal X: std_logic_vector(15 downto 0);
-  signal Y: std_logic_vector(15 downto 0);
-  signal A: std_logic_vector(15 downto 0);
-  signal B: std_logic_vector(15 downto 0);
 begin
 
     -- Persistent signal mappings
@@ -55,15 +51,19 @@ begin
       end if;
     end process;
 
-    process(AxiTValid, CntxDP, AxiTDataxDI, ClkxCI)
+    p_Converter: process(AxiTValid, CntxDP, AxiTDataxDI)
+      variable X: std_logic_vector(15 downto 0);
+      variable Y: std_logic_vector(15 downto 0);
+      variable A: std_logic_vector(15 downto 0);
+      variable B: std_logic_vector(15 downto 0);
     begin
       --if AxiTValid = '1' then
         -- receive every nth sample
         if CntxDP = Decimation - 1 then
-          A <= AxiTDataxDI(15 downto 0);
-          B <= AxiTDataxDI(31 downto 16);
-          X <= std_logic_vector(signed(A) + Offset);
-          Y <= std_logic_vector(signed(B) + Offset);
+          A := AxiTDataxDI(15 downto 0);
+          B := AxiTDataxDI(31 downto 16);
+          X := std_logic_vector(signed(A) + Offset);
+          Y := std_logic_vector(signed(B) + Offset);
           DataxDN <= Y & X;
 --          DataxDN <= AxiTDataxDI;
           StrobexDN <= '1';
