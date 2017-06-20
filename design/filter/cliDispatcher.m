@@ -73,22 +73,22 @@ switch filtertype
         % ---------------------- Frequency at the Start of the Pass Band; Normalized
         % NOTE: The smallest number in Fp must be smaller than the smallest number
         %       in Fst (see below).
-        Fp  = [0.1 0.15 0.2];
-        %Fp  = 0.2;
+        %Fp  = [0.1 0.15 0.2];
+        Fp  = 0.2;
 
         % ------------- ---------- Stop band frequencies ("How steep is the filter?")
         % NOTE: The smallest number in Fst must be larger than the largest number in
         %       Fp (see above).
-        Fst = [0.21 0.22];
-        %Fst = 0.22;
+        %Fst = [0.21 0.22];
+        Fst = 0.22;
 
         % ------------------------------------------------- Ripple in Passband in dB
-        Ap  = [0.25 0.5 1];
-        %Ap  = 0.25;
+        %Ap  = [0.25 0.5 1];
+        Ap  = 0.25;
 
         % ------------------------------------------- Attenuation in Stop Band in dB
-        Ast = [20 40 60 80];
-        %Ast = [40 60];
+        %Ast = [20 40 60 80];
+        Ast = [40 60];
 
         % Hd: Contains the Filter Objects along with their properties (R, Fs, Fp,...)
         Hd = decFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir);
@@ -132,9 +132,9 @@ switch filtertype
         Fst1 = padding + 1/R1 * (2 - Fst2);
 
         % ------------------------------------------------- Ripple in Passband in dB
-        Ap1 = [0.125 0.0625 0.03125]; % NOTE: Cascaded filters amplify 
+        Ap1 = [0.125 0.0625 0.03125]; % NOTE: Cascaded filters amplify
         Ap2 = [0.125 0.0625 0.03125]; % each other's riple in PB.
-        Ap  = [0.250 0.125  0.0625 ]; % Single-stage ripple can therefore be twice 
+        Ap  = [0.250 0.125  0.0625 ]; % Single-stage ripple can therefore be twice
                                       % as big.
 
         % ------------------------------------------- Attenuation in Stop Band in dB
@@ -220,6 +220,55 @@ switch filtertype
         % -> 125 ->
         % -> 25 -> 5 ->
         % -> 5 -> 5 -> 5 ->
+        clear all;close all;
+        filtertype='DEC125';
+        genDir  = 'generators';
+        coefDir = 'coefData';
+        plotDir = 'plotData';
+
+        % ------------------------------------------- Input Sampling Frequency in Hz
+        Fs  = 125e6;
+
+        % -------------------------------------------------------- Decimation Factor
+        R   = 125;  % overall decimation rate
+        Rcic = R/5; % decimation rate in CIC
+        Rfir = R / Rcic; % decimation rate in FIR filter (not the compensator)
+
+        % ---------------------- Frequency at the Start of the Pass Band; Normalized
+        % NOTE: The smallest number in Fp must be smaller than the smallest number
+        %       in Fst (see below).
+        Fp  = 1/R;
+        FpFIR = 1/Rfir;
+
+        % ------------- ---------- Stop band frequencies ("How steep is the filter?")
+        % NOTE: The smallest number in Fst must be larger than the largest number in
+        %       Fp (see above).
+        Fst = Fp * 1.1;
+        FstFIR = FpFIR * 1.1;
+        Tw  = Fst - Fp; % Only works if Fst and Fp are same length or one is a scalar.
+        TwFIR = FstFIR - FpFIR;
+
+        % ------------------------------------------------- Ripple in Passband in dB
+        Ap = [0.05 0.1];
+
+        % ------------------------------------------- Attenuation in Stop Band in dB
+        Ast = [40 60];
+
+        % ----------------------------------------------- Differential Delay for CIC
+        DL = [1];
+
+        Hcic  =  decCIC(Rcic, Fp, Ast, DL, plotDir);
+        Hd    = compCIC(1, Fp, Fst, Ap, Ast, DL, Hcic, coefDir, plotDir);
+        HdFIR = decFIR(Rfir , FpFIR , FstFIR , Ap , Ast , coefDir, plotDir);
+
+        % Hd is going to have more filters if DL is longer than 1 element
+        % Compensate for that by repeating the HB filters.
+        sizeHd  = size(Hd);
+        sizeHdFIR = size(HdFIR);
+        stages    = cell(2,1);
+        stages{1} = Hd;
+        stages{2} = repmat(HdFIR, [sizeHd(1) / sizeHdFIR(1),1]);
+        Hcasc = cascador(R, Fp, Fst, Ap, Ast, DL, plotDir, stages);
     case 'DEC625'
         % 200 kHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
@@ -227,23 +276,171 @@ switch filtertype
         % -> 125 -> 5 ->
         % -> 25 -> 5 -> 5
         % -> 5 -> 5 -> 5 -> 5 ->
+        clear all;close all;
+        filtertype='DEC625';
+        genDir  = 'generators';
+        coefDir = 'coefData';
+        plotDir = 'plotData';
+
+        % ------------------------------------------- Input Sampling Frequency in Hz
+        Fs  = 125e6;
+
+        % -------------------------------------------------------- Decimation Factor
+        R   = 625;  % overall decimation rate
+        Rcic = R/5; % decimation rate in CIC
+        Rfir = R / Rcic; % decimation rate in FIR filter (not the compensator)
+
+        % ---------------------- Frequency at the Start of the Pass Band; Normalized
+        % NOTE: The smallest number in Fp must be smaller than the smallest number
+        %       in Fst (see below).
+        Fp  = 1/R;
+        FpFIR = 1/Rfir;
+
+        % ------------- ---------- Stop band frequencies ("How steep is the filter?")
+        % NOTE: The smallest number in Fst must be larger than the largest number in
+        %       Fp (see above).
+        Fst = Fp * 1.1;
+        FstFIR = FpFIR * 1.1;
+        Tw  = Fst - Fp; % Only works if Fst and Fp are same length or one is a scalar.
+        TwFIR = FstFIR - FpFIR;
+
+        % ------------------------------------------------- Ripple in Passband in dB
+        Ap = [0.05 0.1];
+
+        % ------------------------------------------- Attenuation in Stop Band in dB
+        Ast = [40 60];
+
+        % ----------------------------------------------- Differential Delay for CIC
+        DL = [1];
+
+        Hcic  =  decCIC(Rcic, Fp, Ast, DL, plotDir);
+        Hd    = compCIC(Rfir, Fp, Fst, Ap, Ast, DL, Hcic, coefDir, plotDir);
+        HdFIR = decFIR(Rfir , FpFIR , FstFIR , Ap , Ast , coefDir, plotDir);
+
+        % Hd is going to have more filters if DL is longer than 1 element
+        % Compensate for that by repeating the HB filters.
+        sizeHd  = size(Hd);
+        sizeHdFIR = size(HdFIR);
+        stages    = cell(2,1);
+        stages{1} = Hd;
+        stages{2} = repmat(HdFIR, [sizeHd(1) / sizeHdFIR(1),1]);
+        Hcasc = cascador(R, Fp, Fst, Ap, Ast, DL, plotDir, stages);
     case 'DEC1250'
         % 100 kHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
         % -> 1250 ->
         % -> 625 -> 2 ->
         % -> 125 -> 5 -> 2 ->
-        % -> 25 -> 5 -> 5 2 ->
+        % -> 25 -> 5 -> 5 -> 2 ->
         % -> 5 -> 5 -> 5 -> 5 -> 2 ->
+        clear all;close all;
+        filtertype='DEC1250';
+        genDir  = 'generators';
+        coefDir = 'coefData';
+        plotDir = 'plotData';
+
+        % ------------------------------------------- Input Sampling Frequency in Hz
+        Fs  = 125e6;
+
+        % -------------------------------------------------------- Decimation Factor
+        R   = 1250;  % overall decimation rate
+        Rcic = R/10; % decimation rate in CIC
+        Rfir = 5; % decimation rate in compensation FIR filter
+
+        % ---------------------- Frequency at the Start of the Pass Band; Normalized
+        % NOTE: The smallest number in Fp must be smaller than the smallest number
+        %       in Fst (see below).
+        Fp  = 1/R;
+        FpFIR = 1/Rfir;
+
+        % ------------- ---------- Stop band frequencies ("How steep is the filter?")
+        % NOTE: The smallest number in Fst must be larger than the largest number in
+        %       Fp (see above).
+        Fst = Fp * 1.1;
+        FstFIR = FpFIR * 1.1;
+        Tw  = Fst - Fp; % Only works if Fst and Fp are same length or one is a scalar.
+        TwFIR = FstFIR - FpFIR;
+
+        % ------------------------------------------------- Ripple in Passband in dB
+        Ap = [0.05 0.1];
+
+        % ------------------------------------------- Attenuation in Stop Band in dB
+        Ast = [40 60];
+
+        % ----------------------------------------------- Differential Delay for CIC
+        DL = [1];
+
+        Hcic  =  decCIC(Rcic, Fp, Ast, DL, plotDir);
+        Hd    = compCIC(Rfir, Fp, Fst, Ap, Ast, DL, Hcic, coefDir, plotDir);
+        HdFIR = halfbandFIR(2, TwFIR,          Ast, coefDir, plotDir);
+
+        % Hd is going to have more filters if DL is longer than 1 element
+        % Compensate for that by repeating the HB filters.
+        sizeHd  = size(Hd);
+        sizeHdFIR = size(HdFIR);
+        stages    = cell(2,1);
+        stages{1} = Hd;
+        stages{2} = repmat(HdFIR, [sizeHd(1) / sizeHdFIR(1),1]);
+        Hcasc = cascador(R, Fp, Fst, Ap, Ast, DL, plotDir, stages);
     case 'DEC2500'
         % 50 kHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
         % -> 2500 ->
         % -> 1250 ->
-        % -> 625 -> 2 ->
-        % -> 125 -> 5 -> 2 ->
-        % -> 25 -> 5 -> 5 2 ->
+        % -> 625 -> 2 -> 2 ->
+        % -> 125 -> 5 -> 2 -> 2 ->
+        % -> 25 -> 5 -> 5 -> 2 ->
         % -> 5 -> 5 -> 5 -> 5 -> 2 -> 2 ->
+        clear all;close all;
+        filtertype='DEC2500';
+        genDir  = 'generators';
+        coefDir = 'coefData';
+        plotDir = 'plotData';
+
+        % ------------------------------------------- Input Sampling Frequency in Hz
+        Fs  = 125e6;
+
+        % -------------------------------------------------------- Decimation Factor
+        R   = 2500;  % overall decimation rate
+        Rcic = R/20; % decimation rate in CIC
+        Rfir = 5;    % compensation filter
+
+        % ---------------------- Frequency at the Start of the Pass Band; Normalized
+        % NOTE: The smallest number in Fp must be smaller than the smallest number
+        %       in Fst (see below).
+        Fp  = 1/R;
+
+        % ------------- ---------- Stop band frequencies ("How steep is the filter?")
+        % NOTE: The smallest number in Fst must be larger than the largest number in
+        %       Fp (see above).
+        Fst = Fp * 1.1;
+        Tw  = Fst - Fp; % Only works if Fst and Fp are same length or one is a scalar.
+
+        % ------------------------------------------------- Ripple in Passband in dB
+        Ap = [0.05 0.1];
+
+        % ------------------------------------------- Attenuation in Stop Band in dB
+        Ast = [40 60];
+
+        % ----------------------------------------------- Differential Delay for CIC
+        DL = [1];
+
+        Hcic  =  decCIC(Rcic, Fp, Ast, DL, plotDir);
+        Hd    = compCIC(Rfir, Fp, Fst, Ap, Ast, DL, Hcic, coefDir, plotDir);
+        slopeFactor = 4; % arbitrary slope weakener for first HB
+        HdHB1 = halfbandFIR(2, Tw * Rcic * slopeFactor, Ast, coefDir, plotDir);
+        HdHB2 = halfbandFIR(2, Tw * Rcic              , Ast, coefDir, plotDir);
+
+        % Hd is going to have more filters if DL is longer than 1 element
+        % Compensate for that by repeating the HB filters.
+        sizeHd  = size(Hd);
+        sizeHB1 = size(HdHB1);
+        sizeHB2 = size(HdHB2);
+        stages    = cell(3,1);
+        stages{1} = Hd;
+        stages{2} = repmat(HdHB1, [sizeHd(1) / sizeHB1(1),1]);
+        stages{3} = repmat(HdHB2, [sizeHd(1) / sizeHB2(1),1]);
+        Hcasc = cascador(R, Fp, Fst, Ap, Ast, DL, plotDir, stages);
     case 'DEC4'
         % 31.25 MHz, T = 32 ns
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
@@ -266,7 +463,7 @@ switch filtertype
         % NOTE: The smallest number in Fp must be smaller than the smallest number
         %       in Fst (see below).
         Fp  = 0.25;
-        
+
         % ------------- ---------- Stop band frequencies ("How steep is the filter?")
         % NOTE: The smallest number in Fst must be larger than the largest number in
         %       Fp (see above).
@@ -275,10 +472,10 @@ switch filtertype
 
         % ------------------------------------------------- Ripple in Passband in dB
         Ap = [0.05 0.1 0.15];
-        
+
         % ------------------------------------------- Attenuation in Stop Band in dB
         Ast = [40 60 80];
-                
+
         % Hd: Contains the Filter Objects along with their properties (R, Fs, Fp,...)
         Hd   =      decFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir);
         HdHB = halfbandFIR(2, Tw,          Ast, coefDir, plotDir);
@@ -320,7 +517,7 @@ switch filtertype
         % NOTE: The smallest number in Fp must be smaller than the smallest number
         %       in Fst (see below).
         Fp  = 1/R;
-        
+
         % ------------- ---------- Stop band frequencies ("How steep is the filter?")
         % NOTE: The smallest number in Fst must be larger than the largest number in
         %       Fp (see above).
@@ -329,7 +526,7 @@ switch filtertype
 
         % ------------------------------------------------- Ripple in Passband in dB
         Ap = [0.05 0.1];
-        
+
         % ------------------------------------------- Attenuation in Stop Band in dB
         Ast = [40 60];
 
@@ -337,7 +534,7 @@ switch filtertype
         DL = [1];
 
         Hcic =  decCIC(Rcic, Fp, Ast, DL, plotDir);
-        Hd   = compCIC(Rcic, Fp, Fst, Ap, Ast, DL, Hcic, coefDir, plotDir);
+        Hd   = compCIC(1, Fp, Fst, Ap, Ast, DL, Hcic, coefDir, plotDir);
 
         slopeFactor = 4; % arbitrary slope weakener for first HB
         HdHB1 = halfbandFIR(2, Tw * Rcic * slopeFactor, Ast, coefDir, plotDir);

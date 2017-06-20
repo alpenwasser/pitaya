@@ -75,7 +75,7 @@ Q = O*K*N;
 
 Hd = cell(Q,8);
 
-compensatorDecimation = 1;
+compensatorDecimation = R;
 
 % Iterate through all decimators.
 for l = 0:L-1
