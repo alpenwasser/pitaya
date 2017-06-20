@@ -35,3 +35,13 @@ clean:
 	rm -rf $(BUILD)
 	rm -rf .Xil
 	rm -rf .tmp_versions
+
+clean_project:
+	rm -rf $(BUILD)/src
+	rm -rf .Xil
+	rm -rf .tmp_versions
+
+clean_cores:
+	rm -rf $(BUILD)/cores
+	rm -rf .Xil
+	rm -rf .tmp_versions

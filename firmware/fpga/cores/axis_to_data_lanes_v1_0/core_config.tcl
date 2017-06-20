@@ -20,6 +20,10 @@ set_property physical_name AxiTDataxDI [ipx::get_port_maps TDATA -of_objects [ip
 ipx::add_port_map TVALID [ipx::get_bus_interfaces SI -of_objects [ipx::current_core]]
 set_property physical_name AxiTValid [ipx::get_port_maps TVALID -of_objects [ipx::get_bus_interfaces SI -of_objects [ipx::current_core]]]
 
+# Define new port TREADY
+ipx::add_port_map TREADY [ipx::get_bus_interfaces SI -of_objects [ipx::current_core]]
+set_property physical_name AxiTReady [ipx::get_port_maps TREADY -of_objects [ipx::get_bus_interfaces SI -of_objects [ipx::current_core]]]
+
 # Add new Clock Interface
 ipx::add_bus_interface SI_clk [ipx::current_core]
 set_property abstraction_type_vlnv xilinx.com:signal:clock_rtl:1.0 [ipx::get_bus_interfaces SI_clk -of_objects [ipx::current_core]]
