@@ -1,10 +1,32 @@
-COE_FILE := /home/vagrant/pitaya/design/filter/coefData/decFIR/r-005--fp-200--fst-220--ap-250--ast-80.coe
+# ---------------------------------------------------------------------------- #
+# Makefile for FPGA Filter Resource Testing
+#
+# Makefile for design/fpga/
+# Location:    design/fpga/Makefile
+#
+# Authors: Raphael Frey <rmfrey@alpenwasser.net>
+#
+# Date:   2017-06-20
+#
+# Called by: user
+#
+# Working Directory: design/fpga/
+# ---------------------------------------------------------------------------- #
+COE_FILE ?= $(shell pwd)/../filter/coefData/decFIR/r-005--fp-200--fst-220--ap-250--ast-60.coe
+VIVADO := vivado -nolog -nojournal -mode batch
 
-default:
-	vivado -nolog -nojournal -mode batch -source filters.tcl -tclargs $(COE_FILE)
-	cp tmp/filter/filter.runs/synth_1/design_1_wrapper_utilization_synth.rpt ./
+RM := rm -f
+RMR := rm -rf
+
+.DEFAULT: all
+
+all:
+	$(VIVADO) -source vivadoDispatcher.tcl
+
+decFIR:
+	$(VIVADO) -source filters.tcl -tclargs $(COE_FILE)
 
 clean:
-	rm -f *.log
-	rm -f *.jou
-	rm -rf tmp
+	$(RM) *.log
+	$(RM) *.jou
+	$(RMR) tmp
