@@ -7,8 +7,10 @@ function Hd = compCIC(R, Fp, Fst, Ap, Ast, DL, Hcic, coefDir, plotDir)
 %       R:  decimation factor
 %
 %       Iteration Parameters
-%       Fp:  pass band edge frequencies (normalized) (array)
-%       Fst: stop band edge frequencies (normalized) (array)
+%       Fp:  pass band edge frequencies
+%            (normalized to CIC frequency scale) (array)
+%       Fst: stop band edge frequencies
+%            (normalized to CIC frequency scale) (array)
 %       Ap:  pass band ripples in dB (array)
 %       Ast: stop band attenuation in dB (array)
 %       DL:  differential delay
@@ -34,8 +36,10 @@ function Hd = compCIC(R, Fp, Fst, Ap, Ast, DL, Hcic, coefDir, plotDir)
 %       Hd{q,2}: Filter: CIC Filter
 %       Hd{q,3}: Filter: Compensator
 %       Hd{q,4}:     Fp: pass band frequency
+%                        (normalized to CIC frequency scale)
 %       Hd{q,5}:      R: decimation factor
 %       Hd{q,6}:    Fst: stop band edge frequency
+%                        (normalized to CIC frequency scale)
 %       Hd{q,7}:    Ast: stop band attenuation in dB
 %       Hd{q,8}:      R: decimation factor
 %       Where:
@@ -98,6 +102,10 @@ for l = 0:L-1
                         Hd{q,8} = Hcic{n,1}.DecimationFactor;
 
                         % Specify Filter
+                        % NOTE: 
+                        % Since Compensator runs at decimated frequency
+                        % coming out of the CIC filter, its Fp and Fst
+                        % parameters must be scaled up accordingly.
                         d = fdesign.decimator(...
                             compensatorDecimation,...
                             'ciccomp',...
