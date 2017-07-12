@@ -328,6 +328,174 @@ implementation in the FPGA tool chain.
          result onto the Red Pitaya and verify correct functionality.
      }
 
+\section{Frontend}
+\label{sec:frontend}
+
+\subsubsection{Techology Research}
+\label{subsec:frontend:}
+\wpac
+     {}
+     {}
+     {}
+     {None}
+     {}
+     {Noah Hüsser}
+     {%
+         Research the possibilities to design and implement a nice frontend for the RedPitaya recording system.
+         The RedPitaya Project has a built-in webinterface which allows the display of signals and rudimentary calculations.
+         Furthermore Prof. Gut has implemented a spectrum analyzer in Java which interfaces with the RedPitaya.
+         Both approaches are feasible and should be evaluated properly.
+         Furthermore it has to be evaluated how the data should be transferred to the frontend.
+         This descision correlates a lot with the selection of a programming language since e.g. web technologies do not support UDP.
+         Finally, existing libraries have to examined very carefully. There is a lot of libraries around data transmission and GUI design, but not all of them are feasible.
+     }
+
+\subsubsection{Implementation of a basic Plotter}
+\label{subsec:frontend:}
+\wpac
+     {}
+     {}
+     {}
+     {Techology Research}
+     {}
+     {Noah Hüsser}
+     {%
+         At first a simple plotter will be implemented. It should not do more than plot a given vector of data points on a canvas.
+         The plotting should be done performantly at 60 frames per second not being dependant on the size of the data vector.
+         Of course more data will slow down the plotting, but it should perform so well that the size of vectors up to 64 kilosamples do plot nicely.
+         For this task it is recommended to use existing libraries which make use of the GPU such as OpenGL.
+     }
+
+\subsubsection{Implementation of a basic Receiver}
+\label{subsec:frontend:}
+\wpac
+     {}
+     {}
+     {}
+     {Techology Research, TODO: server}
+     {}
+     {Noah Hüsser}
+     {%
+         A simple receiver which receives recorded samples over the network should be created.
+         For this task a simple emmitter which emmits test samples without actually recording anything should be implemented.
+         In further tasks it can be used conveniently without the need of a running RedPitaya board.
+         The receiver should simply receive samples as packets with lengths of powers of two over the network.
+         Again, a good, performant and publicly accepted library should be used to reduce workload and ensure reliability.
+     }
+
+\subsubsection{Combining the Plotter and the Receiver}
+\label{subsec:frontend:}
+\wpac
+     {}
+     {}
+     {}
+     {Implementation of a basic Plotter, Implementation of a basic Receiver}
+     {}
+     {Noah Hüsser}
+     {%
+         The plotter and the receiver should be combined to display vecors received over the network.
+         This should happen fluently without any delays.
+     }
+
+\subsubsection{Setting a Trigger on the Logger Core}
+\label{subsec:frontend:}
+\wpac
+     {}
+     {}
+     {}
+     {Combining the Plotter and the Receiver}
+     {}
+     {Noah Hüsser}
+     {%
+         The application should have a possibility to set a trigger type for any channel with the possibility to do this using a GUI.
+     }
+
+\subsubsection{Implement Proper Scaling}
+\label{subsec:frontend:}
+\wpac
+     {}
+     {}
+     {}
+     {Setting a Trigger on the Logger Core}
+     {}
+     {Noah Hüsser}
+     {%
+         The GUI should not only plot a qualitatively correct signal but also show it's quantities.
+         A grid should be programmed into the GUI which can be used to read metrics of a signal. A panel on the GUI should display the current grid size.
+         It should be possible to scale signals using the mouse or the GUI. Grids should adjust with the current scale.
+     }
+
+\subsubsection{Implement Trigger Modes}
+\label{subsec:frontend:}
+\wpac
+     {}
+     {}
+     {}
+     {Combining the Plotter and the Receiver}
+     {}
+     {Noah Hüsser}
+     {%
+         It should be possible to use the scope application in \textit{normal}, \textit{auto}, and \textit{single} mode.
+         Those modes do as follows:
+         \begin{tabular}{l l}
+            \textit{normal} & the server sends a packet when a trigger was fired and repeats this procedure \\
+            \textit{auto} & the server sends a packet when a trigger was fired or a timeout has been hit and repeats this procedure \\
+            \textit{single} & the server sends a packet after a first trigger and does not repeat this procedure
+         \end{tabular}
+     }
+
+ \subsubsection{}
+\label{subsec:frontend:}
+\wpac
+     {}
+     {}
+     {}
+     {None}
+     {}
+     {Noah Hüsser}
+     {%
+         
+     }
+
+\subsubsection{}
+\label{subsec:frontend:}
+\wpac
+     {}
+     {}
+     {}
+     {None}
+     {}
+     {Noah Hüsser}
+     {%
+         
+     }
+
+\subsubsection{}
+\label{subsec:frontend:}
+\wpac
+     {}
+     {}
+     {}
+     {None}
+     {}
+     {Noah Hüsser}
+     {%
+         
+     }
+
+\subsubsection{}
+\label{subsec:frontend:}
+\wpac
+     {}
+     {}
+     {}
+     {None}
+     {}
+     {Noah Hüsser}
+     {%
+         
+     }
+
 % >>>
 
 \backmatter
