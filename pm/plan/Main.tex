@@ -194,7 +194,11 @@ implementation in the FPGA tool chain.
      {}
      {Noah H\"usser}
      {%
-        Load Ubuntu Linux onto the Red Pitaya.%
+        Boot an Ubuntu Linux onto the Red Pitaya.%
+        The target here is to have a ARM Linux distribution which boots fine on the RedPitaya.
+        The official sources from the RedPitaya project should be used as they contain a lot of patches for the RedPitaya hardware.
+        A standalone toolchain has to be developped as the compiled versions do not contain the right device tree (DT) and board support package (BSP).
+        Compiling in the right DT and BSP is not part of this task.
      }
 
 \subsection{Server Application}
@@ -210,7 +214,9 @@ implementation in the FPGA tool chain.
      {}
      {Noah H\"usser}
      {%
-         Design decisions for server application.
+         It has to be determined what technology should be used to provide the server side of the data transmission.
+         The server needs to be able to perform IOCTL calls and to serve data with the chosen protocol over the network. It has to run on the arm linux and shouldn't have too many dependencies.
+         A C-like language will most likely serve best since it's close to the kernel.
      }
 
 \subsubsection{Server Application}
@@ -223,23 +229,9 @@ implementation in the FPGA tool chain.
      {}
      {Noah H\"usser}
      {%
-         The server application itself.%
-     }
-
-\subsubsection{External Libraries}
-\label{subsubsec:fw:server:libs}
-\wpac
-     {}
-     {}
-     {}
-     {None}
-     {}
-     {Noah H\"usser}
-     {%
-         A build infrastructure which allows for the compilation of the
-         external libraries which are needed for the server application.
-
-         This includes \code{uWebSockets}, \code{zlib} and \code{OpenSSL}.
+         A server application has to be written that reads data from the Logger and transmits it over the network.
+         It needs to be able to configure the logger via RPCs that are mapped to IOCTLs.
+         It should read data from /dev/logger which is presented by the kernel module.
      }
 
 \subsubsection{Documentation}
@@ -435,8 +427,7 @@ implementation in the FPGA tool chain.
      {}
      {Noah Hüsser}
      {%
-         It should be possible to use the scope application in \textit{normal}, \textit{auto}, and \textit{single} mode.
-         Those modes do as follows:
+         It should be possible to use the scope application in \textit{normal}, \textit{auto}, and \textit{single} mode. Those modes should behave as follows:
          \begin{tabular}{l l}
             \textit{normal} & the server sends a packet when a trigger was fired and repeats this procedure \\
             \textit{auto} & the server sends a packet when a trigger was fired or a timeout has been hit and repeats this procedure \\
@@ -444,7 +435,7 @@ implementation in the FPGA tool chain.
          \end{tabular}
      }
 
- \subsubsection{}
+ \subsubsection{Implement an FFT}
 \label{subsec:frontend:}
 \wpac
      {}
@@ -454,10 +445,10 @@ implementation in the FPGA tool chain.
      {}
      {Noah Hüsser}
      {%
-         
+         An FFT should be calculated and displayed live.
      }
 
-\subsubsection{}
+\subsubsection{Implement Power Measuremenets}
 \label{subsec:frontend:}
 \wpac
      {}
@@ -467,10 +458,11 @@ implementation in the FPGA tool chain.
      {}
      {Noah Hüsser}
      {%
-         
+         Calculate the power in the signal.
+         It has to be possible to calculate the power between two markers to limit the calulation on a certain part of the signal.
      }
 
-\subsubsection{}
+\subsubsection{Implement SNR Calculation}
 \label{subsec:frontend:}
 \wpac
      {}
@@ -480,10 +472,11 @@ implementation in the FPGA tool chain.
      {}
      {Noah Hüsser}
      {%
-         
+         The SNR of the signal between two markers has to be calculated automatically.
+         As a reference use the Java applicaion of Prof. Gut.
      }
 
-\subsubsection{}
+\subsubsection{Implement THD Calculation}
 \label{subsec:frontend:}
 \wpac
      {}
@@ -493,7 +486,22 @@ implementation in the FPGA tool chain.
      {}
      {Noah Hüsser}
      {%
-         
+         The THD of the signal spectrum has to be calculated automatically.
+         As a reference use the Java application of Prof. Gut.
+     }
+
+\subsubsection{Implement Dual Channel Possibilities}
+\label{subsec:frontend:}
+\wpac
+     {}
+     {}
+     {}
+     {None}
+     {}
+     {Noah Hüsser}
+     {%
+         The entire transmission and plotting of all the signals should be implemented for dual channel capabilities.
+         The FPGA code supports up to eight channels whilst only supplying two to the server since the RedPitaya board only supports two physical channels.
      }
 
 % >>>

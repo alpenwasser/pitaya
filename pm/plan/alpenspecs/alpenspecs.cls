@@ -44,7 +44,8 @@
 \usetikzlibrary{calc}
 \usetikzlibrary{fadings}
 \RequirePackage{pgfplots}
-\pgfplotsset{compat=1.14}
+% TODO: uncomment this again after noah fixed his distro ...
+% \pgfplotsset{compat=1.14}
 \usepgfplotslibrary{external}
 %%\tikzexternalize[prefix=tikzCache/]
 \tikzexternalize[prefix=tikzCache/,mode=list and make] %% conflicts with tcolorbox
