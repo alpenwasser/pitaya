@@ -38,9 +38,12 @@ LOGARG    ?= -logfile $(LOG_DIR)/$(LOG_FILE)
 all:      JVM      = -nojvm
 all:      EXIT     = exit
 all:      REDIRECT = 1>/dev/null
-parallel: JVM      = -nojvm
+parallel: JVM      = 
 parallel: EXIT     = exit
 parallel: REDIRECT = 1>/dev/null
+chain5:   JVM      = 
+chain5:   EXIT     = exit
+chain5:   REDIRECT = 1>/dev/null
 # NOTE: Do  not  change  the  assignment  operator  to  ':='
 # here! JVM gets modified by some targets.
 MATLAB     = matlab -nosplash -nodesktop $(LOGARG) $(JVM) -r
@@ -74,6 +77,14 @@ all: logdir
 	            filtertype='DEC600'; $(DISPATCHER);\
 	            filtertype='DEC1200';$(DISPATCHER);\
 	            filtertype='DEC2400';$(DISPATCHER);$(EXIT)" $(REDIRECT)
+
+chain5: logdir
+	@$(MATLAB) "filtertype='DEC5';   $(DISPATCHER);\
+	            filtertype='DEC25';  $(DISPATCHER);\
+	            filtertype='DEC125'; $(DISPATCHER);\
+	            filtertype='DEC625'; $(DISPATCHER);\
+	            filtertype='DEC1250';$(DISPATCHER);\
+	            filtertype='DEC2500';$(DISPATCHER);$(EXIT)" $(REDIRECT)
 
 # Invoke  with -j<cores  count>  to  launch multiple  Matlab
 # instances concurrently. If you have  enough cores, this is
