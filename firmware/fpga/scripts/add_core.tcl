@@ -22,15 +22,22 @@ set version [string trimleft [join [lrange $elements end-1 end] .] v]
 file delete -force $build_location/$core_name $build_location/$name.cache $build_location/$name.hw $build_location/$name.xpr $build_location/$name.sim
 
 # Create a project which is used to build the core
-create_project -part $part_name $name $build_location
+create_project -force -part $part_name $name $build_location
+
 
 # Add all files the core consists of
 set verilog_files [glob -nocomplain cores/$core_name/*.v]
 set vhdl_files [glob -nocomplain cores/$core_name/*.vhd]
 set tb_files [glob -nocomplain cores/$core_name/tb/*.vhd]
 if {[file exists $verilog_files]} {add_files -fileset sources_1 -norecurse $verilog_files}
-if {[file exists $vhdl_files]} {add_files -fileset sources_1 -norecurse $vhdl_files}
-if {[file exists $tb_files]} {add_files -fileset sim_1 -norecurse $tb_files}
+if {[file exists $vhdl_files]} {
+    add_files -fileset sources_1 -norecurse $vhdl_files
+    set_property file_type {VHDL 2008} [get_files $vhdl_files]
+}
+if {[file exists $tb_files]} {
+    add_files -fileset sim_1 -norecurse $tb_files
+    set_property file_type {VHDL 2008} [get_files $tb_files]
+}
 
 # Package a new IP
 ipx::package_project -import_files -root_dir $build_location/$core_name

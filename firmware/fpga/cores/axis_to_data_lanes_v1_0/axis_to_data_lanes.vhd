@@ -4,7 +4,7 @@ use IEEE.NUMERIC_STD.all;
 
 entity axis_to_data_lanes is
   generic (
-    Decimation: integer := 25;
+    Decimation: integer := 1;
     Offset: integer := 32768
   );
   port (
