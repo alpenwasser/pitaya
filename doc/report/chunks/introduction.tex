@@ -1,0 +1,17 @@
+Measuring equipments has ever been very expensive. If one wants precise devices it can go up to hundreds or thousands of Francs. Modern, cheap FPGAs can often, if combined with a proper frontend, replace those expensive dedicated devices.
+The frontend consists of dedicated ADCs and DACs and oftentimes some analog filters. Those chips also have become a lot cheaper in recent years aand are thus way more accessible.
+Extreme equipment, for example with high sampling rates, in contrary can still not be replaced easily.
+This project aims at arming an FPGA board with logic that can record, filter and store electrical signals with adjustable sampling rates up to 125\si{\mega\hertz}. To complement the hardware part a software that runs on an embedded Linux on the integrated ARM core will be coded such that it can transmit the recorded samples over the network.
+To read and visualize the samples at the other end of the network, another piece of software will be crafted, that will run on the users computer.
+The primary focus lies on enabling students to analyze audio signals. Since audio signals contain very low frequencyies only up to tens of thousands of \si{\hertz} they can be sampled with rather low frequencies and thus making FPGAs an excellent choice.
+An FPGA not only shines in price competitiveness but also in flexibility.
+This means that the logic is not fixed in silicon and can be adjusted after the product has already been delivered.
+
+For this project a RedPitaya board is used. It is ideal since it features a fast (125\si{\mega\hertz}) 14-bit ADC. This poses a huge amount of data, that is not even required for audio signals. Furthermore it is not realisticly possible to transmit this huge amount of data over the network.
+
+Thus the first primary target of this thesis is to decimate the recorded signals. To avoid aliasing effects that emmerge when decimating a signal appropriate filters have to be designed and impemented that are able to attenuate unwanted signal frequencies.
+
+The second primary target of this thesis is the design and implementation of a software-based oscilloscope. This is a grafical user interface that communicates with the RedPitaya board and visualizes the recored samples.
+Traditional measuring equipment always has a built in display that visualizes the data on the device itself. This uses up a lot of space and provides very low flexibility.
+Since it can be assumed that every engineur is equipped with a computer, said device should be used to display the signals. This keeps cost and required space down.
+The data is then transmitted via the network which will be interfaced by both the users computer and the RedPitaya board.°
