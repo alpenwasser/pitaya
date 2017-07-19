@@ -32,11 +32,15 @@ set tb_files [glob -nocomplain cores/$core_name/tb/*.vhd]
 if {[file exists $verilog_files]} {add_files -fileset sources_1 -norecurse $verilog_files}
 if {[file exists $vhdl_files]} {
     add_files -fileset sources_1 -norecurse $vhdl_files
-    set_property file_type {VHDL 2008} [get_files $vhdl_files]
+    # Vivado doesn't support VHDL 2008 files as top level for now
+    # If we want VHDL 2008 in the future we will need do differentiate from top and subfiles and mache the top VHDL
+    # set_property file_type {VHDL 2008} [get_files $vhdl_files]
 }
 if {[file exists $tb_files]} {
     add_files -fileset sim_1 -norecurse $tb_files
-    set_property file_type {VHDL 2008} [get_files $tb_files]
+    # Vivado doesn't support VHDL 2008 files as top level for now
+    # If we want VHDL 2008 in the future we will need do differentiate from top and subfiles and mache the top VHDL
+    # set_property file_type {VHDL 2008} [get_files $tb_files]
 }
 
 # Package a new IP
