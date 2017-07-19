@@ -12,8 +12,6 @@
 --
 ----------------------------------------------------------------------------------
 
-use work.multiplexer_pkg.all;
-
 library UNISIM;
 use UNISIM.VCOMPONENTS.all;
 library UNIMACRO;
@@ -31,32 +29,9 @@ architecture Behavioral of full_tb is
     signal tbClkxC: std_logic := '0';
     signal tbRstxRB: std_logic := '0';
     signal tbSelectxDI: std_logic_vector(1 downto 0) := (others => '0');
-    signal tbData0xDI: multiplexer_channel_type := (
-        data => (others => '0'),
-        valid => '0',
-        ready => '0'
-    );
-    signal tbData1xDI: multiplexer_channel_type := (
-        data => (0 => '1', others => '0'),
-        valid => '1',
-        ready => '1'
-    );
-    signal tbData2xDI: multiplexer_channel_type := (
-        data => (others => '0'),
-        valid => '0',
-        ready => '0'
-    );
-    signal tbData3xDI: multiplexer_channel_type := (
-        data => (others => '0'),
-        valid => '0',
-        ready => '0'
-    ); 
-    
-    signal tbDataxDO: multiplexer_channel_type := (
-        data => (others => '0'),
-        valid => '0',
-        ready => '0'
-    );
+    signal tbData1xDI: std_logic_vector(31 downto 0) := (0 => '1', others => '0');
+    signal tbData2xDI: std_logic_vector(31 downto 0) := (1 => '1', others => '0');
+    signal tbDataxDO: std_logic_vector(31 downto 0);
 
 begin
     
@@ -67,12 +42,10 @@ begin
     port map (
         ClkxCI => tbClkxC,
         RstxRBI => tbRstxRB,
-        DataIn0xDI => tbData0xDI,
-        DataIn1xDI => tbData1xDI,
-        DataIn2xDI => tbData2xDI,
-        DataIn3xDI => tbData3xDI,
         SelectxDI => tbSelectxDI,
-        DataOutxDO => tbDataxDO
+        Data1xDI => tbData1xDI,
+        Data2xDI => tbData2xDI,
+        DataxDO => tbDataxDO
     );
 
     process
@@ -90,6 +63,21 @@ begin
         end loop;
 
         tbSelectxDI <= (0 => '1', others => '0');
+        
+        -- wait 3 clk cycles
+        for i in 0 to 3 loop
+          wait until rising_edge(tbClkxC);
+        end loop;
+
+        tbSelectxDI <= (1 => '1', 0 => '0', others => '0');
+        
+        -- wait 3 clk cycles
+        for i in 0 to 3 loop
+          wait until rising_edge(tbClkxC);
+        end loop;
+
+        tbSelectxDI <= (1 => '1', 0 => '1', others => '0');
+                
         wait;
     end process;
 end Behavioral;

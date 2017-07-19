@@ -22,8 +22,8 @@ axis_to_data_lanes:
 	rm -f vivado*
 	rm -f webtalk*
 
-multiplexer:
-	$(VIVADO) -source create_cores.tcl -tclargs $(PART) $(BUILD)/cores multiplexer_v1_0
+axis_multiplexer:
+	$(VIVADO) -source create_cores.tcl -tclargs $(PART) $(BUILD)/cores axis_multiplexer_v1_0
 	rm -f vivado*
 	rm -f webtalk*
 
