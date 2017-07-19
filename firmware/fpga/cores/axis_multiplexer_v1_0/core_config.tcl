@@ -5,6 +5,24 @@ set core [ipx::current_core]
 set_property DISPLAY_NAME $display_name $core
 set_property DESCRIPTION $display_name $core
 
+# Set generic tooltips
+set_property display_name {TDATA bit width of the AXI Stream} [ipgui::get_guiparamspec -name "C_AXIS_TDATA_WIDTH" -component [ipx::current_core] ]
+set_property tooltip {TDATA bit width of the AXI Stream} [ipgui::get_guiparamspec -name "C_AXIS_TDATA_WIDTH" -component [ipx::current_core] ]
+
+set_property display_name {Number of input AXI Stream initerfaces} [ipgui::get_guiparamspec -name "C_AXIS_NUM_SI_SLOTS" -component [ipx::current_core] ]
+set_property tooltip {Number of input AXI Stream initerfaces} [ipgui::get_guiparamspec -name "C_AXIS_NUM_SI_SLOTS" -component [ipx::current_core] ]
+
+# Set generic ranges
+set_property widget {textEdit} [ipgui::get_guiparamspec -name "C_AXIS_NUM_SI_SLOTS" -component [ipx::current_core] ]
+set_property value_validation_type range_long [ipx::get_user_parameters C_AXIS_NUM_SI_SLOTS -of_objects [ipx::current_core]]
+set_property value_validation_range_minimum 2 [ipx::get_user_parameters C_AXIS_NUM_SI_SLOTS -of_objects [ipx::current_core]]
+set_property value_validation_range_maximum 8 [ipx::get_user_parameters C_AXIS_NUM_SI_SLOTS -of_objects [ipx::current_core]]
+
+set_property widget {textEdit} [ipgui::get_guiparamspec -name "C_AXIS_TDATA_WIDTH" -component [ipx::current_core] ]
+set_property value_validation_type range_long [ipx::get_user_parameters C_AXIS_TDATA_WIDTH -of_objects [ipx::current_core]]
+set_property value_validation_range_minimum 1 [ipx::get_user_parameters C_AXIS_TDATA_WIDTH -of_objects [ipx::current_core]]
+set_property value_validation_range_maximum 128 [ipx::get_user_parameters C_AXIS_TDATA_WIDTH -of_objects [ipx::current_core]]
+
 # Define 4 new AXI slave interface
 ipx::add_bus_interface SI0 [ipx::current_core]
 set_property abstraction_type_vlnv xilinx.com:interface:axis_rtl:1.0 [ipx::get_bus_interfaces SI0 -of_objects [ipx::current_core]]
