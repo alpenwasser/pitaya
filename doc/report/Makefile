@@ -63,6 +63,14 @@ simple: tikzcache
 debug: tikzcache
 	@pdflatex -shell-escape -output-directory=$(OUT_DIR) $(DOCUMENT)
 
+# Run bibtex. This requires the auxiliary file to exist, so
+# either the simple or debug targets to have been run before,
+# but if those targets are added as prerequisites, they are
+# run each time, which is stupid. Hence, they are left out
+# and the onus is put on the user.
+bib:
+	@bibtex $(OUT_DIR)/$(DOCUMENT).aux
+
 # Make  a  snapshot of  the  current  pdf. Due to  the  tikz
 # externalize library  stuff, we  set this  to automatically
 # depend on the 'simple' or 'debug' target; instead you must
