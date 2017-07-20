@@ -32,10 +32,28 @@ struct state {
     size_t packetSize;
     size_t numberOfChannels;
     size_t connections;
+    size_t currentChannel;
     enum modes mode;
     int fd;
     bool configuring;
     bool reading;
+};
+
+void readAndSendChannel(state* s){
+    struct data_instruction d_instruction;
+    d_instruction.resolution = 0;
+    d_instruction.channel = s->current_channel;
+    ioctl(s->fd, DATA_SETTINGS, &d_instruction);
+
+    size_t _read = 0;
+    while(_read < s->frameSize * 2){
+        size_t toRead = s->frameSize * 2 - _read;
+        toRead = toRead < s->packetSize * 2 ? toRead : s->packetSize * 2;
+        lseek(s->fd, _read, SEEK_SET);
+        size_t ret = read(s->fd, &s->data[0], toRead);
+        _read += ret;
+        s->sock->send((char*)&s->data[0], ret, uWS::OpCode::BINARY);
+    }
 };
 
 void waitForFrame(state* s){
@@ -47,52 +65,38 @@ void waitForFrame(state* s){
         std::cout << "Started a new Frame." << std::endl;
         std::cout << s->frameSize << " " << s->packetSize << " " << s->numberOfChannels << " " << s->data.size() << std::endl;
 
-        // TODO: change to c=0 after testing!
-        for(size_t c = 1; c < s->numberOfChannels; c++){
-            struct data_instruction d_instruction;
-            d_instruction.resolution = 0;
-            d_instruction.channel = c;
-            ioctl(s->fd, DATA_SETTINGS, &d_instruction);
+        readAndSendChannel(s);
 
-            size_t _read = 0;
-            while(_read < s->frameSize * 2){
-                size_t toRead = s->frameSize * 2 - _read;
-                toRead = toRead < s->packetSize * 2 ? toRead : s->packetSize * 2;
-                lseek(s->fd, _read, SEEK_SET);
-                size_t ret = read(s->fd, &s->data[0], toRead);
-                _read += ret;
+{
+            // std::cout << "--------- " << c << "--------- " << std::endl;
 
-                // std::cout << "--------- " << c << "--------- " << std::endl;
+            // for(int k=2048; k < 2048+10; k++)
+            //     std::cout << s->data[k] << " ";
+            // std::cout << std::endl;
 
-                // for(int k=2048; k < 2048+10; k++)
-                //     std::cout << s->data[k] << " ";
-                // std::cout << std::endl;
+            // struct reg_instruction instruction;
+            // printf("Read number of recorded samples ... \n");
+            // instruction.reg_id = 11;
+            // ioctl(s->fd, READ_REG, &instruction);
+            // printf("Return value: %u\n", instruction.reg_value);
+            // instruction.reg_id = 12;
+            // ioctl(s->fd, READ_REG, &instruction);
+            // printf("Return value: %u\n", instruction.reg_value);
 
-                // struct reg_instruction instruction;
-                // printf("Read number of recorded samples ... \n");
-                // instruction.reg_id = 11;
-                // ioctl(s->fd, READ_REG, &instruction);
-                // printf("Return value: %u\n", instruction.reg_value);
-                // instruction.reg_id = 12;
-                // ioctl(s->fd, READ_REG, &instruction);
-                // printf("Return value: %u\n", instruction.reg_value);
+            // printf("Checking error code ... ");
+            // instruction.reg_id = 8;
+            // ioctl(s->fd, READ_REG, &instruction);
+            // printf("Return value: %u\n", instruction.reg_value);
 
-                // printf("Checking error code ... ");
-                // instruction.reg_id = 8;
-                // ioctl(s->fd, READ_REG, &instruction);
-                // printf("Return value: %u\n", instruction.reg_value);
+            // printf("Checking faulty address ... ");
+            // instruction.reg_id = 9;
+            // ioctl(s->fd, READ_REG, &instruction);
+            // printf("Return value: %u\n", instruction.reg_value);
 
-                // printf("Checking faulty address ... ");
-                // instruction.reg_id = 9;
-                // ioctl(s->fd, READ_REG, &instruction);
-                // printf("Return value: %u\n", instruction.reg_value);
+            // std::cout << "read" << ret << "/" << toRead << std::endl;
+            // std::cout << s->data.size() << "/" << ret << std::endl;
 
-                // std::cout << "read" << ret << "/" << toRead << std::endl;
-                // std::cout << s->data.size() << "/" << ret << std::endl;
-
-                s->sock->send((char*)&s->data[0], ret, uWS::OpCode::BINARY);
-            }
-        }
+}
         std::cout << "sent frame" << std::endl;
     } catch(int e){
         std::cout << "Failed to start a new Frame." << std::endl;
@@ -382,9 +386,17 @@ int main(int argc, char* argv[]) {
                 // Request a new frame of data
                 if(!j["requestFrame"].is_null()){
                     // ussleep(30);
+                    s.currentChannel = j["channel"].get<size_t>();
                     std::thread t1(waitForFrame, &s);
                     // TODO: do not detach but join
                     t1.detach();
+                }
+
+                // Request a new frame of data
+                if(!j["readFrame"].is_null()){
+                    // ussleep(30);
+                    s.currentChannel = j["channel"].get<size_t>();
+                    readAndSendChannel(&s);
                 }
 
                 // Force a trigger
