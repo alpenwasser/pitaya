@@ -123,9 +123,9 @@ switch filtertype
         % ------------- ---------- Stop band frequencies ("How steep is the filter?")
         % NOTE: The smallest number in Fst must be larger than the largest number in
         %       Fp (see above).
-        Fst1 = [0.30];
-        Fst2 = [0.225];
-        Fst  = [0.225];
+        Fst1 = 0.30;
+        Fst2 = 0.225;
+        Fst  = 0.225;
 
         % ------------------------------------------------- Ripple in Passband in dB
         % NOTE: Cascaded filters amplify each other's passpand rippples.
@@ -135,9 +135,9 @@ switch filtertype
 
         % ------------------------------------------- Attenuation in Stop Band in dB
         %Ast = [20 40 60 80];
-        Ast1 = [60];
-        Ast2 = [60];
-        Ast  = [60];
+        Ast1 = 60;
+        Ast2 = 60;
+        Ast  = 60;
 
         % Hd: Contains the Filter Objects along with their properties (R, Fs, Fp,...)
         Hd1 = pardecFIR(R1, Fp1, Fst1, Ap1, Ast1, coefDir, plotDir);
@@ -164,51 +164,65 @@ switch filtertype
         Fs  = 125e6;
 
         % -------------------------------------------------------- Decimation Factor
-        R   = 125;  % overall decimation rate
-        Rcic = 25; % decimation rate in CIC
-        Rfir =  5; % decimation rate in FIR filter (not the compensator)
+        R     = 125; % overall decimation rate
+        RCIC  =  25; % decimation rate in CIC
+        RComp =   1; % Compensator decimation rate
+        RFIR  =   5; % decimation rate in FIR filter (not the compensator)
 
         % ---------------------- Frequency at the Start of the Pass Band; Normalized
         % NOTE: The smallest number in Fp must be smaller than the smallest number
         %       in Fst (see below).
         Fp    = 1/R;
-        FpFIR = 1/Rfir;
+
+        % The frequency band coming out of the CIC which is of interest.
+        % In this case, that is Fp. The CIC filter decimates by 25, going down to
+        % 0.04 (normalized to half the new sampling frequency).
+        % The final FIR filter decimates by another factor of 5. Thus, the frequency
+        % band which is of actual interest at the end of the CIC filter is 0.04/5
+        % wide, which equals 0.004, which is half the final output sampling frequency.
+        FpCIC  = Fp;     % The frequency band coming out of the CIC filter which is of interest.
+        FpComp = Fp;     % The frequency band over which the compensator has to work.
+        FpFIR  = 1/RFIR; % The frequency band coming out of the final FIR filter which is of interest.
 
         % ------------- ---------- Stop band frequencies ("How steep is the filter?")
         % NOTE: The smallest number in Fst must be larger than the largest number in
         %       Fp (see above).
-        Fst = Fp * 1.1;
-        FstComp = Fp + 0.005;
-        FstFIR  = [0.225];
-        Tw      = Fst - Fp; % Only works if Fst and Fp are same length or one is a scalar.
-        TwFIR   = FstFIR - FpFIR;
+        FstComp = FpComp + 0.008; % Must be smaller than or equal to 0.04. FpComp = 0.008
+                                  % FpComp,max = 0.032
+        FstFIR  = 0.225;
+        Fst     = FstFIR / RCIC; % overall stop band imposed by the final FIR filter. Only used for filename.
 
         % ------------------------------------------------- Ripple in Passband in dB
-        Ap     = [0.1];
-        ApComp = [0.05];
-        ApFIR  = [0.2];
+        ApComp = 0.05;
+        ApFIR  = 0.2;
+        Ap     = ApComp + ApFIR; % Ripple of cascaded filters is additive. Only used for filename.
 
         % ------------------------------------------- Attenuation in Stop Band in dB
-        Ast     = [60];
-        AstComp = [60];
-        AstFIR  = [60];
+        Ast     = 60; % only used for filename.
+        AstComp = 60;
+        AstFIR  = 60;
 
         % ----------------------------------------------- Differential Delay for CIC
-        DL = [1];
+        DL = 1;
 
-        Hcic   =    decCIC(Rcic, Fp, Ast, DL, plotDir);
-        HdComp =   compCIC(   1,    Fp, FstComp, ApComp, AstComp, DL, Hcic, coefDir, plotDir);
-        HdFIR  = pardecFIR(Rfir, FpFIR,  FstFIR,  ApFIR, AstFIR, coefDir, plotDir);
+        HdCIC   =    decCIC(RCIC,  FpCIC, Ast, DL, plotDir);
+        HdComp =   compCIC(RComp, FpComp, FstComp, ApComp, AstComp, DL, HdCIC, coefDir, plotDir);
+        HdFIR  = pardecFIR(RFIR, FpFIR,  FstFIR,  ApFIR, AstFIR, coefDir, plotDir);
+
+        stages    = cell(2,1);
+        stages{1} = HdComp;
+        stages{2} = HdFIR;
+        Hcasc     = parcascador(R, Fp, Fst, Ap, Ast, DL, plotDir, stages);
 
         % NOTE: Something doesn't quite work correctly when iterating and sometimes
         %       not all configurations might be iterated. Fixing this bug might not
         %       be worth the time, so make sure to check results.
-        sizeHdComp = size(HdComp);
-        sizeHdFIR  = size(HdFIR);
-        stages     = cell(2,1);
-        stages{1}  = repmat(HdComp, [sizeHdFIR(1) / sizeHdComp(1),1]);
-        stages{2}  = HdFIR;
-        Hcasc      = parcascador(R, Fp, FstFIR, Ap, Ast, DL, plotDir, stages);
+        %sizeHdComp = size(HdComp);
+        %sizeHdFIR  = size(HdFIR);
+        %stages     = cell(2,1);
+        %stages{1}  = repmat(HdComp, [sizeHdFIR(1) / sizeHdComp(1),1]);
+        %stages{2}  = HdFIR;
+        %Hcasc      = parcascador(R, Fp, FstFIR, Ap, Ast, DL, plotDir, stages);
     case 'DEC625'
         % 200 kHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
@@ -226,52 +240,70 @@ switch filtertype
         Fs  = 125e6;
 
         % -------------------------------------------------------- Decimation Factor
-        R    = 625;  % overall decimation rate
-        Rcic = 125; % decimation rate in CIC
-        Rcomp  = 1; % decimation rate for the compensator
-        Rfir   = 5; % decimation rate in FIR filter (not the compensator)
+        R     = 625; % overall decimation rate
+        RCIC  =  25; % decimation rate in CIC
+        RComp =   1; % Compensator decimation rate
+        RFIR1 =   5; % decimation rate in flat FIR filter
+        RFIR2 =   5; % decimation rate in steep FIR filter
 
         % ---------------------- Frequency at the Start of the Pass Band; Normalized
         % NOTE: The smallest number in Fp must be smaller than the smallest number
         %       in Fst (see below).
         Fp    = 1/R;
-        FpFIR = 1/Rfir;
+
+        % The frequency band coming out of the CIC which is of interest.
+        % In this case, that is Fp*RFIR2 (half the sampling frequency before the
+        % final FIR decimator).
+        FpCIC  = Fp*RFIR2; % The frequency band coming out of the CIC filter which is of interest.
+        FpComp = Fp*RFIR1; % The frequency band over which the compensator has to work.
+        FpFIR1 = 1/RFIR1;
+        FpFIR2 = 1/RFIR2;
 
         % ------------- ---------- Stop band frequencies ("How steep is the filter?")
-        % NOTE: The smallest number in Fst must be larger than the largest number in
-        %       Fp (see above).
-        Fst = Fp * 1.1;
-        FstComp = Fp + 0.001;
-        FstFIR  = [0.225];
-        Tw      = Fst - Fp; % Only works if Fst and Fp are same length or one is a scalar.
-        TwFIR   = FstFIR - FpFIR;
+        % NOTE: The compensator's frequency specifications are relative to the CIC filter's.
+        %       0.008 transition band width is in terms of the CIC filter, and means that
+        %       on the compensator's frequency axis, it will be 0.2 wide (0.008*RCIC).
+        FstComp = FpComp + 0.008; % Must be smaller than or equal to 0.04 (1/RCIC). FpComp = 0.008
+                                  % FpComp,max = 0.032
+        FstFIR1 = 0.30;
+        FstFIR2 = 0.225;
+        Fst     = FstFIR2 / RCIC / RFIR1; % overall stop band imposed by the final FIR filter. Only used for filename.
 
         % ------------------------------------------------- Ripple in Passband in dB
-        Ap     = [0.1];
-        ApComp = [0.05];
-        ApFIR  = [0.2];
+        ApComp = 0.05;
+        ApFIR1 = 0.05;
+        ApFIR2 = 0.20;
+        Ap     = ApComp + ApFIR1 + ApFIR2; % Ripple of cascaded filters is additive. Only used for filename.
 
         % ------------------------------------------- Attenuation in Stop Band in dB
-        Ast     = [60];
-        AstComp = [60];
-        AstFIR  = [60];
+        Ast     = 60; % only used for filename.
+        AstComp = 60;
+        AstFIR1 = 60;
+        AstFIR2 = 60;
 
         % ----------------------------------------------- Differential Delay for CIC
-        DL = [1];
+        DL = 1;
 
-        Hcic   =    decCIC(Rcic, Fp, Ast, DL, plotDir);
-        HdComp =   compCIC(Rcomp,    Fp, FstComp, ApComp, AstComp, DL, Hcic, coefDir, plotDir);
-        HdFIR  = pardecFIR( Rfir, FpFIR,  FstFIR,  ApFIR, AstFIR, coefDir, plotDir);
+        HdCIC  =    decCIC(RCIC,  FpCIC, Ast, DL, plotDir);
+        HdComp =   compCIC(RComp, FpComp, FstComp, ApComp, AstComp, DL, HdCIC, coefDir, plotDir);
+        HdFIR1 = pardecFIR(RFIR1, FpFIR1,  FstFIR1,  ApFIR1, AstFIR1, coefDir, plotDir);
+        HdFIR2 = pardecFIR(RFIR2, FpFIR2,  FstFIR2,  ApFIR2, AstFIR2, coefDir, plotDir);
+
+        stages    = cell(3,1);
+        stages{1} = HdComp;
+        stages{2} = HdFIR1;
+        stages{3} = HdFIR2;
+        Hcasc     = parcascador(R, Fp, Fst, Ap, Ast, DL, plotDir, stages);
 
         % NOTE: Something doesn't quite work correctly when iterating and sometimes
         %       not all configurations might be iterated. Fixing this bug might not
         %       be worth the time, so make sure to check results.
-        sizeHdComp = size(HdComp);
-        sizeHdFIR  = size(HdFIR);
-        stages     = cell(2,1);
-        stages{1}  = repmat(HdComp, [sizeHdFIR(1) / sizeHdComp(1),1]);
-        stages{2}  = HdFIR;
-        Hcasc      = parcascador(R, Fp, FstFIR, Ap, Ast, DL, plotDir, stages);
+        %sizeHdComp = size(HdComp);
+        %sizeHdFIR  = size(HdFIR);
+        %stages     = cell(2,1);
+        %stages{1}  = repmat(HdComp, [sizeHdFIR(1) / sizeHdComp(1),1]);
+        %stages{2}  = HdFIR;
+        %Hcasc      = parcascador(R, Fp, FstFIR, Ap, Ast, DL, plotDir, stages);
     case 'DEC1250'
         % 100 kHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
@@ -286,63 +318,71 @@ switch filtertype
         coefDir = 'coefData';
         plotDir = 'plotData';
 
-
         % ------------------------------------------- Input Sampling Frequency in Hz
         Fs  = 125e6;
 
         % -------------------------------------------------------- Decimation Factor
-        R     = 1250;  % overall decimation rate
-        RHack =  625;  % for CIC filter hack
-        Rcic  =  125; % decimation rate in CIC
-        Rcomp =    5; % decimation rate for the compensator
-        RHB   =    2; % decimation rate in Halfband FIR filter (not the compensator)
+        R    = 1250; % overall decimation rate
+        RCIC  = 125; % decimation rate in CIC
+        RComp =   5; % Compensator decimation rate
+        RFIR1 =   2; % decimation rate in flat FIR filter
 
         % ---------------------- Frequency at the Start of the Pass Band; Normalized
         % NOTE: The smallest number in Fp must be smaller than the smallest number
         %       in Fst (see below).
-        Fp   = 1/R;
-        FpHack = 1/RHack;
-        FpHB = 1/RHB;
+        Fp    = 1/R;
+
+        % The frequency band coming out of the CIC which is of interest.
+        % In this case, that is Fp*RFIR2 (half the sampling frequency before the
+        % final FIR decimator).
+        FpCIC  = Fp*RFIR1; % The frequency band coming out of the CIC filter which is of interest.
+        FpComp = Fp*RFIR1; % The frequency band over which the compensator has to work.
+        FpFIR1 = 1/RFIR1;
 
         % ------------- ---------- Stop band frequencies ("How steep is the filter?")
-        % NOTE: The smallest number in Fst must be larger than the largest number in
-        %       Fp (see above).
-        Fst = Fp * 1.1;
-        FstComp = Fp + 0.001;
-        FstHB   = [0.52];
-        Tw      = Fst - Fp; % Only works if Fst and Fp are same length or one is a scalar.
-        TwHB    = FstHB - FpHB;
+        % NOTE: The compensator's frequency specifications are relative to the CIC filter's.
+        FstComp = FpComp + 0.0008; % Must be smaller than or equal to 0.008 (1/RCIC). FpComp = 0.0016
+                                   % FpComp,max = 0.0064
+        % NOTE: FstComp must be small enough so that it does not get picked up by the repetition
+        %       of the halfband filter running at the lower frequency (FsComp/5).
+        % Can be checked with:
+        % fvtool(Hcasc{1,1},Hcasc{1,1}.Stage1,Hcasc{1,1}.Stage2,Hcasc{1,1}.Stage3,'Fs',[125e6,125e6,1e6,2e5])
+        FstFIR2 = 0.225;
+        TwHB1   = 0.04;
+        FstHB1  = 0.5 + 0.5*TwHB1;
+        Fst     = FstHB1 / RCIC / RComp; % overall stop band imposed by the final FIR filter. Only used for filename.
 
         % ------------------------------------------------- Ripple in Passband in dB
-        Ap     = [0.1];
-        ApComp = [0.05];
-        ApHB   = [0.1];
+        ApComp = 0.05;
+        ApHB1  = 0.20;
+        Ap     = ApComp + ApHB1; % Ripple of cascaded filters is additive. Only used for filename.
 
         % ------------------------------------------- Attenuation in Stop Band in dB
-        Ast     = [60];
-        AstComp = [60];
-        AstHB   = [60];
+        Ast     = 60; % only used for filename.
+        AstComp = 60;
+        AstHB1  = 60;
 
         % ----------------------------------------------- Differential Delay for CIC
-        DL = [1];
+        DL = 1;
 
-        %Hcic   =    decCIC(Rcic, Fp, Ast, DL, plotDir); % correct, in theory
-        % Since Matlab's CIC filter designer adjusts the number of stages when
-        % Fp is changed, and we might want to use the same CIC filter for all
-        % filter chains, we shall adjust Fp to Fphack here.
-        Hcic   =    decCIC(Rcic, FpHack, Ast, DL, plotDir);
-        HdComp =   compCIC(Rcomp, Fp, FstComp, ApComp, AstComp, DL, Hcic, coefDir, plotDir);
-        HdHB   = halfbandFIR(2, TwHB, AstHB, coefDir, plotDir);
+        HdCIC  =    decCIC(RCIC,  FpCIC, Ast, DL, plotDir);
+        HdComp =   compCIC(RComp, FpComp, FstComp, ApComp, AstComp, DL, HdCIC, coefDir, plotDir);
+        HdHB1  = halfbandFIR(2, TwHB1, AstHB1, coefDir, plotDir);
+
+        stages    = cell(2,1);
+        stages{1} = HdComp;
+        stages{2} = HdHB1;
+        Hcasc     = cascador(R, Fp, Fst, Ap, Ast, DL, plotDir, stages);
 
         % NOTE: Something doesn't quite work correctly when iterating and sometimes
         %       not all configurations might be iterated. Fixing this bug might not
         %       be worth the time, so make sure to check results.
-        sizeHdComp = size(HdComp);
-        sizeHdHB   = size(HdHB);
-        stages     = cell(2,1);
-        stages{1}  = repmat(HdComp, [sizeHdHB(1) / sizeHdComp(1),1]);
-        stages{2}  = HdHB;
-        Hcasc      = parcascador(R, Fp, FstHB, Ap, Ast, DL, plotDir, stages);
+        %sizeHdComp = size(HdComp);
+        %sizeHdFIR  = size(HdFIR);
+        %stages     = cell(2,1);
+        %stages{1}  = repmat(HdComp, [sizeHdFIR(1) / sizeHdComp(1),1]);
+        %stages{2}  = HdFIR;
+        %Hcasc      = parcascador(R, Fp, FstFIR, Ap, Ast, DL, plotDir, stages);
     case 'DEC2500'
         % 50 kHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
@@ -362,64 +402,74 @@ switch filtertype
         Fs  = 125e6;
 
         % -------------------------------------------------------- Decimation Factor
-        R     = 2500;  % overall decimation rate
-        RHack =  625;  % for CIC filter hack
-        Rcic  =  125; % decimation rate in CIC
-        Rcomp =    5; % decimation rate for the compensator
-        RHB   =    2; % decimation rate in Halfband FIR filter (not the compensator)
+        R    = 1250; % overall decimation rate
+        RCIC  = 125; % decimation rate in CIC
+        RComp =   5; % Compensator decimation rate
+        RFIR1 =   2; % decimation rate in flat FIR filter
+        RFIR2 =   2; % decimation rate in flat FIR filter
 
         % ---------------------- Frequency at the Start of the Pass Band; Normalized
         % NOTE: The smallest number in Fp must be smaller than the smallest number
         %       in Fst (see below).
-        Fp   = 1/R;
-        FpHack = 1/RHack;
-        FpHB = 1/RHB;
+        Fp    = 1/R;
+
+        % The frequency band coming out of the CIC which is of interest.
+        % In this case, that is Fp*RFIR2 (half the sampling frequency before the
+        % final FIR decimator).
+        FpCIC  = Fp*RFIR1; % The frequency band coming out of the CIC filter which is of interest.
+        FpComp = Fp*RFIR1; % The frequency band over which the compensator has to work.
+        FpFIR1 = 1/RFIR1;
+        FpFIR2 = 1/RFIR2;
 
         % ------------- ---------- Stop band frequencies ("How steep is the filter?")
-        % NOTE: The smallest number in Fst must be larger than the largest number in
-        %       Fp (see above).
-        Fst = Fp * 1.1;
-        FstComp = Fp + 0.001;
-        FstHB1  = [0.60];
-        FstHB2  = [0.52];
-        Tw      = Fst - Fp; % Only works if Fst and Fp are same length or one is a scalar.
-        TwHB1   = FstHB1 - FpHB;
-        TwHB2   = FstHB2 - FpHB;
+        % NOTE: The compensator's frequency specifications are relative to the CIC filter's.
+        FstComp = FpComp + 0.0008; % Must be smaller than or equal to 0.008 (1/RCIC). FpComp = 0.0016
+                                   % FpComp,max = 0.0064
+        % NOTE: FstComp must be small enough so that it does not get picked up by the repetition
+        %       of the halfband filter running at the lower frequency (FsComp/5).
+        % Can be checked with:
+        % fvtool(Hcasc{1,1},Hcasc{1,1}.Stage1,Hcasc{1,1}.Stage2,Hcasc{1,1}.Stage3,'Fs',[125e6,125e6,1e6,2e5])
+        FstFIR2 = 0.225;
+        TwHB1   = 0.04;
+        TwHB2   = 0.04;
+        FstHB1  = 0.5 + 0.5*TwHB1;
+        FstHB2  = 0.5 + 0.5*TwHB2;
+        Fst     = FstHB2 / FstHB1 / RCIC / RComp; % overall stop band imposed by the final FIR filter. Only used for filename.
 
         % ------------------------------------------------- Ripple in Passband in dB
-        Ap     = [0.1];
-        ApComp = [0.05];
-        ApHB1  = [0.1];
-        ApHB2  = [0.1];
+        ApComp = 0.05;
+        ApHB1  = 0.20;
+        ApHB2  = 0.20;
+        Ap     = ApComp + ApHB1 + ApHB2; % Ripple of cascaded filters is additive. Only used for filename.
 
         % ------------------------------------------- Attenuation in Stop Band in dB
-        Ast     = [60];
-        AstComp = [60];
-        AstHB1  = [60];
-        AstHB2  = [60];
+        Ast     = 60; % only used for filename.
+        AstComp = 60;
+        AstHB1  = 60;
+        AstHB2  = 60;
 
         % ----------------------------------------------- Differential Delay for CIC
-        DL = [1];
+        DL = 1;
 
-        %Hcic   =    decCIC(Rcic, Fp, Ast, DL, plotDir);
-        % Since Matlab's CIC filter designer adjusts the number of stages when
-        % Fp is changed, and we might want to use the same CIC filter for all
-        % filter chains, we shall adjust Fp to Fphack here.
-        Hcic   =    decCIC(Rcic, FpHack, Ast, DL, plotDir);
-        HdComp =   compCIC(Rcomp, Fp, FstComp, ApComp, AstComp, DL, Hcic, coefDir, plotDir);
+        HdCIC  =    decCIC(RCIC,  FpCIC, Ast, DL, plotDir);
+        HdComp =   compCIC(RComp, FpComp, FstComp, ApComp, AstComp, DL, HdCIC, coefDir, plotDir);
         HdHB1  = halfbandFIR(2, TwHB1, AstHB1, coefDir, plotDir);
-        HdHB2  = halfbandFIR(2, TwHB2, AstHB2, coefDir, plotDir);
+
+        stages    = cell(3,1);
+        stages{1} = HdComp;
+        stages{2} = HdHB1;
+        stages{3} = HdHB1;
+        Hcasc     = cascador(R, Fp, Fst, Ap, Ast, DL, plotDir, stages);
 
         % NOTE: Something doesn't quite work correctly when iterating and sometimes
         %       not all configurations might be iterated. Fixing this bug might not
         %       be worth the time, so make sure to check results.
-        sizeHdComp = size(HdComp);
-        sizeHdHB1  = size(HdHB1);
-        stages     = cell(3,1);
-        stages{1}  = repmat(HdComp, [sizeHdHB1(1) / sizeHdComp(1),1]);
-        stages{2}  = HdHB1;
-        stages{3}  = HdHB2;
-        Hcasc      = parcascador(R, Fp, FstHB1, Ap, Ast, DL, plotDir, stages);
+        %sizeHdComp = size(HdComp);
+        %sizeHdFIR  = size(HdFIR);
+        %stages     = cell(2,1);
+        %stages{1}  = repmat(HdComp, [sizeHdFIR(1) / sizeHdComp(1),1]);
+        %stages{2}  = HdFIR;
+        %Hcasc      = parcascador(R, Fp, FstFIR, Ap, Ast, DL, plotDir, stages);
     case 'DEC4'
         % 31.25 MHz, T = 32 ns
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
