@@ -42,7 +42,7 @@ struct state {
 void readAndSendChannel(state* s){
     struct data_instruction d_instruction;
     d_instruction.resolution = 0;
-    d_instruction.channel = s->current_channel;
+    d_instruction.channel = s->currentChannel;
     ioctl(s->fd, DATA_SETTINGS, &d_instruction);
 
     size_t _read = 0;
@@ -386,6 +386,11 @@ int main(int argc, char* argv[]) {
                 // Request a new frame of data
                 if(!j["requestFrame"].is_null()){
                     // ussleep(30);
+                    try {
+                        s.currentChannel = j["channel"].get<size_t>();
+                    } catch(int e) {
+                        std::cout << "No valid channel requested." << std::endl;
+                    }
                     s.currentChannel = j["channel"].get<size_t>();
                     std::thread t1(waitForFrame, &s);
                     // TODO: do not detach but join
@@ -395,7 +400,11 @@ int main(int argc, char* argv[]) {
                 // Request a new frame of data
                 if(!j["readFrame"].is_null()){
                     // ussleep(30);
-                    s.currentChannel = j["channel"].get<size_t>();
+                    try {
+                        s.currentChannel = j["channel"].get<size_t>();
+                    } catch(int e) {
+                        std::cout << "No valid channel requested." << std::endl;
+                    }
                     readAndSendChannel(&s);
                 }
 
