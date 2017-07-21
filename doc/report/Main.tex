@@ -6,6 +6,7 @@
 %https://tex.stackexchange.com/a/210456/131649
 \renewcommand\partnumberlinebox[2]{#2\hspace{2em}}
 \usetikzlibrary{positioning}
+\usepackage{multirow,array}
 \tcbuselibrary{breakable}
 \tcbset{shield externalize}
 \makeindex
@@ -214,6 +215,8 @@ their respective chapters and sections.
 
 \chapter{Graphical Front End} % <<< ------------------------------------------ %
 \label{ch:graphical_front_end}
+
+\input{chunks/gui.tex}
 
 % >>>
 

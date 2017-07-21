@@ -1,0 +1,45 @@
+To view measured data a graphical user interface (GUI in further text) was created. It can receive the recorded samples over the network and display them on a canvas. Furthermore it manages triggers and does a lot of math to get more specific metrics of a signal.
+In this section the requirements for this piece of software, the design choices and the implementation details are discussed.
+
+\subsection{Requirements}
+
+The requirements for the GUI were given by the scope of Prof. Gut's 'Spektrum Analyzer' written in Java.
+The task description required the new GUI to have the same features as the old one plus as many more as possible.
+
+The requirements were as follows
+
+\begin{itemize}
+    \item Receive data over the network.
+    \item Display received data in time as well as fequency space.
+    \item Calculate the RMS power density in the signal.
+    \item Calculate the THD ratio of the signal.
+\end{itemize}
+
+\subsection{Design Choices}
+
+There is a wealth of programming languages to choose from. And there is as many libraries helping with graphics and networking as well for most of those languages.
+
+\begin{table}
+\begin{centering}
+\setlength{\extrarowheight}{2pt}
+\begin{tabular}{*{10}{c|}}
+
+    \multicolumn{2}{c}{}        & \multicolumn{2}{c}{}\\\cline{3-10}%
+    %% Header row
+    \multicolumn{1}{c}{} &      & \parbox[t]{2mm}{\rotatebox[origin=c]{90}{Open Standard}}%
+                                & \parbox[t]{2mm}{\rotatebox[origin=c]{90}{Networking}}%
+                                & \parbox[t]{2mm}{\rotatebox[origin=c]{90}{Graphics}}%
+                                & \parbox[t]{2mm}{\rotatebox[origin=c]{90}{Widespread}}%
+                                & \parbox[t]{2mm}{\rotatebox[origin=c]{90}{User-Friendly}}%
+                                & \parbox[t]{2mm}{\rotatebox[origin=c]{90}{Easy To Use}}%
+                                & \parbox[t]{2mm}{\rotatebox[origin=c]{90}{Familiarity With The Language}}%
+                                & \parbox[t]{2mm}{\rotatebox[origin=c]{90}{Total}} \\\cline{2-10}
+                    & Rust      & 6 & 6 & 2 & 3 & 5 & 3 & 3 & 28\\\cline{2-10}
+                    & C++       & 6 & 6 & 5 & 6 & 5 & 4 & 4 & 36\\\cline{2-10}
+                    & Java      & 1 & 6 & 5 & 6 & 5 & 5 & 3 & 31\\\cline{2-10}
+                    & Python    & 6 & 6 & 5 & 5 & 5 & 6 & 6 & 39\\\cline{2-10}
+                    & JavaScript& 6 & 4 & 6 & 6 & 6 & 6 & 6 & 40\\\cline{2-10}
+\end{tabular}
+\caption{Descision matrix to choose a programming language}
+\end{centering}
+\end{table}
