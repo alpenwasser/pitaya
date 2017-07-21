@@ -23,7 +23,8 @@ create_bd_design system
 
 # ====================================================================================
 # IP repos
-set currrent_dir [get_property DIRECTORY [current_project]]
+# current_dir: resolves to firmware/fpga/build/src
+set current_dir [get_property DIRECTORY [current_project]]
 set_property  ip_repo_paths  {build/cores zynq_logger/build/fpga} [current_project]
 update_ip_catalog
 
@@ -62,16 +63,73 @@ create_bd_cell -type ip -vlnv noah-huesser:user:axis_to_data_lanes:1.0 axis2lane
 # The Logger module
 create_bd_cell -type ip -vlnv bastli:user:zynq_logger:1.1 logger
 
+# Multiplexers
+set mux0 axis_multiplexer_0
+set mux1 axis_multiplexer_1
+set mux2 axis_multiplexer_2
+set mux3 axis_multiplexer_3
+set mux4 axis_multiplexer_4
+create_bd_cell -type ip -vlnv raphael-frey:user:axis_multiplexer:1.0 $mux2
+
+# Broadcaster
+set cast0 axis_broadcaster_0
+set cast1 axis_broadcaster_1
+set cast2 axis_broadcaster_2
+set cast3 axis_broadcaster_3
+set cast4 axis_broadcaster_4
+
+create_bd_cell -type ip -vlnv xilinx.com:ip:axis_broadcaster:1.1 $cast2
+set_property -dict [list CONFIG.M_TDATA_NUM_BYTES.VALUE_SRC USER CONFIG.S_TDATA_NUM_BYTES.VALUE_SRC USER CONFIG.HAS_TREADY.VALUE_SRC USER] [get_bd_cells $cast2]
+set_property -dict [list CONFIG.M_TDATA_NUM_BYTES {4} CONFIG.S_TDATA_NUM_BYTES {4} CONFIG.M00_TDATA_REMAP {tdata[31:0]} CONFIG.M01_TDATA_REMAP {tdata[31:0]}] [get_bd_cells $cast2]
+
 # FIR Compiler
 set vlnv_fircomp xilinx.com:ip:fir_compiler:7.2
-set fircomp_instance fir_compiler_0
 set clk 125
 set decRate 5
 set dataWidth 16
 set fracBits 8
+# current_dir: resolves to firmware/fpga/build/src
+set coef_dir "${current_dir}/../../src/coefData"
+# Coefficient files
+set coef_comp025 "${coef_dir}/comp025.coe"
+set coef_comp125 "${coef_dir}/comp125.coe"
+set coef_dec5flat "${coef_dir}/dec5flat.coe"
+set coef_dec5steep "${coef_dir}/dec5steep.coe"
+set coef_halfband "${coef_dir}/halfband.coe"
+set fircomp_instance "fir5_steep"
+set fircomp_instance_5steep $fircomp_instance
 create_bd_cell -type ip -vlnv $vlnv_fircomp $fircomp_instance
 set_property -dict [list CONFIG.Data_Width.VALUE_SRC USER] [get_bd_cells $fircomp_instance]
-#set_property -dict [list CONFIG.CoefficientSource {COE_File} CONFIG.Coefficient_File $coef_file] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.CoefficientSource {COE_File} CONFIG.Coefficient_File $coef_dec5steep] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Filter_Type {Decimation}] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Decimation_Rate $decRate] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Sample_Frequency $clk] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Clock_Frequency $clk] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.BestPrecision {true}] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Output_Rounding_Mode {Truncate_LSBs}] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Output_Width $dataWidth] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Coefficient_Sets {1}] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Interpolation_Rate {1}] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Zero_Pack_Factor {1}] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Number_Channels {1}] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Number_Paths {2}] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.RateSpecification {Frequency_Specification}] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Clock_Frequency $clk] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Coefficient_Sign {Signed}] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Quantization {Quantize_Only}] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Coefficient_Width $dataWidth] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Coefficient_Fractional_Bits $fracBits] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Coefficient_Structure {Inferred}] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Data_Width $dataWidth] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Filter_Architecture {Systolic_Multiply_Accumulate}] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.ColumnConfig {31}] [get_bd_cells $fircomp_instance] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.M_DATA_Has_TREADY {true}] [get_bd_cells $fircomp_instance]
+
+set fircomp_instance "fir5_flat"
+set fircomp_instance_5flat $fircomp_instance
+create_bd_cell -type ip -vlnv $vlnv_fircomp $fircomp_instance
+set_property -dict [list CONFIG.Data_Width.VALUE_SRC USER] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.CoefficientSource {COE_File} CONFIG.Coefficient_File $coef_dec5flat] [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.Filter_Type {Decimation}] [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.Decimation_Rate $decRate] [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.Sample_Frequency $clk] [get_bd_cells $fircomp_instance]
@@ -111,7 +169,8 @@ connect_bd_net [get_bd_pins logger/ClkxCI] [get_bd_pins clk_wiz_adc/clk_out1]
 connect_bd_net [get_bd_pins ps/M_AXI_GP0_ACLK] [get_bd_pins ps/S_AXI_HP0_ACLK]
 connect_bd_net [get_bd_pins ps/M_AXI_GP0_ACLK] [get_bd_pins clk_wiz_adc/clk_out1]
 connect_bd_net [get_bd_pins system_rst/ext_reset_in] [get_bd_pins clk_wiz_adc/locked]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $fircomp_instance/aclk]
+connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $fircomp_instance_5steep/aclk]
+connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $fircomp_instance_5flat/aclk]
 
 # Distribute Resets
 connect_bd_net [get_bd_pins system_rst/peripheral_aresetn] [get_bd_pins axis2lanes/RstxRBI]
@@ -144,9 +203,25 @@ connect_bd_intf_net [get_bd_intf_pins M2Sconverter/S_AXI] [get_bd_intf_pins logg
 connect_bd_intf_net [get_bd_intf_pins S2Mconverter/S_AXI] [get_bd_intf_pins ps/M_AXI_GP0]
 connect_bd_intf_net [get_bd_intf_pins S2Mconverter/M_AXI] [get_bd_intf_pins logger/S0]
 
+# Filter Chain
+connect_bd_intf_net [get_bd_intf_pins adc/M_AXIS] [get_bd_intf_pins $cast2/S_AXIS]
+connect_bd_intf_net [get_bd_intf_pins $cast2/M00_AXIS] [get_bd_intf_pins $mux2/SI0]
+connect_bd_intf_net [get_bd_intf_pins $cast2/M01_AXIS] [get_bd_intf_pins $fircomp_instance_5flat/S_AXIS_DATA]
+connect_bd_intf_net [get_bd_intf_pins $fircomp_instance_5flat/M_AXIS_DATA] [get_bd_intf_pins $mux2/SI1]
+connect_bd_intf_net [get_bd_intf_pins $mux2/MO] [get_bd_intf_pins $fircomp_instance_5steep/S_AXIS_DATA]
+connect_bd_intf_net [get_bd_intf_pins $fircomp_instance_5steep/M_AXIS_DATA] [get_bd_intf_pins axis2lanes/SI]
+# clock and reset for broadcaster
+connect_bd_net [get_bd_pins $cast2/aclk] [get_bd_pins clk_wiz_adc/clk_out1]
+connect_bd_net [get_bd_pins $cast2/aresetn] [get_bd_pins S2Mconverter/aresetn]
+# clock and reset for multiplexer
+connect_bd_net [get_bd_pins $mux2/ClkxCI] [get_bd_pins clk_wiz_adc/clk_out1]
+connect_bd_net [get_bd_pins $mux2/RstxRBI] [get_bd_pins system_rst/interconnect_aresetn]
+
+
 # FIR Compiler
-connect_bd_intf_net [get_bd_intf_pins adc/M_AXIS] [get_bd_intf_pins $fircomp_instance/S_AXIS_DATA]
-connect_bd_intf_net [get_bd_intf_pins $fircomp_instance/M_AXIS_DATA] [get_bd_intf_pins axis2lanes/SI]
+#connect_bd_intf_net [get_bd_intf_pins adc/M_AXIS] [get_bd_intf_pins $fircomp_instance_5flat/S_AXIS_DATA]
+#connect_bd_intf_net [get_bd_intf_pins $fircomp_instance_5flat/M_AXIS_DATA] [get_bd_intf_pins $fircomp_instance_5steep/S_AXIS_DATA]
+#connect_bd_intf_net [get_bd_intf_pins $fircomp_instance_5steep/M_AXIS_DATA] [get_bd_intf_pins axis2lanes/SI]
 
 # Assign Address to Logger MMIO Slave
 assign_bd_address [get_bd_addr_segs {logger/S0/Reg }]

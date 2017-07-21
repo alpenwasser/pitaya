@@ -117,6 +117,12 @@ set_property interface_mode slave [ipx::get_bus_interfaces SI_clk -of_objects [i
 ipx::add_port_map CLK [ipx::get_bus_interfaces SI_clk -of_objects [ipx::current_core]]
 set_property physical_name ClkxCI [ipx::get_port_maps CLK -of_objects [ipx::get_bus_interfaces SI_clk -of_objects [ipx::current_core]]]
 
+ipx::associate_bus_interfaces -busif SI0 -clock SI_clk [ipx::current_core]
+ipx::associate_bus_interfaces -busif SI1 -clock SI_clk [ipx::current_core]
+ipx::associate_bus_interfaces -busif SI2 -clock SI_clk [ipx::current_core]
+ipx::associate_bus_interfaces -busif SI3 -clock SI_clk [ipx::current_core]
+ipx::associate_bus_interfaces -busif MO -clock SI_clk [ipx::current_core]
+
 # Add new Reset Interface
 ipx::add_bus_interface SI_rst [ipx::current_core]
 set_property abstraction_type_vlnv xilinx.com:signal:reset_rtl:1.0 [ipx::get_bus_interfaces SI_rst -of_objects [ipx::current_core]]
