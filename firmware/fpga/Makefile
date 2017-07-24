@@ -32,7 +32,42 @@ zynq_logger:
 	cd zynq_logger && make core
 
 project:
-	$(VIVADO) -source make_project.tcl
+	$(VIVADO) -source make_project.tcl -tclargs src
+	rm -f vivado*
+	rm -f webtalk*
+
+chain5:
+	$(VIVADO) -source make_project.tcl -tclargs p_chain5
+	rm -f vivado*
+	rm -f webtalk*
+
+nofilters:
+	$(VIVADO) -source make_project.tcl -tclargs p_nofilters
+	rm -f vivado*
+	rm -f webtalk*
+
+bcmux:
+	$(VIVADO) -source make_project.tcl -tclargs p_bcmux
+	rm -f vivado*
+	rm -f webtalk*
+
+sim_bcfirmux:
+	$(VIVADO) -source make_project.tcl -tclargs p_sim_bcfirmux
+	rm -f vivado*
+	rm -f webtalk*
+
+bcfirmux:
+	$(VIVADO) -source make_project.tcl -tclargs p_bcfirmux
+	rm -f vivado*
+	rm -f webtalk*
+
+firtest:
+	$(VIVADO) -source make_project.tcl -tclargs p_firtest
+	rm -f vivado*
+	rm -f webtalk*
+
+cictest:
+	$(VIVADO) -source make_project.tcl -tclargs p_cictest
 	rm -f vivado*
 	rm -f webtalk*
 
