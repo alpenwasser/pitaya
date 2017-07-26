@@ -1,54 +1,60 @@
 {
    guistr: "# # String gsaved with Nlview 6.5.12  2016-01-29 bk=1.3547 VDI=39 GEI=35 GUI=JA:1.6
 #  -string -flagsOSRD
-preplace inst axis_broadcaster_0 -pg 1 -lvl 5 -y 240 -defaultsOSRD
-preplace inst correct_sink -pg 1 -lvl 15 -y 240 -defaultsOSRD
-preplace inst xlslice_0 -pg 1 -lvl 3 -y 40 -defaultsOSRD
-preplace inst FIR_resized0 -pg 1 -lvl 8 -y 340 -defaultsOSRD
-preplace inst xlslice_1 -pg 1 -lvl 15 -y 320 -defaultsOSRD
-preplace inst axis_to_data_lanes_0 -pg 1 -lvl 14 -y 390 -defaultsOSRD
-preplace inst FIR_resized1 -pg 1 -lvl 10 -y 330 -defaultsOSRD
-preplace inst xlslice_2 -pg 1 -lvl 15 -y 400 -defaultsOSRD
-preplace inst FIR -pg 1 -lvl 6 -y 240 -defaultsOSRD
-preplace inst cic_compiler_0 -pg 1 -lvl 6 -y 390 -defaultsOSRD
-preplace inst FIR_resized2 -pg 1 -lvl 12 -y 330 -defaultsOSRD
-preplace inst xlslice_3 -pg 1 -lvl 3 -y 120 -defaultsOSRD
-preplace inst xlslice_4 -pg 1 -lvl 13 -y 330 -defaultsOSRD
-preplace inst xlconcat_0 -pg 1 -lvl 4 -y 120 -defaultsOSRD
-preplace inst xlslice_5 -pg 1 -lvl 3 -y 200 -defaultsOSRD
-preplace inst xlslice_6 -pg 1 -lvl 11 -y 310 -defaultsOSRD
-preplace inst xlslice_7 -pg 1 -lvl 7 -y 370 -defaultsOSRD
-preplace inst correct_value -pg 1 -lvl 14 -y 240 -defaultsOSRD
-preplace inst wavegen -pg 1 -lvl 2 -y 240 -defaultsOSRD
-preplace inst xlslice_8 -pg 1 -lvl 9 -y 310 -defaultsOSRD
-preplace inst clk -pg 1 -lvl 1 -y 320 -defaultsOSRD
-preplace netloc clk_gen_0_sync_rst 1 1 13 NJ 330 NJ 330 NJ 330 870 330 NJ 320 NJ 250 NJ 250 NJ 250 NJ 440 NJ 440 NJ 440 NJ 440 NJ
-preplace netloc axis_broadcaster_0_M00_AXIS 1 5 1 N
-preplace netloc FIR_resized3_m_axis_data_tvalid 1 8 2 N 360 NJ
-preplace netloc FIR_resized3_m_axis_data_tdata 1 8 1 2220
-preplace netloc FIR_resized2_m_axis_data_tvalid 1 12 2 3440 280 NJ
-preplace netloc xlslice_4_Dout 1 13 1 NJ
-preplace netloc xlslice_3_Dout 1 3 1 NJ
-preplace netloc wavegen_m_axis_data_tvalid 1 2 3 NJ 250 NJ 240 N
-preplace netloc fir_compiler_0_m_axis_data_tdata 1 6 8 NJ 240 NJ 240 NJ 240 NJ 240 NJ 240 NJ 240 NJ 240 NJ
-preplace netloc xlslice_7_Dout 1 7 1 1820
-preplace netloc FIR_resized1_m_axis_data_tvalid 1 10 2 2840 360 NJ
-preplace netloc xlslice_5_Dout 1 3 1 NJ
-preplace netloc axis_to_data_lanes_0_Data1xDO 1 14 1 NJ
-preplace netloc axis_to_data_lanes_0_Data0xDO 1 14 1 NJ
-preplace netloc axis_broadcaster_0_M01_AXIS 1 5 1 1230
-preplace netloc xlslice_0_Dout1 1 3 1 NJ
+preplace inst xlslice_0 -pg 1 -lvl 3 -y 260 -defaultsOSRD
+preplace inst xlconstant_0 -pg 1 -lvl 8 -y 40 -defaultsOSRD
+preplace inst FIR_resized0 -pg 1 -lvl 10 -y 290 -defaultsOSRD
+preplace inst xlconstant_1 -pg 1 -lvl 10 -y 70 -defaultsOSRD -resize 100 60
+preplace inst FIR_resized1 -pg 1 -lvl 12 -y 130 -defaultsOSRD
+preplace inst xlconstant_2 -pg 1 -lvl 3 -y 180 -defaultsOSRD
+preplace inst cic_compiler_0 -pg 1 -lvl 6 -y 280 -defaultsOSRD
+preplace inst FIR_resized2 -pg 1 -lvl 14 -y 110 -defaultsOSRD
+preplace inst FIR_resized3 -pg 1 -lvl 12 -y 360 -defaultsOSRD -resize 360 120
+preplace inst xlslice_4 -pg 1 -lvl 15 -y 120 -defaultsOSRD
+preplace inst xlconcat_0 -pg 1 -lvl 4 -y 190 -defaultsOSRD
+preplace inst FIR_resized4 -pg 1 -lvl 14 -y 250 -defaultsOSRD -resize 360 120
+preplace inst xlslice_11 -pg 1 -lvl 13 -y 220 -defaultsOSRD -resize 160 60
+preplace inst xlconcat_1 -pg 1 -lvl 9 -y 90 -defaultsOSRD
+preplace inst xlconcat_2 -pg 1 -lvl 11 -y 150 -defaultsOSRD -resize 160 100
+preplace inst xlslice_12 -pg 1 -lvl 15 -y 250 -defaultsOSRD -resize 160 60
+preplace inst xlslice_6 -pg 1 -lvl 13 -y 100 -defaultsOSRD
+preplace inst xlslice_13 -pg 1 -lvl 10 -y 170 -defaultsOSRD -resize 140 60
+preplace inst xlslice_7 -pg 1 -lvl 7 -y 260 -defaultsOSRD
+preplace inst wavegen -pg 1 -lvl 2 -y 270 -defaultsOSRD
+preplace inst xlslice_14 -pg 1 -lvl 9 -y 190 -defaultsOSRD -resize 160 60
+preplace inst xlslice_8 -pg 1 -lvl 11 -y 250 -defaultsOSRD
+preplace inst xlslice_15 -pg 1 -lvl 5 -y 260 -defaultsOSRD
+preplace inst xlslice_9 -pg 1 -lvl 8 -y 140 -defaultsOSRD
+preplace inst clk -pg 1 -lvl 1 -y 280 -defaultsOSRD
+preplace netloc xlconstant_1_dout 1 10 1 NJ
+preplace netloc xlconstant_2_dout 1 3 1 NJ
+preplace netloc xlslice_14_Dout 1 9 2 2060 120 NJ
+preplace netloc xlslice_9_Dout 1 8 1 NJ
+preplace netloc FIR_resized3_m_axis_data_tvalid 1 10 2 2480 80 NJ
+preplace netloc FIR_resized3_m_axis_data_tdata 1 10 1 2490
+preplace netloc axis_broadcaster_0_m_axis_tdata 1 4 5 860 190 NJ 190 NJ 190 NJ 190 NJ
+preplace netloc xlslice_13_Dout 1 10 1 NJ
+preplace netloc xlslice_7_Dout 1 7 2 1670 200 NJ
+preplace netloc FIR_resized1_m_axis_data_tvalid 1 12 2 N 150 NJ
+preplace netloc xlslice_15_Dout 1 5 1 NJ
+preplace netloc xlconcat_1_dout 1 9 1 2070
+preplace netloc xlconstant_0_dout 1 8 1 NJ
 preplace netloc cic_compiler_0_m_axis_data_tdata 1 6 1 NJ
-preplace netloc xlconcat_0_dout 1 4 1 860
-preplace netloc FIR_resized1_m_axis_data_tdata 1 10 1 2840
-preplace netloc wavegen_m_axis_data_tdata 1 2 1 460
-preplace netloc xlslice_8_Dout 1 9 1 NJ
-preplace netloc FIR_resized2_m_axis_data_tdata 1 12 1 N
-preplace netloc Net 1 1 13 200 320 NJ 320 NJ 320 860 340 1240 460 NJ 430 1810 430 NJ 420 2440 420 NJ 420 3040 420 NJ 420 NJ
-preplace netloc cic_compiler_0_m_axis_data_tvalid 1 6 2 NJ 320 1810
-preplace netloc xlslice_6_Dout 1 11 1 NJ
-preplace netloc xlslice_0_Dout 1 14 1 NJ
-levelinfo -pg 1 0 100 330 560 760 1050 1420 1710 2020 2320 2640 2940 3240 3540 3800 4040 4140 -top 0 -bot 490
+preplace netloc FIR_resized4_m_axis_data_tdata 1 14 1 NJ
+preplace netloc wavegen_m_axis_data_tdata 1 2 1 N
+preplace netloc xlslice_11_Dout 1 13 1 NJ
+preplace netloc FIR_resized1_m_axis_data_tdata 1 12 1 3120
+preplace netloc xlslice_8_Dout 1 11 1 NJ
+preplace netloc FIR_resized2_m_axis_data_tdata 1 14 1 NJ
+preplace netloc Net 1 1 13 200 350 NJ 350 NJ 350 NJ 350 1070 370 NJ 370 NJ 370 NJ 370 2060 380 NJ 380 2710 210 NJ 170 3340
+preplace netloc xlconcat_2_dout 1 11 1 2700
+preplace netloc axis_broadcaster_0_m_axis_tvalid 1 2 10 460 310 NJ 310 NJ 310 1060 390 NJ 390 NJ 390 NJ 390 NJ 390 NJ 390 NJ
+preplace netloc FIR_resized3_m_axis_data_tvalid1 1 12 2 3130 270 NJ
+preplace netloc FIR_resized3_m_axis_data_tdata1 1 12 1 3120
+preplace netloc xlslice_0_Dout 1 3 1 NJ
+preplace netloc cic_compiler_0_m_axis_data_tvalid 1 6 4 NJ 310 NJ 310 NJ 310 N
+preplace netloc xlslice_6_Dout 1 13 1 NJ
+levelinfo -pg 1 0 100 330 560 760 960 1270 1570 1760 1960 2270 2590 2920 3230 3540 3850 3960 -top 0 -bot 440
 ",
 }
 0

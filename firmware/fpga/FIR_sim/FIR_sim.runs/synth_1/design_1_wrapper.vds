@@ -1,0 +1,82 @@
+#-----------------------------------------------------------
+# Vivado v2016.2 (64-bit)
+# SW Build 1577090 on Thu Jun  2 16:32:35 MDT 2016
+# IP Build 1577682 on Fri Jun  3 12:00:54 MDT 2016
+# Start of session at: Tue Jul 25 18:20:26 2017
+# Process ID: 11661
+# Current directory: /home/edu/noah.huesser/repos/FIR_sim/FIR_sim.runs/synth_1
+# Command line: vivado -log design_1_wrapper.vds -mode batch -messageDb vivado.pb -notrace -source design_1_wrapper.tcl
+# Log file: /home/edu/noah.huesser/repos/FIR_sim/FIR_sim.runs/synth_1/design_1_wrapper.vds
+# Journal file: /home/edu/noah.huesser/repos/FIR_sim/FIR_sim.runs/synth_1/vivado.jou
+#-----------------------------------------------------------
+source design_1_wrapper.tcl -notrace
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1700] Loaded user IP repository '/home/edu/noah.huesser/repos/pitaya/firmware/fpga/build/cores'.
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository '/shared/eda/lnx_exe/xilinx/xilinx_vivado_2016.2/Vivado/2016.2/data/ip'.
+Command: synth_design -top design_1_wrapper -part xc7z010clg400-1
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7z010'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7z010'
+INFO: Launching helper process for spawning children vivado processes
+INFO: Helper process launched with PID 11873 
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:13 ; elapsed = 00:00:16 . Memory (MB): peak = 1025.898 ; gain = 150.137 ; free physical = 6100 ; free virtual = 30138
+---------------------------------------------------------------------------------
+INFO: [Synth 8-638] synthesizing module 'design_1_wrapper' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/hdl/design_1_wrapper.v:12]
+INFO: [Synth 8-638] synthesizing module 'design_1' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/hdl/design_1.v:13]
+INFO: [Synth 8-638] synthesizing module 'design_1_fir_compiler_0_0' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_fir_compiler_0_0/synth/design_1_fir_compiler_0_0.vhd:70]
+INFO: [Synth 8-3491] module 'fir_compiler_v7_2_6' declared at '/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ipshared/xilinx.com/fir_compiler_v7_2/hdl/fir_compiler_v7_2.vhd:57' bound to instance 'U0' of component 'fir_compiler_v7_2_6' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_fir_compiler_0_0/synth/design_1_fir_compiler_0_0.vhd:194]
+INFO: [Synth 8-256] done synthesizing module 'design_1_fir_compiler_0_0' (16#1) [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_fir_compiler_0_0/synth/design_1_fir_compiler_0_0.vhd:70]
+WARNING: [Synth 8-350] instance 'FIR' of module 'design_1_fir_compiler_0_0' requires 6 connections, but only 4 given [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/hdl/design_1.v:45]
+INFO: [Synth 8-638] synthesizing module 'design_1_FIR_resized1_1' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_FIR_resized1_1/synth/design_1_FIR_resized1_1.vhd:70]
+INFO: [Synth 8-3491] module 'fir_compiler_v7_2_6' declared at '/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ipshared/xilinx.com/fir_compiler_v7_2/hdl/fir_compiler_v7_2.vhd:57' bound to instance 'U0' of component 'fir_compiler_v7_2_6' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_FIR_resized1_1/synth/design_1_FIR_resized1_1.vhd:194]
+INFO: [Synth 8-256] done synthesizing module 'design_1_FIR_resized1_1' (19#1) [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_FIR_resized1_1/synth/design_1_FIR_resized1_1.vhd:70]
+WARNING: [Synth 8-350] instance 'FIR_resized0' of module 'design_1_FIR_resized1_1' requires 6 connections, but only 5 given [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/hdl/design_1.v:50]
+INFO: [Synth 8-638] synthesizing module 'design_1_FIR_resized_0' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_FIR_resized_0/synth/design_1_FIR_resized_0.vhd:70]
+INFO: [Synth 8-3491] module 'fir_compiler_v7_2_6' declared at '/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ipshared/xilinx.com/fir_compiler_v7_2/hdl/fir_compiler_v7_2.vhd:57' bound to instance 'U0' of component 'fir_compiler_v7_2_6' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_FIR_resized_0/synth/design_1_FIR_resized_0.vhd:194]
+INFO: [Synth 8-256] done synthesizing module 'design_1_FIR_resized_0' (20#1) [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_FIR_resized_0/synth/design_1_FIR_resized_0.vhd:70]
+WARNING: [Synth 8-350] instance 'FIR_resized1' of module 'design_1_FIR_resized_0' requires 6 connections, but only 5 given [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/hdl/design_1.v:56]
+INFO: [Synth 8-638] synthesizing module 'design_1_FIR_resized1_0' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_FIR_resized1_0/synth/design_1_FIR_resized1_0.vhd:70]
+INFO: [Synth 8-3491] module 'fir_compiler_v7_2_6' declared at '/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ipshared/xilinx.com/fir_compiler_v7_2/hdl/fir_compiler_v7_2.vhd:57' bound to instance 'U0' of component 'fir_compiler_v7_2_6' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_FIR_resized1_0/synth/design_1_FIR_resized1_0.vhd:194]
+INFO: [Synth 8-256] done synthesizing module 'design_1_FIR_resized1_0' (21#1) [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_FIR_resized1_0/synth/design_1_FIR_resized1_0.vhd:70]
+WARNING: [Synth 8-350] instance 'FIR_resized2' of module 'design_1_FIR_resized1_0' requires 6 connections, but only 5 given [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/hdl/design_1.v:62]
+INFO: [Synth 8-638] synthesizing module 'design_1_axis_broadcaster_0_0' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_axis_broadcaster_0_0/synth/design_1_axis_broadcaster_0_0.v:57]
+INFO: [Synth 8-638] synthesizing module 'top_design_1_axis_broadcaster_0_0' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_axis_broadcaster_0_0/hdl/top_design_1_axis_broadcaster_0_0.v:60]
+INFO: [Synth 8-638] synthesizing module 'axis_broadcaster_v1_1_9_core' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ipshared/xilinx.com/axis_broadcaster_v1_1/hdl/verilog/axis_broadcaster_v1_1_core.v:59]
+INFO: [Synth 8-638] synthesizing module 'axis_infrastructure_v1_1_0_util_vector2axis' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ipshared/xilinx.com/axis_infrastructure_v1_1/hdl/verilog/axis_infrastructure_v1_1_util_vector2axis.v:66]
+INFO: [Synth 8-256] done synthesizing module 'axis_infrastructure_v1_1_0_util_vector2axis' (22#1) [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ipshared/xilinx.com/axis_infrastructure_v1_1/hdl/verilog/axis_infrastructure_v1_1_util_vector2axis.v:66]
+INFO: [Synth 8-638] synthesizing module 'axis_infrastructure_v1_1_0_util_axis2vector' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ipshared/xilinx.com/axis_infrastructure_v1_1/hdl/verilog/axis_infrastructure_v1_1_util_axis2vector.v:66]
+INFO: [Synth 8-256] done synthesizing module 'axis_infrastructure_v1_1_0_util_axis2vector' (23#1) [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ipshared/xilinx.com/axis_infrastructure_v1_1/hdl/verilog/axis_infrastructure_v1_1_util_axis2vector.v:66]
+INFO: [Synth 8-256] done synthesizing module 'axis_broadcaster_v1_1_9_core' (24#1) [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ipshared/xilinx.com/axis_broadcaster_v1_1/hdl/verilog/axis_broadcaster_v1_1_core.v:59]
+INFO: [Synth 8-638] synthesizing module 'tdata_design_1_axis_broadcaster_0_0' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_axis_broadcaster_0_0/hdl/tdata_design_1_axis_broadcaster_0_0.v:49]
+INFO: [Synth 8-256] done synthesizing module 'tdata_design_1_axis_broadcaster_0_0' (25#1) [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_axis_broadcaster_0_0/hdl/tdata_design_1_axis_broadcaster_0_0.v:49]
+INFO: [Synth 8-638] synthesizing module 'tuser_design_1_axis_broadcaster_0_0' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_axis_broadcaster_0_0/hdl/tuser_design_1_axis_broadcaster_0_0.v:49]
+INFO: [Synth 8-256] done synthesizing module 'tuser_design_1_axis_broadcaster_0_0' (26#1) [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_axis_broadcaster_0_0/hdl/tuser_design_1_axis_broadcaster_0_0.v:49]
+INFO: [Synth 8-256] done synthesizing module 'top_design_1_axis_broadcaster_0_0' (27#1) [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_axis_broadcaster_0_0/hdl/top_design_1_axis_broadcaster_0_0.v:60]
+INFO: [Synth 8-256] done synthesizing module 'design_1_axis_broadcaster_0_0' (28#1) [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_axis_broadcaster_0_0/synth/design_1_axis_broadcaster_0_0.v:57]
+INFO: [Synth 8-638] synthesizing module 'design_1_axis_to_data_lanes_0_0' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_axis_to_data_lanes_0_0/synth/design_1_axis_to_data_lanes_0_0.vhd:69]
+INFO: [Synth 8-3491] module 'axis_to_data_lanes' declared at '/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ipshared/noah-huesser/axis_to_data_lanes_v1_0/src/axis_to_data_lanes.vhd:5' bound to instance 'U0' of component 'axis_to_data_lanes' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_axis_to_data_lanes_0_0/synth/design_1_axis_to_data_lanes_0_0.vhd:99]
+INFO: [Synth 8-638] synthesizing module 'axis_to_data_lanes' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ipshared/noah-huesser/axis_to_data_lanes_v1_0/src/axis_to_data_lanes.vhd:23]
+WARNING: [Synth 8-614] signal 'DataxDP' is read in the process but is not in the sensitivity list [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ipshared/noah-huesser/axis_to_data_lanes_v1_0/src/axis_to_data_lanes.vhd:54]
+INFO: [Synth 8-256] done synthesizing module 'axis_to_data_lanes' (29#1) [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ipshared/noah-huesser/axis_to_data_lanes_v1_0/src/axis_to_data_lanes.vhd:23]
+INFO: [Synth 8-256] done synthesizing module 'design_1_axis_to_data_lanes_0_0' (30#1) [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_axis_to_data_lanes_0_0/synth/design_1_axis_to_data_lanes_0_0.vhd:69]
+WARNING: [Synth 8-689] width (16) of port connection 'AxiTDataxDI' does not match port width (32) of module 'design_1_axis_to_data_lanes_0_0' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/hdl/design_1.v:76]
+WARNING: [Synth 8-350] instance 'axis_to_data_lanes_0' of module 'design_1_axis_to_data_lanes_0_0' requires 8 connections, but only 6 given [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/hdl/design_1.v:75]
+INFO: [Synth 8-638] synthesizing module 'design_1_cic_compiler_0_0' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_cic_compiler_0_0/synth/design_1_cic_compiler_0_0.vhd:70]
+INFO: [Synth 8-3491] module 'cic_compiler_v4_0_10' declared at '/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ipshared/xilinx.com/cic_compiler_v4_0/hdl/cic_compiler_v4_0.vhd:55' bound to instance 'U0' of component 'cic_compiler_v4_0_10' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_cic_compiler_0_0/synth/design_1_cic_compiler_0_0.vhd:149]
+INFO: [Synth 8-256] done synthesizing module 'design_1_cic_compiler_0_0' (40#1) [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_cic_compiler_0_0/synth/design_1_cic_compiler_0_0.vhd:70]
+WARNING: [Synth 8-350] instance 'cic_compiler_0' of module 'design_1_cic_compiler_0_0' requires 6 connections, but only 5 given [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/hdl/design_1.v:82]
+INFO: [Synth 8-638] synthesizing module 'design_1_clk_gen_0_0' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_clk_gen_0_0/synth/design_1_clk_gen_0_0.v:57]
+ERROR: [Synth 8-439] module 'clk_gen' not found [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_clk_gen_0_0/synth/design_1_clk_gen_0_0.v:71]
+ERROR: [Synth 8-285] failed synthesizing module 'design_1_clk_gen_0_0' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/ip/design_1_clk_gen_0_0/synth/design_1_clk_gen_0_0.v:57]
+ERROR: [Synth 8-285] failed synthesizing module 'design_1' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/hdl/design_1.v:13]
+ERROR: [Synth 8-285] failed synthesizing module 'design_1_wrapper' [/home/edu/noah.huesser/repos/FIR_sim/FIR_sim.srcs/sources_1/bd/design_1/hdl/design_1_wrapper.v:12]
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:01:36 ; elapsed = 00:01:42 . Memory (MB): peak = 1173.336 ; gain = 297.574 ; free physical = 5952 ; free virtual = 29990
+---------------------------------------------------------------------------------
+RTL Elaboration failed
+INFO: [Common 17-83] Releasing license: Synthesis
+42 Infos, 8 Warnings, 0 Critical Warnings and 5 Errors encountered.
+synth_design failed
+ERROR: [Common 17-69] Command failed: Synthesis failed - please see the console or run log file for details
+INFO: [Common 17-206] Exiting Vivado at Tue Jul 25 18:22:19 2017...
