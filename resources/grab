@@ -3,7 +3,7 @@
 url="$1"
 basename="$(echo "$url" | sed 's/^.*\/\(.*\)\.pdf/\1/')"
 
-wget -v "$1"
+wget --no-check-certificate -v "$1"
 
 date > "${basename}.txt"
 echo "$url" >> "${basename}.txt"
