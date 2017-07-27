@@ -17,29 +17,84 @@ The requirements were as follows
 
 \subsection{Design Choices}
 
-There is a wealth of programming languages to choose from. And there is as many libraries helping with graphics and networking as well for most of those languages.
+There is a wealth of programming languages to choose from. And there are as many libraries helping with graphics and networking as well for most of those languages.
+In the following it is explained why we chose JavaScript and web technologies to implement a basic GUI.
+
+In the comparison matrix \ref{fig:gui_language_choices} a select few popular possibilities were given weights for certain attributes of the respective language.
+
+All the attributes are explained in the following.
+
+\subsubsection*{Open Standard} Since this is a university based project meant for educational purposes too, it was very important to make all source code available under public license. Thus it was important to have a company and paid model independant sulution. Many languages are managed by a council or similar and open to public commits and thus deemed an open standard. Some are managed by a company and not classiefied as a open standard.
+
+\subsubsection*{Networking} To ensure a fast and lossless data transfer, it was very important to have the choice between good networking protocols as well as convenient libraries to ease the use of those standards.
+Networking is not a trivial thing and standards can be quite engineering and feature heavy. Thus it is important to have ready-to-use libraries that abstract the network. For more information on evaluated networking solutions, read Section \ref{TODO: networking}.
+
+\subsubsection*{Graphics} An oscilloscope is quite requiring when it comes to graphics, since a image-stream that is fluent for the human eye has to be provided in a high resolution. This fact made it indispensable to use a library that interfaces OpenGL. Since a interface is not easy to design from scratch only using rectangles and circles, it was deemed important to have a GUI toolkit that makes the design process of the GUI easy. More on possible graphics libraries in section \ref{TODO: Graphics}
+
+\subsubsection*{Widespread} It was important for the project to use a widespread solution since that way it is easy to obtain help and ask more savy users about certain pitfalls.
+
+\subsubsection*{User-Friendly} Some solutions are more user-friendly when it comes to toolkit and usage. Since both team members come form a Linux background, it was strongly preferred to use a language that does not quasi-require a huge IDE or requires a lot of uneasy maintenance.
+
+\subsubsection*{Easy To Use(r)} Since not all users want to fight with installers and package managers, the deployment options as well as general stability of the environment for the binaries were a strong point in the descision process.
+
+\subsubsection*{Familiarity With The Language} The best toolkits do not matter if none of the involved programmers have ever used it and will struggle with even the basics for a major part of the project duration. Thus it was unavoidable to have some personal preferences for some languages.
 
 \begin{table}
 \begin{centering}
 \setlength{\extrarowheight}{2pt}
-\begin{tabular}{*{10}{c|}}
-
-    \multicolumn{2}{c}{}        & \multicolumn{2}{c}{}\\\cline{3-10}%
-    %% Header row
-    \multicolumn{1}{c}{} &      & \parbox[t]{2mm}{\rotatebox[origin=c]{90}{Open Standard}}%
-                                & \parbox[t]{2mm}{\rotatebox[origin=c]{90}{Networking}}%
-                                & \parbox[t]{2mm}{\rotatebox[origin=c]{90}{Graphics}}%
-                                & \parbox[t]{2mm}{\rotatebox[origin=c]{90}{Widespread}}%
-                                & \parbox[t]{2mm}{\rotatebox[origin=c]{90}{User-Friendly}}%
-                                & \parbox[t]{2mm}{\rotatebox[origin=c]{90}{Easy To Use}}%
-                                & \parbox[t]{2mm}{\rotatebox[origin=c]{90}{Familiarity With The Language}}%
-                                & \parbox[t]{2mm}{\rotatebox[origin=c]{90}{Total}} \\\cline{2-10}
-                    & Rust      & 6 & 6 & 2 & 3 & 5 & 3 & 3 & 28\\\cline{2-10}
-                    & C++       & 6 & 6 & 5 & 6 & 5 & 4 & 4 & 36\\\cline{2-10}
-                    & Java      & 1 & 6 & 5 & 6 & 5 & 5 & 3 & 31\\\cline{2-10}
-                    & Python    & 6 & 6 & 5 & 5 & 5 & 6 & 6 & 39\\\cline{2-10}
-                    & JavaScript& 6 & 4 & 6 & 6 & 6 & 6 & 6 & 40\\\cline{2-10}
+\begin{tabular}{*{7}{c|}}
+    \multicolumn{2}{c}{}        & \multicolumn{2}{c}{}\\\cline{3-7}
+    \multicolumn{1}{c}{}    &   & \parbox[t]{2mm}{\rotatebox[origin=c]{90}{Rust}}%
+                                & \parbox[t]{2mm}{\rotatebox[origin=c]{90}{C++}}%
+                                & \parbox[t]{2mm}{\rotatebox[origin=c]{90}{Java}}%
+                                & \parbox[t]{2mm}{\rotatebox[origin=c]{90}{Python}}%
+                                & \parbox[t]{2mm}{\rotatebox[origin=c]{90}{JavaScript}} \\\cline{2-7}
+                & Open Standard & 6 & 6 & 1 & 6 & 6\\\cline{2-7}
+                   & Networking & 6 & 6 & 6 & 6 & 4\\\cline{2-7}
+                     & Graphics & 2 & 5 & 5 & 5 & 6\\\cline{2-7}
+                   & Widespread & 3 & 6 & 6 & 5 & 6\\\cline{2-7}
+                & User-Friendly & 5 & 5 & 5 & 5 & 6\\\cline{2-7}
+               & Easy To Use(r) & 3 & 4 & 5 & 6 & 6\\\cline{2-7}
+& Familiarity With The Language & 3 & 4 & 3 & 6 & 6\\\cline{2-7}
+                       & Total &28 &36 &31 &39 & 40\\\cline{2-7}
 \end{tabular}
-\caption{Descision matrix to choose a programming language}
+\caption{Weights of certain aspects of possible programming languages.}
+\label{fig:gui_language_choices}
 \end{centering}
 \end{table}
+
+After weighting in all the different aspects JavaScript was chosen as the language to implement the GUI for the oscilloscope. JavaScript is a scripting language that can be interpreted by the browser.
+It is known for it's high versatility and widespread use in the web community.
+A few years ago, JavaScript would not have been a viable choice for graphics and networking at all. But with the recent addition and more important great increase in stability in performance of WebGL and WebSockets, JavaScript has become a very potent solution available to everyone.
+With JavaScript deploying the application to the enduser is as simple as making it accessible via a website that runs on the RedPitaya board. Thus it is very convenient for the user to work with the board, considering the assumption that every user has a webbrowser that is able to run the application.
+A downside of JavaScript is the huge runtime the browser needs to execute the application and thus resulting in a lot of memory ressources used. Since those are easily available nowadays, this issue was considered non-relevant.
+Another downside of JavaScript is that it leaves very little room when it comes to networking choices. For streaming data there is only WebSockets that performs well. Since WebSockets is a quite capable solution, this issue was also weighted rather light.
+
+\subsection{Networking}
+
+To ensure a fluent stream of data, very little overhead for the transmitted data is key.
+
+Normally for streamed data where packets can be lost, \textbf{UDP} is the best choice since it has no overhead for guaranteeing completeness and in-order for all packets sent resulting in a packet header of only 2 bytes \cite{TODO: refrence}.
+UDP sends packets but does not guarantee that none are lost. Since the scope only requires complete frames, those could be transmitted with a size of one UDP packet and thus ensuring no sample in the frame is lost. If no-lost-packets should be guaranteed, that would have been to implement.
+
+For guaranteed transmission and sequentiality of the data, one is advised to use \textbf{TCP}. This comes at the cost of some more overhead resulting in a 6 byte header \cite{TODO: refrence}. Considering the huge packet size this header is, with less than 0.1 \% of the total packet size, completely negligible. What TCP does more and was important for this project is congestion control. It ensures that no more packets are sent if old ones are missing. It prevents the network from collapsing because an UDP sender sends all packets it can and thus using the entire bandwidth even if the receiver cannot even process the data at this point.
+This means that TCP also helps when the bandwith is small by waiting for the current package and not already sending further packages and thus providing sort of automatic bandwith adaption.
+There is the possibility of using raw TCP sockets or one of TCP's subprotocols. Raw sockets require the user to implement their own protocol entirely to handle data transmission on an application layer whilst using subprotocols already provide a standard way to do so.
+Two of those subprotocols are HTTP and WebSockets. HTTP comes with great overhead and is meant for single transactions only.
+WebSockets on the contrary are meant for data streaming.
+Since JavaScript enforces WebSockets the functionality is explained a little bit more in the following.
+
+\subsubsection{WebSockets}
+
+WebSockets final RFC 6455\cite{TODO: https://tools.ietf.org/html/rfc6455,} was released in December 2011 and is thus still quite young. It is meant to compensate the lack of raw UDP and TCP sockets in JavaScript which is due to security threats that are not further elaborated here.
+WebSockets is located in the Application Layer of the OSI model\footnote{TODO: https://en.wikipedia.org/wiki/OSI\_model}.
+Instead of opening a raw WebSocket, the handshake is done via HTTP(S). This brings the benefit of communicating through the same ports as the browser (80 or 443) which enables the protocol to go through most firewalls.
+The client sends an upgrade request to the server which then opens a WebSocket connection.
+This allows for a very conventient way to use TCP Sockets without any entirely new standards.
+The section "1.5 Design Philosophy" in the RFC 6455\cite{TODO: https://tools.ietf.org/html/rfc6455,} explains it very well:
+Basically it is intended to be as close to just exposing raw TCP to script as possible given the constraints of the Web.
+
+The only exception is that WebSockets adds framing to make it packet rather than stream based and to differentiate between binary and text data.
+This differentiation is very useful for this project. Instructions to the server are issued via the text channel whilst data is sent back through the binary channel, allowing for very convenient interfacing with close to no effort.
+
+\subsection{Graphics}
