@@ -61,9 +61,9 @@ ENTITY design_1_FIR_resized1_1 IS
     aclk : IN STD_LOGIC;
     s_axis_data_tvalid : IN STD_LOGIC;
     s_axis_data_tready : OUT STD_LOGIC;
-    s_axis_data_tdata : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+    s_axis_data_tdata : IN STD_LOGIC_VECTOR(23 DOWNTO 0);
     m_axis_data_tvalid : OUT STD_LOGIC;
-    m_axis_data_tdata : OUT STD_LOGIC_VECTOR(23 DOWNTO 0)
+    m_axis_data_tdata : OUT STD_LOGIC_VECTOR(31 DOWNTO 0)
   );
 END design_1_FIR_resized1_1;
 
@@ -151,7 +151,7 @@ ARCHITECTURE design_1_FIR_resized1_1_arch OF design_1_FIR_resized1_1 IS
       s_axis_data_tready : OUT STD_LOGIC;
       s_axis_data_tlast : IN STD_LOGIC;
       s_axis_data_tuser : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
-      s_axis_data_tdata : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+      s_axis_data_tdata : IN STD_LOGIC_VECTOR(23 DOWNTO 0);
       s_axis_config_tvalid : IN STD_LOGIC;
       s_axis_config_tready : OUT STD_LOGIC;
       s_axis_config_tlast : IN STD_LOGIC;
@@ -164,7 +164,7 @@ ARCHITECTURE design_1_FIR_resized1_1_arch OF design_1_FIR_resized1_1 IS
       m_axis_data_tready : IN STD_LOGIC;
       m_axis_data_tlast : OUT STD_LOGIC;
       m_axis_data_tuser : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
-      m_axis_data_tdata : OUT STD_LOGIC_VECTOR(23 DOWNTO 0);
+      m_axis_data_tdata : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
       event_s_data_tlast_missing : OUT STD_LOGIC;
       event_s_data_tlast_unexpected : OUT STD_LOGIC;
       event_s_data_chanid_incorrect : OUT STD_LOGIC;
@@ -205,10 +205,10 @@ BEGIN
       C_COL_PIPE_LEN => 4,
       C_COL_CONFIG => "1",
       C_OPTIMIZATION => 0,
-      C_DATA_PATH_WIDTHS => "16",
-      C_DATA_IP_PATH_WIDTHS => "16",
-      C_DATA_PX_PATH_WIDTHS => "16",
-      C_DATA_WIDTH => 16,
+      C_DATA_PATH_WIDTHS => "24",
+      C_DATA_IP_PATH_WIDTHS => "24",
+      C_DATA_PX_PATH_WIDTHS => "24",
+      C_DATA_WIDTH => 24,
       C_COEF_PATH_WIDTHS => "16",
       C_COEF_WIDTH => 16,
       C_DATA_PATH_SRC => "0",
@@ -216,10 +216,10 @@ BEGIN
       C_PX_PATH_SRC => "0",
       C_DATA_PATH_SIGN => "0",
       C_COEF_PATH_SIGN => "0",
-      C_ACCUM_PATH_WIDTHS => "33",
-      C_OUTPUT_WIDTH => 17,
-      C_OUTPUT_PATH_WIDTHS => "17",
-      C_ACCUM_OP_PATH_WIDTHS => "33",
+      C_ACCUM_PATH_WIDTHS => "41",
+      C_OUTPUT_WIDTH => 32,
+      C_OUTPUT_PATH_WIDTHS => "32",
+      C_ACCUM_OP_PATH_WIDTHS => "41",
       C_EXT_MULT_CNFG => "none",
       C_DATA_PATH_PSAMP_SRC => "0",
       C_OP_PATH_PSAMP_SRC => "0",
@@ -243,11 +243,11 @@ BEGIN
       C_DATA_HAS_TLAST => 0,
       C_S_DATA_HAS_FIFO => 1,
       C_S_DATA_HAS_TUSER => 0,
-      C_S_DATA_TDATA_WIDTH => 16,
+      C_S_DATA_TDATA_WIDTH => 24,
       C_S_DATA_TUSER_WIDTH => 1,
       C_M_DATA_HAS_TREADY => 0,
       C_M_DATA_HAS_TUSER => 0,
-      C_M_DATA_TDATA_WIDTH => 24,
+      C_M_DATA_TDATA_WIDTH => 32,
       C_M_DATA_TUSER_WIDTH => 1,
       C_HAS_CONFIG_CHANNEL => 0,
       C_CONFIG_SYNC_MODE => 0,

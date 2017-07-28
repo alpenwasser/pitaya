@@ -63,8 +63,8 @@ output wire [15 : 0] Dout;
 
   xlslice #(
     .DIN_WIDTH(40),
-    .DIN_FROM(32),
-    .DIN_TO(17)
+    .DIN_FROM(34),
+    .DIN_TO(19)
   ) inst (
     .Din(Din),
     .Dout(Dout)

@@ -12,94 +12,217 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="99226883912fs"></ZoomEndTime>
+      <ZoomEndTime time="49100000004fs"></ZoomEndTime>
       <Cursor1Time time="40000000000fs"></Cursor1Time>
    </zoom_setting>
-   <WVObjectSize size="10" />
+   <WVObjectSize size="5" />
    <wvobject type="logic" fp_name="/design_1_wrapper/design_1_i/clk/inst/clk">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/xlslice_0/Dout">
+   <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/xlconcat_0/dout">
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">Dout[13:0]</obj_property>
-      <obj_property name="ObjectShortName">Dout[13:0]</obj_property>
+      <obj_property name="ElementShortName">dout[15:0]</obj_property>
+      <obj_property name="ObjectShortName">dout[15:0]</obj_property>
       <obj_property name="label">WAVEGEN</obj_property>
       <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
       <obj_property name="CellHeight">100</obj_property>
       <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/cic_compiler_0/m_axis_data_tdata">
+   <wvobject type="group" fp_name="group124">
+      <obj_property name="label">CHAIN 5</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">m_axis_data_tdata[39:0]</obj_property>
-      <obj_property name="ObjectShortName">m_axis_data_tdata[39:0]</obj_property>
-      <obj_property name="label">CIC OUT</obj_property>
-      <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
-      <obj_property name="CellHeight">100</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/FIR_resized5/m_axis_data_tdata">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">m_axis_data_tdata[31:0]</obj_property>
+         <obj_property name="ObjectShortName">m_axis_data_tdata[31:0]</obj_property>
+         <obj_property name="label">FIR 1 OUT</obj_property>
+         <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+         <obj_property name="CellHeight">100</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/xlslice_16/Dout">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">Dout[23:0]</obj_property>
+         <obj_property name="ObjectShortName">Dout[23:0]</obj_property>
+         <obj_property name="label">FIR 1 SLICE OUT</obj_property>
+         <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+         <obj_property name="CellHeight">100</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
    </wvobject>
-   <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/xlslice_7/Dout">
+   <wvobject type="group" fp_name="group996">
+      <obj_property name="label">CHAIN 25</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">Dout[15:0]</obj_property>
-      <obj_property name="ObjectShortName">Dout[15:0]</obj_property>
-      <obj_property name="label">CIC SLICE OUT</obj_property>
-      <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
-      <obj_property name="CellHeight">100</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="group" fp_name="group864">
+         <obj_property name="label">FIR 1</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/FIR_resized3/m_axis_data_tdata">
+            <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="ElementShortName">m_axis_data_tdata[31:0]</obj_property>
+            <obj_property name="ObjectShortName">m_axis_data_tdata[31:0]</obj_property>
+            <obj_property name="label">FIR 1 OUT</obj_property>
+            <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+            <obj_property name="CellHeight">100</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/xlslice_11/inst/Dout">
+            <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="ElementShortName">Dout[23:0]</obj_property>
+            <obj_property name="ObjectShortName">Dout[23:0]</obj_property>
+            <obj_property name="label">FIR 1 SLICE OUT</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject type="group" fp_name="group889">
+         <obj_property name="label">FIR 2</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/FIR_resized4/m_axis_data_tdata">
+            <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="ElementShortName">m_axis_data_tdata[31:0]</obj_property>
+            <obj_property name="ObjectShortName">m_axis_data_tdata[31:0]</obj_property>
+            <obj_property name="label">FIR 2 OUT</obj_property>
+            <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+            <obj_property name="CellHeight">100</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/xlslice_12/inst/Dout">
+            <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="ElementShortName">Dout[23:0]</obj_property>
+            <obj_property name="ObjectShortName">Dout[23:0]</obj_property>
+            <obj_property name="label">FIR 2 SLICE OUT</obj_property>
+         </wvobject>
+      </wvobject>
    </wvobject>
-   <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/FIR_resized1/m_axis_data_tdata">
+   <wvobject type="group" fp_name="group528">
+      <obj_property name="label">CHAIN 625</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">m_axis_data_tdata[23:0]</obj_property>
-      <obj_property name="ObjectShortName">m_axis_data_tdata[23:0]</obj_property>
-      <obj_property name="label">FIR1 OUT 16BIT</obj_property>
-      <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
-      <obj_property name="CellHeight">100</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      <obj_property name="AnalogYRangeType">ANALOG_YRANGETYPE_AUTO</obj_property>
-      <obj_property name="AnalogYRangeMin">-1538550.000000</obj_property>
-      <obj_property name="AnalogYRRangeMax">-1354100.000000</obj_property>
-      <obj_property name="AnalogInterpolation">ANALOG_INTERPOLATION_LINEAR</obj_property>
-      <obj_property name="AnalogOffscale">ANALOG_OFFSCALE_HIDE</obj_property>
-      <obj_property name="AnalogHorizLine">0.000000</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/xlslice_6/Dout">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">Dout[15:0]</obj_property>
-      <obj_property name="ObjectShortName">Dout[15:0]</obj_property>
-      <obj_property name="label">FIR 1 OUT SLICE</obj_property>
-      <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
-      <obj_property name="CellHeight">100</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-   </wvobject>
-   <wvobject fp_name="divider1559" type="divider">
-      <obj_property name="label">KEK</obj_property>
-      <obj_property name="DisplayName">label</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/FIR_resized2/s_axis_data_tdata">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">s_axis_data_tdata[15:0]</obj_property>
-      <obj_property name="ObjectShortName">s_axis_data_tdata[15:0]</obj_property>
-      <obj_property name="label">FIR 2 IN</obj_property>
-      <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
-      <obj_property name="CellHeight">100</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/FIR_resized2/m_axis_data_tdata">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">m_axis_data_tdata[23:0]</obj_property>
-      <obj_property name="ObjectShortName">m_axis_data_tdata[23:0]</obj_property>
-      <obj_property name="label">FIR 2 OUT</obj_property>
-      <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
-      <obj_property name="CellHeight">100</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/FIR_resized2/m_axis_data_tdata">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">m_axis_data_tdata[23:0]</obj_property>
-      <obj_property name="ObjectShortName">m_axis_data_tdata[23:0]</obj_property>
-      <obj_property name="label">FIR 2 OUT</obj_property>
-      <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
-      <obj_property name="CellHeight">100</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="group" fp_name="group485">
+         <obj_property name="label">CIC</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/cic_compiler_0/m_axis_data_tdata">
+            <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="ElementShortName">m_axis_data_tdata[39:0]</obj_property>
+            <obj_property name="ObjectShortName">m_axis_data_tdata[39:0]</obj_property>
+            <obj_property name="label">CIC OUT</obj_property>
+            <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+            <obj_property name="CellHeight">100</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/xlslice_7/Dout">
+            <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="ElementShortName">Dout[15:0]</obj_property>
+            <obj_property name="ObjectShortName">Dout[15:0]</obj_property>
+            <obj_property name="label">CIC SLICE OUT</obj_property>
+            <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+            <obj_property name="CellHeight">100</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject type="group" fp_name="group484">
+         <obj_property name="label">FIR 1</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/FIR_resized1/m_axis_data_tdata">
+            <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="ElementShortName">m_axis_data_tdata[31:0]</obj_property>
+            <obj_property name="ObjectShortName">m_axis_data_tdata[31:0]</obj_property>
+            <obj_property name="label">FIR1 OUT</obj_property>
+            <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+            <obj_property name="CellHeight">100</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            <obj_property name="AnalogYRangeType">ANALOG_YRANGETYPE_AUTO</obj_property>
+            <obj_property name="AnalogYRangeMin">-1538550.000000</obj_property>
+            <obj_property name="AnalogYRRangeMax">-1354100.000000</obj_property>
+            <obj_property name="AnalogInterpolation">ANALOG_INTERPOLATION_LINEAR</obj_property>
+            <obj_property name="AnalogOffscale">ANALOG_OFFSCALE_HIDE</obj_property>
+            <obj_property name="AnalogHorizLine">0.000000</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/xlslice_6/Dout">
+            <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="ElementShortName">Dout[23:0]</obj_property>
+            <obj_property name="ObjectShortName">Dout[23:0]</obj_property>
+            <obj_property name="label">FIR 1 SLICE OUT</obj_property>
+            <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+            <obj_property name="CellHeight">100</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject type="group" fp_name="group486">
+         <obj_property name="label">FIR 2</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/FIR_resized2/m_axis_data_tdata">
+            <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="ElementShortName">m_axis_data_tdata[31:0]</obj_property>
+            <obj_property name="ObjectShortName">m_axis_data_tdata[31:0]</obj_property>
+            <obj_property name="label">FIR 2 OUT</obj_property>
+            <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+            <obj_property name="CellHeight">100</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/xlslice_4/Dout">
+            <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="ElementShortName">Dout[23:0]</obj_property>
+            <obj_property name="ObjectShortName">Dout[23:0]</obj_property>
+            <obj_property name="label">FIR 2 SLICE OUT</obj_property>
+            <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+            <obj_property name="CellHeight">100</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/cic_compiler_1/m_axis_data_tdata">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">m_axis_data_tdata[47:0]</obj_property>
+         <obj_property name="ObjectShortName">m_axis_data_tdata[47:0]</obj_property>
+         <obj_property name="label">CIC OUT</obj_property>
+         <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+         <obj_property name="CellHeight">100</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/xlconcat_3/dout">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">dout[23:0]</obj_property>
+         <obj_property name="ObjectShortName">dout[23:0]</obj_property>
+         <obj_property name="label">CIC OUT SLICE</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+         <obj_property name="CellHeight">100</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/FIR_resized6/m_axis_data_tdata">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">m_axis_data_tdata[31:0]</obj_property>
+         <obj_property name="ObjectShortName">m_axis_data_tdata[31:0]</obj_property>
+         <obj_property name="label">FIR 1 OUT</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+         <obj_property name="CellHeight">100</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/xlslice_15/Dout">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">Dout[23:0]</obj_property>
+         <obj_property name="ObjectShortName">Dout[23:0]</obj_property>
+         <obj_property name="label">FIR 1 SLICE OUT</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+         <obj_property name="CellHeight">100</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/FIR_resized7/m_axis_data_tdata">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">m_axis_data_tdata[31:0]</obj_property>
+         <obj_property name="ObjectShortName">m_axis_data_tdata[31:0]</obj_property>
+         <obj_property name="label">FIR 2 OUT</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+         <obj_property name="CellHeight">100</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/design_1_wrapper/design_1_i/xlslice_14/Dout">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">Dout[23:0]</obj_property>
+         <obj_property name="ObjectShortName">Dout[23:0]</obj_property>
+         <obj_property name="label">FIR 2 SLICE OUT</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+         <obj_property name="CellHeight">100</obj_property>
+      </wvobject>
    </wvobject>
 </wave_config>
