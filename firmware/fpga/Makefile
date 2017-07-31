@@ -27,6 +27,11 @@ axis_multiplexer:
 	rm -f vivado*
 	rm -f webtalk*
 
+dec_to_fir_mux:
+	$(VIVADO) -source create_cores.tcl -tclargs $(PART) $(BUILD)/cores dec_to_fir_mux_v1_0
+	rm -f vivado*
+	rm -f webtalk*
+
 .PHONY: zynq_logger
 zynq_logger:
 	cd zynq_logger && make core

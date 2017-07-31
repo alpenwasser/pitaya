@@ -136,8 +136,8 @@ ARCHITECTURE design_1_cic_compiler_0_0_arch OF design_1_cic_compiler_0_0 IS
   ATTRIBUTE CHECK_LICENSE_TYPE : STRING;
   ATTRIBUTE CHECK_LICENSE_TYPE OF design_1_cic_compiler_0_0_arch : ARCHITECTURE IS "design_1_cic_compiler_0_0,cic_compiler_v4_0_10,{}";
   ATTRIBUTE CORE_GENERATION_INFO : STRING;
-  ATTRIBUTE CORE_GENERATION_INFO OF design_1_cic_compiler_0_0_arch: ARCHITECTURE IS "design_1_cic_compiler_0_0,cic_compiler_v4_0_10,{x_ipProduct=Vivado 2016.2,x_ipVendor=xilinx.com,x_ipLibrary=ip,x_ipName=cic_compiler,x_ipVersion=4.0,x_ipCoreRevision=10,x_ipLanguage=VERILOG,x_ipSimLanguage=MIXED,C_COMPONENT_NAME=design_1_cic_compiler_0_0,C_FILTER_TYPE=1,C_NUM_STAGES=4,C_DIFF_DELAY=1,C_RATE=25,C_INPUT_WIDTH=14,C_OUTPUT_WIDTH=33,C_USE_DSP=1,C_HAS_ROUNDING=0,C_NUM_CHANNELS=1,C_RATE_TYPE=0,C_MIN_RATE=25,C_MAX_RATE=25,C_SAMPLE_FREQ=1,C_CLK_FREQ=1,C_USE_STREAMING_INTERFACE=1,C_FAMILY=" & 
-"zynq,C_XDEVICEFAMILY=zynq,C_C1=33,C_C2=33,C_C3=33,C_C4=33,C_C5=0,C_C6=0,C_I1=33,C_I2=33,C_I3=33,C_I4=33,C_I5=0,C_I6=0,C_S_AXIS_CONFIG_TDATA_WIDTH=1,C_S_AXIS_DATA_TDATA_WIDTH=16,C_M_AXIS_DATA_TDATA_WIDTH=40,C_M_AXIS_DATA_TUSER_WIDTH=1,C_HAS_DOUT_TREADY=0,C_HAS_ACLKEN=0,C_HAS_ARESETN=0}";
+  ATTRIBUTE CORE_GENERATION_INFO OF design_1_cic_compiler_0_0_arch: ARCHITECTURE IS "design_1_cic_compiler_0_0,cic_compiler_v4_0_10,{x_ipProduct=Vivado 2016.2,x_ipVendor=xilinx.com,x_ipLibrary=ip,x_ipName=cic_compiler,x_ipVersion=4.0,x_ipCoreRevision=10,x_ipLanguage=VERILOG,x_ipSimLanguage=MIXED,C_COMPONENT_NAME=design_1_cic_compiler_0_0,C_FILTER_TYPE=1,C_NUM_STAGES=4,C_DIFF_DELAY=1,C_RATE=25,C_INPUT_WIDTH=16,C_OUTPUT_WIDTH=35,C_USE_DSP=1,C_HAS_ROUNDING=0,C_NUM_CHANNELS=1,C_RATE_TYPE=0,C_MIN_RATE=25,C_MAX_RATE=25,C_SAMPLE_FREQ=1,C_CLK_FREQ=1,C_USE_STREAMING_INTERFACE=1,C_FAMILY=" & 
+"zynq,C_XDEVICEFAMILY=zynq,C_C1=35,C_C2=35,C_C3=35,C_C4=35,C_C5=0,C_C6=0,C_I1=35,C_I2=35,C_I3=35,C_I4=35,C_I5=0,C_I6=0,C_S_AXIS_CONFIG_TDATA_WIDTH=1,C_S_AXIS_DATA_TDATA_WIDTH=16,C_M_AXIS_DATA_TDATA_WIDTH=40,C_M_AXIS_DATA_TUSER_WIDTH=1,C_HAS_DOUT_TREADY=0,C_HAS_ACLKEN=0,C_HAS_ARESETN=0}";
   ATTRIBUTE X_INTERFACE_INFO : STRING;
   ATTRIBUTE X_INTERFACE_INFO OF aclk: SIGNAL IS "xilinx.com:signal:clock:1.0 aclk_intf CLK";
   ATTRIBUTE X_INTERFACE_INFO OF s_axis_data_tdata: SIGNAL IS "xilinx.com:interface:axis:1.0 S_AXIS_DATA TDATA";
@@ -153,8 +153,8 @@ BEGIN
       C_NUM_STAGES => 4,
       C_DIFF_DELAY => 1,
       C_RATE => 25,
-      C_INPUT_WIDTH => 14,
-      C_OUTPUT_WIDTH => 33,
+      C_INPUT_WIDTH => 16,
+      C_OUTPUT_WIDTH => 35,
       C_USE_DSP => 1,
       C_HAS_ROUNDING => 0,
       C_NUM_CHANNELS => 1,
@@ -166,16 +166,16 @@ BEGIN
       C_USE_STREAMING_INTERFACE => 1,
       C_FAMILY => "zynq",
       C_XDEVICEFAMILY => "zynq",
-      C_C1 => 33,
-      C_C2 => 33,
-      C_C3 => 33,
-      C_C4 => 33,
+      C_C1 => 35,
+      C_C2 => 35,
+      C_C3 => 35,
+      C_C4 => 35,
       C_C5 => 0,
       C_C6 => 0,
-      C_I1 => 33,
-      C_I2 => 33,
-      C_I3 => 33,
-      C_I4 => 33,
+      C_I1 => 35,
+      C_I2 => 35,
+      C_I3 => 35,
+      C_I4 => 35,
       C_I5 => 0,
       C_I6 => 0,
       C_S_AXIS_CONFIG_TDATA_WIDTH => 1,

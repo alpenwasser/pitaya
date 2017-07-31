@@ -156,8 +156,38 @@ proc create_root_design { parentCell } {
 
   # Create ports
 
-  # Create instance: FIR_resized0, and set properties
-  set FIR_resized0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:fir_compiler:7.2 FIR_resized0 ]
+  # Create instance: CIC25, and set properties
+  set CIC25 [ create_bd_cell -type ip -vlnv xilinx.com:ip:cic_compiler:4.0 CIC25 ]
+  set_property -dict [ list \
+CONFIG.Clock_Frequency {125} \
+CONFIG.Filter_Type {Decimation} \
+CONFIG.Fixed_Or_Initial_Rate {25} \
+CONFIG.Input_Data_Width {14} \
+CONFIG.Input_Sample_Frequency {125} \
+CONFIG.Maximum_Rate {25} \
+CONFIG.Minimum_Rate {25} \
+CONFIG.Number_Of_Stages {4} \
+CONFIG.Output_Data_Width {33} \
+CONFIG.SamplePeriod {1} \
+ ] $CIC25
+
+  # Create instance: CIC125, and set properties
+  set CIC125 [ create_bd_cell -type ip -vlnv xilinx.com:ip:cic_compiler:4.0 CIC125 ]
+  set_property -dict [ list \
+CONFIG.Clock_Frequency {125} \
+CONFIG.Filter_Type {Decimation} \
+CONFIG.Fixed_Or_Initial_Rate {125} \
+CONFIG.Input_Data_Width {14} \
+CONFIG.Input_Sample_Frequency {125} \
+CONFIG.Maximum_Rate {125} \
+CONFIG.Minimum_Rate {125} \
+CONFIG.Number_Of_Stages {4} \
+CONFIG.Output_Data_Width {42} \
+CONFIG.SamplePeriod {1} \
+ ] $CIC125
+
+  # Create instance: COMP1, and set properties
+  set COMP1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:fir_compiler:7.2 COMP1 ]
   set_property -dict [ list \
 CONFIG.Clock_Frequency {125} \
 CONFIG.CoefficientSource {COE_File} \
@@ -181,10 +211,44 @@ CONFIG.Quantization {Quantize_Only} \
 CONFIG.RateSpecification {Frequency_Specification} \
 CONFIG.Sample_Frequency {5} \
 CONFIG.Zero_Pack_Factor {1} \
- ] $FIR_resized0
+ ] $COMP1
 
-  # Create instance: FIR_resized1, and set properties
-  set FIR_resized1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:fir_compiler:7.2 FIR_resized1 ]
+  # Create instance: COMP5, and set properties
+  set COMP5 [ create_bd_cell -type ip -vlnv xilinx.com:ip:fir_compiler:7.2 COMP5 ]
+  set_property -dict [ list \
+CONFIG.Clock_Frequency {125} \
+CONFIG.CoefficientSource {COE_File} \
+CONFIG.Coefficient_File {../../../../../../../pitaya/firmware/fpga/p_chain5/coefData/comp125.coe} \
+CONFIG.Coefficient_Fractional_Bits {16} \
+CONFIG.Coefficient_Sets {1} \
+CONFIG.Coefficient_Sign {Signed} \
+CONFIG.Coefficient_Structure {Inferred} \
+CONFIG.Coefficient_Width {16} \
+CONFIG.ColumnConfig {1} \
+CONFIG.Data_Fractional_Bits {7} \
+CONFIG.Data_Width {24} \
+CONFIG.Decimation_Rate {5} \
+CONFIG.Filter_Architecture {Systolic_Multiply_Accumulate} \
+CONFIG.Filter_Type {Decimation} \
+CONFIG.Interpolation_Rate {1} \
+CONFIG.Number_Channels {1} \
+CONFIG.Output_Rounding_Mode {Truncate_LSBs} \
+CONFIG.Output_Width {32} \
+CONFIG.Quantization {Quantize_Only} \
+CONFIG.RateSpecification {Frequency_Specification} \
+CONFIG.Sample_Frequency {1} \
+CONFIG.Zero_Pack_Factor {1} \
+ ] $COMP5
+
+  # Create instance: DEC_SEL, and set properties
+  set DEC_SEL [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 DEC_SEL ]
+  set_property -dict [ list \
+CONFIG.CONST_VAL {2500} \
+CONFIG.CONST_WIDTH {32} \
+ ] $DEC_SEL
+
+  # Create instance: FIR5flat, and set properties
+  set FIR5flat [ create_bd_cell -type ip -vlnv xilinx.com:ip:fir_compiler:7.2 FIR5flat ]
   set_property -dict [ list \
 CONFIG.Clock_Frequency {125} \
 CONFIG.CoefficientSource {COE_File} \
@@ -208,10 +272,10 @@ CONFIG.Quantization {Quantize_Only} \
 CONFIG.RateSpecification {Frequency_Specification} \
 CONFIG.Sample_Frequency {125} \
 CONFIG.Zero_Pack_Factor {1} \
- ] $FIR_resized1
+ ] $FIR5flat
 
-  # Create instance: FIR_resized2, and set properties
-  set FIR_resized2 [ create_bd_cell -type ip -vlnv xilinx.com:ip:fir_compiler:7.2 FIR_resized2 ]
+  # Create instance: FIR5steep, and set properties
+  set FIR5steep [ create_bd_cell -type ip -vlnv xilinx.com:ip:fir_compiler:7.2 FIR5steep ]
   set_property -dict [ list \
 CONFIG.BestPrecision {false} \
 CONFIG.Clock_Frequency {125} \
@@ -236,51 +300,24 @@ CONFIG.Quantization {Quantize_Only} \
 CONFIG.RateSpecification {Frequency_Specification} \
 CONFIG.Sample_Frequency {125} \
 CONFIG.Zero_Pack_Factor {1} \
- ] $FIR_resized2
+ ] $FIR5steep
 
-  # Create instance: FIR_resized3, and set properties
-  set FIR_resized3 [ create_bd_cell -type ip -vlnv xilinx.com:ip:fir_compiler:7.2 FIR_resized3 ]
-  set_property -dict [ list \
-CONFIG.Clock_Frequency {125} \
-CONFIG.CoefficientSource {COE_File} \
-CONFIG.Coefficient_File {../../../../../../../pitaya/firmware/fpga/p_chain5/coefData/dec5flat.coe} \
-CONFIG.Coefficient_Fractional_Bits {17} \
-CONFIG.Coefficient_Sets {1} \
-CONFIG.Coefficient_Sign {Signed} \
-CONFIG.Coefficient_Structure {Inferred} \
-CONFIG.Coefficient_Width {16} \
-CONFIG.ColumnConfig {7} \
-CONFIG.Data_Fractional_Bits {7} \
-CONFIG.Data_Width {24} \
-CONFIG.Decimation_Rate {5} \
-CONFIG.Filter_Architecture {Systolic_Multiply_Accumulate} \
-CONFIG.Filter_Type {Decimation} \
-CONFIG.Interpolation_Rate {1} \
-CONFIG.Number_Channels {1} \
-CONFIG.Output_Rounding_Mode {Truncate_LSBs} \
-CONFIG.Output_Width {32} \
-CONFIG.Quantization {Quantize_Only} \
-CONFIG.RateSpecification {Frequency_Specification} \
-CONFIG.Sample_Frequency {125} \
-CONFIG.Zero_Pack_Factor {1} \
- ] $FIR_resized3
-
-  # Create instance: FIR_resized4, and set properties
-  set FIR_resized4 [ create_bd_cell -type ip -vlnv xilinx.com:ip:fir_compiler:7.2 FIR_resized4 ]
+  # Create instance: HBflat, and set properties
+  set HBflat [ create_bd_cell -type ip -vlnv xilinx.com:ip:fir_compiler:7.2 HBflat ]
   set_property -dict [ list \
 CONFIG.BestPrecision {false} \
 CONFIG.Clock_Frequency {125} \
 CONFIG.CoefficientSource {COE_File} \
-CONFIG.Coefficient_File {../../../../../../../pitaya/firmware/fpga/p_chain5/coefData/dec5steep.coe} \
-CONFIG.Coefficient_Fractional_Bits {17} \
+CONFIG.Coefficient_File {../../../../../../../pitaya/firmware/fpga/p_chain5/coefData/halfband.coe} \
+CONFIG.Coefficient_Fractional_Bits {15} \
 CONFIG.Coefficient_Sets {1} \
 CONFIG.Coefficient_Sign {Signed} \
 CONFIG.Coefficient_Structure {Inferred} \
 CONFIG.Coefficient_Width {16} \
-CONFIG.ColumnConfig {21} \
+CONFIG.ColumnConfig {1} \
 CONFIG.Data_Fractional_Bits {7} \
 CONFIG.Data_Width {24} \
-CONFIG.Decimation_Rate {5} \
+CONFIG.Decimation_Rate {2} \
 CONFIG.Filter_Architecture {Systolic_Multiply_Accumulate} \
 CONFIG.Filter_Type {Decimation} \
 CONFIG.Interpolation_Rate {1} \
@@ -289,30 +326,162 @@ CONFIG.Output_Rounding_Mode {Truncate_LSBs} \
 CONFIG.Output_Width {32} \
 CONFIG.Quantization {Quantize_Only} \
 CONFIG.RateSpecification {Frequency_Specification} \
-CONFIG.Sample_Frequency {125} \
+CONFIG.Sample_Frequency {0.5} \
 CONFIG.Zero_Pack_Factor {1} \
- ] $FIR_resized4
+ ] $HBflat
 
-  # Create instance: cic_compiler_0, and set properties
-  set cic_compiler_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:cic_compiler:4.0 cic_compiler_0 ]
+  # Create instance: HBsteep, and set properties
+  set HBsteep [ create_bd_cell -type ip -vlnv xilinx.com:ip:fir_compiler:7.2 HBsteep ]
   set_property -dict [ list \
+CONFIG.BestPrecision {false} \
 CONFIG.Clock_Frequency {125} \
+CONFIG.CoefficientSource {COE_File} \
+CONFIG.Coefficient_File {../../../../../../../pitaya/firmware/fpga/p_chain5/coefData/halfband.coe} \
+CONFIG.Coefficient_Fractional_Bits {15} \
+CONFIG.Coefficient_Sets {1} \
+CONFIG.Coefficient_Sign {Signed} \
+CONFIG.Coefficient_Structure {Inferred} \
+CONFIG.Coefficient_Width {16} \
+CONFIG.ColumnConfig {1} \
+CONFIG.Data_Fractional_Bits {7} \
+CONFIG.Data_Width {24} \
+CONFIG.Decimation_Rate {2} \
+CONFIG.Filter_Architecture {Systolic_Multiply_Accumulate} \
 CONFIG.Filter_Type {Decimation} \
-CONFIG.Fixed_Or_Initial_Rate {25} \
-CONFIG.Input_Data_Width {16} \
-CONFIG.Input_Sample_Frequency {125} \
-CONFIG.Maximum_Rate {25} \
-CONFIG.Minimum_Rate {25} \
-CONFIG.Number_Of_Stages {4} \
-CONFIG.Output_Data_Width {35} \
-CONFIG.SamplePeriod {1} \
- ] $cic_compiler_0
+CONFIG.Interpolation_Rate {1} \
+CONFIG.Number_Channels {1} \
+CONFIG.Output_Rounding_Mode {Truncate_LSBs} \
+CONFIG.Output_Width {32} \
+CONFIG.Quantization {Quantize_Only} \
+CONFIG.RateSpecification {Frequency_Specification} \
+CONFIG.Sample_Frequency {0.5} \
+CONFIG.Zero_Pack_Factor {1} \
+ ] $HBsteep
+
+  # Create instance: MUX0, and set properties
+  set MUX0 [ create_bd_cell -type ip -vlnv raphael-frey:user:axis_multiplexer:1.0 MUX0 ]
+  set_property -dict [ list \
+CONFIG.C_AXIS_TDATA_WIDTH {24} \
+ ] $MUX0
+
+  # Create instance: MUX1, and set properties
+  set MUX1 [ create_bd_cell -type ip -vlnv raphael-frey:user:axis_multiplexer:1.0 MUX1 ]
+  set_property -dict [ list \
+CONFIG.C_AXIS_NUM_SI_SLOTS {3} \
+CONFIG.C_AXIS_TDATA_WIDTH {24} \
+ ] $MUX1
+
+  # Create instance: MUX2, and set properties
+  set MUX2 [ create_bd_cell -type ip -vlnv raphael-frey:user:axis_multiplexer:1.0 MUX2 ]
+  set_property -dict [ list \
+CONFIG.C_AXIS_TDATA_WIDTH {24} \
+ ] $MUX2
+
+  # Create instance: MUX3, and set properties
+  set MUX3 [ create_bd_cell -type ip -vlnv raphael-frey:user:axis_multiplexer:1.0 MUX3 ]
+  set_property -dict [ list \
+CONFIG.C_AXIS_NUM_SI_SLOTS {3} \
+CONFIG.C_AXIS_TDATA_WIDTH {24} \
+ ] $MUX3
+
+  # Create instance: cic125_slice, and set properties
+  set cic125_slice [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat:2.1 cic125_slice ]
+  set_property -dict [ list \
+CONFIG.IN0_WIDTH {7} \
+CONFIG.IN1_WIDTH {16} \
+CONFIG.IN2_WIDTH {1} \
+CONFIG.NUM_PORTS {3} \
+ ] $cic125_slice
+
+  # Create instance: cic25_slice, and set properties
+  set cic25_slice [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat:2.1 cic25_slice ]
+  set_property -dict [ list \
+CONFIG.IN0_WIDTH {7} \
+CONFIG.IN1_WIDTH {16} \
+CONFIG.IN2_WIDTH {1} \
+CONFIG.NUM_PORTS {3} \
+ ] $cic25_slice
 
   # Create instance: clk, and set properties
   set clk [ create_bd_cell -type ip -vlnv xilinx.com:ip:clk_gen:1.0 clk ]
   set_property -dict [ list \
 CONFIG.FREQ_HZ {125000000} \
  ] $clk
+
+  # Create instance: comp1_slice, and set properties
+  set comp1_slice [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 comp1_slice ]
+  set_property -dict [ list \
+CONFIG.DIN_FROM {30} \
+CONFIG.DIN_TO {7} \
+CONFIG.DIN_WIDTH {32} \
+CONFIG.DOUT_WIDTH {24} \
+ ] $comp1_slice
+
+  # Create instance: comp5_slice, and set properties
+  set comp5_slice [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 comp5_slice ]
+  set_property -dict [ list \
+CONFIG.DIN_FROM {30} \
+CONFIG.DIN_TO {7} \
+CONFIG.DIN_WIDTH {32} \
+CONFIG.DOUT_WIDTH {24} \
+ ] $comp5_slice
+
+  # Create instance: dec_to_fir_mux_1, and set properties
+  set dec_to_fir_mux_1 [ create_bd_cell -type ip -vlnv noah-huesser:user:dec_to_fir_mux:1.0 dec_to_fir_mux_1 ]
+
+  # Create instance: fir5flat_slice, and set properties
+  set fir5flat_slice [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 fir5flat_slice ]
+  set_property -dict [ list \
+CONFIG.DIN_FROM {30} \
+CONFIG.DIN_TO {7} \
+CONFIG.DIN_WIDTH {32} \
+CONFIG.DOUT_WIDTH {24} \
+ ] $fir5flat_slice
+
+  # Create instance: fir5steep_slice, and set properties
+  set fir5steep_slice [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 fir5steep_slice ]
+  set_property -dict [ list \
+CONFIG.DIN_FROM {29} \
+CONFIG.DIN_TO {6} \
+CONFIG.DIN_WIDTH {32} \
+CONFIG.DOUT_WIDTH {24} \
+ ] $fir5steep_slice
+
+  # Create instance: hbflat_slice, and set properties
+  set hbflat_slice [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 hbflat_slice ]
+  set_property -dict [ list \
+CONFIG.DIN_FROM {29} \
+CONFIG.DIN_TO {6} \
+CONFIG.DIN_WIDTH {32} \
+CONFIG.DOUT_WIDTH {24} \
+ ] $hbflat_slice
+
+  # Create instance: hbsteep_slice, and set properties
+  set hbsteep_slice [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 hbsteep_slice ]
+  set_property -dict [ list \
+CONFIG.DIN_FROM {30} \
+CONFIG.DIN_TO {7} \
+CONFIG.DIN_WIDTH {32} \
+CONFIG.DOUT_WIDTH {24} \
+ ] $hbsteep_slice
+
+  # Create instance: nocic_slice, and set properties
+  set nocic_slice [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat:2.1 nocic_slice ]
+  set_property -dict [ list \
+CONFIG.IN0_WIDTH {7} \
+CONFIG.IN1_WIDTH {16} \
+CONFIG.IN2_WIDTH {1} \
+CONFIG.NUM_PORTS {3} \
+ ] $nocic_slice
+
+  # Create instance: out_slice, and set properties
+  set out_slice [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 out_slice ]
+  set_property -dict [ list \
+CONFIG.DIN_FROM {22} \
+CONFIG.DIN_TO {7} \
+CONFIG.DIN_WIDTH {24} \
+CONFIG.DOUT_WIDTH {16} \
+ ] $out_slice
 
   # Create instance: wavegen, and set properties
   set wavegen [ create_bd_cell -type ip -vlnv xilinx.com:ip:dds_compiler:6.0 wavegen ]
@@ -321,9 +490,9 @@ CONFIG.DDS_Clock_Rate {125} \
 CONFIG.Frequency_Resolution {0.4} \
 CONFIG.Latency {3} \
 CONFIG.Noise_Shaping {Auto} \
-CONFIG.Output_Frequency1 {0.02} \
+CONFIG.Output_Frequency1 {0.021} \
 CONFIG.Output_Width {8} \
-CONFIG.PINC1 {10100111110001011} \
+CONFIG.PINC1 {10110000001010010} \
 CONFIG.Phase_Width {29} \
  ] $wavegen
 
@@ -332,32 +501,14 @@ CONFIG.Phase_Width {29} \
 CONFIG.Latency.VALUE_SRC {DEFAULT} \
  ] $wavegen
 
-  # Create instance: xlconcat_0, and set properties
-  set xlconcat_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat:2.1 xlconcat_0 ]
+  # Create instance: wavegen_slice, and set properties
+  set wavegen_slice [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat:2.1 wavegen_slice ]
   set_property -dict [ list \
-CONFIG.IN0_WIDTH {2} \
-CONFIG.IN1_WIDTH {14} \
-CONFIG.IN2_WIDTH {1} \
-CONFIG.NUM_PORTS {2} \
- ] $xlconcat_0
-
-  # Create instance: xlconcat_1, and set properties
-  set xlconcat_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat:2.1 xlconcat_1 ]
-  set_property -dict [ list \
-CONFIG.IN0_WIDTH {7} \
-CONFIG.IN1_WIDTH {16} \
+CONFIG.IN0_WIDTH {14} \
+CONFIG.IN1_WIDTH {1} \
 CONFIG.IN2_WIDTH {1} \
 CONFIG.NUM_PORTS {3} \
- ] $xlconcat_1
-
-  # Create instance: xlconcat_2, and set properties
-  set xlconcat_2 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat:2.1 xlconcat_2 ]
-  set_property -dict [ list \
-CONFIG.IN0_WIDTH {7} \
-CONFIG.IN1_WIDTH {16} \
-CONFIG.IN2_WIDTH {1} \
-CONFIG.NUM_PORTS {3} \
- ] $xlconcat_2
+ ] $wavegen_slice
 
   # Create instance: xlconstant_0, and set properties
   set xlconstant_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 xlconstant_0 ]
@@ -373,12 +524,12 @@ CONFIG.CONST_VAL {0} \
 CONFIG.CONST_WIDTH {7} \
  ] $xlconstant_1
 
-  # Create instance: xlconstant_2, and set properties
-  set xlconstant_2 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 xlconstant_2 ]
+  # Create instance: xlconstant_3, and set properties
+  set xlconstant_3 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 xlconstant_3 ]
   set_property -dict [ list \
 CONFIG.CONST_VAL {0} \
-CONFIG.CONST_WIDTH {2} \
- ] $xlconstant_2
+CONFIG.CONST_WIDTH {7} \
+ ] $xlconstant_3
 
   # Create instance: xlslice_0, and set properties
   set xlslice_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xlslice_0 ]
@@ -389,41 +540,14 @@ CONFIG.DIN_WIDTH {16} \
 CONFIG.DOUT_WIDTH {14} \
  ] $xlslice_0
 
-  # Create instance: xlslice_4, and set properties
-  set xlslice_4 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xlslice_4 ]
-  set_property -dict [ list \
-CONFIG.DIN_FROM {29} \
-CONFIG.DIN_TO {6} \
-CONFIG.DIN_WIDTH {32} \
-CONFIG.DOUT_WIDTH {24} \
- ] $xlslice_4
-
-  # Create instance: xlslice_6, and set properties
-  set xlslice_6 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xlslice_6 ]
-  set_property -dict [ list \
-CONFIG.DIN_FROM {30} \
-CONFIG.DIN_TO {7} \
-CONFIG.DIN_WIDTH {32} \
-CONFIG.DOUT_WIDTH {24} \
- ] $xlslice_6
-
   # Create instance: xlslice_7, and set properties
   set xlslice_7 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xlslice_7 ]
   set_property -dict [ list \
-CONFIG.DIN_FROM {34} \
-CONFIG.DIN_TO {19} \
+CONFIG.DIN_FROM {32} \
+CONFIG.DIN_TO {17} \
 CONFIG.DIN_WIDTH {40} \
 CONFIG.DOUT_WIDTH {16} \
  ] $xlslice_7
-
-  # Create instance: xlslice_8, and set properties
-  set xlslice_8 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xlslice_8 ]
-  set_property -dict [ list \
-CONFIG.DIN_FROM {30} \
-CONFIG.DIN_TO {7} \
-CONFIG.DIN_WIDTH {32} \
-CONFIG.DOUT_WIDTH {24} \
- ] $xlslice_8
 
   # Create instance: xlslice_9, and set properties
   set xlslice_9 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xlslice_9 ]
@@ -434,22 +558,31 @@ CONFIG.DIN_WIDTH {16} \
 CONFIG.DOUT_WIDTH {1} \
  ] $xlslice_9
 
+  # Create instance: xlslice_10, and set properties
+  set xlslice_10 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xlslice_10 ]
+  set_property -dict [ list \
+CONFIG.DIN_FROM {15} \
+CONFIG.DIN_TO {15} \
+CONFIG.DIN_WIDTH {16} \
+CONFIG.DOUT_WIDTH {1} \
+ ] $xlslice_10
+
   # Create instance: xlslice_11, and set properties
   set xlslice_11 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xlslice_11 ]
   set_property -dict [ list \
-CONFIG.DIN_FROM {30} \
-CONFIG.DIN_TO {7} \
-CONFIG.DIN_WIDTH {32} \
-CONFIG.DOUT_WIDTH {24} \
+CONFIG.DIN_FROM {15} \
+CONFIG.DIN_TO {15} \
+CONFIG.DIN_WIDTH {16} \
+CONFIG.DOUT_WIDTH {1} \
  ] $xlslice_11
 
   # Create instance: xlslice_12, and set properties
   set xlslice_12 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xlslice_12 ]
   set_property -dict [ list \
-CONFIG.DIN_FROM {29} \
-CONFIG.DIN_TO {6} \
-CONFIG.DIN_WIDTH {32} \
-CONFIG.DOUT_WIDTH {24} \
+CONFIG.DIN_FROM {15} \
+CONFIG.DIN_TO {15} \
+CONFIG.DIN_WIDTH {16} \
+CONFIG.DOUT_WIDTH {1} \
  ] $xlslice_12
 
   # Create instance: xlslice_13, and set properties
@@ -461,53 +594,69 @@ CONFIG.DIN_WIDTH {16} \
 CONFIG.DOUT_WIDTH {1} \
  ] $xlslice_13
 
-  # Create instance: xlslice_14, and set properties
-  set xlslice_14 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xlslice_14 ]
+  # Create instance: xlslice_17, and set properties
+  set xlslice_17 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xlslice_17 ]
   set_property -dict [ list \
-CONFIG.DIN_FROM {15} \
-CONFIG.DIN_TO {0} \
-CONFIG.DIN_WIDTH {32} \
+CONFIG.DIN_FROM {42} \
+CONFIG.DIN_TO {27} \
+CONFIG.DIN_WIDTH {48} \
 CONFIG.DOUT_WIDTH {16} \
- ] $xlslice_14
-
-  # Create instance: xlslice_15, and set properties
-  set xlslice_15 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xlslice_15 ]
-  set_property -dict [ list \
-CONFIG.DIN_FROM {15} \
-CONFIG.DIN_TO {0} \
-CONFIG.DIN_WIDTH {32} \
-CONFIG.DOUT_WIDTH {16} \
- ] $xlslice_15
+ ] $xlslice_17
 
   # Create port connections
-  connect_bd_net -net FIR_resized1_m_axis_data_tdata [get_bd_pins FIR_resized1/m_axis_data_tdata] [get_bd_pins xlslice_6/Din]
-  connect_bd_net -net FIR_resized1_m_axis_data_tvalid [get_bd_pins FIR_resized1/m_axis_data_tvalid] [get_bd_pins FIR_resized2/s_axis_data_tvalid]
-  connect_bd_net -net FIR_resized2_m_axis_data_tdata [get_bd_pins FIR_resized2/m_axis_data_tdata] [get_bd_pins xlslice_4/Din]
-  connect_bd_net -net FIR_resized3_m_axis_data_tdata [get_bd_pins FIR_resized0/m_axis_data_tdata] [get_bd_pins xlslice_8/Din]
-  connect_bd_net -net FIR_resized3_m_axis_data_tdata1 [get_bd_pins FIR_resized3/m_axis_data_tdata] [get_bd_pins xlslice_11/Din]
-  connect_bd_net -net FIR_resized3_m_axis_data_tvalid [get_bd_pins FIR_resized0/m_axis_data_tvalid] [get_bd_pins FIR_resized1/s_axis_data_tvalid]
-  connect_bd_net -net FIR_resized3_m_axis_data_tvalid1 [get_bd_pins FIR_resized3/m_axis_data_tvalid] [get_bd_pins FIR_resized4/s_axis_data_tvalid]
-  connect_bd_net -net FIR_resized4_m_axis_data_tdata [get_bd_pins FIR_resized4/m_axis_data_tdata] [get_bd_pins xlslice_12/Din]
-  connect_bd_net -net Net [get_bd_pins FIR_resized0/aclk] [get_bd_pins FIR_resized1/aclk] [get_bd_pins FIR_resized2/aclk] [get_bd_pins FIR_resized3/aclk] [get_bd_pins FIR_resized4/aclk] [get_bd_pins cic_compiler_0/aclk] [get_bd_pins clk/clk] [get_bd_pins wavegen/aclk]
-  connect_bd_net -net axis_broadcaster_0_m_axis_tdata [get_bd_pins xlconcat_0/dout] [get_bd_pins xlslice_14/Din] [get_bd_pins xlslice_15/Din]
-  connect_bd_net -net axis_broadcaster_0_m_axis_tvalid [get_bd_pins FIR_resized3/s_axis_data_tvalid] [get_bd_pins cic_compiler_0/s_axis_data_tvalid] [get_bd_pins wavegen/m_axis_data_tvalid]
-  connect_bd_net -net cic_compiler_0_m_axis_data_tdata [get_bd_pins cic_compiler_0/m_axis_data_tdata] [get_bd_pins xlslice_7/Din]
-  connect_bd_net -net cic_compiler_0_m_axis_data_tvalid [get_bd_pins FIR_resized0/s_axis_data_tvalid] [get_bd_pins cic_compiler_0/m_axis_data_tvalid]
-  connect_bd_net -net wavegen_m_axis_data_tdata [get_bd_pins wavegen/m_axis_data_tdata] [get_bd_pins xlslice_0/Din]
-  connect_bd_net -net xlconcat_1_dout [get_bd_pins FIR_resized0/s_axis_data_tdata] [get_bd_pins xlconcat_1/dout]
-  connect_bd_net -net xlconcat_2_dout [get_bd_pins FIR_resized3/s_axis_data_tdata] [get_bd_pins xlconcat_2/dout]
-  connect_bd_net -net xlconstant_0_dout [get_bd_pins xlconcat_1/In0] [get_bd_pins xlconstant_0/dout]
-  connect_bd_net -net xlconstant_1_dout [get_bd_pins xlconcat_2/In0] [get_bd_pins xlconstant_1/dout]
-  connect_bd_net -net xlconstant_2_dout [get_bd_pins xlconcat_0/In0] [get_bd_pins xlconstant_2/dout]
-  connect_bd_net -net xlslice_0_Dout [get_bd_pins xlconcat_0/In1] [get_bd_pins xlslice_0/Dout]
-  connect_bd_net -net xlslice_11_Dout [get_bd_pins FIR_resized4/s_axis_data_tdata] [get_bd_pins xlslice_11/Dout]
-  connect_bd_net -net xlslice_13_Dout [get_bd_pins xlconcat_2/In2] [get_bd_pins xlslice_13/Dout]
-  connect_bd_net -net xlslice_14_Dout [get_bd_pins xlconcat_2/In1] [get_bd_pins xlslice_13/Din] [get_bd_pins xlslice_14/Dout]
-  connect_bd_net -net xlslice_15_Dout [get_bd_pins cic_compiler_0/s_axis_data_tdata] [get_bd_pins xlslice_15/Dout]
-  connect_bd_net -net xlslice_6_Dout [get_bd_pins FIR_resized2/s_axis_data_tdata] [get_bd_pins xlslice_6/Dout]
-  connect_bd_net -net xlslice_7_Dout [get_bd_pins xlconcat_1/In1] [get_bd_pins xlslice_7/Dout] [get_bd_pins xlslice_9/Din]
-  connect_bd_net -net xlslice_8_Dout [get_bd_pins FIR_resized1/s_axis_data_tdata] [get_bd_pins xlslice_8/Dout]
-  connect_bd_net -net xlslice_9_Dout [get_bd_pins xlconcat_1/In2] [get_bd_pins xlslice_9/Dout]
+  connect_bd_net -net CIC125_m_axis_data_tvalid [get_bd_pins CIC125/m_axis_data_tvalid] [get_bd_pins COMP5/s_axis_data_tvalid]
+  connect_bd_net -net CIC25_m_axis_data_tvalid [get_bd_pins CIC25/m_axis_data_tvalid] [get_bd_pins COMP1/s_axis_data_tvalid]
+  connect_bd_net -net COMP1_m_axis_data_tvalid [get_bd_pins COMP1/m_axis_data_tvalid] [get_bd_pins MUX3/Valid1xSI]
+  connect_bd_net -net COMP5_m_axis_data_tvalid [get_bd_pins COMP5/m_axis_data_tvalid] [get_bd_pins MUX3/Valid2xSI]
+  connect_bd_net -net DEC_SEL_dout [get_bd_pins DEC_SEL/dout] [get_bd_pins dec_to_fir_mux_1/DecRate]
+  connect_bd_net -net FIR5flat_m_axis_data_tvalid [get_bd_pins FIR5flat/m_axis_data_tvalid] [get_bd_pins MUX2/Valid1xSI]
+  connect_bd_net -net FIR5steep_m_axis_data_tvalid [get_bd_pins FIR5steep/m_axis_data_tvalid] [get_bd_pins MUX1/Valid0xSI]
+  connect_bd_net -net FIR_resized1_m_axis_data_tdata [get_bd_pins FIR5flat/m_axis_data_tdata] [get_bd_pins fir5flat_slice/Din]
+  connect_bd_net -net FIR_resized2_m_axis_data_tdata [get_bd_pins FIR5steep/m_axis_data_tdata] [get_bd_pins fir5steep_slice/Din]
+  connect_bd_net -net FIR_resized3_m_axis_data_tdata [get_bd_pins COMP1/m_axis_data_tdata] [get_bd_pins comp1_slice/Din]
+  connect_bd_net -net FIR_resized6_m_axis_data_tdata [get_bd_pins COMP5/m_axis_data_tdata] [get_bd_pins comp5_slice/Din]
+  connect_bd_net -net FIR_resized7_m_axis_data_tdata [get_bd_pins HBsteep/m_axis_data_tdata] [get_bd_pins hbsteep_slice/Din]
+  connect_bd_net -net HBsteep1_m_axis_data_tvalid [get_bd_pins HBflat/m_axis_data_tvalid] [get_bd_pins MUX1/Valid1xSI]
+  connect_bd_net -net HBsteep_m_axis_data_tvalid [get_bd_pins HBsteep/m_axis_data_tvalid] [get_bd_pins MUX0/Valid1xSI]
+  connect_bd_net -net MUX0_DataxDO [get_bd_pins MUX0/DataxDO] [get_bd_pins out_slice/Din]
+  connect_bd_net -net MUX1_DataxDO [get_bd_pins HBsteep/s_axis_data_tdata] [get_bd_pins MUX0/Data0xDI] [get_bd_pins MUX1/DataxDO]
+  connect_bd_net -net MUX1_ValidxSO [get_bd_pins HBsteep/s_axis_data_tvalid] [get_bd_pins MUX0/Valid0xSI] [get_bd_pins MUX1/ValidxSO]
+  connect_bd_net -net MUX2_DataxDO [get_bd_pins FIR5steep/s_axis_data_tdata] [get_bd_pins HBflat/s_axis_data_tdata] [get_bd_pins MUX1/Data2xDI] [get_bd_pins MUX2/DataxDO]
+  connect_bd_net -net MUX2_ValidxSO [get_bd_pins FIR5steep/s_axis_data_tvalid] [get_bd_pins HBflat/s_axis_data_tvalid] [get_bd_pins MUX1/Valid2xSI] [get_bd_pins MUX2/ValidxSO]
+  connect_bd_net -net MUX3_DataxDO [get_bd_pins FIR5flat/s_axis_data_tdata] [get_bd_pins MUX2/Data0xDI] [get_bd_pins MUX3/DataxDO]
+  connect_bd_net -net MUX3_ValidxSO [get_bd_pins FIR5flat/s_axis_data_tvalid] [get_bd_pins MUX2/Valid0xSI] [get_bd_pins MUX3/ValidxSO]
+  connect_bd_net -net Net [get_bd_pins CIC125/aclk] [get_bd_pins CIC25/aclk] [get_bd_pins COMP1/aclk] [get_bd_pins COMP5/aclk] [get_bd_pins FIR5flat/aclk] [get_bd_pins FIR5steep/aclk] [get_bd_pins HBflat/aclk] [get_bd_pins HBsteep/aclk] [get_bd_pins MUX0/ClkxCI] [get_bd_pins MUX1/ClkxCI] [get_bd_pins MUX2/ClkxCI] [get_bd_pins MUX3/ClkxCI] [get_bd_pins clk/clk] [get_bd_pins wavegen/aclk]
+  connect_bd_net -net Net1 [get_bd_pins MUX0/RstxRBI] [get_bd_pins MUX1/RstxRBI] [get_bd_pins MUX2/RstxRBI] [get_bd_pins MUX3/RstxRBI]
+  connect_bd_net -net cic125_slice_dout [get_bd_pins COMP5/s_axis_data_tdata] [get_bd_pins cic125_slice/dout]
+  connect_bd_net -net cic25_slice_dout [get_bd_pins COMP1/s_axis_data_tdata] [get_bd_pins cic25_slice/dout]
+  connect_bd_net -net cic_compiler_0_m_axis_data_tdata [get_bd_pins CIC25/m_axis_data_tdata] [get_bd_pins xlslice_7/Din]
+  connect_bd_net -net cic_compiler_1_m_axis_data_tdata [get_bd_pins CIC125/m_axis_data_tdata] [get_bd_pins xlslice_17/Din]
+  connect_bd_net -net dec_to_fir_mux_1_Mux0 [get_bd_pins MUX0/SelectxDI] [get_bd_pins dec_to_fir_mux_1/Mux0]
+  connect_bd_net -net dec_to_fir_mux_1_Mux1 [get_bd_pins MUX1/SelectxDI] [get_bd_pins dec_to_fir_mux_1/Mux1]
+  connect_bd_net -net dec_to_fir_mux_1_Mux2 [get_bd_pins MUX2/SelectxDI] [get_bd_pins dec_to_fir_mux_1/Mux2]
+  connect_bd_net -net dec_to_fir_mux_1_Mux3 [get_bd_pins MUX3/SelectxDI] [get_bd_pins dec_to_fir_mux_1/Mux3]
+  connect_bd_net -net fir5steep_slice1_Dout [get_bd_pins MUX1/Data1xDI] [get_bd_pins hbflat_slice/Dout]
+  connect_bd_net -net hbflat_slice_m_axis_data_tdata [get_bd_pins HBflat/m_axis_data_tdata] [get_bd_pins hbflat_slice/Din]
+  connect_bd_net -net nocic_slice_dout [get_bd_pins MUX3/Data0xDI] [get_bd_pins nocic_slice/dout]
+  connect_bd_net -net wavegen_m_axis_data_tdata [get_bd_pins wavegen/m_axis_data_tdata] [get_bd_pins xlslice_0/Din] [get_bd_pins xlslice_11/Din] [get_bd_pins xlslice_12/Din]
+  connect_bd_net -net wavegen_m_axis_data_tvalid [get_bd_pins CIC125/s_axis_data_tvalid] [get_bd_pins CIC25/s_axis_data_tvalid] [get_bd_pins MUX3/Valid0xSI] [get_bd_pins wavegen/m_axis_data_tvalid]
+  connect_bd_net -net xlconcat_0_dout [get_bd_pins CIC125/s_axis_data_tdata] [get_bd_pins CIC25/s_axis_data_tdata] [get_bd_pins nocic_slice/In1] [get_bd_pins wavegen_slice/dout] [get_bd_pins xlslice_13/Din]
+  connect_bd_net -net xlconstant_0_dout [get_bd_pins cic25_slice/In0] [get_bd_pins xlconstant_0/dout]
+  connect_bd_net -net xlconstant_1_dout [get_bd_pins nocic_slice/In0] [get_bd_pins xlconstant_1/dout]
+  connect_bd_net -net xlconstant_3_dout [get_bd_pins cic125_slice/In0] [get_bd_pins xlconstant_3/dout]
+  connect_bd_net -net xlslice_0_Dout [get_bd_pins wavegen_slice/In0] [get_bd_pins xlslice_0/Dout]
+  connect_bd_net -net xlslice_10_Dout [get_bd_pins cic125_slice/In2] [get_bd_pins xlslice_10/Dout]
+  connect_bd_net -net xlslice_11_Dout [get_bd_pins wavegen_slice/In1] [get_bd_pins xlslice_11/Dout]
+  connect_bd_net -net xlslice_12_Dout [get_bd_pins wavegen_slice/In2] [get_bd_pins xlslice_12/Dout]
+  connect_bd_net -net xlslice_13_Dout [get_bd_pins nocic_slice/In2] [get_bd_pins xlslice_13/Dout]
+  connect_bd_net -net xlslice_14_Dout [get_bd_pins MUX0/Data1xDI] [get_bd_pins hbsteep_slice/Dout]
+  connect_bd_net -net xlslice_15_Dout [get_bd_pins MUX3/Data2xDI] [get_bd_pins comp5_slice/Dout]
+  connect_bd_net -net xlslice_17_Dout [get_bd_pins cic125_slice/In1] [get_bd_pins xlslice_10/Din] [get_bd_pins xlslice_17/Dout]
+  connect_bd_net -net xlslice_4_Dout [get_bd_pins MUX1/Data0xDI] [get_bd_pins fir5steep_slice/Dout]
+  connect_bd_net -net xlslice_6_Dout [get_bd_pins MUX2/Data1xDI] [get_bd_pins fir5flat_slice/Dout]
+  connect_bd_net -net xlslice_7_Dout [get_bd_pins cic25_slice/In1] [get_bd_pins xlslice_7/Dout] [get_bd_pins xlslice_9/Din]
+  connect_bd_net -net xlslice_8_Dout [get_bd_pins MUX3/Data1xDI] [get_bd_pins comp1_slice/Dout]
+  connect_bd_net -net xlslice_9_Dout [get_bd_pins cic25_slice/In2] [get_bd_pins xlslice_9/Dout]
 
   # Create address segments
 
@@ -515,60 +664,98 @@ CONFIG.DOUT_WIDTH {16} \
   regenerate_bd_layout -layout_string {
    guistr: "# # String gsaved with Nlview 6.5.12  2016-01-29 bk=1.3547 VDI=39 GEI=35 GUI=JA:1.6
 #  -string -flagsOSRD
-preplace inst xlslice_0 -pg 1 -lvl 3 -y 260 -defaultsOSRD
-preplace inst xlconstant_0 -pg 1 -lvl 8 -y 40 -defaultsOSRD
-preplace inst FIR_resized0 -pg 1 -lvl 10 -y 290 -defaultsOSRD
-preplace inst xlconstant_1 -pg 1 -lvl 10 -y 70 -defaultsOSRD -resize 100 60
-preplace inst FIR_resized1 -pg 1 -lvl 12 -y 130 -defaultsOSRD
-preplace inst xlconstant_2 -pg 1 -lvl 3 -y 180 -defaultsOSRD
-preplace inst cic_compiler_0 -pg 1 -lvl 6 -y 280 -defaultsOSRD
-preplace inst FIR_resized2 -pg 1 -lvl 14 -y 110 -defaultsOSRD
-preplace inst FIR_resized3 -pg 1 -lvl 12 -y 360 -defaultsOSRD -resize 360 120
-preplace inst xlslice_4 -pg 1 -lvl 15 -y 120 -defaultsOSRD
-preplace inst xlconcat_0 -pg 1 -lvl 4 -y 190 -defaultsOSRD
-preplace inst FIR_resized4 -pg 1 -lvl 14 -y 250 -defaultsOSRD -resize 360 120
-preplace inst xlslice_11 -pg 1 -lvl 13 -y 220 -defaultsOSRD -resize 160 60
-preplace inst xlconcat_1 -pg 1 -lvl 9 -y 90 -defaultsOSRD
-preplace inst xlconcat_2 -pg 1 -lvl 11 -y 150 -defaultsOSRD -resize 160 100
-preplace inst xlslice_12 -pg 1 -lvl 15 -y 250 -defaultsOSRD -resize 160 60
-preplace inst xlslice_6 -pg 1 -lvl 13 -y 100 -defaultsOSRD
-preplace inst xlslice_13 -pg 1 -lvl 10 -y 170 -defaultsOSRD -resize 140 60
-preplace inst xlslice_7 -pg 1 -lvl 7 -y 260 -defaultsOSRD
-preplace inst wavegen -pg 1 -lvl 2 -y 270 -defaultsOSRD
-preplace inst xlslice_14 -pg 1 -lvl 9 -y 190 -defaultsOSRD -resize 160 60
-preplace inst xlslice_8 -pg 1 -lvl 11 -y 250 -defaultsOSRD
-preplace inst xlslice_15 -pg 1 -lvl 5 -y 260 -defaultsOSRD
-preplace inst xlslice_9 -pg 1 -lvl 8 -y 140 -defaultsOSRD
-preplace inst clk -pg 1 -lvl 1 -y 280 -defaultsOSRD
-preplace netloc xlconstant_1_dout 1 10 1 NJ
-preplace netloc xlconstant_2_dout 1 3 1 NJ
-preplace netloc xlslice_14_Dout 1 9 2 2060 120 NJ
-preplace netloc xlslice_9_Dout 1 8 1 NJ
-preplace netloc FIR_resized3_m_axis_data_tvalid 1 10 2 2480 80 NJ
-preplace netloc FIR_resized3_m_axis_data_tdata 1 10 1 2490
-preplace netloc axis_broadcaster_0_m_axis_tdata 1 4 5 860 190 NJ 190 NJ 190 NJ 190 NJ
-preplace netloc xlslice_13_Dout 1 10 1 NJ
-preplace netloc xlslice_7_Dout 1 7 2 1670 200 NJ
-preplace netloc FIR_resized1_m_axis_data_tvalid 1 12 2 N 150 NJ
-preplace netloc xlslice_15_Dout 1 5 1 NJ
-preplace netloc xlconcat_1_dout 1 9 1 2070
-preplace netloc xlconstant_0_dout 1 8 1 NJ
-preplace netloc cic_compiler_0_m_axis_data_tdata 1 6 1 NJ
-preplace netloc FIR_resized4_m_axis_data_tdata 1 14 1 NJ
-preplace netloc wavegen_m_axis_data_tdata 1 2 1 N
-preplace netloc xlslice_11_Dout 1 13 1 NJ
-preplace netloc FIR_resized1_m_axis_data_tdata 1 12 1 3120
-preplace netloc xlslice_8_Dout 1 11 1 NJ
-preplace netloc FIR_resized2_m_axis_data_tdata 1 14 1 NJ
-preplace netloc Net 1 1 13 200 350 NJ 350 NJ 350 NJ 350 1070 370 NJ 370 NJ 370 NJ 370 2060 380 NJ 380 2710 210 NJ 170 3340
-preplace netloc xlconcat_2_dout 1 11 1 2700
-preplace netloc axis_broadcaster_0_m_axis_tvalid 1 2 10 460 310 NJ 310 NJ 310 1060 390 NJ 390 NJ 390 NJ 390 NJ 390 NJ 390 NJ
-preplace netloc FIR_resized3_m_axis_data_tvalid1 1 12 2 3130 270 NJ
-preplace netloc FIR_resized3_m_axis_data_tdata1 1 12 1 3120
+preplace inst HBflat -pg 1 -lvl 15 -y 300 -defaultsOSRD
+preplace inst comp1_slice -pg 1 -lvl 10 -y 120 -defaultsOSRD
+preplace inst fir5steep_slice -pg 1 -lvl 16 -y 360 -defaultsOSRD
+preplace inst xlslice_0 -pg 1 -lvl 3 -y 80 -defaultsOSRD
+preplace inst out_slice -pg 1 -lvl 21 -y 280 -defaultsOSRD
+preplace inst xlconstant_0 -pg 1 -lvl 7 -y 40 -defaultsOSRD
+preplace inst FIR5steep -pg 1 -lvl 15 -y 440 -defaultsOSRD
+preplace inst dec_to_fir_mux_1 -pg 1 -lvl 10 -y 790 -defaultsOSRD
+preplace inst hbflat_slice -pg 1 -lvl 16 -y 460 -defaultsOSRD
+preplace inst cic125_slice -pg 1 -lvl 8 -y 290 -defaultsOSRD -resize 160 100
+preplace inst xlconstant_1 -pg 1 -lvl 9 -y 380 -defaultsOSRD -resize 100 60
+preplace inst nocic_slice -pg 1 -lvl 10 -y 430 -defaultsOSRD -resize 160 100
+preplace inst hbsteep_slice -pg 1 -lvl 19 -y 250 -defaultsOSRD -resize 160 60
+preplace inst CIC125 -pg 1 -lvl 5 -y 340 -defaultsOSRD -resize 360 140
+preplace inst cic25_slice -pg 1 -lvl 8 -y 90 -defaultsOSRD
+preplace inst xlslice_10 -pg 1 -lvl 7 -y 340 -defaultsOSRD -resize 140 60
+preplace inst xlconstant_3 -pg 1 -lvl 7 -y 240 -defaultsOSRD -resize 100 60
+preplace inst xlslice_11 -pg 1 -lvl 3 -y 160 -defaultsOSRD -resize 140 60
+preplace inst xlslice_12 -pg 1 -lvl 3 -y 240 -defaultsOSRD
+preplace inst MUX0 -pg 1 -lvl 20 -y 260 -defaultsOSRD -resize 245 250
+preplace inst COMP1 -pg 1 -lvl 9 -y 120 -defaultsOSRD
+preplace inst FIR5flat -pg 1 -lvl 12 -y 470 -defaultsOSRD
+preplace inst MUX1 -pg 1 -lvl 17 -y 490 -defaultsOSRD -resize 251 272
+preplace inst xlslice_13 -pg 1 -lvl 9 -y 480 -defaultsOSRD -resize 140 60
+preplace inst xlslice_7 -pg 1 -lvl 6 -y 140 -defaultsOSRD
+preplace inst wavegen -pg 1 -lvl 2 -y 280 -defaultsOSRD
+preplace inst MUX2 -pg 1 -lvl 14 -y 440 -defaultsOSRD -resize 257 242
+preplace inst HBsteep -pg 1 -lvl 18 -y 290 -defaultsOSRD -resize 360 120
+preplace inst wavegen_slice -pg 1 -lvl 4 -y 160 -defaultsOSRD
+preplace inst MUX3 -pg 1 -lvl 11 -y 390 -defaultsOSRD -resize 243 244
+preplace inst comp5_slice -pg 1 -lvl 10 -y 270 -defaultsOSRD -resize 160 60
+preplace inst xlslice_9 -pg 1 -lvl 7 -y 140 -defaultsOSRD
+preplace inst clk -pg 1 -lvl 1 -y 290 -defaultsOSRD
+preplace inst DEC_SEL -pg 1 -lvl 9 -y 620 -defaultsOSRD
+preplace inst COMP5 -pg 1 -lvl 9 -y 270 -defaultsOSRD -resize 360 120
+preplace inst fir5flat_slice -pg 1 -lvl 13 -y 440 -defaultsOSRD
+preplace inst xlslice_17 -pg 1 -lvl 6 -y 340 -defaultsOSRD -resize 160 60
+preplace inst CIC25 -pg 1 -lvl 5 -y 170 -defaultsOSRD
+preplace netloc MUX1_ValidxSO 1 17 3 4930 200 NJ 200 NJ
+preplace netloc xlconstant_1_dout 1 9 1 NJ
+preplace netloc xlslice_12_Dout 1 3 1 NJ
+preplace netloc xlslice_14_Dout 1 19 1 NJ
+preplace netloc MUX1_DataxDO 1 17 3 4900 190 NJ 190 NJ
+preplace netloc xlslice_4_Dout 1 16 1 NJ
+preplace netloc MUX2_ValidxSO 1 14 3 3920 530 NJ 530 NJ
+preplace netloc MUX3_DataxDO 1 11 3 2970 370 NJ 370 N
+preplace netloc xlslice_9_Dout 1 7 1 NJ
+preplace netloc FIR_resized3_m_axis_data_tdata 1 9 1 NJ
+preplace netloc xlslice_17_Dout 1 6 2 1500 390 NJ
+preplace netloc FIR_resized7_m_axis_data_tdata 1 18 1 5330
+preplace netloc wavegen_m_axis_data_tvalid 1 2 9 N 290 NJ 290 880 250 NJ 250 NJ 290 NJ 10 NJ 10 NJ 10 NJ
+preplace netloc DEC_SEL_dout 1 9 1 2370
+preplace netloc fir5steep_slice1_Dout 1 16 1 NJ
+preplace netloc xlslice_13_Dout 1 9 1 NJ
+preplace netloc xlslice_7_Dout 1 6 2 1500 90 NJ
+preplace netloc CIC125_m_axis_data_tvalid 1 5 4 NJ 400 NJ 400 NJ 220 1950
+preplace netloc cic125_slice_dout 1 8 1 1940
+preplace netloc xlslice_15_Dout 1 10 1 2610
+preplace netloc nocic_slice_dout 1 10 1 2600
+preplace netloc cic25_slice_dout 1 8 1 1970
+preplace netloc xlslice_10_Dout 1 7 1 NJ
+preplace netloc dec_to_fir_mux_1_Mux0 1 10 10 NJ 170 NJ 170 NJ 170 NJ 170 NJ 170 NJ 170 NJ 170 NJ 170 NJ 170 5550
+preplace netloc FIR5steep_m_axis_data_tvalid 1 15 2 4340 410 NJ
+preplace netloc dec_to_fir_mux_1_Mux1 1 10 7 NJ 600 NJ 600 NJ 600 NJ 600 NJ 600 NJ 600 N
+preplace netloc FIR5flat_m_axis_data_tvalid 1 12 2 NJ 490 3590
+preplace netloc COMP1_m_axis_data_tvalid 1 9 2 NJ 170 2630
+preplace netloc FIR_resized6_m_axis_data_tdata 1 9 1 NJ
+preplace netloc xlconcat_0_dout 1 4 6 870 90 NJ 90 NJ 430 NJ 430 1960 430 NJ
+preplace netloc xlconstant_0_dout 1 7 1 NJ
+preplace netloc cic_compiler_0_m_axis_data_tdata 1 5 1 NJ
+preplace netloc dec_to_fir_mux_1_Mux2 1 10 4 NJ 560 NJ 560 NJ 530 N
+preplace netloc HBsteep1_m_axis_data_tvalid 1 15 2 4340 310 NJ
+preplace netloc dec_to_fir_mux_1_Mux3 1 10 1 2630
+preplace netloc xlslice_11_Dout 1 3 1 NJ
+preplace netloc MUX3_ValidxSO 1 11 3 2980 390 NJ 390 N
+preplace netloc wavegen_m_axis_data_tdata 1 2 1 460
+preplace netloc FIR_resized1_m_axis_data_tdata 1 12 1 NJ
+preplace netloc hbflat_slice_m_axis_data_tdata 1 15 1 4350
+preplace netloc Net1 1 10 10 2660 550 NJ 550 NJ 550 3610 590 NJ 580 NJ 580 4590 330 NJ 370 NJ 330 NJ
+preplace netloc HBsteep_m_axis_data_tvalid 1 18 2 N 310 NJ
+preplace netloc MUX2_DataxDO 1 14 3 3940 520 NJ 520 NJ
+preplace netloc xlslice_8_Dout 1 10 1 2650
+preplace netloc FIR_resized2_m_axis_data_tdata 1 15 1 4360
+preplace netloc Net 1 1 19 200 360 NJ 360 NJ 360 890 430 NJ 420 NJ 420 NJ 420 1960 30 NJ 30 2620 540 2970 570 NJ 570 3600 580 3930 220 NJ 220 4580 310 4920 380 NJ 320 NJ
+preplace netloc CIC25_m_axis_data_tvalid 1 5 4 NJ 190 NJ 190 NJ 190 1940
+preplace netloc cic_compiler_1_m_axis_data_tdata 1 5 1 NJ
+preplace netloc MUX0_DataxDO 1 20 1 N
 preplace netloc xlslice_0_Dout 1 3 1 NJ
-preplace netloc cic_compiler_0_m_axis_data_tvalid 1 6 4 NJ 310 NJ 310 NJ 310 N
-preplace netloc xlslice_6_Dout 1 13 1 NJ
-levelinfo -pg 1 0 100 330 560 760 960 1270 1570 1760 1960 2270 2590 2920 3230 3540 3850 3960 -top 0 -bot 440
+preplace netloc xlslice_6_Dout 1 13 1 N
+preplace netloc COMP5_m_axis_data_tvalid 1 9 2 NJ 320 2590
+preplace netloc xlconstant_3_dout 1 7 1 NJ
+levelinfo -pg 1 0 100 330 570 770 1090 1390 1610 1840 2170 2480 2820 3180 3490 3770 4140 4460 4750 5130 5440 5710 5960 6070 -top 0 -bot 870
 ",
 }
 

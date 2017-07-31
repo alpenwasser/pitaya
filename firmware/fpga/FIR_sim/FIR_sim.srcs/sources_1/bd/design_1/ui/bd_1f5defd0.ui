@@ -1,60 +1,98 @@
 {
    guistr: "# # String gsaved with Nlview 6.5.12  2016-01-29 bk=1.3547 VDI=39 GEI=35 GUI=JA:1.6
 #  -string -flagsOSRD
-preplace inst xlslice_0 -pg 1 -lvl 3 -y 260 -defaultsOSRD
-preplace inst xlconstant_0 -pg 1 -lvl 8 -y 40 -defaultsOSRD
-preplace inst FIR_resized0 -pg 1 -lvl 10 -y 290 -defaultsOSRD
-preplace inst xlconstant_1 -pg 1 -lvl 10 -y 70 -defaultsOSRD -resize 100 60
-preplace inst FIR_resized1 -pg 1 -lvl 12 -y 130 -defaultsOSRD
-preplace inst xlconstant_2 -pg 1 -lvl 3 -y 180 -defaultsOSRD
-preplace inst cic_compiler_0 -pg 1 -lvl 6 -y 280 -defaultsOSRD
-preplace inst FIR_resized2 -pg 1 -lvl 14 -y 110 -defaultsOSRD
-preplace inst FIR_resized3 -pg 1 -lvl 12 -y 360 -defaultsOSRD -resize 360 120
-preplace inst xlslice_4 -pg 1 -lvl 15 -y 120 -defaultsOSRD
-preplace inst xlconcat_0 -pg 1 -lvl 4 -y 190 -defaultsOSRD
-preplace inst FIR_resized4 -pg 1 -lvl 14 -y 250 -defaultsOSRD -resize 360 120
-preplace inst xlslice_11 -pg 1 -lvl 13 -y 220 -defaultsOSRD -resize 160 60
-preplace inst xlconcat_1 -pg 1 -lvl 9 -y 90 -defaultsOSRD
-preplace inst xlconcat_2 -pg 1 -lvl 11 -y 150 -defaultsOSRD -resize 160 100
-preplace inst xlslice_12 -pg 1 -lvl 15 -y 250 -defaultsOSRD -resize 160 60
-preplace inst xlslice_6 -pg 1 -lvl 13 -y 100 -defaultsOSRD
-preplace inst xlslice_13 -pg 1 -lvl 10 -y 170 -defaultsOSRD -resize 140 60
-preplace inst xlslice_7 -pg 1 -lvl 7 -y 260 -defaultsOSRD
-preplace inst wavegen -pg 1 -lvl 2 -y 270 -defaultsOSRD
-preplace inst xlslice_14 -pg 1 -lvl 9 -y 190 -defaultsOSRD -resize 160 60
-preplace inst xlslice_8 -pg 1 -lvl 11 -y 250 -defaultsOSRD
-preplace inst xlslice_15 -pg 1 -lvl 5 -y 260 -defaultsOSRD
-preplace inst xlslice_9 -pg 1 -lvl 8 -y 140 -defaultsOSRD
-preplace inst clk -pg 1 -lvl 1 -y 280 -defaultsOSRD
-preplace netloc xlconstant_1_dout 1 10 1 NJ
-preplace netloc xlconstant_2_dout 1 3 1 NJ
-preplace netloc xlslice_14_Dout 1 9 2 2060 120 NJ
-preplace netloc xlslice_9_Dout 1 8 1 NJ
-preplace netloc FIR_resized3_m_axis_data_tvalid 1 10 2 2480 80 NJ
-preplace netloc FIR_resized3_m_axis_data_tdata 1 10 1 2490
-preplace netloc axis_broadcaster_0_m_axis_tdata 1 4 5 860 190 NJ 190 NJ 190 NJ 190 NJ
-preplace netloc xlslice_13_Dout 1 10 1 NJ
-preplace netloc xlslice_7_Dout 1 7 2 1670 200 NJ
-preplace netloc FIR_resized1_m_axis_data_tvalid 1 12 2 N 150 NJ
-preplace netloc xlslice_15_Dout 1 5 1 NJ
-preplace netloc xlconcat_1_dout 1 9 1 2070
-preplace netloc xlconstant_0_dout 1 8 1 NJ
-preplace netloc cic_compiler_0_m_axis_data_tdata 1 6 1 NJ
-preplace netloc FIR_resized4_m_axis_data_tdata 1 14 1 NJ
-preplace netloc wavegen_m_axis_data_tdata 1 2 1 N
-preplace netloc xlslice_11_Dout 1 13 1 NJ
-preplace netloc FIR_resized1_m_axis_data_tdata 1 12 1 3120
-preplace netloc xlslice_8_Dout 1 11 1 NJ
-preplace netloc FIR_resized2_m_axis_data_tdata 1 14 1 NJ
-preplace netloc Net 1 1 13 200 350 NJ 350 NJ 350 NJ 350 1070 370 NJ 370 NJ 370 NJ 370 2060 380 NJ 380 2710 210 NJ 170 3340
-preplace netloc xlconcat_2_dout 1 11 1 2700
-preplace netloc axis_broadcaster_0_m_axis_tvalid 1 2 10 460 310 NJ 310 NJ 310 1060 390 NJ 390 NJ 390 NJ 390 NJ 390 NJ 390 NJ
-preplace netloc FIR_resized3_m_axis_data_tvalid1 1 12 2 3130 270 NJ
-preplace netloc FIR_resized3_m_axis_data_tdata1 1 12 1 3120
+preplace inst HBflat -pg 1 -lvl 15 -y 300 -defaultsOSRD
+preplace inst comp1_slice -pg 1 -lvl 10 -y 120 -defaultsOSRD
+preplace inst fir5steep_slice -pg 1 -lvl 16 -y 360 -defaultsOSRD
+preplace inst xlslice_0 -pg 1 -lvl 3 -y 80 -defaultsOSRD
+preplace inst out_slice -pg 1 -lvl 21 -y 280 -defaultsOSRD
+preplace inst xlconstant_0 -pg 1 -lvl 7 -y 40 -defaultsOSRD
+preplace inst FIR5steep -pg 1 -lvl 15 -y 440 -defaultsOSRD
+preplace inst dec_to_fir_mux_1 -pg 1 -lvl 10 -y 790 -defaultsOSRD
+preplace inst hbflat_slice -pg 1 -lvl 16 -y 460 -defaultsOSRD
+preplace inst cic125_slice -pg 1 -lvl 8 -y 290 -defaultsOSRD -resize 160 100
+preplace inst xlconstant_1 -pg 1 -lvl 9 -y 380 -defaultsOSRD -resize 100 60
+preplace inst nocic_slice -pg 1 -lvl 10 -y 430 -defaultsOSRD -resize 160 100
+preplace inst hbsteep_slice -pg 1 -lvl 19 -y 250 -defaultsOSRD -resize 160 60
+preplace inst CIC125 -pg 1 -lvl 5 -y 340 -defaultsOSRD -resize 360 140
+preplace inst cic25_slice -pg 1 -lvl 8 -y 90 -defaultsOSRD
+preplace inst xlslice_10 -pg 1 -lvl 7 -y 340 -defaultsOSRD -resize 140 60
+preplace inst xlconstant_3 -pg 1 -lvl 7 -y 240 -defaultsOSRD -resize 100 60
+preplace inst xlslice_11 -pg 1 -lvl 3 -y 160 -defaultsOSRD -resize 140 60
+preplace inst xlslice_12 -pg 1 -lvl 3 -y 240 -defaultsOSRD
+preplace inst MUX0 -pg 1 -lvl 20 -y 260 -defaultsOSRD -resize 245 250
+preplace inst COMP1 -pg 1 -lvl 9 -y 120 -defaultsOSRD
+preplace inst FIR5flat -pg 1 -lvl 12 -y 470 -defaultsOSRD
+preplace inst MUX1 -pg 1 -lvl 17 -y 490 -defaultsOSRD -resize 251 272
+preplace inst xlslice_13 -pg 1 -lvl 9 -y 480 -defaultsOSRD -resize 140 60
+preplace inst xlslice_7 -pg 1 -lvl 6 -y 140 -defaultsOSRD
+preplace inst wavegen -pg 1 -lvl 2 -y 280 -defaultsOSRD
+preplace inst MUX2 -pg 1 -lvl 14 -y 440 -defaultsOSRD -resize 257 242
+preplace inst HBsteep -pg 1 -lvl 18 -y 290 -defaultsOSRD -resize 360 120
+preplace inst wavegen_slice -pg 1 -lvl 4 -y 160 -defaultsOSRD
+preplace inst MUX3 -pg 1 -lvl 11 -y 390 -defaultsOSRD -resize 243 244
+preplace inst comp5_slice -pg 1 -lvl 10 -y 270 -defaultsOSRD -resize 160 60
+preplace inst xlslice_9 -pg 1 -lvl 7 -y 140 -defaultsOSRD
+preplace inst clk -pg 1 -lvl 1 -y 290 -defaultsOSRD
+preplace inst DEC_SEL -pg 1 -lvl 9 -y 620 -defaultsOSRD
+preplace inst COMP5 -pg 1 -lvl 9 -y 270 -defaultsOSRD -resize 360 120
+preplace inst fir5flat_slice -pg 1 -lvl 13 -y 440 -defaultsOSRD
+preplace inst xlslice_17 -pg 1 -lvl 6 -y 340 -defaultsOSRD -resize 160 60
+preplace inst CIC25 -pg 1 -lvl 5 -y 170 -defaultsOSRD
+preplace netloc MUX1_ValidxSO 1 17 3 4930 200 NJ 200 NJ
+preplace netloc xlconstant_1_dout 1 9 1 NJ
+preplace netloc xlslice_12_Dout 1 3 1 NJ
+preplace netloc xlslice_14_Dout 1 19 1 NJ
+preplace netloc MUX1_DataxDO 1 17 3 4900 190 NJ 190 NJ
+preplace netloc xlslice_4_Dout 1 16 1 NJ
+preplace netloc MUX2_ValidxSO 1 14 3 3920 530 NJ 530 NJ
+preplace netloc MUX3_DataxDO 1 11 3 2970 370 NJ 370 N
+preplace netloc xlslice_9_Dout 1 7 1 NJ
+preplace netloc FIR_resized3_m_axis_data_tdata 1 9 1 NJ
+preplace netloc xlslice_17_Dout 1 6 2 1500 390 NJ
+preplace netloc FIR_resized7_m_axis_data_tdata 1 18 1 5330
+preplace netloc wavegen_m_axis_data_tvalid 1 2 9 N 290 NJ 290 880 250 NJ 250 NJ 290 NJ 10 NJ 10 NJ 10 NJ
+preplace netloc DEC_SEL_dout 1 9 1 2370
+preplace netloc fir5steep_slice1_Dout 1 16 1 NJ
+preplace netloc xlslice_13_Dout 1 9 1 NJ
+preplace netloc xlslice_7_Dout 1 6 2 1500 90 NJ
+preplace netloc CIC125_m_axis_data_tvalid 1 5 4 NJ 400 NJ 400 NJ 220 1950
+preplace netloc cic125_slice_dout 1 8 1 1940
+preplace netloc xlslice_15_Dout 1 10 1 2610
+preplace netloc nocic_slice_dout 1 10 1 2600
+preplace netloc cic25_slice_dout 1 8 1 1970
+preplace netloc xlslice_10_Dout 1 7 1 NJ
+preplace netloc dec_to_fir_mux_1_Mux0 1 10 10 NJ 170 NJ 170 NJ 170 NJ 170 NJ 170 NJ 170 NJ 170 NJ 170 NJ 170 5550
+preplace netloc FIR5steep_m_axis_data_tvalid 1 15 2 4340 410 NJ
+preplace netloc dec_to_fir_mux_1_Mux1 1 10 7 NJ 600 NJ 600 NJ 600 NJ 600 NJ 600 NJ 600 N
+preplace netloc FIR5flat_m_axis_data_tvalid 1 12 2 NJ 490 3590
+preplace netloc COMP1_m_axis_data_tvalid 1 9 2 NJ 170 2630
+preplace netloc FIR_resized6_m_axis_data_tdata 1 9 1 NJ
+preplace netloc xlconcat_0_dout 1 4 6 870 90 NJ 90 NJ 430 NJ 430 1960 430 NJ
+preplace netloc xlconstant_0_dout 1 7 1 NJ
+preplace netloc cic_compiler_0_m_axis_data_tdata 1 5 1 NJ
+preplace netloc dec_to_fir_mux_1_Mux2 1 10 4 NJ 560 NJ 560 NJ 530 N
+preplace netloc HBsteep1_m_axis_data_tvalid 1 15 2 4340 310 NJ
+preplace netloc dec_to_fir_mux_1_Mux3 1 10 1 2630
+preplace netloc xlslice_11_Dout 1 3 1 NJ
+preplace netloc MUX3_ValidxSO 1 11 3 2980 390 NJ 390 N
+preplace netloc wavegen_m_axis_data_tdata 1 2 1 460
+preplace netloc FIR_resized1_m_axis_data_tdata 1 12 1 NJ
+preplace netloc hbflat_slice_m_axis_data_tdata 1 15 1 4350
+preplace netloc Net1 1 10 10 2660 550 NJ 550 NJ 550 3610 590 NJ 580 NJ 580 4590 330 NJ 370 NJ 330 NJ
+preplace netloc HBsteep_m_axis_data_tvalid 1 18 2 N 310 NJ
+preplace netloc MUX2_DataxDO 1 14 3 3940 520 NJ 520 NJ
+preplace netloc xlslice_8_Dout 1 10 1 2650
+preplace netloc FIR_resized2_m_axis_data_tdata 1 15 1 4360
+preplace netloc Net 1 1 19 200 360 NJ 360 NJ 360 890 430 NJ 420 NJ 420 NJ 420 1960 30 NJ 30 2620 540 2970 570 NJ 570 3600 580 3930 220 NJ 220 4580 310 4920 380 NJ 320 NJ
+preplace netloc CIC25_m_axis_data_tvalid 1 5 4 NJ 190 NJ 190 NJ 190 1940
+preplace netloc cic_compiler_1_m_axis_data_tdata 1 5 1 NJ
+preplace netloc MUX0_DataxDO 1 20 1 N
 preplace netloc xlslice_0_Dout 1 3 1 NJ
-preplace netloc cic_compiler_0_m_axis_data_tvalid 1 6 4 NJ 310 NJ 310 NJ 310 N
-preplace netloc xlslice_6_Dout 1 13 1 NJ
-levelinfo -pg 1 0 100 330 560 760 960 1270 1570 1760 1960 2270 2590 2920 3230 3540 3850 3960 -top 0 -bot 440
+preplace netloc xlslice_6_Dout 1 13 1 N
+preplace netloc COMP5_m_axis_data_tvalid 1 9 2 NJ 320 2590
+preplace netloc xlconstant_3_dout 1 7 1 NJ
+levelinfo -pg 1 0 100 330 570 770 1090 1390 1610 1840 2170 2480 2820 3180 3490 3770 4140 4460 4750 5130 5440 5710 5960 6070 -top 0 -bot 870
 ",
 }
 0

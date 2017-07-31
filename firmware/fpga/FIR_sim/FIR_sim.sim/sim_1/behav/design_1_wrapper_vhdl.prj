@@ -24,8 +24,17 @@ vhdl cic_compiler_v4_0_10  "../../../FIR_sim.ip_user_files/ipstatic/cic_compiler
 vhdl cic_compiler_v4_0_10  "../../../FIR_sim.ip_user_files/ipstatic/cic_compiler_v4_0/hdl/cic_compiler_v4_0.vhd"
 vhdl xil_defaultlib  "../../../FIR_sim.ip_user_files/bd/design_1/ip/design_1_cic_compiler_0_0/sim/design_1_cic_compiler_0_0.vhd"
 vhdl xil_defaultlib  "../../../FIR_sim.ip_user_files/bd/design_1/ip/design_1_FIR_resized1_1/sim/design_1_FIR_resized1_1.vhd"
-vhdl xil_defaultlib  "../../../FIR_sim.ip_user_files/bd/design_1/ip/design_1_FIR_resized1_3/sim/design_1_FIR_resized1_3.vhd"
-vhdl xil_defaultlib  "../../../FIR_sim.ip_user_files/bd/design_1/ip/design_1_FIR_resized2_2/sim/design_1_FIR_resized2_2.vhd"
+vhdl xil_defaultlib  "../../../FIR_sim.ip_user_files/bd/design_1/ip/design_1_cic_compiler_0_1/sim/design_1_cic_compiler_0_1.vhd"
+vhdl xil_defaultlib  "../../../FIR_sim.ip_user_files/bd/design_1/ip/design_1_FIR_resized0_0/sim/design_1_FIR_resized0_0.vhd"
+vhdl xil_defaultlib  "../../../FIR_sim.ip_user_files/bd/design_1/ip/design_1_FIR_resized2_0/sim/design_1_FIR_resized2_0.vhd"
+vhdl xil_defaultlib  "../../../FIR_sim.ip_user_files/bd/design_1/ipshared/raphael-frey/axis_multiplexer_v1_0/src/axis_multiplexer.vhd"
+vhdl xil_defaultlib  "../../../FIR_sim.ip_user_files/bd/design_1/ip/design_1_MUX4_0/sim/design_1_MUX4_0.vhd"
+vhdl xil_defaultlib  "../../../FIR_sim.ip_user_files/bd/design_1/ip/design_1_MUX5_0/sim/design_1_MUX5_0.vhd"
+vhdl xil_defaultlib  "../../../FIR_sim.ip_user_files/bd/design_1/ip/design_1_MUX0_0/sim/design_1_MUX0_0.vhd"
+vhdl xil_defaultlib  "../../../FIR_sim.ip_user_files/bd/design_1/ip/design_1_MUX1_0/sim/design_1_MUX1_0.vhd"
+vhdl xil_defaultlib  "../../../FIR_sim.ip_user_files/bd/design_1/ip/design_1_HBsteep_0/sim/design_1_HBsteep_0.vhd"
+vhdl xil_defaultlib  "../../../FIR_sim.ip_user_files/bd/design_1/ipshared/noah-huesser/dec_to_fir_mux_v1_0/src/dec_to_fir_mux.vhd"
+vhdl xil_defaultlib  "../../../FIR_sim.ip_user_files/bd/design_1/ip/design_1_dec_to_fir_mux_1_0/sim/design_1_dec_to_fir_mux_1_0.vhd"
 
 # Do not sort compile order
 nosort
