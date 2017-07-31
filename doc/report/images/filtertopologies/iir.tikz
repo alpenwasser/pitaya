@@ -1,0 +1,47 @@
+% https://tex.stackexchange.com/a/183092/131649
+\begin{tikzpicture}[
+    triangle/.style = {draw,regular polygon, regular polygon sides=3 },
+    node rotated/.style   = {rotate=180},
+    border rotatedA/.style = {shape border rotate=-90},
+    border rotatedB/.style = {shape border rotate=90},
+]    
+    \coordinate (in)  at (0,0);
+    \coordinate (out) at (8,0);
+
+    % Delay elements
+    \node[draw] (d1) at  (2,-1) {$z^{-1}$};
+    \node[draw] (d2) at  (2,-3) {$z^{-1}$};
+    \node[draw] (d3) at  (6,-1) {$z^{-1}$};
+    \node[draw] (d4) at  (6,-3) {$z^{-1}$};
+
+    % Multipliers
+    \node[triangle, border rotatedA] (m1) at  (3,0) {};
+    \node[triangle, border rotatedA] (m2) at  (3,-2) {};
+    \node[triangle, border rotatedA] (m3) at  (3,-4) {};
+    \node[triangle, border rotatedA] (m4) at  (5,0) {};
+    \node[triangle, border rotatedB] (m5) at  (5,-2) {};
+    \node[triangle, border rotatedB] (m6) at  (5,-4) {};
+
+    %% Adders
+    \node[draw,circle, inner sep=0.3mm] (a1) at  (4,0) {$+$};
+    \node[draw,circle, inner sep=0.3mm] (a2) at  (4,-2) {$+$};
+    \node[draw,circle, inner sep=0.3mm] (a3) at  (4,-4) {$+$};
+
+    %% Lines
+    \draw[-latex] (in) -- (m1);
+    \draw[-latex] (in) -| (d1);
+    \draw[-latex] (d1) -- (d2);
+    \draw[-latex] (d1) |- (m2);
+    \draw[-latex] (d2) |- (m3);
+    \draw[-latex] (m1) -- (a1);
+    \draw[-latex] (m2) -- (a2);
+    \draw[-latex] (m3) -- (a3);
+    \draw[-latex] (a1) -- (m4);
+    \draw[-latex] (m5) -- (a2);
+    \draw[-latex] (m6) -- (a3);
+    \draw[-latex] (d3) |- (m5);
+    \draw[-latex] (d3) -- (d4);
+    \draw[-latex] (d4) |- (m6);
+    \draw[-latex] (m4) -| (d3);
+    \draw[-latex] (m4) -- (out);
+\end{tikzpicture}

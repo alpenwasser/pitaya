@@ -1,0 +1,24 @@
+\begin{tikzpicture}
+     \pgfplotsset{every axis/.style={
+            height=40mm,
+            width=120mm,
+            grid=none,
+            axis line style={draw=none},
+            tick style={draw=none},
+            ticks = none,
+        }
+    }
+    \begin{axis}[
+        at = {(0mm,30mm)},
+    ]
+        \addplot[-]            table[x=f,y=Y,col sep=comma] {images/aliasing/bandNoAliasing.csv};
+    \end{axis}
+
+    \begin{axis}[
+        at = {(0mm,0mm)},
+    ]
+        \addplot[-]            table[x=f,y=Y,col sep=comma] {images/aliasing/bandAliased1.csv};
+        \addplot[-]            table[x=f,y=Y,col sep=comma] {images/aliasing/bandAliased2.csv};
+        \addplot[-]            table[x=f,y=Y,col sep=comma] {images/aliasing/bandAliased3.csv};
+    \end{axis}
+\end{tikzpicture}

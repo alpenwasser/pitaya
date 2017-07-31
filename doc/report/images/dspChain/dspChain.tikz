@@ -1,0 +1,22 @@
+\begin{tikzpicture}
+    \coordinate (in) at (-1.5,0);
+    \coordinate (out) at (7.5,0);
+
+    \node[draw] (LP)  at (0,0) {LP};
+    \node[draw] (ADC) at (3,0) {ADC};
+    \node[draw] (DSP) at (6,0) {DSP};
+
+    \draw[-latex] (in)  -- (LP);
+    \draw[-latex] (LP)  -- (ADC);
+    \draw[-latex] (ADC) -- (DSP);
+    \draw[-latex] (DSP) -- (out);
+
+    \node[above      =1ex] (a1a) at (in)       {A};
+    \node[above right=1ex] (a2a) at (LP.east)  {A};
+    \node[above right=1ex] (d1a) at (ADC.east) {D};
+    \node[above      =1ex] (d2a) at (out)      {D};
+
+    \node[draw,circle,below=4ex,inner sep=0.30mm] (a1b) at (a1a) {\footnotesize 1};
+    \node[draw,circle,below=4ex,inner sep=0.30mm] (a2b) at (a2a) {\footnotesize 2};
+    \node[draw,circle,below=4ex,inner sep=0.30mm] (d1b) at (d1a) {\footnotesize 3};
+\end{tikzpicture}

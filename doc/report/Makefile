@@ -10,6 +10,7 @@ META_DIR := meta
 BUNDLE_CFG := $(META_DIR)/bundledoc.cfg
 CODE_DIR := code
 CHUNK_DIR := chunks
+IMG_DIR := images
 
 # Generate host-specific identifiers, or
 # default ones if unailable.
@@ -35,6 +36,7 @@ default: simple
 tikzcache:
 	@mkdir -p $(OUT_DIR)/$(TIKZ_DIR)
 	@mkdir -p $(OUT_DIR)/$(CLASS)
+	@[ -L $(OUT_DIR)/$(IMG_DIR) ] || ln -s ../$(IMG_DIR) $(OUT_DIR)/$(IMG_DIR)
 	@[ -L $(OUT_DIR)/$(CHUNK_DIR) ] || ln -s ../$(CHUNK_DIR) $(OUT_DIR)/$(CHUNK_DIR)
 	@[ -L $(OUT_DIR)/$(CODE_DIR) ] || ln -s ../$(CODE_DIR) $(OUT_DIR)/$(CODE_DIR)
 	@[ -L ./$(TIKZ_DIR) ] || ln -s $(OUT_DIR)/$(TIKZ_DIR) ./$(TIKZ_DIR)
