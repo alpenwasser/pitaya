@@ -1,0 +1,162 @@
+\RequireVersions{
+  *{application}{TeX}     {1990/03/25 v3.x}
+  *{format} {LaTeX2e}     {2017-04-15 v2.e}
+  *{file}   {Main.tex}    {0000/00/00 v0.0}
+  *{package}{snapshot}    {2002/03/05 v1.14}
+  *{class}  {alpenthesis/alpenthesis}{0000/00/00 v0.0}
+  *{class}  {memoir}      {2016/05/16 v3.7f}
+  *{package}{ifpdf}       {2017/03/15 v3.2}
+  *{package}{ifetex}      {2011/12/15 v1.2}
+  *{package}{ifxetex}     {2010/09/12 v0.6}
+  *{package}{ifluatex}    {2016/05/16 v1.4}
+  *{file}   {mem10.clo}   {2008/01/30 v0.3}
+  *{package}{mempatch}    {2009/07/24 v6.0f}
+  *{package}{kpfonts}     {2010/08/20 v3.31}
+  *{package}{textcomp}    {2017/04/05 v2.0i}
+  *{file}   {ts1enc.def}  {2001/06/05 v3.0e}
+  *{package}{amsmath}     {2016/11/05 v2.16a}
+  *{package}{amstext}     {2000/06/29 v2.01}
+  *{package}{amsgen}      {1999/11/30 v2.0}
+  *{package}{amsbsy}      {1999/11/29 v1.2d}
+  *{package}{amsopn}      {2016/03/08 v2.02}
+  *{package}{DejaVuSansMono}{2011/06/01 v0.0}
+  *{package}{keyval}      {2014/10/28 v1.15}
+  *{package}{inputenc}    {2015/03/17 v1.2c}
+  *{file}   {utf8.def}    {2017/01/28 v1.1t}
+  *{file}   {t1enc.dfu}   {2017/01/28 v1.1t}
+  *{file}   {ot1enc.dfu}  {2017/01/28 v1.1t}
+  *{file}   {omsenc.dfu}  {2017/01/28 v1.1t}
+  *{file}   {ts1enc.dfu}  {2017/01/28 v1.1t}
+  *{package}{fontenc}     {0000/00/00 v0.0}
+  *{file}   {t1enc.def}   {2017/04/05 v2.0i}
+  *{package}{xcolor}      {2016/05/11 v2.12}
+  *{file}   {color.cfg}   {2016/01/02 v1.6}
+  *{file}   {pdftex.def}  {2017/01/12 v0.06k}
+  *{package}{infwarerr}   {2016/05/16 v1.4}
+  *{package}{ltxcmds}     {2016/05/16 v1.23}
+  *{package}{tikz}        {2015/08/07 v3.0.1a}
+  *{package}{pgf}         {2015/08/07 v3.0.1a}
+  *{package}{pgfrcs}      {2015/08/07 v3.0.1a}
+  *{package}{everyshi}    {2001/05/15 v3.00}
+  *{file}   {pgfrcs.code.tex}{0000/00/00 v0.0}
+  *{package}{pgfcore}     {2010/04/11 v3.0.1a}
+  *{package}{graphicx}    {2014/10/28 v1.0g}
+  *{package}{graphics}    {2017/04/14 v1.1b}
+  *{package}{trig}        {2016/01/03 v1.10}
+  *{file}   {graphics.cfg}{2016/06/04 v1.11}
+  *{package}{pgfsys}      {2014/07/09 v3.0.1a}
+  *{file}   {pgfsys.code.tex}{0000/00/00 v0.0}
+  *{file}   {pgfsyssoftpath.code.tex}{2013/09/09 v1.9)}
+  *{file}   {pgfsysprotocol.code.tex}{2006/10/16 v1.4)}
+  *{file}   {pgfcore.code.tex}{0000/00/00 v0.0}
+  *{package}{pgfcomp-version-0-65}{2007/07/03 v3.0.1a}
+  *{package}{pgfcomp-version-1-18}{2007/07/23 v3.0.1a}
+  *{package}{pgffor}      {2013/12/13 v3.0.1a}
+  *{package}{pgfkeys}     {0000/00/00 v0.0}
+  *{file}   {pgfkeys.code.tex}{0000/00/00 v0.0}
+  *{package}{pgfmath}     {0000/00/00 v0.0}
+  *{file}   {pgfmath.code.tex}{0000/00/00 v0.0}
+  *{file}   {pgffor.code.tex}{0000/00/00 v0.0}
+  *{file}   {tikz.code.tex}{0000/00/00 v0.0}
+  *{package}{pgfplots}    {2016/08/10 v1.14}
+  *{package}{pdftexcmds}  {2017/03/19 v0.25}
+  *{package}{atveryend}   {2016/05/16 v1.9}
+  *{package}{minted}      {2016/10/31 v2.4.1}
+  *{package}{kvoptions}   {2016/05/16 v3.12}
+  *{package}{kvsetkeys}   {2016/05/16 v1.17}
+  *{package}{etexcmds}    {2016/05/16 v1.6}
+  *{package}{fvextra}     {2016/09/02 v1.2.1}
+  *{package}{ifthen}      {2014/09/29 v1.1c}
+  *{package}{etoolbox}    {2017/01/02 v2.4}
+  *{package}{fancyvrb}    {2008/02/07 v0.0}
+  *{package}{upquote}     {2012/04/19 v1.3}
+  *{package}{lineno}      {2005/11/02 v4.41}
+  *{file}   {T1DejaVuSansMono-TLF.fd}{2011/06/01 v1/DejaVuSansMono-TLF.}
+  *{package}{float}       {2001/11/08 v1.3d}
+  *{package}{calc}        {2014/10/28 v4.3}
+  *{package}{shellesc}    {2016/06/07 v0.02a}
+  *{package}{ifplatform}  {2010/10/22 v0.4}
+  *{package}{catchfile}   {2016/05/16 v1.7}
+  *{file}   {Main.w18}    {0000/00/00 v0.0}
+  *{package}{xstring}     {2013/10/13 v1.7c}
+  *{package}{framed}      {2011/10/22 v0.96:}
+  *{package}{tcolorbox}   {2017/04/25 v4.03}
+  *{package}{environ}     {2014/05/04 v0.3}
+  *{package}{trimspaces}  {2009/09/17 v1.1}
+  *{package}{listings}    {2015/06/04 v1.6}
+  *{package}{lstmisc}     {2015/06/04 v1.6}
+  *{file}   {listings.cfg}{2015/06/04 v1.6}
+  *{package}{xparse}      {2017/05/13 v3}
+  *{package}{expl3}       {2017/05/13 v3}
+  *{file}   {expl3-code.tex}{2017/05/13 v3}
+  *{file}   {l3pdfmode.def}{2017/03/18 v3}
+  *{package}{hyperref}    {2017/03/14 v6.85a}
+  *{package}{hobsub-hyperref}{2016/05/16 v1.14}
+  *{package}{hobsub-generic}{2016/05/16 v1.14}
+  *{package}{hobsub}      {2016/05/16 v1.14}
+  *{package}{ifvtex}      {2016/05/16 v1.6}
+  *{package}{intcalc}     {2016/05/16 v1.2}
+  *{package}{kvdefinekeys}{2016/05/16 v1.4}
+  *{package}{pdfescape}   {2016/05/16 v1.14}
+  *{package}{bigintcalc}  {2016/05/16 v1.4}
+  *{package}{bitset}      {2016/05/16 v1.2}
+  *{package}{uniquecounter}{2016/05/16 v1.3}
+  *{package}{letltxmacro} {2016/05/16 v1.5}
+  *{package}{hopatch}     {2016/05/16 v1.3}
+  *{package}{xcolor-patch}{2016/05/16 v0.0}
+  *{package}{atbegshi}    {2016/06/09 v1.18}
+  *{package}{refcount}    {2016/05/16 v3.5}
+  *{package}{hycolor}     {2016/05/16 v1.8}
+  *{package}{auxhook}     {2016/05/16 v1.4}
+  *{file}   {pd1enc.def}  {2017/03/14 v6.85a}
+  *{file}   {hyperref.cfg}{2002/06/06 v1.2}
+  *{package}{url}         {2013/09/16 v3.4}
+  *{package}{memhfixc}    {2013/05/30 v1.17}
+  *{file}   {hpdftex.def} {2017/03/14 v6.85a}
+  *{package}{rerunfilecheck}{2016/05/16 v1.8}
+  *{package}{babel}       {2017/05/19 v3.10}
+  *{file}   {english.ldf} {2017/01/24 v3.3q}
+  *{package}{siunitx}     {2017/05/19 v2.7g}
+  *{package}{l3keys2e}    {2017/05/13 v2e}
+  *{package}{translator}  {2010/06/12 v1.10}
+  *{file}   {translator-language-mappings.tex}{0000/00/00 v0.0}
+  *{package}{counttexruns}{2012/08/31 v1.00a}
+  *{package}{morewrites}  {2017/04/20 v0.0}
+  *{package}{primargs}    {2017/04/10 v0.0}
+  *{file}   {randInts.tex}{0000/00/00 v0.0}
+  *{package}{multirow}    {2016/11/25 v2.2}
+  *{file}   {omljkp.fd}   {2006/08/15 v1.0}
+  *{file}   {omsjkp.fd}   {2006/08/15 v1.0}
+  *{file}   {omxjkp.fd}   {2006/08/15 v1.0}
+  *{file}   {ujkpexa.fd}  {2006/08/15 v1.0}
+  *{file}   {ts1cmr.fd}   {2014/09/29 v2.5h}
+  *{file}   {t1jkpx.fd}   {2007/08/30 v1.928}
+  *{file}   {supp-pdf.mkii}{0000/00/00 v0.0}
+  *{package}{epstopdf-base}{2016/05/15 v2.6}
+  *{package}{grfext}      {2016/05/16 v1.2}
+  *{file}   {epstopdf-sys.cfg}{2010/07/13 v1.3}
+  *{package}{nameref}     {2016/05/21 v2.44}
+  *{package}{gettitlestring}{2016/05/16 v1.5}
+  *{file}   {translator-basic-dictionary-English.dict}{0000/00/00 v0.0}
+  *{file}   {siunitx-abbreviations.cfg}{2017/05/19 v2.7g}
+  *{file}   {ot1jkp.fd}   {2007/08/30 v1.928}
+  *{file}   {ujkpmia.fd}  {2006/08/15 v1.0}
+  *{file}   {ujkpsya.fd}  {2006/08/15 v1.0}
+  *{file}   {ujkpsyb.fd}  {2006/08/15 v1.0}
+  *{file}   {ujkpsyc.fd}  {2006/08/15 v1.0}
+  *{file}   {ot1jkpss.fd} {2007/07/16 v1.928}
+  *{file}   {ot1jkptt.fd} {2007/01/26 v1.928}
+  *{file}   {t1jkpss.fd}  {2007/07/16 v1.928}
+  *{file}   {chunks/introduction.tex}{0000/00/00 v0.0}
+  *{file}   {ts1jkpx.fd}  {2007/08/30 v1.928}
+  *{file}   {images/dspChain/dspChain.tikz}{0000/00/00 v0.0}
+  *{file}   {images/dspChain/timeDomain.tikz}{0000/00/00 v0.0}
+  *{file}   {images/dspChain/freqDomain.tikz}{0000/00/00 v0.0}
+  *{file}   {images/aliasing/band.tikz}{0000/00/00 v0.0}
+  *{file}   {images/aliasing/dirac.tikz}{0000/00/00 v0.0}
+  *{file}   {images/filtertopologies/fir.tikz}{0000/00/00 v0.0}
+  *{file}   {images/filtertopologies/iir.tikz}{0000/00/00 v0.0}
+  *{file}   {images/filtertopologies/cic.tikz}{0000/00/00 v0.0}
+  *{file}   {chunks/gui.tex}{0000/00/00 v0.0}
+  *{file}   {TS1DejaVuSansMono-TLF.fd}{2011/06/01 v1/DejaVuSansMono-TLF.}
+}

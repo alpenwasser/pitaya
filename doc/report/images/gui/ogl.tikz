@@ -1,0 +1,63 @@
+% https://tex.stackexchange.com/a/183092/131649
+\begin{tikzpicture}
+    \coordinate (in)  at  (0,0);
+    \coordinate (out) at (12,0);
+
+    % branching coordinates
+    \coordinate (b1) at (2.1,0);
+    \coordinate (b2) at (3.6,0);
+    \coordinate (b3) at (5.1,0);
+    \coordinate (b4) at (6.9,0);
+    \coordinate (b5) at (8.4,0);
+    \coordinate (b6) at (9.9,0);
+
+    % Delay elements
+    \node[draw] (d1) at  (1.5,1) {$z^{-1}$};
+    \node[draw] (d2) at  (3.0,1) {$z^{-1}$};
+    \node[draw] (d3) at  (4.5,1) {$z^{-1}$};
+    \node[draw] (d4) at  (7.5,1) {$z^{-M}$};
+    \node[draw] (d5) at  (9.0,1) {$z^{-M}$};
+    \node[draw] (d6) at (10.5,1) {$z^{-M}$};
+
+    % Downsampler
+    \node[draw] (r1) at (6,0) {$R\downarrow$};
+
+    % Adders
+    \node[draw,circle, inner sep=0.3mm] (a1) at  (1.0,0) {$+$};
+    \node[draw,circle, inner sep=0.3mm] (a2) at  (2.5,0) {$+$};
+    \node[draw,circle, inner sep=0.3mm] (a3) at  (4.0,0) {$+$};
+    \node[draw,circle, inner sep=0.3mm] (a4) at  (8.0,0) {$+$};
+    \node[draw,circle, inner sep=0.3mm] (a5) at  (9.5,0) {$+$};
+    \node[draw,circle, inner sep=0.3mm] (a6) at (11.0,0) {$+$};
+
+    % subtractors
+    \node[above right=0.2ex] (s1) at (a4) {$-$};
+    \node[above right=0.2ex] (s2) at (a5) {$-$};
+    \node[above right=0.2ex] (s3) at (a6) {$-$};
+
+    % Lines
+    \draw[-latex] (in) -- (a1);
+    \draw[-latex] (a6) -- (out);
+    \draw[-latex] (b1) |- (d1);
+    \draw[-latex] (b2) |- (d2);
+    \draw[-latex] (b3) |- (d3);
+    \draw[-latex] (a1) -- (a2);
+    \draw[-latex] (a2) -- (a3);
+    \draw[-latex] (a3) -- (r1);
+    \draw[-latex] (r1) -- (a4);
+    \draw[-latex] (a4) -- (a5);
+    \draw[-latex] (a5) -- (a6);
+    \draw[-latex] (d1) -| (a1);
+    \draw[-latex] (d2) -| (a2);
+    \draw[-latex] (d3) -| (a3);
+    \draw[-latex] (b4) |- (d4);
+    \draw[-latex] (b5) |- (d5);
+    \draw[-latex] (b6) |- (d6);
+    \draw[-latex] (d4) -| (a4);
+    \draw[-latex] (d5) -| (a5);
+    \draw[-latex] (d6) -| (a6);
+
+    % Annotations
+    \node[below left =1.5ex] at (a1) {$f_s$};
+    \node[below right=1.5ex] at (a6) {$f_s/R$};
+\end{tikzpicture}
