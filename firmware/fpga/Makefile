@@ -10,7 +10,7 @@ BUILD = build
 VIVADO = vivado -nolog -nojournal -mode batch
 PART = xc7z010clg400-1
 
-all: all-cores zynq_logger project
+all: all-cores zynq_logger
 
 all-cores:
 	$(VIVADO) -source create_cores.tcl -tclargs $(PART) $(BUILD)/cores
