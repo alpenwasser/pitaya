@@ -1,0 +1,150 @@
+Shell commands can be type thusly:
+\begin{commandshell}
+    user:> if [ -f "${myfile}" ];then echo "${myfile} exists!"
+\end{commandshell}
+
+\section{Makefile}
+\begin{tcolorbox}[
+        breakable,
+        title={
+            \refstepcounter{listing}
+            Listing \thelisting: Makefile Code
+            \label{lst:makefile}
+            \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Makefile Code}
+        }
+    ]
+    \inputminted{makefile}{code/Makefile}
+\end{tcolorbox}
+
+\section{Verilog}
+\begin{tcolorbox}[
+        breakable,
+        width=1.2\textwidth,
+        title={
+            \refstepcounter{listing}
+            Listing \thelisting: Verilog Code
+            \label{lst:makefile}
+            \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Verilog Code}
+        }
+    ]
+\inputminted{verilog}{./code/axi_axis_reader.v}
+\end{tcolorbox}
+
+\section{VHDL}
+\inputminted{vhdl}{./code/comparator.vhd}
+
+\section{TCL}
+\inputminted{tcl}{./code/create_cores.tcl}
+
+\begin{listing}
+    \begin{minted}[autogobble]{vhdl}
+        entity comparator is
+            generic (
+                Width : integer := 14
+            );
+            port (
+                AxDI : in unsigned(Width - 1 downto 0);
+                BxDI : in unsigned(Width - 1 downto 0);
+                GreaterxSO : out std_logic;
+                EqualxSO : out std_logic;
+                LowerxSO : out std_logic
+            );
+        end comparator;
+    \end{minted}
+    \caption{Comparator}
+    \label{lst:vhdl:comparator}
+\end{listing}
+
+\section{Matlab}
+Here, we shall also demonstrate breaking a code file into multiple segments
+to comment on its contents.
+
+We start with the header:
+\begin{tcolorbox}[
+        skin = octoboxfirst,
+        title={
+            \refstepcounter{listing}
+            Listing \thelisting: Matlab Code
+            \label{lst:makefile}
+            \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Matlab Code}
+        }
+    ]
+    \inputminted[
+        linenos,
+        numbersep=4pt,
+        style=solarizedlight,
+        firstline=1,
+        lastline=12,
+    ]{matlab}{./code/filterChainDesigns.m}
+\end{tcolorbox}
+In the next box, we start where we  left off previously, and we pack some more
+header information into our listing:
+\begin{tcolorbox}[
+        skin = octoboxmiddle,
+    ]
+    \inputminted[
+        linenos,
+        numbersep=4pt,
+        style=solarizedlight,
+        firstnumber=last,
+        firstline=13,
+        lastline=26,
+    ]{matlab}{./code/filterChainDesigns.m}
+\end{tcolorbox}
+
+Then we describe the target for the FIR filter:
+\begin{tcolorbox}[
+        skin = octoboxmiddle,
+    ]
+    \inputminted[
+        linenos,
+        numbersep=4pt,
+        style=solarizedlight,
+        firstnumber=29,
+        firstline=29,
+        lastline=40,
+    ]{matlab}{./code/filterChainDesigns.m}
+\end{tcolorbox}
+
+After which we start the sript proper by setting up the iteration parameters:
+\begin{tcolorbox}[
+        skin = octoboxmiddle,
+    ]
+    \inputminted[
+        linenos,
+        numbersep=4pt,
+        style=solarizedlight,
+        firstnumber=43,
+        firstline=43,
+        lastline=64,
+    ]{matlab}{./code/filterChainDesigns.m}
+\end{tcolorbox}
+
+We define some data structures to contain the filter objects for further processing:
+\begin{tcolorbox}[
+        skin = octoboxmiddle,
+    ]
+    \inputminted[
+        linenos,
+        numbersep=4pt,
+        style=solarizedlight,
+        firstnumber=66,
+        firstline=66,
+        lastline=78,
+    ]{matlab}{./code/filterChainDesigns.m}
+\end{tcolorbox}
+
+And then we iterate:
+\begin{tcolorbox}[
+        skin = octoboxlast,
+    ]
+    \inputminted[
+        linenos,
+        numbersep=4pt,
+        style=solarizedlight,
+        firstnumber=80,
+        firstline=80,
+        %lastline=78,
+    ]{matlab}{./code/filterChainDesigns.m}
+\end{tcolorbox}
+

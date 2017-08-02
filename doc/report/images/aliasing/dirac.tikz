@@ -3,17 +3,49 @@
             height=40mm,
             width=120mm,
             grid=none,
-            axis line style={draw=none},
-            tick style={draw=none},
-            ticks = none,
-        }
+            axis x line=bottom,
+            axis y line=middle,
+            %axis line style={draw=none},
+            %tick style={draw=none},
+            %ticks = none,
+            yticklabels={},
+            ytick style={draw=none},
+            ymin=0,
+            ymax=1.33,
+            xlabel={$f$},
+            xlabel style={
+                at={(ticklabel* cs:1.05)},
+                anchor=east,
+            },
+            xmin=-8,
+            xmax=8,
+        },
+        every axis legend/.append style={
+            %at={(1.05,1.1)}, % if attached to top plot
+            at={(1.05,2.8)},  % if attached to bottom plot
+            anchor=south east,
+            font=\footnotesize,
+            cells={anchor=east},
+        },
     }
     % fs = 4
     % fs/2 = 2
     
     % Dirac at f=1
     \begin{axis}[
-        at = {(0mm,30mm)},
+        at = {(0mm,40mm)},
+        xtick={-6,-4,-2,-1,0,1,2,4,6},
+        xticklabels={
+            $-\frac{3f_s}{2}$,
+            $-f_s$,
+            $-\frac{f_s}{2}$,
+            \raisebox{-6ex}{$-f_{\mathrm{sig}}$},
+            0,
+            \raisebox{-6ex}{$f_{\mathrm{sig}}$},
+            $\frac{f_s}{2}$,
+            $f_s$,
+            $\frac{3f_s}{2}$},
+        xticklabel style={font=\footnotesize},
     ]
         % Centered around 0
         \addplot[ycomb,mark=triangle*] coordinates {
@@ -30,26 +62,84 @@
             (-3,1)
             (-5,1)
         };
+
+        % Centered around +-2fs = +-8
+        \addplot[black!40!white,ycomb,mark=triangle*] coordinates {
+            (7,1)
+        };
+        \addplot[black!20!white,ycomb,mark=triangle*] coordinates {
+            (-7,1)
+        };
+
+        % Sampling Frequency and its half
+        \addplot[gray,ycomb,mark=none,style={dotted,thick}] coordinates {
+            (2,0.75)
+            (-2,0.75)
+            (6,0.75)
+            (-6,0.75)
+        };
+        \addplot[gray,ycomb,mark=none,style={dotted,thick}] coordinates {
+            (4,1.33)
+            (-4,1.33)
+        };
     \end{axis}
 
     % Dirac at f=3
     \begin{axis}[
         at = {(0mm,0mm)},
+        xtick={-6,-4,-3,-2,0,2,3,4,6},
+        xticklabels={
+            $-\frac{3f_s}{2}$,
+            $-f_s$,
+            \raisebox{-6ex}{$-f_{\mathrm{sig}}$},
+            $-\frac{f_s}{2}$,
+            0,
+            $\frac{f_s}{2}$,
+            \raisebox{-6ex}{$f_{\mathrm{sig}}$},
+            $f_s$,
+            $\frac{3f_s}{2}$},
+        xticklabel style={font=\footnotesize},
     ]
         % Centered around 0
         \addplot[ycomb,mark=triangle*] coordinates {
             (3,1)
             (-3,1)
         };
+        \addlegendentry{copy centered around $f=0$}
+
         % Centered around fs = 4
         \addplot[blue,ycomb,mark=triangle*] coordinates {
             (1,1)
             (7,1)
         };
+        \addlegendentry{copy centered around $f=f_s$}
         % Centered around -fs = -4
         \addplot[magenta,ycomb,mark=triangle*] coordinates {
             (-1,1)
             (-7,1)
+        };
+        \addlegendentry{copy centered around $f=-f_s$}
+
+        % Centered around +-2fs = +-8
+        \addplot[black!40!white,ycomb,mark=triangle*] coordinates {
+            (5,1)
+        };
+        \addlegendentry{copy centered around $f=2f_s$}
+        \addplot[black!20!white,ycomb,mark=triangle*] coordinates {
+            (-5,1)
+        };
+        \addlegendentry{copy centered around $f=-2f_s$}
+
+        % Sampling Frequency and its half
+        \addplot[gray,ycomb,mark=none,style={dotted,thick}] coordinates {
+            (2,0.75)
+            (-2,0.75)
+            (6,0.75)
+            (-6,0.75)
+        };
+        \addplot[gray,ycomb,mark=none,style={dotted,thick}] coordinates {
+            (4,1.33)
+            (-4,1.33)
         };
     \end{axis}
 \end{tikzpicture}
