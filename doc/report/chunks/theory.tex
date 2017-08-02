@@ -2,138 +2,249 @@
 \label{ch:analog-to-digital_data_aquisition}
 % ---------------------------------------------------------------------------- %
 
-\section{Analog-to-Digital Data Acquisition}
-\label{sec:adc-acquisition}
+This chapter  will present a  brief synopsis on  some aspects of  digital data
+acquisition from  an analog source  and the processing  of that data,  and how
+those issues pertain to our project. It  is not intended to be a comprehensive
+treatise on the subject but shall serve  as a short refresher. At its end, the
+reader should  have sufficient insight  to understand the basic  motivation of
+our project from a theoretical point of view.
 
-\subsection{The DSP Chain}
-\label{subsec:dsp-chain}
+TODO: references to more comprehensive literature.
+
+\section{The Digital Signal Processing Chain}% <<< --------------------------- %
+\label{sec:dsp_chain}
 
 Digitally acquiring a signal generally requires at least the following steps:
-
 \begin{itemize}\tightlist
-    \item
-        Analog LP: Remove any frequencies above fs/2, to enable correct processing
-        down the chain (more on this later).
-    \item
-        ADC: convert time-continuous and value-continuous into value-discreet and
-        time-discreet signal. Being value-discreet is of less importance in our
-        system, but let it be mentioned that this is the source of the quantization
-        noise. Being time-discreet has a few more consequences:
-        \begin{itemize}\tightlist
-                \item
-                    multiplication w/ dirac pulse sequence in time domain
-                \item
-                    convolution w/ dirac pulse sequence in frequency domain
-                \item
-                    spectrum of signal is repeated at intervals of fs, centered
-                    around each multiple of fs.
-                \item
-                    if the signal has frequency components above fs/2, this means
-                    that different copies of the signal's spectrum will overlap
-                    and lead to an error called aliasing. This means that the
-                    analog waveform can no longer be unambiguously reconstructed
-                    and correct processing of the data down the chain is not possible.
-                    The phenomenon called "folding back" is also a consequence of
-                    this and will be described in more detail later, because it is
-                    of particular importance for our system.
-                \item
-                    As a consequences, the analog low-pass filter is required.
-        \end{itemize}
-    \item
-        DSP: Can be n inalmost arbitrary. Preferred to analog signal processing because
-        it can be done with computers, which are well understood and cheap.
-        Primary problem tends to be the amount of data being shoved into the DSP
-        system, which is usually constrained with regards to its available resources
-        (i.e. processing power). If the ADC provides too much data for the DSP to
-        meaningfully process (keep in mind: depending on \emph{what} is to be done
-        in the DSP part, sometimes the ADC's data rate might be too high, other times
-        not, so it is usually not possible to perfectly match the ADC's specifications
-        to the DSP unless the application's scope is very narrowly defined before the
-        system is designed).
+        \item
+            Passing the signal through an analog low-pass filter.
+        \item
+            Sampling and quantizing the filtered signal.
 \end{itemize}
 
-The solution to the problem of too much data is usually downsampling. One could run
-the ADC at lower clock frequencies, but oversampling carries some advantages which would
-be lost with that.
-
-\subsection{Challenges in Downsampling}
-\label{subsec:downsampling}
-
-The most obvious way to downsample from a sequence of values is of course to simply pick
-each nth sample. However, this has some serious drawbacks which make it an unworkable solution
-in most cases.
-
-\textbf{Fancy Graphics of downsampling without LP filter with explanations}
-
-
-\subsection{Digital Low-Pass Filters}
-\label{subsec:digital-lp-filters}
-
-The obvious solution to this predicament is to apply a (digital) low-pass filter to the
-sequence of values before downsampling. For this purpose, three types of filters are commonly
-used, each with their own specific advantages and drawbacks: IIR, FIR, CIC.
-
-For theseandthose reasons, we will use FIR and CIC in our system.
-
-\textbf{Fancy graphics of LP filter, downsampling and folding back}
-
-\section{Designing a Filter System}
-\label{sec:designing-a-filter-system}
-
-Talking about which type of filter has which properties is all good and well in theory, but
-how does one actually apply this knowledge to a practical problem? This section answers that
-question insofar as it applies to our project.
-
-\begin{itemize}\tightlist
-    \item
-        limited HW resources
-    \item
-        single-stage vs. multi-stage
-    \item
-        TBW issue with multi-stage
-    \item
-        filters at lower frequencies use fewer resources
-    \item
-        halfband filtres
-    \item
-        CIC: compensation filters
-\end{itemize}
+The   resulting   sequence  of   values   can   then  be   further   digitally
+processed. The necessary  building blocks  for this  process are  portrayed in
+Figure~\ref{fig:dspChain:blocks}.
 
 \begin{figure}
     \centering
     \input{images/dspChain/dspChain.tikz}
-    \caption{Digital signal processing chain from analog signal to the digitally processed data stream}
+    \caption{%
+        The basic  building blocks of the  DSP chain from its  analog input to
+        its digitally processed output.\protect\newline
+        From  left  to  right: The  analog low-pass  filter  (\emph{LP}),  the
+        analog-to-digital  converter (\emph{ADC}),  and  an arbitrary  digital
+        signal processing  system for further  processing of the  ADC's output
+        (\emph{DSP}).%
+    }
     \label{fig:dspChain:blocks}
 \end{figure}
 
 \begin{figure}
     \centering
     \input{images/dspChain/timeDomain.tikz}
-    \caption{Digital signal processing chain from analog signal to the digitally processed data stream}
-    \label{fig:dspChain:timedomain}
+    \input{images/dspChain/freqDomain.tikz}
+    \caption{%
+        Simplified  time-domain  (top)   and  frequency-domain  (bottom)  view
+        of  the  signal  at  different  stages on  its  way  through  the  DSP
+        chain. The circled  numbers correspond  to the  stages as  outlined in
+        Figure~\ref{fig:dspChain:blocks}.\protect\newline
+        Stage  1 is  the  signal  before passing  through  the input  low-pass
+        filter,  with  a  significant   amount  of  high-frequency  noise. The
+        low-pass filter removes any  frequency components above ${f_s}/{2}$ in
+        an ideal scenario  (in reality, it merely attenuates them,  as we will
+        see later), resulting in the signal at stage 2.\protect\newline
+        After having been filtered, the  ADC samples and quantizes the signal,
+        yielding  a sequence  of  values, as  schematically  portrayed in  the
+        rightmost picture for stage 3.\protect\newline
+        Note that  due to the sampling  process, the spectrum of  the filtered
+        signal is repeated at intervals of  $f_s/2$. This is the source of the
+        issue of \emph{aliasing}.%
+    }
+    \label{fig:dspChain:signals}
 \end{figure}
 
-\begin{figure}
-    \centering
-    \input{images/dspChain/freqDomain.tikz}
-    \caption{Digital signal processing chain from analog signal to the digitally processed data stream}
-    \label{fig:dspChain:freqDomain}
-\end{figure}
+Of particular  interest for our  application is  what happens in  the ADC. The
+quantization process converts a  value-continuous signal into a value-discreet
+one,  with its  resolution being  a specification  of the  ADC which  is being
+used. As an example, the ADC in our system has a resolution of \num{14}\,bits,
+meaning it can divite its valid  input range into \num{16384} values. Given an
+input range of \SI{2}{\volt} $V_{PP}$, that equates to a resolution of roughly
+\SI{122}{\micro\volt} (in theory). This quantization  process is the source of
+what is generally  known as \emph{quantization noise}. For more  on the topic,
+see \code{TODO}.
+
+TODO: Check numbers. Give references for further reading.
+
+Besides the quantization,  the other step happening in the  ADC is sampling; a
+time-continuous signal is converted into a series of time-discreet values. The
+time between those values is known as \emph{sampling time}, its inverse is the
+\emph{sampling  frequency}. Note that  usually  these are  constant, at  least
+during the  time where the signal  is measured. This need not  strictly be the
+case  in theory  though. In our  system, this  sampling frequency  is a  fixed
+property of the ADC, and is \SI{125}{\mega\hertz}.
+
+The sampling  step lies  at the  core of  the problem  our project  intends to
+address:  \emph{aliasing}. Therefore, we  will take  a  closer look  at a  few
+consequences  of the  sampling  process, and  how they  are  relevant to  this
+project.
+
+Descriptively, the sampling  process can be thought of as  looking at a signal
+at  specific points  in  time and  capturing  its value. Mathematically,  this
+amounts to multipliying the  signal with a series of Dirac  pulses in the time
+domain,  and  convolving with  a  series  of  Dirac  pulses in  the  frequency
+domain\footnotemark.
+\footnotetext{%
+    \emph{Pro memoria}: A series of Dirac pulses  in the time domain has as its
+    spectrum a series of Dirac pulses as well.%
+}.
+This  convolution  in   the  frequency  domain  lies  at  the   heart  of  the
+problem   of  aliasing,   because  it   results  in   the  incoming   signal's
+spectrum  being  repeated  at  intervals  of  $f_s$  (see  also:  stage  3  in
+Figure~\ref{fig:dspChain:signals}). This is no problem as long as the spectrum
+of the incoming signal fits within  the boundaries set by this repetition. But
+if  the  spectrum   of  the  incoming  singal  is  too   broad,  two  or  more
+recurrences  of  the spectrum  will  overlap. This  effect is  highlighted  in
+Figure~\ref{fig:aliasing:band}.
 
 \begin{figure}
     \centering
     \input{images/aliasing/band.tikz}
-    \caption{Digital signal processing chain from analog signal to the digitally processed data stream}
+    \caption{%
+        Simplified view  of a signal  which does not produce  aliasing between
+        its recurrences  in the  frequency spectrum  (top), contrasted  with a
+        signal whose  frequency band  has components  above half  the sampling
+        frequency,  resulting   in  aliasing;  its  spectral   copies  overlap
+        (highlighted areas in the bottom plot).%
+    }
     \label{fig:aliasing:band}
 \end{figure}
+
+This overlap results in two primary problems:
+\begin{itemize}\tightlist
+    \item
+        The digital  signal may not  be unambiguously reconstructable  into an
+        analog signal, if that is intended.
+    \item
+        Frequencies  may occur  in the  digital  signal stream  which are  not
+        actually  present  in  the  original  signal. This  problem  is  often
+        referred to  as the  \emph{folding back} of  frequency components. See
+        Figure~\ref{fig:aliasing:dirac} for an illustration  of how this might
+        look.
+
+        This problem is of particular interest  to our application, as we will
+        see later.
+\end{itemize}
 
 \begin{figure}
     \centering
     \input{images/aliasing/dirac.tikz}
-    \caption{Digital signal processing chain from analog signal to the digitally processed data stream}
+    \caption{%
+        Example  of  two harmonic  signals  being  sampled. In the  top  plot,
+        the  signal's  frequency is  below  half  the sampling  frequency  and
+        there  is  no  aliasing. The   signal  can  be  reconstructed  without
+        error.\protect\newline
+        In the bottom plot, the signal's  frequency is above half the sampling
+        frequency. Consequently, the copies of the signal's frequency spectrum
+        centered around  the sampling  frequency and  its negative  alias back
+        into  the  band  between  $-f_s/2$  and  $f_s/2$. If  this  signal  is
+        reconstructed, the resulting  signal would have a frequency  of $f_s -
+        f_{\mathrm{sig}}$ instead of $f_{\mathrm{sig}}$.%
+    }
     \label{fig:aliasing:dirac}
 \end{figure}
 
+
+Once a signal  has left the ADC and  is handed down the DSP  chain for further
+processing,  the primary  problem becomes  one of  resources, particularly  in
+real-time applications. In  most systems,  the available  hardware is  a fixed
+constraint, and depending on what sort of processing is to be conducted on the
+digital data stream, the available resources may or may not suffice.
+
+If available resources are found to be insufficient for real-time processing of
+the data stream, one may choose to
+\begin{itemize}\tightlist
+    \item
+        not process the data in real time,
+    \item
+        reduce the complexity of the computations, or
+    \item
+        reduce the amount of data to be processed through \emph{downsampling}
+        of the signal.
+\end{itemize}
+The  last case  is the  route  which is  chosen in  our application. The  main
+constraint on the Red Pitaya is that  the data being generated cannot be moved
+off the  device in  real time,  and the  device itself  does not  really offer
+sufficient storage for capturing a meaningful amount of data which can then be
+moved onto another  device for further processing at  a later point. Therefore
+the amount of data must be reduced before  it can be moved off the device to a
+computer for viewing or further processing.
+
+TODO: Amount of data being generated on the PITA.
+
+Because downsampling a signal is in  essence nothing more than the sampling of
+a signal which has already been sampled, a lot of the considerations which are
+valid for the  step from an analog  to a digital signal as  outlined above are
+either very  similar or even identical. Specifically,  the same considerations
+for  aliasing still  apply: If  the  signal which  is  to  be downsampled  has
+frequency components  above $f_{s,  downsampled}/2$, aliasing  will occur. And
+since the  signal coming out of  the ADC has the  original signal's (filtered)
+spectrum recurring at intervals of its  sampling frequency, this is always the
+case.\code{TODO: Correct?}
+
+Therefore,  the sampled  signal must  be  filtered through  a low-pass  filter
+before  being downsampled,  just as  the original  analog signal  was low-pass
+filtered  before being  passed into  the  ADC. In light  of the  signal to  be
+downsampled  being a  \emph{digital} signal  instead  of an  analog one,  that
+low-pass filter must  naturally be a digital filter as  well. Designing such a
+digital low-pass filter is the core mission of this project.
+
+
+%\subsection{Challenges in Downsampling}
+%\label{subsec:downsampling}
+%
+%The most obvious way to downsample from a sequence of values is of course to simply pick
+%each nth sample. However, this has some serious drawbacks which make it an unworkable solution
+%in most cases.
+%
+%\textbf{Fancy Graphics of downsampling without LP filter with explanations}
+%
+%
+%\subsection{Digital Low-Pass Filters}
+%\label{subsec:digital-lp-filters}
+%
+%The obvious solution to this predicament is to apply a (digital) low-pass filter to the
+%sequence of values before downsampling. For this purpose, three types of filters are commonly
+%used, each with their own specific advantages and drawbacks: IIR, FIR, CIC.
+%
+%For theseandthose reasons, we will use FIR and CIC in our system.
+%
+%\textbf{Fancy graphics of LP filter, downsampling and folding back}
+%
+%%>>>
+%
+%\section{Designing a Filter System}
+%\label{sec:designing-a-filter-system}
+%
+%Talking about which type of filter has which properties is all good and well in theory, but
+%how does one actually apply this knowledge to a practical problem? This section answers that
+%question insofar as it applies to our project.
+%
+%\begin{itemize}\tightlist
+%    \item
+%        limited HW resources
+%    \item
+%        single-stage vs. multi-stage
+%    \item
+%        TBW issue with multi-stage
+%    \item
+%        filters at lower frequencies use fewer resources
+%    \item
+%        halfband filtres
+%    \item
+%        CIC: compensation filters
+%\end{itemize}
+\clearpage
 \begin{figure}
     \centering
     \input{images/filtertopologies/fir.tikz}
