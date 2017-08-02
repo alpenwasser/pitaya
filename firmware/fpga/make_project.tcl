@@ -10,5 +10,6 @@
 # ==================================================================================================
 
 set project_name [lindex $argv 0]
+set sim [lindex $argv 1]
 
 source $project_name/block_design.tcl

@@ -46,6 +46,11 @@ chain5:
 	rm -f vivado*
 	rm -f webtalk*
 
+chain5sim:
+	$(VIVADO) -source make_project.tcl -tclargs p_chain5 sim
+	rm -f vivado*
+	rm -f webtalk*
+
 nofilters:
 	$(VIVADO) -source make_project.tcl -tclargs p_nofilters
 	rm -f vivado*

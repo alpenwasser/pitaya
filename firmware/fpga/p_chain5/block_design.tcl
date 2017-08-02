@@ -28,40 +28,96 @@ set current_dir [get_property DIRECTORY [current_project]]
 set_property  ip_repo_paths  {build/cores zynq_logger/build/fpga} [current_project]
 update_ip_catalog
 
-# Create basic Red Pitaya Block Design
-source $project_name/basic_red_pitaya_bd.tcl
+if {$sim eq ""} {
+ 	# Create basic Red Pitaya Block Design
+ 	puts "Starting a normal project!"
+	source $project_name/basic_red_pitaya_bd.tcl
+} else {
+	# Create basic Sim Block Design
+	puts "Starting a simulation project!"
+	source $project_name/basic_sim_bd.tcl
+}
+
+# ====================================================================================
+# Methods
+
+# Slices a 64bit axi dual channel signal into 2 24bit signals
+# and combines them to 48bit dual channel
+# 25.7 x 2 => 17.7 x2
+proc w64to48 {name din dout} {
+	# Create slices
+	create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 ${name}_slice_0
+	create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 ${name}_slice_1
+	set_property -dict [list CONFIG.DIN_WIDTH  {64}] [get_bd_cells ${name}_slice_0]
+	set_property -dict [list CONFIG.DIN_FROM   {30}] [get_bd_cells ${name}_slice_0]
+	set_property -dict [list CONFIG.DIN_TO     {7}] [get_bd_cells ${name}_slice_0]
+	set_property -dict [list CONFIG.DOUT_WIDTH  {24}] [get_bd_cells ${name}_slice_0]
+	set_property -dict [list CONFIG.DIN_WIDTH  {64}] [get_bd_cells ${name}_slice_1]
+	set_property -dict [list CONFIG.DIN_FROM   {62}] [get_bd_cells ${name}_slice_1]
+	set_property -dict [list CONFIG.DIN_TO     {39}] [get_bd_cells ${name}_slice_1]
+	set_property -dict [list CONFIG.DOUT_WIDTH  {24}] [get_bd_cells ${name}_slice_1]
+
+	# Create concat
+	create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat:2.1 ${name}_concat_0
+	set_property -dict [list CONFIG.IN0_WIDTH.VALUE_SRC USER] [get_bd_cells ${name}_concat_0]
+	set_property -dict [list CONFIG.IN1_WIDTH.VALUE_SRC USER] [get_bd_cells ${name}_concat_0]
+	set_property -dict [list CONFIG.NUM_PORTS {2}]            [get_bd_cells ${name}_concat_0]
+	set_property -dict [list CONFIG.IN0_WIDTH {24}]           [get_bd_cells ${name}_concat_0]
+	set_property -dict [list CONFIG.IN1_WIDTH {24}]           [get_bd_cells ${name}_concat_0]
+
+	# Connect slices with concat
+	connect_bd_net [get_bd_pins ${name}_slice_0/Dout] [get_bd_pins ${name}_concat_0/In0]
+	connect_bd_net [get_bd_pins ${name}_slice_1/Dout] [get_bd_pins ${name}_concat_0/In1]
+
+	# Connect component to outside
+	connect_bd_net [get_bd_pins $din] [get_bd_pins ${name}_slice_0/Din]
+	connect_bd_net [get_bd_pins $din] [get_bd_pins ${name}_slice_1/Din]
+	connect_bd_net [get_bd_pins $dout] [get_bd_pins ${name}_concat_0/Dout]
+}
 
 # ====================================================================================
 # RTL modules
 
-# Set up processing system
-set_property -dict [list CONFIG.PCW_USE_FABRIC_INTERRUPT {1} CONFIG.PCW_IRQ_F2P_INTR {1} CONFIG.PCW_CORE0_IRQ_INTR {0}] [get_bd_cells ps]
+if {$sim eq ""} {
+ 	# Normal project
 
-# System processor Reset
-create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 system_rst
+ 	# Set up processing system
+ 	set_property -dict [list CONFIG.PCW_USE_FABRIC_INTERRUPT {1} CONFIG.PCW_IRQ_F2P_INTR {1} CONFIG.PCW_CORE0_IRQ_INTR {0}] [get_bd_cells ps]
+ 	# System processor Reset
+	create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 system_rst
+	# Blinking LED & slow clock
+	create_bd_cell -type ip -vlnv xilinx.com:ip:c_counter_binary:12.0 Cnt2Hz
+	set_property -dict [list CONFIG.Output_Width {32}] [get_bd_cells Cnt2Hz]
+	create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 Slc2Hz
+	set_property -dict [list CONFIG.DIN_TO {26}] [get_bd_cells Slc2Hz]
+	set_property -dict [list CONFIG.DIN_FROM {26}] [get_bd_cells Slc2Hz]
+	set_property -dict [list CONFIG.DOUT_WIDTH {1}] [get_bd_cells Slc2Hz]
 
-# Blinking LED & slow clock
-create_bd_cell -type ip -vlnv xilinx.com:ip:c_counter_binary:12.0 Cnt2Hz
-set_property -dict [list CONFIG.Output_Width {32}] [get_bd_cells Cnt2Hz]
-create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 Slc2Hz
-set_property -dict [list CONFIG.DIN_TO {26}] [get_bd_cells Slc2Hz]
-set_property -dict [list CONFIG.DIN_FROM {26}] [get_bd_cells Slc2Hz]
-set_property -dict [list CONFIG.DOUT_WIDTH {1}] [get_bd_cells Slc2Hz]
+	# AXI Protocol Converters
+	create_bd_cell -type ip -vlnv xilinx.com:ip:axi_protocol_converter:2.1 M2Sconverter
+	set_property -dict [list CONFIG.MI_PROTOCOL.VALUE_SRC USER CONFIG.SI_PROTOCOL.VALUE_SRC USER] [get_bd_cells M2Sconverter]
+	set_property -dict [list CONFIG.MI_PROTOCOL.VALUE_SRC USER CONFIG.SI_PROTOCOL.VALUE_SRC USER] [get_bd_cells M2Sconverter]
+	set_property -dict [list CONFIG.SI_PROTOCOL {AXI4LITE}] [get_bd_cells M2Sconverter]
+	set_property -dict [list CONFIG.MI_PROTOCOL {AXI3}] [get_bd_cells M2Sconverter]
+	set_property -dict [list CONFIG.TRANSLATION_MODE {2}] [get_bd_cells M2Sconverter]
+	create_bd_cell -type ip -vlnv xilinx.com:ip:axi_protocol_converter:2.1 S2Mconverter
 
-# AXI Protocol Converters
-create_bd_cell -type ip -vlnv xilinx.com:ip:axi_protocol_converter:2.1 M2Sconverter
-set_property -dict [list CONFIG.MI_PROTOCOL.VALUE_SRC USER CONFIG.SI_PROTOCOL.VALUE_SRC USER] [get_bd_cells M2Sconverter]
-set_property -dict [list CONFIG.MI_PROTOCOL.VALUE_SRC USER CONFIG.SI_PROTOCOL.VALUE_SRC USER] [get_bd_cells M2Sconverter]
-set_property -dict [list CONFIG.SI_PROTOCOL {AXI4LITE}] [get_bd_cells M2Sconverter]
-set_property -dict [list CONFIG.MI_PROTOCOL {AXI3}] [get_bd_cells M2Sconverter]
-set_property -dict [list CONFIG.TRANSLATION_MODE {2}] [get_bd_cells M2Sconverter]
-create_bd_cell -type ip -vlnv xilinx.com:ip:axi_protocol_converter:2.1 S2Mconverter
+	# The Logger module
+	create_bd_cell -type ip -vlnv bastli:user:zynq_logger:1.1 logger
+} else {
+	# Sim project
+
+	# Create clock
+	create_bd_cell -type ip -vlnv xilinx.com:ip:clk_gen:1.0 clk_gen
+	set_property -dict [list CONFIG.FREQ_HZ {125000000}] [get_bd_cells clk_gen]
+
+	# Waveform GEN
+	create_bd_cell -type ip -vlnv xilinx.com:ip:dds_compiler:6.0 waveform
+	set_property -dict [list CONFIG.DDS_Clock_Rate {125} CONFIG.Frequency_Resolution {0.4} CONFIG.Noise_Shaping {Auto} CONFIG.Phase_Width {29} CONFIG.Output_Width {8} CONFIG.Output_Frequency1 {0.02} CONFIG.PINC1 {10100111110001011}] [get_bd_cells waveform]
+}
 
 # Module to convert the ADC AXI Stream data to the data lanes the Logger Core requires
 create_bd_cell -type ip -vlnv noah-huesser:user:axis_to_data_lanes:1.0 axis2lanes
-
-# The Logger module
-create_bd_cell -type ip -vlnv bastli:user:zynq_logger:1.1 logger
 
 # Control Logic
 set ctrl0 dec_to_fir_mux_0
@@ -86,171 +142,12 @@ set stage2_branch_count 2
 set stage3_branch_count_start 6
 set stage3_branch_count_end 3
 
-set cast0 axis_broadcaster_0
-set cast1 axis_broadcaster_1
-set cast2 axis_broadcaster_2
-set cast3 axis_broadcaster_3
-set cast4 axis_broadcaster_4
-set cast5 axis_broadcaster_5
-set cast6 axis_broadcaster_6
-set cast7 axis_broadcaster_7
-set cast8 axis_broadcaster_8
-set cast9 axis_broadcaster_9
-set cast10 axis_broadcaster_10
-
-create_bd_cell -type ip -vlnv xilinx.com:ip:axis_broadcaster:1.1 $cast0
-create_bd_cell -type ip -vlnv xilinx.com:ip:axis_broadcaster:1.1 $cast1
-create_bd_cell -type ip -vlnv xilinx.com:ip:axis_broadcaster:1.1 $cast2
-create_bd_cell -type ip -vlnv xilinx.com:ip:axis_broadcaster:1.1 $cast3
-create_bd_cell -type ip -vlnv xilinx.com:ip:axis_broadcaster:1.1 $cast4
-create_bd_cell -type ip -vlnv xilinx.com:ip:axis_broadcaster:1.1 $cast5
-create_bd_cell -type ip -vlnv xilinx.com:ip:axis_broadcaster:1.1 $cast6
-create_bd_cell -type ip -vlnv xilinx.com:ip:axis_broadcaster:1.1 $cast7
-create_bd_cell -type ip -vlnv xilinx.com:ip:axis_broadcaster:1.1 $cast8
-create_bd_cell -type ip -vlnv xilinx.com:ip:axis_broadcaster:1.1 $cast9
-create_bd_cell -type ip -vlnv xilinx.com:ip:axis_broadcaster:1.1 $cast10
-
-set_property -dict [list CONFIG.NUM_MI $path_count]                [get_bd_cells $cast0]
-set_property -dict [list CONFIG.NUM_MI $path_count]                [get_bd_cells $cast1]
-set_property -dict [list CONFIG.NUM_MI $stage0_branch_count]       [get_bd_cells $cast2]
-set_property -dict [list CONFIG.NUM_MI $path_count]                [get_bd_cells $cast3]
-set_property -dict [list CONFIG.NUM_MI $path_count]                [get_bd_cells $cast4]
-set_property -dict [list CONFIG.NUM_MI $stage1_branch_count]       [get_bd_cells $cast5]
-set_property -dict [list CONFIG.NUM_MI $path_count]                [get_bd_cells $cast6]
-set_property -dict [list CONFIG.NUM_MI $stage2_branch_count]       [get_bd_cells $cast7]
-set_property -dict [list CONFIG.NUM_MI $path_count]                [get_bd_cells $cast8]
-set_property -dict [list CONFIG.NUM_MI $path_count]                [get_bd_cells $cast9]
-set_property -dict [list CONFIG.NUM_MI $stage3_branch_count_start] [get_bd_cells $cast10]
-
-set_property -dict [list CONFIG.M_TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $cast0]
-set_property -dict [list CONFIG.S_TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $cast0]
-set_property -dict [list CONFIG.HAS_TREADY.VALUE_SRC USER]        [get_bd_cells $cast0]
-set_property -dict [list CONFIG.M_TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $cast1]
-set_property -dict [list CONFIG.S_TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $cast1]
-set_property -dict [list CONFIG.HAS_TREADY.VALUE_SRC USER]        [get_bd_cells $cast1]
-set_property -dict [list CONFIG.M_TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $cast2]
-set_property -dict [list CONFIG.S_TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $cast2]
-set_property -dict [list CONFIG.HAS_TREADY.VALUE_SRC USER]        [get_bd_cells $cast2]
-set_property -dict [list CONFIG.M_TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $cast3]
-set_property -dict [list CONFIG.S_TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $cast3]
-set_property -dict [list CONFIG.HAS_TREADY.VALUE_SRC USER]        [get_bd_cells $cast3]
-set_property -dict [list CONFIG.M_TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $cast4]
-set_property -dict [list CONFIG.S_TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $cast4]
-set_property -dict [list CONFIG.HAS_TREADY.VALUE_SRC USER]        [get_bd_cells $cast4]
-set_property -dict [list CONFIG.M_TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $cast5]
-set_property -dict [list CONFIG.S_TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $cast5]
-set_property -dict [list CONFIG.HAS_TREADY.VALUE_SRC USER]        [get_bd_cells $cast5]
-set_property -dict [list CONFIG.M_TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $cast6]
-set_property -dict [list CONFIG.S_TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $cast6]
-set_property -dict [list CONFIG.HAS_TREADY.VALUE_SRC USER]        [get_bd_cells $cast6]
-set_property -dict [list CONFIG.M_TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $cast7]
-set_property -dict [list CONFIG.S_TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $cast7]
-set_property -dict [list CONFIG.HAS_TREADY.VALUE_SRC USER]        [get_bd_cells $cast7]
-set_property -dict [list CONFIG.M_TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $cast8]
-set_property -dict [list CONFIG.S_TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $cast8]
-set_property -dict [list CONFIG.HAS_TREADY.VALUE_SRC USER]        [get_bd_cells $cast8]
-set_property -dict [list CONFIG.M_TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $cast9]
-set_property -dict [list CONFIG.S_TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $cast9]
-set_property -dict [list CONFIG.HAS_TREADY.VALUE_SRC USER]        [get_bd_cells $cast9]
-set_property -dict [list CONFIG.M_TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $cast10]
-set_property -dict [list CONFIG.S_TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $cast10]
-set_property -dict [list CONFIG.HAS_TREADY.VALUE_SRC USER]        [get_bd_cells $cast10]
-
-set_property -dict [list CONFIG.S_TDATA_NUM_BYTES {6}]            [get_bd_cells $cast0]
-set_property -dict [list CONFIG.M_TDATA_NUM_BYTES {2}]            [get_bd_cells $cast0]
-set_property -dict [list CONFIG.M00_TDATA_REMAP  {tdata[22:7]}]   [get_bd_cells $cast0]
-set_property -dict [list CONFIG.M01_TDATA_REMAP {tdata[46:31]}]   [get_bd_cells $cast0]
-
-set_property -dict [list CONFIG.S_TDATA_NUM_BYTES {8}]            [get_bd_cells $cast1]
-set_property -dict [list CONFIG.M_TDATA_NUM_BYTES {2}]            [get_bd_cells $cast1]
-set_property -dict [list CONFIG.M00_TDATA_REMAP {tdata[29:14]}]   [get_bd_cells $cast1]
-set_property -dict [list CONFIG.M01_TDATA_REMAP {tdata[61:46]}]   [get_bd_cells $cast1]
-
-set_property -dict [list CONFIG.S_TDATA_NUM_BYTES {6}]            [get_bd_cells $cast2]
-set_property -dict [list CONFIG.M_TDATA_NUM_BYTES {6}]            [get_bd_cells $cast2]
-set_property -dict [list CONFIG.M00_TDATA_REMAP {tdata[47:0]}]    [get_bd_cells $cast2]
-set_property -dict [list CONFIG.M01_TDATA_REMAP {tdata[47:0]}]    [get_bd_cells $cast2]
-
-set_property -dict [list CONFIG.S_TDATA_NUM_BYTES {8}]            [get_bd_cells $cast3]
-set_property -dict [list CONFIG.M_TDATA_NUM_BYTES {3}]            [get_bd_cells $cast3]
-set_property -dict [list CONFIG.M00_TDATA_REMAP {tdata[29:6]}]    [get_bd_cells $cast3]
-set_property -dict [list CONFIG.M01_TDATA_REMAP {tdata[61:38]}]   [get_bd_cells $cast3]
-
-set_property -dict [list CONFIG.S_TDATA_NUM_BYTES {8}]            [get_bd_cells $cast4]
-set_property -dict [list CONFIG.M_TDATA_NUM_BYTES {3}]            [get_bd_cells $cast4]
-set_property -dict [list CONFIG.M00_TDATA_REMAP {tdata[29:6]}]    [get_bd_cells $cast4]
-set_property -dict [list CONFIG.M01_TDATA_REMAP {tdata[61:38]}]   [get_bd_cells $cast4]
-
-set_property -dict [list CONFIG.S_TDATA_NUM_BYTES {6}]            [get_bd_cells $cast5]
-set_property -dict [list CONFIG.M_TDATA_NUM_BYTES {6}]            [get_bd_cells $cast5]
-set_property -dict [list CONFIG.M00_TDATA_REMAP {tdata[47:0]}]    [get_bd_cells $cast5]
-set_property -dict [list CONFIG.M01_TDATA_REMAP {tdata[47:0]}]    [get_bd_cells $cast5]
-set_property -dict [list CONFIG.M02_TDATA_REMAP {tdata[47:0]}]    [get_bd_cells $cast5]
-
-set_property -dict [list CONFIG.S_TDATA_NUM_BYTES {8}]            [get_bd_cells $cast6]
-set_property -dict [list CONFIG.M_TDATA_NUM_BYTES {3}]            [get_bd_cells $cast6]
-set_property -dict [list CONFIG.M00_TDATA_REMAP {tdata[30:7]}]    [get_bd_cells $cast6]
-set_property -dict [list CONFIG.M01_TDATA_REMAP {tdata[62:39]}]   [get_bd_cells $cast6]
-
-set_property -dict [list CONFIG.S_TDATA_NUM_BYTES {6}]            [get_bd_cells $cast7]
-set_property -dict [list CONFIG.M_TDATA_NUM_BYTES {6}]            [get_bd_cells $cast7]
-set_property -dict [list CONFIG.M00_TDATA_REMAP {tdata[47:0]}]    [get_bd_cells $cast7]
-set_property -dict [list CONFIG.M01_TDATA_REMAP {tdata[47:0]}]    [get_bd_cells $cast7]
-
-set_property -dict [list CONFIG.S_TDATA_NUM_BYTES {8}]            [get_bd_cells $cast8]
-set_property -dict [list CONFIG.M_TDATA_NUM_BYTES {3}]            [get_bd_cells $cast8]
-set_property -dict [list CONFIG.M00_TDATA_REMAP {tdata[30:7]}]    [get_bd_cells $cast8]
-set_property -dict [list CONFIG.M01_TDATA_REMAP {tdata[62:39]}]   [get_bd_cells $cast8]
-
-set_property -dict [list CONFIG.S_TDATA_NUM_BYTES {8}]            [get_bd_cells $cast9]
-set_property -dict [list CONFIG.M_TDATA_NUM_BYTES {3}]            [get_bd_cells $cast9]
-set_property -dict [list CONFIG.M00_TDATA_REMAP {tdata[30:7]}]    [get_bd_cells $cast9]
-set_property -dict [list CONFIG.M01_TDATA_REMAP {tdata[62:39]}]   [get_bd_cells $cast9]
-
-set_property -dict [list CONFIG.S_TDATA_NUM_BYTES {4}]            [get_bd_cells $cast10]
-set_property -dict [list CONFIG.M_TDATA_NUM_BYTES {2}]            [get_bd_cells $cast10]
-set_property -dict [list CONFIG.M00_TDATA_REMAP {tdata[15:0]}]    [get_bd_cells $cast10]
-set_property -dict [list CONFIG.M01_TDATA_REMAP {tdata[31:16]}]   [get_bd_cells $cast10]
-set_property -dict [list CONFIG.M02_TDATA_REMAP {tdata[15:0]}]    [get_bd_cells $cast10]
-set_property -dict [list CONFIG.M03_TDATA_REMAP {tdata[31:16]}]   [get_bd_cells $cast10]
-set_property -dict [list CONFIG.M04_TDATA_REMAP {tdata[15:0]}]    [get_bd_cells $cast10]
-set_property -dict [list CONFIG.M05_TDATA_REMAP {tdata[31:16]}]   [get_bd_cells $cast10]
-
-# Combiners
-set combiner0 axis_combiner_0
-set combiner1 axis_combiner_1
-set combiner2 axis_combiner_2
-set combiner3 axis_combiner_3
-set combiner4 axis_combiner_4
-set combiner5 axis_combiner_5
-set combiner6 axis_combiner_6
-create_bd_cell -type ip -vlnv xilinx.com:ip:axis_combiner:1.1 $combiner0
-create_bd_cell -type ip -vlnv xilinx.com:ip:axis_combiner:1.1 $combiner1
-create_bd_cell -type ip -vlnv xilinx.com:ip:axis_combiner:1.1 $combiner2
-create_bd_cell -type ip -vlnv xilinx.com:ip:axis_combiner:1.1 $combiner3
-create_bd_cell -type ip -vlnv xilinx.com:ip:axis_combiner:1.1 $combiner4
-create_bd_cell -type ip -vlnv xilinx.com:ip:axis_combiner:1.1 $combiner5
-create_bd_cell -type ip -vlnv xilinx.com:ip:axis_combiner:1.1 $combiner6
-set_property -dict [list CONFIG.TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $combiner0]
-set_property -dict [list CONFIG.TDATA_NUM_BYTES {2}]            [get_bd_cells $combiner0]
-set_property -dict [list CONFIG.TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $combiner1]
-set_property -dict [list CONFIG.TDATA_NUM_BYTES {2}]            [get_bd_cells $combiner1]
-set_property -dict [list CONFIG.TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $combiner2]
-set_property -dict [list CONFIG.TDATA_NUM_BYTES {3}]            [get_bd_cells $combiner2]
-set_property -dict [list CONFIG.TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $combiner3]
-set_property -dict [list CONFIG.TDATA_NUM_BYTES {3}]            [get_bd_cells $combiner3]
-set_property -dict [list CONFIG.TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $combiner4]
-set_property -dict [list CONFIG.TDATA_NUM_BYTES {3}]            [get_bd_cells $combiner4]
-set_property -dict [list CONFIG.TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $combiner5]
-set_property -dict [list CONFIG.TDATA_NUM_BYTES {3}]            [get_bd_cells $combiner5]
-set_property -dict [list CONFIG.TDATA_NUM_BYTES.VALUE_SRC USER] [get_bd_cells $combiner6]
-set_property -dict [list CONFIG.TDATA_NUM_BYTES {3}]            [get_bd_cells $combiner6]
-
 # Create Multiplexers
 set mux0 axis_multiplexer_0
 set mux1 axis_multiplexer_1
 set mux2 axis_multiplexer_2
 set mux3 axis_multiplexer_3
+
 #set mux4 axis_multiplexer_4
 create_bd_cell -type ip -vlnv raphael-frey:user:axis_multiplexer:1.0 $mux0
 create_bd_cell -type ip -vlnv raphael-frey:user:axis_multiplexer:1.0 $mux1
@@ -259,7 +156,7 @@ create_bd_cell -type ip -vlnv raphael-frey:user:axis_multiplexer:1.0 $mux3
 
 # Configure Multiplexers
 set_property -dict [list CONFIG.C_AXIS_NUM_SI_SLOTS $stage0_branch_count]     [get_bd_cells $mux0]
-set_property -dict [list CONFIG.C_AXIS_TDATA_WIDTH {32}]                      [get_bd_cells $mux0]
+set_property -dict [list CONFIG.C_AXIS_TDATA_WIDTH {48}]                      [get_bd_cells $mux0]
 set_property -dict [list CONFIG.C_AXIS_NUM_SI_SLOTS $stage1_branch_count]     [get_bd_cells $mux1]
 set_property -dict [list CONFIG.C_AXIS_TDATA_WIDTH {48}]                      [get_bd_cells $mux1]
 set_property -dict [list CONFIG.C_AXIS_NUM_SI_SLOTS $stage2_branch_count]     [get_bd_cells $mux2]
@@ -357,9 +254,8 @@ set slice6 slice_6
 set slice7 slice_7
 set slice8 slice_8
 set slice9 slice_9
-set slice10 slice_10
-set slice11 slice_11
-set slice12 slice_12
+set slice13 slice_13
+set slice14 slice_14
 create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 $slice0
 create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 $slice1
 create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 $slice2
@@ -370,9 +266,8 @@ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 $slice6
 create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 $slice7
 create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 $slice8
 create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 $slice9
-create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 $slice10
-create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 $slice11
-create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 $slice12
+create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 $slice13
+create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 $slice14
 set_property -dict [list CONFIG.DIN_WIDTH  {16}] [get_bd_cells $slice0]
 set_property -dict [list CONFIG.DIN_FROM   {15}] [get_bd_cells $slice0]
 set_property -dict [list CONFIG.DIN_TO     {15}] [get_bd_cells $slice0]
@@ -413,18 +308,16 @@ set_property -dict [list CONFIG.DIN_WIDTH  {48}] [get_bd_cells $slice9]
 set_property -dict [list CONFIG.DIN_FROM   {42}] [get_bd_cells $slice9]
 set_property -dict [list CONFIG.DIN_TO     {27}] [get_bd_cells $slice9]
 set_property -dict [list CONFIG.DOUT_WIDTH {16}] [get_bd_cells $slice9]
-set_property -dict [list CONFIG.DIN_WIDTH  {96}] [get_bd_cells $slice10]
-set_property -dict [list CONFIG.DIN_FROM   {15}] [get_bd_cells $slice10]
-set_property -dict [list CONFIG.DIN_TO      {0}] [get_bd_cells $slice10]
-set_property -dict [list CONFIG.DOUT_WIDTH {16}] [get_bd_cells $slice10]
-set_property -dict [list CONFIG.DIN_WIDTH  {96}] [get_bd_cells $slice11]
-set_property -dict [list CONFIG.DIN_FROM   {31}] [get_bd_cells $slice11]
-set_property -dict [list CONFIG.DIN_TO     {16}] [get_bd_cells $slice11]
-set_property -dict [list CONFIG.DOUT_WIDTH {16}] [get_bd_cells $slice11]
-set_property -dict [list CONFIG.DIN_WIDTH   {6}] [get_bd_cells $slice12]
-set_property -dict [list CONFIG.DIN_FROM    {0}] [get_bd_cells $slice12]
-set_property -dict [list CONFIG.DIN_TO      {0}] [get_bd_cells $slice12]
-set_property -dict [list CONFIG.DOUT_WIDTH  {1}] [get_bd_cells $slice12]
+set_property -dict [list CONFIG.DIN_WIDTH  {32}] [get_bd_cells $slice13]
+set_property -dict [list CONFIG.DIN_FROM   {15}] [get_bd_cells $slice13]
+set_property -dict [list CONFIG.DIN_TO      {2}] [get_bd_cells $slice13]
+set_property -dict [list CONFIG.DOUT_WIDTH {14}] [get_bd_cells $slice13]
+set_property -dict [list CONFIG.DIN_WIDTH  {32}] [get_bd_cells $slice14]
+set_property -dict [list CONFIG.DIN_FROM   {31}] [get_bd_cells $slice14]
+set_property -dict [list CONFIG.DIN_TO     {18}] [get_bd_cells $slice14]
+set_property -dict [list CONFIG.DOUT_WIDTH {14}] [get_bd_cells $slice14]
+# TODO: adjust for real
+
 
 # FIR Compilers
 set vlnv_fircomp xilinx.com:ip:fir_compiler:7.2
@@ -443,6 +336,7 @@ set coef_comp125   "${coef_dir}/comp125.coe"
 set decRate 2
 set fs_dec2steep 0.2
 set dataWidthIn 24
+set fracWidthIn 7
 set dataWidthOut 32
 set coefWidth 16
 set paths $path_count
@@ -471,10 +365,13 @@ set_property -dict [list CONFIG.Coefficient_Structure {Inferred}]               
 set_property -dict [list CONFIG.Data_Width $dataWidthIn]                                              [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.Filter_Architecture {Systolic_Multiply_Accumulate}]                   [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.M_DATA_Has_TREADY {true}]                                             [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Data_Fractional_Bits.VALUE_SRC USER] 								  [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Data_Fractional_Bits $fracWidthIn] 								      [get_bd_cells $fircomp_instance]
 
 set decRate 2
 set fs_dec2flat 0.2
 set dataWidthIn 24
+set fracWidthIn 7
 set dataWidthOut 32
 set coefWidth 16
 set paths $path_count
@@ -503,10 +400,13 @@ set_property -dict [list CONFIG.Coefficient_Structure {Inferred}]               
 set_property -dict [list CONFIG.Data_Width $dataWidthIn]                                              [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.Filter_Architecture {Systolic_Multiply_Accumulate}]                   [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.M_DATA_Has_TREADY {true}]                                             [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Data_Fractional_Bits.VALUE_SRC USER] 								  [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Data_Fractional_Bits $fracWidthIn] 								      [get_bd_cells $fircomp_instance]
 
 set decRate 5
 set fs_dec5steep $clk
 set dataWidthIn 24
+set fracWidthIn 7
 set dataWidthOut 32
 set coefWidth 16
 set paths $path_count
@@ -535,10 +435,13 @@ set_property -dict [list CONFIG.Coefficient_Structure {Inferred}]               
 set_property -dict [list CONFIG.Data_Width $dataWidthIn]                                              [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.Filter_Architecture {Systolic_Multiply_Accumulate}]                   [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.M_DATA_Has_TREADY {true}]                                             [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Data_Fractional_Bits.VALUE_SRC USER] 								  [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Data_Fractional_Bits $fracWidthIn] 								      [get_bd_cells $fircomp_instance]
 
 set decRate 5
 set fs_dec5flat $clk
 set dataWidthIn 24
+set fracWidthIn 7
 set dataWidthOut 32
 set coefWidth 16
 set paths $path_count
@@ -567,9 +470,12 @@ set_property -dict [list CONFIG.Coefficient_Structure {Inferred}]               
 set_property -dict [list CONFIG.Data_Width $dataWidthIn]                                              [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.Filter_Architecture {Systolic_Multiply_Accumulate}]                   [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.M_DATA_Has_TREADY {true}]                                             [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Data_Fractional_Bits.VALUE_SRC USER] 								  [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Data_Fractional_Bits $fracWidthIn] 								      [get_bd_cells $fircomp_instance]
 
 set fs_comp025 5
 set dataWidthIn 24
+set fracWidthIn 7
 set dataWidthOut 32
 set coefWidth 16
 set paths $path_count
@@ -600,10 +506,13 @@ set_property -dict [list CONFIG.Coefficient_Structure {Inferred}]               
 set_property -dict [list CONFIG.Data_Width $dataWidthIn]                                            [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.Filter_Architecture {Systolic_Multiply_Accumulate}]                 [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.M_DATA_Has_TREADY {true}]                                           [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Data_Fractional_Bits.VALUE_SRC USER] 								[get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Data_Fractional_Bits $fracWidthIn] 								    [get_bd_cells $fircomp_instance]
 
 set fs_comp125 1
 set decRate 5
 set dataWidthIn 24
+set fracWidthIn 7
 set dataWidthOut 32
 set coefWidth 16
 set paths $path_count
@@ -632,6 +541,8 @@ set_property -dict [list CONFIG.Coefficient_Structure {Inferred}]               
 set_property -dict [list CONFIG.Data_Width $dataWidthIn]                                              [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.Filter_Architecture {Systolic_Multiply_Accumulate}]                   [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.M_DATA_Has_TREADY {true}]                                             [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Data_Fractional_Bits.VALUE_SRC USER] 								  [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Data_Fractional_Bits $fracWidthIn] 								      [get_bd_cells $fircomp_instance]
 
 # CIC Compilers
 set cic025_0 cic_compiler025_0
@@ -701,162 +612,130 @@ set_property -dict [list CONFIG.Use_Xtreme_DSP_Slice {false}]    [get_bd_cells $
 set_property -dict [list CONFIG.Minimum_Rate {125}]              [get_bd_cells $cic125_1]
 set_property -dict [list CONFIG.Maximum_Rate {125}]              [get_bd_cells $cic125_1]
 set_property -dict [list CONFIG.SamplePeriod {1}]                [get_bd_cells $cic125_1]
+
 # ====================================================================================
 # Connections
 
-# Distribute Clocks
-connect_bd_net [get_bd_pins ps/M_AXI_GP0_ACLK]    [get_bd_pins ps/S_AXI_HP0_ACLK]
-connect_bd_net [get_bd_pins ps/M_AXI_GP0_ACLK]    [get_bd_pins clk_wiz_adc/clk_out1]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins system_rst/slowest_sync_clk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins S2Mconverter/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins M2Sconverter/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins axis2lanes/ClkxCI]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins logger/MAxiClkxCI]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins logger/SAxiAClkxCI]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins logger/ClkxCI]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $combiner0/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $combiner1/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $combiner2/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $combiner3/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $combiner4/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $combiner5/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $combiner6/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $mux0/ClkxCI]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $mux1/ClkxCI]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $mux2/ClkxCI]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $mux3/ClkxCI]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $cast0/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $cast1/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $cast2/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $cast3/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $cast4/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $cast5/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $cast6/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $cast7/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $cast8/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $cast9/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $cast10/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $fircomp_instance_2steep/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $fircomp_instance_2flat/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $fircomp_instance_5steep/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $fircomp_instance_5flat/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $fircomp_instance_cfir025/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $fircomp_instance_cfir125/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $cic025_0/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $cic025_1/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $cic125_0/aclk]
-connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $cic125_1/aclk]
+if {$sim eq ""} {
+ 	# Normal project
 
-# Distribute Resets
-connect_bd_net [get_bd_pins system_rst/ext_reset_in]         [get_bd_pins clk_wiz_adc/locked]
-connect_bd_net [get_bd_pins system_rst/peripheral_aresetn]   [get_bd_pins axis2lanes/RstxRBI]
-connect_bd_net [get_bd_pins system_rst/peripheral_aresetn]   [get_bd_pins logger/MAxiRstxRBI]
-connect_bd_net [get_bd_pins system_rst/peripheral_aresetn]   [get_bd_pins logger/SAxiAResetxRBI]
-connect_bd_net [get_bd_pins system_rst/interconnect_aresetn] [get_bd_pins M2Sconverter/aresetn]
-connect_bd_net [get_bd_pins system_rst/interconnect_aresetn] [get_bd_pins S2Mconverter/aresetn]
-connect_bd_net [get_bd_pins system_rst/interconnect_aresetn] [get_bd_pins $combiner0/aresetn]
-connect_bd_net [get_bd_pins system_rst/interconnect_aresetn] [get_bd_pins $combiner1/aresetn]
-connect_bd_net [get_bd_pins system_rst/interconnect_aresetn] [get_bd_pins $combiner2/aresetn]
-connect_bd_net [get_bd_pins system_rst/interconnect_aresetn] [get_bd_pins $combiner3/aresetn]
-connect_bd_net [get_bd_pins system_rst/interconnect_aresetn] [get_bd_pins $combiner4/aresetn]
-connect_bd_net [get_bd_pins system_rst/interconnect_aresetn] [get_bd_pins $combiner5/aresetn]
-connect_bd_net [get_bd_pins system_rst/interconnect_aresetn] [get_bd_pins $combiner6/aresetn]
-connect_bd_net [get_bd_pins system_rst/interconnect_aresetn] [get_bd_pins $mux0/RstxRBI]
-connect_bd_net [get_bd_pins system_rst/interconnect_aresetn] [get_bd_pins $mux1/RstxRBI]
-connect_bd_net [get_bd_pins system_rst/interconnect_aresetn] [get_bd_pins $mux2/RstxRBI]
-connect_bd_net [get_bd_pins system_rst/interconnect_aresetn] [get_bd_pins $mux3/RstxRBI]
-connect_bd_net [get_bd_pins S2Mconverter/aresetn]            [get_bd_pins $cast0/aresetn]
-connect_bd_net [get_bd_pins S2Mconverter/aresetn]            [get_bd_pins $cast1/aresetn]
-connect_bd_net [get_bd_pins S2Mconverter/aresetn]            [get_bd_pins $cast2/aresetn]
-connect_bd_net [get_bd_pins S2Mconverter/aresetn]            [get_bd_pins $cast3/aresetn]
-connect_bd_net [get_bd_pins S2Mconverter/aresetn]            [get_bd_pins $cast4/aresetn]
-connect_bd_net [get_bd_pins S2Mconverter/aresetn]            [get_bd_pins $cast5/aresetn]
-connect_bd_net [get_bd_pins S2Mconverter/aresetn]            [get_bd_pins $cast6/aresetn]
-connect_bd_net [get_bd_pins S2Mconverter/aresetn]            [get_bd_pins $cast7/aresetn]
-connect_bd_net [get_bd_pins S2Mconverter/aresetn]            [get_bd_pins $cast8/aresetn]
-connect_bd_net [get_bd_pins S2Mconverter/aresetn]            [get_bd_pins $cast9/aresetn]
-connect_bd_net [get_bd_pins S2Mconverter/aresetn]            [get_bd_pins $cast10/aresetn]
+ 	# Distribute Clocks
+ 	connect_bd_net [get_bd_pins ps/M_AXI_GP0_ACLK]    [get_bd_pins ps/S_AXI_HP0_ACLK]
+	connect_bd_net [get_bd_pins ps/M_AXI_GP0_ACLK]    [get_bd_pins clk_wiz_adc/clk_out1]
+	connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins system_rst/slowest_sync_clk]
+	connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins S2Mconverter/aclk]
+	connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins M2Sconverter/aclk]
+	connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins axis2lanes/ClkxCI]
+	connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins logger/MAxiClkxCI]
+	connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins logger/SAxiAClkxCI]
+	connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins logger/ClkxCI]
+	connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $mux0/ClkxCI]
+	connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $mux1/ClkxCI]
+	connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $mux2/ClkxCI]
+	connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $mux3/ClkxCI]
+	connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $fircomp_instance_2steep/aclk]
+	connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $fircomp_instance_2flat/aclk]
+	connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $fircomp_instance_5steep/aclk]
+	connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $fircomp_instance_5flat/aclk]
+	connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $fircomp_instance_cfir025/aclk]
+	connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $fircomp_instance_cfir125/aclk]
+	connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $cic025_0/aclk]
+	connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $cic025_1/aclk]
+	connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $cic125_0/aclk]
+	connect_bd_net [get_bd_pins clk_wiz_adc/clk_out1] [get_bd_pins $cic125_1/aclk]
 
-# Blinking LED
-connect_bd_net [get_bd_pins Cnt2Hz/Q]   [get_bd_pins Slc2Hz/Din]
-connect_bd_net [get_bd_ports led_o]     [get_bd_pins Slc2Hz/Dout]
-connect_bd_net [get_bd_pins Cnt2Hz/CLK] [get_bd_pins clk_wiz_adc/clk_out1]
+	# Distribute Resets
+	connect_bd_net [get_bd_pins system_rst/ext_reset_in]         [get_bd_pins clk_wiz_adc/locked]
+	connect_bd_net [get_bd_pins system_rst/peripheral_aresetn]   [get_bd_pins axis2lanes/RstxRBI]
+	connect_bd_net [get_bd_pins system_rst/peripheral_aresetn]   [get_bd_pins logger/MAxiRstxRBI]
+	connect_bd_net [get_bd_pins system_rst/peripheral_aresetn]   [get_bd_pins logger/SAxiAResetxRBI]
+	connect_bd_net [get_bd_pins system_rst/interconnect_aresetn] [get_bd_pins M2Sconverter/aresetn]
+	connect_bd_net [get_bd_pins system_rst/interconnect_aresetn] [get_bd_pins S2Mconverter/aresetn]
+	connect_bd_net [get_bd_pins system_rst/interconnect_aresetn] [get_bd_pins $mux0/RstxRBI]
+	connect_bd_net [get_bd_pins system_rst/interconnect_aresetn] [get_bd_pins $mux1/RstxRBI]
+	connect_bd_net [get_bd_pins system_rst/interconnect_aresetn] [get_bd_pins $mux2/RstxRBI]
+	connect_bd_net [get_bd_pins system_rst/interconnect_aresetn] [get_bd_pins $mux3/RstxRBI]
+} else {
+	# Sim project
 
-# ADC to Logger
-connect_bd_net [get_bd_pins logger/Data0xDI]     [get_bd_pins axis2lanes/Data0xDO]
-connect_bd_net [get_bd_pins axis2lanes/Data1xDO] [get_bd_pins logger/Data1xDI]
+	# Distribute Clocks
+	connect_bd_net [get_bd_pins clk_gen/clk] [get_bd_pins axis2lanes/ClkxCI]
+	connect_bd_net [get_bd_pins clk_gen/clk] [get_bd_pins waveform/aclk]
+	connect_bd_net [get_bd_pins clk_gen/clk] [get_bd_pins $mux0/ClkxCI]
+	connect_bd_net [get_bd_pins clk_gen/clk] [get_bd_pins $mux1/ClkxCI]
+	connect_bd_net [get_bd_pins clk_gen/clk] [get_bd_pins $mux2/ClkxCI]
+	connect_bd_net [get_bd_pins clk_gen/clk] [get_bd_pins $mux3/ClkxCI]
+	connect_bd_net [get_bd_pins clk_gen/clk] [get_bd_pins $fircomp_instance_2steep/aclk]
+	connect_bd_net [get_bd_pins clk_gen/clk] [get_bd_pins $fircomp_instance_2flat/aclk]
+	connect_bd_net [get_bd_pins clk_gen/clk] [get_bd_pins $fircomp_instance_5steep/aclk]
+	connect_bd_net [get_bd_pins clk_gen/clk] [get_bd_pins $fircomp_instance_5flat/aclk]
+	connect_bd_net [get_bd_pins clk_gen/clk] [get_bd_pins $fircomp_instance_cfir025/aclk]
+	connect_bd_net [get_bd_pins clk_gen/clk] [get_bd_pins $fircomp_instance_cfir125/aclk]
+	connect_bd_net [get_bd_pins clk_gen/clk] [get_bd_pins $cic025_0/aclk]
+	connect_bd_net [get_bd_pins clk_gen/clk] [get_bd_pins $cic025_1/aclk]
+	connect_bd_net [get_bd_pins clk_gen/clk] [get_bd_pins $cic125_0/aclk]
+	connect_bd_net [get_bd_pins clk_gen/clk] [get_bd_pins $cic125_1/aclk]
 
-# ZYNQ7 Processing System to Zynq Logger
-connect_bd_net [get_bd_pins ps/IRQ_F2P] [get_bd_pins logger/IRQxSO]
+	# Distribute Resets
+	connect_bd_net [get_bd_pins clk_gen/sync_rst]   [get_bd_pins axis2lanes/RstxRBI]
+	connect_bd_net [get_bd_pins clk_gen/sync_rst] [get_bd_pins $mux0/RstxRBI]
+	connect_bd_net [get_bd_pins clk_gen/sync_rst] [get_bd_pins $mux1/RstxRBI]
+	connect_bd_net [get_bd_pins clk_gen/sync_rst] [get_bd_pins $mux2/RstxRBI]
+	connect_bd_net [get_bd_pins clk_gen/sync_rst] [get_bd_pins $mux3/RstxRBI]
+}
 
-# Clock & DataStrobe to Logger
-connect_bd_net [get_bd_pins logger/DataStrobexSI] [get_bd_pins axis2lanes/DataStrobexDO]
 
-# AXI Converters
-connect_bd_intf_net [get_bd_intf_pins M2Sconverter/M_AXI] [get_bd_intf_pins ps/S_AXI_HP0]
-connect_bd_intf_net [get_bd_intf_pins M2Sconverter/S_AXI] [get_bd_intf_pins logger/M0]
-connect_bd_intf_net [get_bd_intf_pins S2Mconverter/S_AXI] [get_bd_intf_pins ps/M_AXI_GP0]
-connect_bd_intf_net [get_bd_intf_pins S2Mconverter/M_AXI] [get_bd_intf_pins logger/S0]
+if {$sim eq ""} {
+ 	# Normal project
+} else {
+	# Sim project
+}
+
+if {$sim eq ""} {
+ 	# Normal project
+
+ 	# Blinking LED
+	connect_bd_net [get_bd_pins Cnt2Hz/Q]   [get_bd_pins Slc2Hz/Din]
+	connect_bd_net [get_bd_ports led_o]     [get_bd_pins Slc2Hz/Dout]
+	connect_bd_net [get_bd_pins Cnt2Hz/CLK] [get_bd_pins clk_wiz_adc/clk_out1]
+
+ 	# ADC to Logger
+	connect_bd_net [get_bd_pins logger/Data0xDI]     [get_bd_pins axis2lanes/Data0xDO]
+	connect_bd_net [get_bd_pins axis2lanes/Data1xDO] [get_bd_pins logger/Data1xDI]
+
+ 	# Clock & DataStrobe to Logger
+	connect_bd_net [get_bd_pins logger/DataStrobexSI] [get_bd_pins axis2lanes/DataStrobexDO]
+
+ 	# AXI Converters
+	connect_bd_intf_net [get_bd_intf_pins M2Sconverter/M_AXI] [get_bd_intf_pins ps/S_AXI_HP0]
+	connect_bd_intf_net [get_bd_intf_pins M2Sconverter/S_AXI] [get_bd_intf_pins logger/M0]
+	connect_bd_intf_net [get_bd_intf_pins S2Mconverter/S_AXI] [get_bd_intf_pins ps/M_AXI_GP0]
+	connect_bd_intf_net [get_bd_intf_pins S2Mconverter/M_AXI] [get_bd_intf_pins logger/S0]
+
+	# ZYNQ7 Processing System to Zynq Logger
+	connect_bd_net [get_bd_pins ps/IRQ_F2P] [get_bd_pins logger/IRQxSO]
+} else {
+	# Sim project
+}
 
 # Filter Chain
 # Stage 0 (last stage: direct path, Steep Halfband Filter)
 # We are connecting the chain backwards from its output
 connect_bd_intf_net [get_bd_intf_pins $mux0/MO]                             [get_bd_intf_pins axis2lanes/SI]
-connect_bd_intf_net [get_bd_intf_pins $combiner0/M_AXIS]                    [get_bd_intf_pins $mux0/SI0]
-connect_bd_intf_net [get_bd_intf_pins $combiner1/M_AXIS]                    [get_bd_intf_pins $mux0/SI1]
-connect_bd_intf_net [get_bd_intf_pins $cast0/M00_AXIS]                      [get_bd_intf_pins $combiner0/S00_AXIS]
-connect_bd_intf_net [get_bd_intf_pins $cast0/M01_AXIS]                      [get_bd_intf_pins $combiner0/S01_AXIS]
-connect_bd_intf_net [get_bd_intf_pins $cast1/M00_AXIS]                      [get_bd_intf_pins $combiner1/S00_AXIS]
-connect_bd_intf_net [get_bd_intf_pins $cast1/M01_AXIS]                      [get_bd_intf_pins $combiner1/S01_AXIS]
-connect_bd_intf_net [get_bd_intf_pins $cast2/M00_AXIS]                      [get_bd_intf_pins $cast0/S_AXIS]
-connect_bd_intf_net [get_bd_intf_pins $fircomp_instance_2steep/M_AXIS_DATA] [get_bd_intf_pins $cast1/S_AXIS]
-connect_bd_intf_net [get_bd_intf_pins $cast2/M01_AXIS]                      [get_bd_intf_pins $fircomp_instance_2steep/S_AXIS_DATA]
-# Stage 1 (direct path, Steep Decimator by 5, Flat Halfband Filter)
-connect_bd_intf_net [get_bd_intf_pins $mux1/MO]                             [get_bd_intf_pins $cast2/S_AXIS]
-connect_bd_intf_net [get_bd_intf_pins $cast5/M00_AXIS]                      [get_bd_intf_pins $mux1/SI0]
-connect_bd_intf_net [get_bd_intf_pins $combiner2/M_AXIS]                    [get_bd_intf_pins $mux1/SI1]
-connect_bd_intf_net [get_bd_intf_pins $combiner3/M_AXIS]                    [get_bd_intf_pins $mux1/SI2]
-connect_bd_intf_net [get_bd_intf_pins $cast3/M00_AXIS]                      [get_bd_intf_pins $combiner2/S00_AXIS]
-connect_bd_intf_net [get_bd_intf_pins $cast3/M01_AXIS]                      [get_bd_intf_pins $combiner2/S01_AXIS]
-connect_bd_intf_net [get_bd_intf_pins $cast4/M00_AXIS]                      [get_bd_intf_pins $combiner3/S00_AXIS]
-connect_bd_intf_net [get_bd_intf_pins $cast4/M01_AXIS]                      [get_bd_intf_pins $combiner3/S01_AXIS]
-connect_bd_intf_net [get_bd_intf_pins $fircomp_instance_5steep/M_AXIS_DATA] [get_bd_intf_pins $cast3/S_AXIS]
-connect_bd_intf_net [get_bd_intf_pins $fircomp_instance_2flat/M_AXIS_DATA]  [get_bd_intf_pins $cast4/S_AXIS]
-connect_bd_intf_net [get_bd_intf_pins $cast5/M01_AXIS]                      [get_bd_intf_pins $fircomp_instance_5steep/S_AXIS_DATA]
-connect_bd_intf_net [get_bd_intf_pins $cast5/M02_AXIS]                      [get_bd_intf_pins $fircomp_instance_2flat/S_AXIS_DATA]
-# Stage 2 (direct path, Flat Decimator by 5)
-connect_bd_intf_net [get_bd_intf_pins $mux2/MO]                             [get_bd_intf_pins $cast5/S_AXIS]
-connect_bd_intf_net [get_bd_intf_pins $cast7/M00_AXIS]                      [get_bd_intf_pins $mux2/SI0]
-connect_bd_intf_net [get_bd_intf_pins $combiner4/M_AXIS]                    [get_bd_intf_pins $mux2/SI1]
-connect_bd_intf_net [get_bd_intf_pins $cast6/M00_AXIS]                      [get_bd_intf_pins $combiner4/S00_AXIS]
-connect_bd_intf_net [get_bd_intf_pins $cast6/M01_AXIS]                      [get_bd_intf_pins $combiner4/S01_AXIS]
-connect_bd_intf_net [get_bd_intf_pins $fircomp_instance_5flat/M_AXIS_DATA]  [get_bd_intf_pins $cast6/S_AXIS]
-connect_bd_intf_net [get_bd_intf_pins $cast7/M01_AXIS]                      [get_bd_intf_pins $fircomp_instance_5flat/S_AXIS_DATA]
+
 # Stage 3 (direct path, cic25, cic125)
-connect_bd_intf_net [get_bd_intf_pins $mux3/MO]                              [get_bd_intf_pins $cast7/S_AXIS]
 connect_bd_net      [get_bd_pins      $concat0/dout]                         [get_bd_pins      $mux3/Data0xDI]
-connect_bd_intf_net [get_bd_intf_pins $combiner5/M_AXIS]                     [get_bd_intf_pins $mux3/SI1]
-connect_bd_intf_net [get_bd_intf_pins $combiner6/M_AXIS]                     [get_bd_intf_pins $mux3/SI2]
-connect_bd_intf_net [get_bd_intf_pins $cast8/M00_AXIS]                       [get_bd_intf_pins $combiner5/S00_AXIS]
-connect_bd_intf_net [get_bd_intf_pins $cast8/M01_AXIS]                       [get_bd_intf_pins $combiner5/S01_AXIS]
-connect_bd_intf_net [get_bd_intf_pins $cast9/M00_AXIS]                       [get_bd_intf_pins $combiner6/S00_AXIS]
-connect_bd_intf_net [get_bd_intf_pins $cast9/M01_AXIS]                       [get_bd_intf_pins $combiner6/S01_AXIS]
-connect_bd_intf_net [get_bd_intf_pins $fircomp_instance_cfir025/M_AXIS_DATA] [get_bd_intf_pins $cast8/S_AXIS]
-connect_bd_intf_net [get_bd_intf_pins $fircomp_instance_cfir125/M_AXIS_DATA] [get_bd_intf_pins $cast9/S_AXIS]
+
 connect_bd_net      [get_bd_pins $concat1/dout]                              [get_bd_pins $concat0/In0]
 connect_bd_net      [get_bd_pins $concat2/dout]                              [get_bd_pins $concat0/In1]
 connect_bd_net      [get_bd_pins $const0/dout]                               [get_bd_pins $concat1/In0]
-connect_bd_net      [get_bd_pins $slice10/Dout]                              [get_bd_pins $concat1/In1]
+connect_bd_net      [get_bd_pins $slice13/Dout]                              [get_bd_pins $concat1/In1]
 connect_bd_net      [get_bd_pins $slice0/Dout]                               [get_bd_pins $concat1/In2]
 connect_bd_net      [get_bd_pins $const0/dout]                               [get_bd_pins $concat2/In0]
-connect_bd_net      [get_bd_pins $slice11/Dout]                              [get_bd_pins $concat2/In1]
+connect_bd_net      [get_bd_pins $slice14/Dout]                              [get_bd_pins $concat2/In1]
 connect_bd_net      [get_bd_pins $slice1/Dout]                               [get_bd_pins $concat2/In2]
-connect_bd_net      [get_bd_pins $slice10/Dout]                              [get_bd_pins $slice0/Din]
-connect_bd_net      [get_bd_pins $slice11/Dout]                              [get_bd_pins $slice1/Din]
-connect_bd_net      [get_bd_pins $cast10/m_axis_tdata]                       [get_bd_pins $slice10/Din]
-connect_bd_net      [get_bd_pins $cast10/m_axis_tdata]                       [get_bd_pins $slice11/Din]
-connect_bd_net      [get_bd_pins $cast10/m_axis_tvalid]                      [get_bd_pins $slice12/Din]
-connect_bd_net      [get_bd_pins $slice12/Dout]                              [get_bd_pins $mux3/Valid0xSI]
+connect_bd_net      [get_bd_pins $slice13/Dout]                              [get_bd_pins $slice0/Din]
+connect_bd_net      [get_bd_pins $slice14/Dout]                              [get_bd_pins $slice1/Din]
 connect_bd_net      [get_bd_pins $concat3/dout]                              [get_bd_pins $fircomp_instance_cfir025/s_axis_data_tdata]
 connect_bd_net      [get_bd_pins $concat4/dout]                              [get_bd_pins $fircomp_instance_cfir125/s_axis_data_tdata]
 connect_bd_net      [get_bd_pins $cic025_0/m_axis_data_tvalid]               [get_bd_pins $fircomp_instance_cfir025/s_axis_data_tvalid]
@@ -881,15 +760,84 @@ connect_bd_net      [get_bd_pins $const0/dout]                               [ge
 connect_bd_net      [get_bd_pins $slice9/Dout]                               [get_bd_pins $concat8/In1]
 connect_bd_net      [get_bd_pins $slice9/Dout]                               [get_bd_pins $slice5/Din]
 connect_bd_net      [get_bd_pins $slice5/Dout]                               [get_bd_pins $concat8/In2]
-connect_bd_net      [get_bd_pins $cic025_0/m_axis_data_tvalid]               [get_bd_pins $slice6/Din]
+connect_bd_net      [get_bd_pins $cic025_0/m_axis_data_tdata]               [get_bd_pins $slice6/Din]
 connect_bd_net      [get_bd_pins $cic025_1/m_axis_data_tdata]                [get_bd_pins $slice7/Din]
-connect_bd_net      [get_bd_pins $cic125_0/m_axis_data_tvalid]               [get_bd_pins $slice8/Din]
+connect_bd_net      [get_bd_pins $cic125_0/m_axis_data_tdata]               [get_bd_pins $slice8/Din]
 connect_bd_net      [get_bd_pins $cic125_1/m_axis_data_tdata]                [get_bd_pins $slice9/Din]
-connect_bd_intf_net [get_bd_intf_pins $cast10/M02_AXIS]                      [get_bd_intf_pins $cic025_0/S_AXIS_DATA]
-connect_bd_intf_net [get_bd_intf_pins $cast10/M03_AXIS]                      [get_bd_intf_pins $cic025_1/S_AXIS_DATA]
-connect_bd_intf_net [get_bd_intf_pins $cast10/M04_AXIS]                      [get_bd_intf_pins $cic125_0/S_AXIS_DATA]
-connect_bd_intf_net [get_bd_intf_pins $cast10/M05_AXIS]                      [get_bd_intf_pins $cic125_1/S_AXIS_DATA]
-connect_bd_intf_net [get_bd_intf_pins adc/M_AXIS]                            [get_bd_intf_pins $cast10/S_AXIS]
+connect_bd_net [get_bd_pins $slice13/Dout]                      [get_bd_pins $cic025_0/s_axis_data_tdata]
+connect_bd_net [get_bd_pins $slice14/Dout]                      [get_bd_pins $cic025_1/s_axis_data_tdata]
+connect_bd_net [get_bd_pins $slice13/Dout]                      [get_bd_pins $cic125_0/s_axis_data_tdata]
+connect_bd_net [get_bd_pins $slice14/Dout]                      [get_bd_pins $cic125_1/s_axis_data_tdata]
+
+# ADC TO MUX 3
+connect_bd_net      [get_bd_pins waveform/m_axis_data_tvalid]                [get_bd_pins $mux3/Valid0xSI]
+
+# FIR 1 To MUX 3
+w64to48 fir1_025_mux3 $fircomp_instance_cfir025/m_axis_data_tdata $mux3/Data1xDI
+w64to48 fir1_125_mux3 $fircomp_instance_cfir125/m_axis_data_tdata $mux3/Data2xDI
+connect_bd_net      [get_bd_pins $fircomp_instance_cfir025/m_axis_data_tvalid]                [get_bd_pins $mux3/Valid1xSI]
+connect_bd_net      [get_bd_pins $fircomp_instance_cfir125/m_axis_data_tvalid]                [get_bd_pins $mux3/Valid2xSI]
+
+# MUX 3 TO FIR 5 FLAT
+connect_bd_net      [get_bd_pins $mux3/DataxDO]                [get_bd_pins $fircomp_instance_5flat/s_axis_data_tdata]
+connect_bd_net      [get_bd_pins $mux3/ValidxSO]               [get_bd_pins $fircomp_instance_5flat/s_axis_data_tvalid]
+
+# MUX 3 TO MUX 2
+connect_bd_net      [get_bd_pins $mux3/DataxDO]                [get_bd_pins $mux2/Data0xDI]
+connect_bd_net      [get_bd_pins $mux3/ValidxSO]               [get_bd_pins $mux2/Valid0xSI]
+
+# FIR 5 FLAT TO MUX 2
+w64to48 fir5_flat_mux2 $fircomp_instance_5flat/m_axis_data_tdata $mux2/Data1xDI
+connect_bd_net      [get_bd_pins $fircomp_instance_5flat/m_axis_data_tvalid] [get_bd_pins $mux2/Valid1xSI]
+
+# MUX 2 TO FIR 5 STEEP
+connect_bd_net      [get_bd_pins $mux2/DataxDO]                [get_bd_pins $fircomp_instance_5steep/s_axis_data_tdata]
+connect_bd_net      [get_bd_pins $mux2/ValidxSO]               [get_bd_pins $fircomp_instance_5steep/s_axis_data_tvalid]
+
+# MUX 2 TO FIR 2 FLAT
+connect_bd_net      [get_bd_pins $mux2/DataxDO]                [get_bd_pins $fircomp_instance_2flat/s_axis_data_tdata]
+connect_bd_net      [get_bd_pins $mux2/ValidxSO]               [get_bd_pins $fircomp_instance_2flat/s_axis_data_tvalid]
+
+# MUX 2 TO MUX 1
+connect_bd_net      [get_bd_pins $mux2/DataxDO]                [get_bd_pins $mux1/Data0xDI]
+connect_bd_net      [get_bd_pins $mux2/ValidxSO]               [get_bd_pins $mux1/Valid0xSI]
+
+# FIR 5 STEEP TO MUX 1
+w64to48 fir5_steep_mux1 $fircomp_instance_5steep/m_axis_data_tdata $mux1/Data1xDI
+connect_bd_net      [get_bd_pins $fircomp_instance_5steep/m_axis_data_tvalid] [get_bd_pins $mux1/Valid1xSI]
+
+# FIR 2 FLAT TO MUX 1
+w64to48 fir2_flat_mux1 $fircomp_instance_2flat/m_axis_data_tdata $mux1/Data2xDI
+connect_bd_net      [get_bd_pins $fircomp_instance_2flat/m_axis_data_tvalid] [get_bd_pins $mux1/Valid2xSI]
+
+# MUX 1 TO MUX 0
+connect_bd_net      [get_bd_pins $mux1/DataxDO]                [get_bd_pins $mux0/Data0xDI]
+connect_bd_net      [get_bd_pins $mux1/ValidxSO]               [get_bd_pins $mux0/Valid0xSI]
+
+# MUX 1 TO FIR 2 STEEP
+connect_bd_net      [get_bd_pins $mux1/DataxDO]                [get_bd_pins $fircomp_instance_2steep/s_axis_data_tdata]
+connect_bd_net      [get_bd_pins $mux1/ValidxSO]               [get_bd_pins $fircomp_instance_2steep/s_axis_data_tvalid]
+
+# FIR 2 STEEP TO MUX 0
+w64to48 fir2_steep_mux0 $fircomp_instance_2steep/m_axis_data_tdata $mux0/Data1xDI
+connect_bd_net      [get_bd_pins $fircomp_instance_2steep/m_axis_data_tvalid] [get_bd_pins $mux0/Valid1xSI]
+
+if {$sim eq ""} {
+ 	# Normal project
+
+ 	# ADC Input
+ 	# TODO:
+} else {
+	# Sim project
+
+	# ADC Input
+	connect_bd_net [get_bd_pins $slice13/Din] [get_bd_pins waveform/m_axis_data_tdata]
+	connect_bd_net [get_bd_pins $slice14/Din] [get_bd_pins waveform/m_axis_data_tdata]
+	connect_bd_net [get_bd_pins $cic025_0/s_axis_data_tvalid]  [get_bd_pins waveform/m_axis_data_tvalid]
+	connect_bd_net [get_bd_pins $cic025_1/s_axis_data_tvalid]  [get_bd_pins waveform/m_axis_data_tvalid]
+	connect_bd_net [get_bd_pins $cic125_0/s_axis_data_tvalid]  [get_bd_pins waveform/m_axis_data_tvalid]
+	connect_bd_net [get_bd_pins $cic125_1/s_axis_data_tvalid]  [get_bd_pins waveform/m_axis_data_tvalid]
+}
 
 # Connect Control Logic
 connect_bd_net [get_bd_pins $const1/dout] [get_bd_pins $ctrl0/DecRate]
@@ -898,8 +846,14 @@ connect_bd_net [get_bd_pins $ctrl0/Mux1]  [get_bd_pins $mux1/SelectxDI]
 connect_bd_net [get_bd_pins $ctrl0/Mux2]  [get_bd_pins $mux2/SelectxDI]
 connect_bd_net [get_bd_pins $ctrl0/Mux3]  [get_bd_pins $mux3/SelectxDI]
 
-# Assign Address to Logger MMIO Slave
-assign_bd_address [get_bd_addr_segs {logger/S0/Reg }]
+if {$sim eq ""} {
+ 	# Normal project
+
+ 	# Assign Address to Logger MMIO Slave
+	assign_bd_address [get_bd_addr_segs {logger/S0/Reg }]
+} else {
+	# Sim project
+}
 
 # Pita Basic
 generate_target all [get_files  $bd_path/system.bd]

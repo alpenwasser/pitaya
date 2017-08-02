@@ -29,12 +29,18 @@ set_property abstraction_type_vlnv xilinx.com:interface:axis_rtl:1.0 [ipx::get_b
 set_property bus_type_vlnv xilinx.com:interface:axis:1.0 [ipx::get_bus_interfaces SI0 -of_objects [ipx::current_core]]
 set_property display_name SI0 [ipx::get_bus_interfaces SI0 -of_objects [ipx::current_core]]
 set_property description {AXI Stream Data In 0} [ipx::get_bus_interfaces SI0 -of_objects [ipx::current_core]]
+ipx::add_bus_parameter FREQ_HZ [ipx::get_bus_interfaces SI0 -of_objects [ipx::current_core]]
+set_property description {Clock frequency (Hertz)} [ipx::get_bus_parameters FREQ_HZ -of_objects [ipx::get_bus_interfaces SI0 -of_objects [ipx::current_core]]]
+set_property value 125000000 [ipx::get_bus_parameters FREQ_HZ -of_objects [ipx::get_bus_interfaces SI0 -of_objects [ipx::current_core]]]
 
 ipx::add_bus_interface SI1 [ipx::current_core]
 set_property abstraction_type_vlnv xilinx.com:interface:axis_rtl:1.0 [ipx::get_bus_interfaces SI1 -of_objects [ipx::current_core]]
 set_property bus_type_vlnv xilinx.com:interface:axis:1.0 [ipx::get_bus_interfaces SI1 -of_objects [ipx::current_core]]
 set_property display_name SI1 [ipx::get_bus_interfaces SI1 -of_objects [ipx::current_core]]
 set_property description {AXI Stream Data In 1} [ipx::get_bus_interfaces SI1 -of_objects [ipx::current_core]]
+ipx::add_bus_parameter FREQ_HZ [ipx::get_bus_interfaces SI1 -of_objects [ipx::current_core]]
+set_property description {Clock frequency (Hertz)} [ipx::get_bus_parameters FREQ_HZ -of_objects [ipx::get_bus_interfaces SI1 -of_objects [ipx::current_core]]]
+set_property value 125000000 [ipx::get_bus_parameters FREQ_HZ -of_objects [ipx::get_bus_interfaces SI1 -of_objects [ipx::current_core]]]
 
 ipx::add_bus_interface SI2 [ipx::current_core]
 set_property abstraction_type_vlnv xilinx.com:interface:axis_rtl:1.0 [ipx::get_bus_interfaces SI2 -of_objects [ipx::current_core]]
@@ -42,6 +48,9 @@ set_property bus_type_vlnv xilinx.com:interface:axis:1.0 [ipx::get_bus_interface
 set_property display_name SI2 [ipx::get_bus_interfaces SI2 -of_objects [ipx::current_core]]
 set_property description {AXI Stream Data In 2} [ipx::get_bus_interfaces SI2 -of_objects [ipx::current_core]]
 set_property enablement_dependency {$C_AXIS_NUM_SI_SLOTS>=3} [ipx::get_bus_interfaces SI2 -of_objects [ipx::current_core]]
+ipx::add_bus_parameter FREQ_HZ [ipx::get_bus_interfaces SI2 -of_objects [ipx::current_core]]
+set_property description {Clock frequency (Hertz)} [ipx::get_bus_parameters FREQ_HZ -of_objects [ipx::get_bus_interfaces SI2 -of_objects [ipx::current_core]]]
+set_property value 125000000 [ipx::get_bus_parameters FREQ_HZ -of_objects [ipx::get_bus_interfaces SI2 -of_objects [ipx::current_core]]]
 
 ipx::add_bus_interface SI3 [ipx::current_core]
 set_property abstraction_type_vlnv xilinx.com:interface:axis_rtl:1.0 [ipx::get_bus_interfaces SI3 -of_objects [ipx::current_core]]
@@ -49,6 +58,9 @@ set_property bus_type_vlnv xilinx.com:interface:axis:1.0 [ipx::get_bus_interface
 set_property display_name SI3 [ipx::get_bus_interfaces SI3 -of_objects [ipx::current_core]]
 set_property description {AXI Stream Data In 3} [ipx::get_bus_interfaces SI3 -of_objects [ipx::current_core]]
 set_property enablement_dependency {$C_AXIS_NUM_SI_SLOTS>=4} [ipx::get_bus_interfaces SI3 -of_objects [ipx::current_core]]
+ipx::add_bus_parameter FREQ_HZ [ipx::get_bus_interfaces SI3 -of_objects [ipx::current_core]]
+set_property description {Clock frequency (Hertz)} [ipx::get_bus_parameters FREQ_HZ -of_objects [ipx::get_bus_interfaces SI3 -of_objects [ipx::current_core]]]
+set_property value 125000000 [ipx::get_bus_parameters FREQ_HZ -of_objects [ipx::get_bus_interfaces SI3 -of_objects [ipx::current_core]]]
 
 # Define new AXI master interface
 ipx::add_bus_interface MO [ipx::current_core]
@@ -57,6 +69,9 @@ set_property bus_type_vlnv xilinx.com:interface:axis:1.0 [ipx::get_bus_interface
 set_property interface_mode master [ipx::get_bus_interfaces MO -of_objects [ipx::current_core]]
 set_property display_name MO [ipx::get_bus_interfaces MO -of_objects [ipx::current_core]]
 set_property description {AXI Stream Data Out} [ipx::get_bus_interfaces MO -of_objects [ipx::current_core]]
+ipx::add_bus_parameter FREQ_HZ [ipx::get_bus_interfaces MO -of_objects [ipx::current_core]]
+set_property description {Clock frequency (Hertz)} [ipx::get_bus_parameters FREQ_HZ -of_objects [ipx::get_bus_interfaces MO -of_objects [ipx::current_core]]]
+set_property value 125000000 [ipx::get_bus_parameters FREQ_HZ -of_objects [ipx::get_bus_interfaces MO -of_objects [ipx::current_core]]]
 
 # Define 4 new ports TDATA
 ipx::add_port_map TDATA [ipx::get_bus_interfaces SI0 -of_objects [ipx::current_core]]
