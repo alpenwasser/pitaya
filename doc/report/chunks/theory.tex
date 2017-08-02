@@ -1,0 +1,160 @@
+\chapter{Theoretical Background} % <<< --------------------------------------- %
+\label{ch:analog-to-digital_data_aquisition}
+% ---------------------------------------------------------------------------- %
+
+\section{Analog-to-Digital Data Acquisition}
+\label{sec:adc-acquisition}
+
+\subsection{The DSP Chain}
+\label{subsec:dsp-chain}
+
+Digitally acquiring a signal generally requires at least the following steps:
+
+\begin{itemize}\tightlist
+    \item
+        Analog LP: Remove any frequencies above fs/2, to enable correct processing
+        down the chain (more on this later).
+    \item
+        ADC: convert time-continuous and value-continuous into value-discreet and
+        time-discreet signal. Being value-discreet is of less importance in our
+        system, but let it be mentioned that this is the source of the quantization
+        noise. Being time-discreet has a few more consequences:
+        \begin{itemize}\tightlist
+                \item
+                    multiplication w/ dirac pulse sequence in time domain
+                \item
+                    convolution w/ dirac pulse sequence in frequency domain
+                \item
+                    spectrum of signal is repeated at intervals of fs, centered
+                    around each multiple of fs.
+                \item
+                    if the signal has frequency components above fs/2, this means
+                    that different copies of the signal's spectrum will overlap
+                    and lead to an error called aliasing. This means that the
+                    analog waveform can no longer be unambiguously reconstructed
+                    and correct processing of the data down the chain is not possible.
+                    The phenomenon called "folding back" is also a consequence of
+                    this and will be described in more detail later, because it is
+                    of particular importance for our system.
+                \item
+                    As a consequences, the analog low-pass filter is required.
+        \end{itemize}
+    \item
+        DSP: Can be n inalmost arbitrary. Preferred to analog signal processing because
+        it can be done with computers, which are well understood and cheap.
+        Primary problem tends to be the amount of data being shoved into the DSP
+        system, which is usually constrained with regards to its available resources
+        (i.e. processing power). If the ADC provides too much data for the DSP to
+        meaningfully process (keep in mind: depending on \emph{what} is to be done
+        in the DSP part, sometimes the ADC's data rate might be too high, other times
+        not, so it is usually not possible to perfectly match the ADC's specifications
+        to the DSP unless the application's scope is very narrowly defined before the
+        system is designed).
+\end{itemize}
+
+The solution to the problem of too much data is usually downsampling. One could run
+the ADC at lower clock frequencies, but oversampling carries some advantages which would
+be lost with that.
+
+\subsection{Challenges in Downsampling}
+\label{subsec:downsampling}
+
+The most obvious way to downsample from a sequence of values is of course to simply pick
+each nth sample. However, this has some serious drawbacks which make it an unworkable solution
+in most cases.
+
+\textbf{Fancy Graphics of downsampling without LP filter with explanations}
+
+
+\subsection{Digital Low-Pass Filters}
+\label{subsec:digital-lp-filters}
+
+The obvious solution to this predicament is to apply a (digital) low-pass filter to the
+sequence of values before downsampling. For this purpose, three types of filters are commonly
+used, each with their own specific advantages and drawbacks: IIR, FIR, CIC.
+
+For theseandthose reasons, we will use FIR and CIC in our system.
+
+\textbf{Fancy graphics of LP filter, downsampling and folding back}
+
+\section{Designing a Filter System}
+\label{sec:designing-a-filter-system}
+
+Talking about which type of filter has which properties is all good and well in theory, but
+how does one actually apply this knowledge to a practical problem? This section answers that
+question insofar as it applies to our project.
+
+\begin{itemize}\tightlist
+    \item
+        limited HW resources
+    \item
+        single-stage vs. multi-stage
+    \item
+        TBW issue with multi-stage
+    \item
+        filters at lower frequencies use fewer resources
+    \item
+        halfband filtres
+    \item
+        CIC: compensation filters
+\end{itemize}
+
+\begin{figure}
+    \centering
+    \input{images/dspChain/dspChain.tikz}
+    \caption{Digital signal processing chain from analog signal to the digitally processed data stream}
+    \label{fig:dspChain:blocks}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \input{images/dspChain/timeDomain.tikz}
+    \caption{Digital signal processing chain from analog signal to the digitally processed data stream}
+    \label{fig:dspChain:timedomain}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \input{images/dspChain/freqDomain.tikz}
+    \caption{Digital signal processing chain from analog signal to the digitally processed data stream}
+    \label{fig:dspChain:freqDomain}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \input{images/aliasing/band.tikz}
+    \caption{Digital signal processing chain from analog signal to the digitally processed data stream}
+    \label{fig:aliasing:band}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \input{images/aliasing/dirac.tikz}
+    \caption{Digital signal processing chain from analog signal to the digitally processed data stream}
+    \label{fig:aliasing:dirac}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \input{images/filtertopologies/fir.tikz}
+    \caption{Digital signal processing chain from analog signal to the digitally processed data stream}
+    \label{fig:filtertopologies:fir}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \input{images/filtertopologies/iir.tikz}
+    \caption{Digital signal processing chain from analog signal to the digitally processed data stream}
+    \label{fig:filtertopologies:iir}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \input{images/filtertopologies/cic.tikz}
+    \caption{Digital signal processing chain from analog signal to the digitally processed data stream}
+    \label{fig:filtertopologies:cic}
+\end{figure}
+
+%>>>
+
+%^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>
