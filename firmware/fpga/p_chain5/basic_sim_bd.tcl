@@ -14,6 +14,10 @@ if {[llength $files] > 0} {
   add_files -norecurse $files
 }
 
+# Load WCFG
+add_files -fileset sim_1 -norecurse $project_name/system_wrapper_behav.wcfg
+set_property xsim.view $project_name/system_wrapper_behav.wcfg [get_filesets sim_1]
+
 set_property -name {xsim.simulate.runtime} -value {200us} -objects [get_filesets sim_1]
 
 # ====================================================================================
