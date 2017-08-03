@@ -11,11 +11,16 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="245500000001fs"></ZoomEndTime>
-      <Cursor1Time time="200000000000fs"></Cursor1Time>
+      <ZoomStartTime time="249896000000fs"></ZoomStartTime>
+      <ZoomEndTime time="742896000001fs"></ZoomEndTime>
+      <Cursor1Time time="499396000000fs"></Cursor1Time>
    </zoom_setting>
-   <WVObjectSize size="4" />
+   <WVObjectSize size="7" />
+   <wvobject type="array" fp_name="/system_wrapper/system_i/dec_rate_constant/dout">
+      <obj_property name="ElementShortName">dout[31:0]</obj_property>
+      <obj_property name="ObjectShortName">dout[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
    <wvobject type="vbus" fp_name="vbus815">
       <obj_property name="label">MUX 0</obj_property>
       <obj_property name="DisplayName">label</obj_property>
@@ -23,6 +28,12 @@
       <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
       <obj_property name="CellHeight">100</obj_property>
       <obj_property name="isExpanded"></obj_property>
+      <obj_property name="AnalogYRangeType">ANALOG_YRANGETYPE_FIXED</obj_property>
+      <obj_property name="AnalogYRangeMin">-8388608.000000</obj_property>
+      <obj_property name="AnalogYRRangeMax">8388608.000000</obj_property>
+      <obj_property name="AnalogInterpolation">ANALOG_INTERPOLATION_LINEAR</obj_property>
+      <obj_property name="AnalogOffscale">ANALOG_OFFSCALE_HIDE</obj_property>
+      <obj_property name="AnalogHorizLine">0.000000</obj_property>
       <wvobject type="logic" fp_name="/system_wrapper/system_i/axis_multiplexer_0/DataxDO[23]">
          <obj_property name="ElementShortName">[23]</obj_property>
          <obj_property name="ObjectShortName">[23]</obj_property>
@@ -126,6 +137,7 @@
       <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
       <obj_property name="CellHeight">100</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/system_wrapper/system_i/axis_multiplexer_1/DataxDO[23]">
          <obj_property name="ElementShortName">[23]</obj_property>
          <obj_property name="ObjectShortName">[23]</obj_property>
@@ -428,5 +440,17 @@
          <obj_property name="ElementShortName">[0]</obj_property>
          <obj_property name="ObjectShortName">[0]</obj_property>
       </wvobject>
+   </wvobject>
+   <wvobject type="array" fp_name="/system_wrapper/system_i/cic125tocomp_concat_0/dout">
+      <obj_property name="ElementShortName">dout[23:0]</obj_property>
+      <obj_property name="ObjectShortName">dout[23:0]</obj_property>
+      <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+      <obj_property name="CellHeight">100</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/system_wrapper/system_i/cic_compiler125_0/m_axis_data_tdata">
+      <obj_property name="ElementShortName">m_axis_data_tdata[47:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axis_data_tdata[47:0]</obj_property>
+      <obj_property name="isExpanded"></obj_property>
    </wvobject>
 </wave_config>

@@ -15,10 +15,11 @@ proc spawn_slice {name in from to out} {
 # Slices a 64bit axi dual channel signal into 2 24bit signals
 # and combines them to 48bit dual channel
 # 25.7 x 2 => 17.7 x2
-proc w64to48 {name din dout} {
+proc w64to48 {name din dout fracBits} {
 	# Create slices
-	spawn_slice ${name}_slice_0 64 30 7 24
-	spawn_slice ${name}_slice_1 64 62 39 24
+	set lowerBits0 [expr {$fracBits - 7}]
+	spawn_slice ${name}_slice_0 64 [expr {$lowerBits0 + 24 - 1}] $lowerBits0 24
+	spawn_slice ${name}_slice_1 64 [expr {32 + $lowerBits0 + 24 - 1}] [expr {32 + $lowerBits0}] 24
 
 	# Create concat
 	create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat:2.1 ${name}_concat_0
@@ -124,7 +125,7 @@ proc spawn_fir {name} {
 	set_property -dict [list CONFIG.Number_Paths $::nPaths]                                                 [get_bd_cells $name]
 	set_property -dict [list CONFIG.RateSpecification {Frequency_Specification}]                          [get_bd_cells $name]
 	set_property -dict [list CONFIG.Coefficient_Sign {Signed}]                                            [get_bd_cells $name]
-	set_property -dict [list CONFIG.Quantization {Quantize_Only}]                                         [get_bd_cells $name]
+	set_property -dict [list CONFIG.Quantization {Maximize_Dynamic_Range}]                                         [get_bd_cells $name]
 #	set_property -dict [list CONFIG.Coefficient_Width $coefWidth]                                         [get_bd_cells $name]
 	set_property -dict [list CONFIG.Coefficient_Structure {Inferred}]                                     [get_bd_cells $name]
 	set_property -dict [list CONFIG.Data_Width $::dataWidthIn]                                              [get_bd_cells $name]

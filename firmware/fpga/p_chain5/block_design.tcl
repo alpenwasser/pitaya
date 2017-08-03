@@ -141,16 +141,19 @@ set stage1_branch_count 3
 set stage2_branch_count 2
 set stage3_branch_count_start 6
 set stage3_branch_count_end 3
+set stagef_branch_count 3
 
 set mux0 axis_multiplexer_0
 set mux1 axis_multiplexer_1
 set mux2 axis_multiplexer_2
 set mux3 axis_multiplexer_3
+set muxf axis_multiplexer_f
 
 create_bd_cell -type ip -vlnv raphael-frey:user:axis_multiplexer:1.0 $mux0
 create_bd_cell -type ip -vlnv raphael-frey:user:axis_multiplexer:1.0 $mux1
 create_bd_cell -type ip -vlnv raphael-frey:user:axis_multiplexer:1.0 $mux2
 create_bd_cell -type ip -vlnv raphael-frey:user:axis_multiplexer:1.0 $mux3
+create_bd_cell -type ip -vlnv raphael-frey:user:axis_multiplexer:1.0 $muxf
 
 # Configure Multiplexers
 set_property -dict [list CONFIG.C_AXIS_NUM_SI_SLOTS $stage0_branch_count]     [get_bd_cells $mux0]
@@ -161,6 +164,8 @@ set_property -dict [list CONFIG.C_AXIS_NUM_SI_SLOTS $stage2_branch_count]     [g
 set_property -dict [list CONFIG.C_AXIS_TDATA_WIDTH {48}]                      [get_bd_cells $mux2]
 set_property -dict [list CONFIG.C_AXIS_NUM_SI_SLOTS $stage3_branch_count_end] [get_bd_cells $mux3]
 set_property -dict [list CONFIG.C_AXIS_TDATA_WIDTH {48}]                      [get_bd_cells $mux3]
+set_property -dict [list CONFIG.C_AXIS_NUM_SI_SLOTS $stagef_branch_count]     [get_bd_cells $muxf]
+set_property -dict [list CONFIG.C_AXIS_TDATA_WIDTH {32}]                      [get_bd_cells $muxf]
 
 # Instantiate Concatenators
 set concat0 concat_0
@@ -183,24 +188,48 @@ set_property -dict [list CONFIG.IN0_WIDTH {14}]           [get_bd_cells $concat1
 set_property -dict [list CONFIG.IN1_WIDTH  {1}]           [get_bd_cells $concat1]
 set_property -dict [list CONFIG.IN2_WIDTH  {1}]           [get_bd_cells $concat1]
 
+set concat2 concat_2
+create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat:2.1 $concat2
+set_property -dict [list CONFIG.IN0_WIDTH.VALUE_SRC USER]  [get_bd_cells $concat2]
+set_property -dict [list CONFIG.IN1_WIDTH.VALUE_SRC USER]  [get_bd_cells $concat2]
+set_property -dict [list CONFIG.NUM_PORTS   {2}]           [get_bd_cells $concat2]
+set_property -dict [list CONFIG.IN0_WIDTH  {16}]           [get_bd_cells $concat2]
+set_property -dict [list CONFIG.IN1_WIDTH  {16}]           [get_bd_cells $concat2]
+
+set concat3 concat_3
+create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat:2.1 $concat3
+set_property -dict [list CONFIG.IN0_WIDTH.VALUE_SRC USER]  [get_bd_cells $concat3]
+set_property -dict [list CONFIG.IN1_WIDTH.VALUE_SRC USER]  [get_bd_cells $concat3]
+set_property -dict [list CONFIG.NUM_PORTS   {2}]           [get_bd_cells $concat3]
+set_property -dict [list CONFIG.IN0_WIDTH  {16}]           [get_bd_cells $concat3]
+set_property -dict [list CONFIG.IN1_WIDTH  {16}]           [get_bd_cells $concat3]
+
 
 # Instantiate Slices
 set slice0 slice_0
 set slice1 slice_1
 set slice2 slice_2
 set slice3 slice_3
+set slice4 slice_4
+set slice5 slice_5
 set slice6 slice_6
 set slice7 slice_7
 set slice8 slice_8
 set slice9 slice_9
+set slice10 slice_10
+set slice11 slice_11
 spawn_slice $slice0 16 15 2 14
 spawn_slice $slice1 16 15 2 14
 spawn_slice $slice2 16 15 15 1
 spawn_slice $slice3 16 15 15 1
+spawn_slice $slice4 48 21 6 16
+spawn_slice $slice5 48 45 30 16
 spawn_slice $slice6 40 32 17 16
 spawn_slice $slice7 40 32 17 16
-spawn_slice $slice8 48 42 27 16
-spawn_slice $slice9 48 42 27 16
+spawn_slice $slice8 48 41 26 16
+spawn_slice $slice9 48 41 26 16
+spawn_slice $slice10 48 22 7 16
+spawn_slice $slice11 48 46 31 16
 
 # ====================================================================================
 #
@@ -335,6 +364,7 @@ if {$sim eq ""} {
 	connect_bd_net [get_bd_pins $clk_src] [get_bd_pins $mux1/ClkxCI]
 	connect_bd_net [get_bd_pins $clk_src] [get_bd_pins $mux2/ClkxCI]
 	connect_bd_net [get_bd_pins $clk_src] [get_bd_pins $mux3/ClkxCI]
+	connect_bd_net [get_bd_pins $clk_src] [get_bd_pins $muxf/ClkxCI]
 	connect_bd_net [get_bd_pins $clk_src] [get_bd_pins $fircomp_instance_2steep/aclk]
 	connect_bd_net [get_bd_pins $clk_src] [get_bd_pins $fircomp_instance_2flat/aclk]
 	connect_bd_net [get_bd_pins $clk_src] [get_bd_pins $fircomp_instance_5steep/aclk]
@@ -352,6 +382,7 @@ if {$sim eq ""} {
 	connect_bd_net [get_bd_pins $rst_src] [get_bd_pins $mux1/RstxRBI]
 	connect_bd_net [get_bd_pins $rst_src] [get_bd_pins $mux2/RstxRBI]
 	connect_bd_net [get_bd_pins $rst_src] [get_bd_pins $mux3/RstxRBI]
+	connect_bd_net [get_bd_pins $rst_src] [get_bd_pins $muxf/RstxRBI]
 
 # ====================================================================================
 #
@@ -360,28 +391,54 @@ if {$sim eq ""} {
 # ====================================================================================
 
 if {$sim eq ""} {
-	# Blinking LED
+
+	# Blinking LED for the FPGA Project
 	connect_bd_net [get_bd_pins Cnt2Hz/Q]   [get_bd_pins Slc2Hz/Din]
 	connect_bd_net [get_bd_ports led_o]     [get_bd_pins Slc2Hz/Dout]
 	connect_bd_net [get_bd_pins Cnt2Hz/CLK] [get_bd_pins clk_wiz_adc/clk_out1]
 
- 	# ADC to Logger
+ 	# axis2lanes to Logger for the FPGA Project
 	connect_bd_net [get_bd_pins logger/Data0xDI]     [get_bd_pins axis2lanes/Data0xDO]
 	connect_bd_net [get_bd_pins axis2lanes/Data1xDO] [get_bd_pins logger/Data1xDI]
 
- 	# Clock & DataStrobe to Logger
+ 	# Clock & DataStrobe to Logger for the FPGA Project
 	connect_bd_net [get_bd_pins logger/DataStrobexSI] [get_bd_pins axis2lanes/DataStrobexDO]
 
- 	# AXI Converters
+ 	# AXI Converters for the FPGA Project
 	connect_bd_intf_net [get_bd_intf_pins M2Sconverter/M_AXI] [get_bd_intf_pins ps/S_AXI_HP0]
 	connect_bd_intf_net [get_bd_intf_pins M2Sconverter/S_AXI] [get_bd_intf_pins logger/M0]
 	connect_bd_intf_net [get_bd_intf_pins S2Mconverter/S_AXI] [get_bd_intf_pins ps/M_AXI_GP0]
 	connect_bd_intf_net [get_bd_intf_pins S2Mconverter/M_AXI] [get_bd_intf_pins logger/S0]
 
-	# ZYNQ7 Processing System to Zynq Logger
+	# ZYNQ7 Processing System to Zynq Logger for the FPGA Project
 	connect_bd_net [get_bd_pins ps/IRQ_F2P] [get_bd_pins logger/IRQxSO]
+
+	# ADC to IN for the FPGA Project
+	connect_bd_net      [get_bd_pins adc/m_axis_tdata]                [get_bd_pins $slice0/Din]
+	connect_bd_net      [get_bd_pins adc/m_axis_tdata]                [get_bd_pins $slice1/Din]
+	connect_bd_net      [get_bd_pins adc/m_axis_tdata]                [get_bd_pins $slice2/Din]
+	connect_bd_net      [get_bd_pins adc/m_axis_tdata]                [get_bd_pins $slice3/Din]
+
+	connect_bd_net      [get_bd_pins adc/m_axis_tvalid]                [get_bd_pins $cic025_0/s_axis_data_tvalid]
+	connect_bd_net      [get_bd_pins adc/m_axis_tvalid]                [get_bd_pins $cic025_1/s_axis_data_tvalid]
+	connect_bd_net      [get_bd_pins adc/m_axis_tvalid]                [get_bd_pins $cic125_0/s_axis_data_tvalid]
+	connect_bd_net      [get_bd_pins adc/m_axis_tvalid]                [get_bd_pins $cic125_1/s_axis_data_tvalid]
+	connect_bd_net      [get_bd_pins adc/m_axis_tvalid]                [get_bd_pins $mux3/Valid0xSI]
+
 } else {
-	# Sim project
+
+	# WAVEFORM TO IN for the Sim Project
+	connect_bd_net      [get_bd_pins waveform/m_axis_data_tdata]                [get_bd_pins $slice0/Din]
+	connect_bd_net      [get_bd_pins waveform/m_axis_data_tdata]                [get_bd_pins $slice1/Din]
+	connect_bd_net      [get_bd_pins waveform/m_axis_data_tdata]                [get_bd_pins $slice2/Din]
+	connect_bd_net      [get_bd_pins waveform/m_axis_data_tdata]                [get_bd_pins $slice3/Din]
+
+	connect_bd_net      [get_bd_pins waveform/m_axis_data_tvalid]                [get_bd_pins $cic025_0/s_axis_data_tvalid]
+	connect_bd_net      [get_bd_pins waveform/m_axis_data_tvalid]                [get_bd_pins $cic025_1/s_axis_data_tvalid]
+	connect_bd_net      [get_bd_pins waveform/m_axis_data_tvalid]                [get_bd_pins $cic125_0/s_axis_data_tvalid]
+	connect_bd_net      [get_bd_pins waveform/m_axis_data_tvalid]                [get_bd_pins $cic125_1/s_axis_data_tvalid]
+	connect_bd_net      [get_bd_pins waveform/m_axis_data_tvalid]                [get_bd_pins $mux3/Valid0xSI]
+
 }
 
 # ====================================================================================
@@ -391,10 +448,7 @@ if {$sim eq ""} {
 # ====================================================================================
 
 # IN TO CIC
-connect_bd_net      [get_bd_pins waveform/m_axis_data_tdata]                [get_bd_pins $slice0/Din]
-connect_bd_net      [get_bd_pins waveform/m_axis_data_tdata]                [get_bd_pins $slice1/Din]
-connect_bd_net      [get_bd_pins waveform/m_axis_data_tdata]                [get_bd_pins $slice2/Din]
-connect_bd_net      [get_bd_pins waveform/m_axis_data_tdata]                [get_bd_pins $slice3/Din]
+
 connect_bd_net      [get_bd_pins $slice0/Dout]                [get_bd_pins $concat0/In0]
 connect_bd_net      [get_bd_pins $slice2/Dout]                [get_bd_pins $concat0/In1]
 connect_bd_net      [get_bd_pins $slice2/Dout]                [get_bd_pins $concat0/In2]
@@ -403,17 +457,12 @@ connect_bd_net      [get_bd_pins $slice3/Dout]                [get_bd_pins $conc
 connect_bd_net      [get_bd_pins $slice3/Dout]                [get_bd_pins $concat1/In2]
 connect_bd_net      [get_bd_pins $concat0/dout]                [get_bd_pins $cic025_0/s_axis_data_tdata]
 connect_bd_net      [get_bd_pins $concat1/dout]                [get_bd_pins $cic025_1/s_axis_data_tdata]
-connect_bd_net      [get_bd_pins waveform/m_axis_data_tvalid]                [get_bd_pins $cic025_0/s_axis_data_tvalid]
-connect_bd_net      [get_bd_pins waveform/m_axis_data_tvalid]                [get_bd_pins $cic025_1/s_axis_data_tvalid]
 
 connect_bd_net      [get_bd_pins $concat0/dout]                [get_bd_pins $cic125_0/s_axis_data_tdata]
 connect_bd_net      [get_bd_pins $concat1/dout]                [get_bd_pins $cic125_1/s_axis_data_tdata]
-connect_bd_net      [get_bd_pins waveform/m_axis_data_tvalid]                [get_bd_pins $cic125_0/s_axis_data_tvalid]
-connect_bd_net      [get_bd_pins waveform/m_axis_data_tvalid]                [get_bd_pins $cic125_1/s_axis_data_tvalid]
 
 # IN TO MUX 3
 w16to17p7x2 intomux3 $concat0/dout $concat1/dout $NULL7/dout $mux3/Data0xDI
-connect_bd_net      [get_bd_pins waveform/m_axis_data_tvalid]                [get_bd_pins $mux3/Valid0xSI]
 
 # CICs TO FIRs
 w16to17p7x2 cic025tocomp $slice6/Dout $slice7/Dout $NULL7/dout $fircomp_instance_cfir025/s_axis_data_tdata
@@ -426,8 +475,8 @@ connect_bd_net      [get_bd_pins $cic125_0/m_axis_data_tdata]               [get
 connect_bd_net      [get_bd_pins $cic125_1/m_axis_data_tdata]                [get_bd_pins $slice9/Din]
 
 # FIR 1 TO MUX 3
-w64to48 fir1_025_mux3 $fircomp_instance_cfir025/m_axis_data_tdata $mux3/Data1xDI
-w64to48 fir1_125_mux3 $fircomp_instance_cfir125/m_axis_data_tdata $mux3/Data2xDI
+w64to48 fir1_025_mux3 $fircomp_instance_cfir025/m_axis_data_tdata $mux3/Data1xDI 14
+w64to48 fir1_125_mux3 $fircomp_instance_cfir125/m_axis_data_tdata $mux3/Data2xDI 14
 connect_bd_net      [get_bd_pins $fircomp_instance_cfir025/m_axis_data_tvalid]                [get_bd_pins $mux3/Valid1xSI]
 connect_bd_net      [get_bd_pins $fircomp_instance_cfir125/m_axis_data_tvalid]                [get_bd_pins $mux3/Valid2xSI]
 
@@ -440,7 +489,7 @@ connect_bd_net      [get_bd_pins $mux3/DataxDO]                [get_bd_pins $mux
 connect_bd_net      [get_bd_pins $mux3/ValidxSO]               [get_bd_pins $mux2/Valid0xSI]
 
 # FIR 5 FLAT TO MUX 2
-w64to48 fir5_flat_mux2 $fircomp_instance_5flat/m_axis_data_tdata $mux2/Data1xDI
+w64to48 fir5_flat_mux2 $fircomp_instance_5flat/m_axis_data_tdata $mux2/Data1xDI 14
 connect_bd_net      [get_bd_pins $fircomp_instance_5flat/m_axis_data_tvalid] [get_bd_pins $mux2/Valid1xSI]
 
 # MUX 2 TO FIR 5 STEEP
@@ -456,11 +505,11 @@ connect_bd_net      [get_bd_pins $mux2/DataxDO]                [get_bd_pins $mux
 connect_bd_net      [get_bd_pins $mux2/ValidxSO]               [get_bd_pins $mux1/Valid2xSI]
 
 # FIR 5 STEEP TO MUX 1
-w64to48 fir5_steep_mux1 $fircomp_instance_5steep/m_axis_data_tdata $mux1/Data0xDI
+w64to48 fir5_steep_mux1 $fircomp_instance_5steep/m_axis_data_tdata $mux1/Data0xDI 13
 connect_bd_net      [get_bd_pins $fircomp_instance_5steep/m_axis_data_tvalid] [get_bd_pins $mux1/Valid0xSI]
 
 # FIR 2 FLAT TO MUX 1
-w64to48 fir2_flat_mux1 $fircomp_instance_2flat/m_axis_data_tdata $mux1/Data1xDI
+w64to48 fir2_flat_mux1 $fircomp_instance_2flat/m_axis_data_tdata $mux1/Data1xDI 13
 connect_bd_net      [get_bd_pins $fircomp_instance_2flat/m_axis_data_tvalid] [get_bd_pins $mux1/Valid1xSI]
 
 # MUX 1 TO MUX 0
@@ -472,19 +521,26 @@ connect_bd_net      [get_bd_pins $mux1/DataxDO]                [get_bd_pins $fir
 connect_bd_net      [get_bd_pins $mux1/ValidxSO]               [get_bd_pins $fircomp_instance_2steep/s_axis_data_tvalid]
 
 # FIR 2 STEEP TO MUX 0
-w64to48 fir2_steep_mux0 $fircomp_instance_2steep/m_axis_data_tdata $mux0/Data1xDI
+w64to48 fir2_steep_mux0 $fircomp_instance_2steep/m_axis_data_tdata $mux0/Data1xDI 13
 connect_bd_net      [get_bd_pins $fircomp_instance_2steep/m_axis_data_tvalid] [get_bd_pins $mux0/Valid1xSI]
 
+# MUX 0 TO MUX F
+connect_bd_net [get_bd_pins $mux0/DataxDO] [get_bd_pins $slice4/Din]
+connect_bd_net [get_bd_pins $mux0/DataxDO] [get_bd_pins $slice5/Din]
+connect_bd_net [get_bd_pins $slice4/Dout]  [get_bd_pins $concat2/In0]
+connect_bd_net [get_bd_pins $slice5/Dout]  [get_bd_pins $concat2/In1]
+connect_bd_net [get_bd_pins $mux0/DataxDO] [get_bd_pins $slice10/Din]
+connect_bd_net [get_bd_pins $mux0/DataxDO] [get_bd_pins $slice11/Din]
+connect_bd_net [get_bd_pins $slice10/Dout]  [get_bd_pins $concat3/In0]
+connect_bd_net [get_bd_pins $slice11/Dout]  [get_bd_pins $concat3/In1]
+connect_bd_net [get_bd_pins $concat2/dout] [get_bd_pins $muxf/Data0xDI]
+connect_bd_net [get_bd_pins $concat3/dout] [get_bd_pins $muxf/Data1xDI]
+
+connect_bd_net      [get_bd_pins $muxf/Valid0xSI] [get_bd_pins $mux0/ValidxSO]
+connect_bd_net      [get_bd_pins $muxf/Valid1xSI] [get_bd_pins $mux0/ValidxSO]
+
 # MUX 0 TO OUT
-connect_bd_intf_net [get_bd_intf_pins $mux0/MO]                             [get_bd_intf_pins axis2lanes/SI]
-
-if {$sim eq ""} {
- 	# Normal project
-
-} else {
-	# Sim project
-
-}
+connect_bd_intf_net [get_bd_intf_pins $muxf/MO]                             [get_bd_intf_pins axis2lanes/SI]
 
 # ====================================================================================
 #
@@ -498,6 +554,7 @@ connect_bd_net [get_bd_pins $ctrl0/Mux0]  [get_bd_pins $mux0/SelectxDI]
 connect_bd_net [get_bd_pins $ctrl0/Mux1]  [get_bd_pins $mux1/SelectxDI]
 connect_bd_net [get_bd_pins $ctrl0/Mux2]  [get_bd_pins $mux2/SelectxDI]
 connect_bd_net [get_bd_pins $ctrl0/Mux3]  [get_bd_pins $mux3/SelectxDI]
+connect_bd_net [get_bd_pins $ctrl0/Muxf]  [get_bd_pins $muxf/SelectxDI]
 
 if {$sim eq ""} {
  	# Assign Address to Logger MMIO Slave for the FPGA Project
