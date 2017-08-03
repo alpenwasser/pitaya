@@ -1,0 +1,87 @@
+\begin{tikzpicture}
+     \pgfplotsset{every axis/.style={
+            height=40mm,
+            width=60mm,
+            grid=none,
+            axis x line=middle,
+            axis y line=middle,
+            ytick style={draw=none},
+            xtick style={draw=none},
+        }
+    }
+
+    \begin{axis}[
+        at = {(0,30mm)},
+        xmin=0,
+        xmax=3,
+        xtick={},
+        xticklabels={},
+        ytick={},
+        yticklabels={},
+        ymax=1.1,
+        xlabel=$f$,
+    ]
+
+        \addplot[dv+5,-] coordinates{
+            (0,1)
+            (1,1)
+            (1,0)
+            (3,0)
+        };
+    \end{axis}
+
+    \begin{axis}[
+        at = {(50mm,30mm)},
+        xmin=0,
+        xmax=3,
+        xtick={},
+        xticklabels={},
+        ytick={},
+        yticklabels={},
+        ymin=0,
+        ymax=1.1,
+        xlabel=$f$,
+    ]
+
+        \addplot[dv+5,-] coordinates{
+            (0,1)
+            (1,1)
+            (1.45,0)
+            (3,0)
+        };
+        \addplot[dv+5,domain=1.45:1.98,samples=100] {0.1*1/x*abs(sin(1000*x))};
+
+    \end{axis}
+
+    \begin{axis}[
+        at = {(0,0)},
+        xmin=-10,
+        xmax=10,
+        xtick={},
+        xticklabels={},
+        ytick={},
+        yticklabels={},
+        ymax=1.1,
+        xlabel=$t$,
+    ]
+
+        \addplot[dv+5,smooth,-] table[x=t,y=y,col sep=comma] {images/brickwallVsFIR/sinc.csv};
+        \node[anchor=east] at (-7.9,0.04) {\footnotesize\color{dv+5}\ldots};
+        \node[anchor=west] at ( 8.1,0.04) {\footnotesize\color{dv+5}\ldots};
+    \end{axis}
+
+    \begin{axis}[
+        at = {(50mm,0)},
+        xmin=-10,
+        xmax=10,
+        xtick={},
+        xticklabels={},
+        ytick={},
+        yticklabels={},
+        ymax=1.1,
+        xlabel=$t$,
+    ]
+
+        \addplot[dv+5,smooth,-] table[x=t,y=y,col sep=comma] {images/brickwallVsFIR/fir.csv};
+    \end{axis}
+\end{tikzpicture}

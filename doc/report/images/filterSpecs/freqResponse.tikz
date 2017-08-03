@@ -1,0 +1,44 @@
+\newcommand*\freqzFile{images/filterSpecs/freqResponse.csv}
+\pgfplotstableread[col sep=comma]{\freqzFile}\freqzTable
+\begin{tikzpicture}
+     \pgfplotsset{every axis/.style={
+            height=60mm,
+            width=100mm,
+            grid=none,
+        },
+        set layers,
+    }
+    \begin{axis}[
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            ylabel=$\left|H\right| (dB)$,
+            % TODO: Fix unit for xlabel
+            xlabel=$f$,
+            xmin=0,
+            xmax=1,
+            xtick={0,0.3,0.4,1},
+            ytick={0,-60,-120},
+            xticklabels={0,$F_P$,$F_{St}$,$f_s/2$},
+        ]
+        \addplot[dv+5,-] table[x=W, y=abs(H)] \freqzTable;
+
+        % Passband Edge and Stopband Edge Frequency, Transition Band Width
+        \draw[gray,dashed] (rel axis cs:0.3,0) -- (rel axis cs:0.3,1);
+        \draw[gray,dashed] (rel axis cs:0.4,0) -- (rel axis cs:0.4,1);
+        \draw[latex-latex,gray,dashed] (rel axis cs:0.3,0.1) -- (rel axis cs:0.4,0.1);
+        \node at (rel axis cs:0.35,0.15) {$F_{Tb}$};
+
+        % Stop band attenuation
+        \draw[gray,dashed] (0,-60) -- (1,-60);
+        \draw[gray,dashed] (0.7,0) -- (1,0);
+        \draw[latex-latex,gray,dashed] (0.77,0) -- (0.77,-60);
+        \node at (0.815,-30) {$A_{St}$};
+
+        % Passband Ripple
+        \draw[gray,dashed] (0, 2) -- (0.5,2);
+        \draw[gray,dashed] (0,-2) -- (0.5,-2);
+        \draw[gray,dashed,-latex] (0.45, 10) -- (0.45,2);
+        \draw[gray,dashed,-latex] (0.45,-10) -- (0.45,-2);
+        \node at (0.5,-10) {$A_{P}$};
+    \end{axis}
+\end{tikzpicture}

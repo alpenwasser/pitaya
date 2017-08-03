@@ -29,7 +29,7 @@ Figure~\ref{fig:dspChain:blocks}.
 \begin{figure}
     \centering
     \input{images/dspChain/dspChain.tikz}
-    \caption{%
+    \caption[The DSP Chain]{%
         The basic  building blocks of the  DSP chain from its  analog input to
         its digitally processed output.\protect\newline
         From  left  to  right: The  analog low-pass  filter  (\emph{LP}),  the
@@ -44,7 +44,7 @@ Figure~\ref{fig:dspChain:blocks}.
     \centering
     \input{images/dspChain/timeDomain.tikz}
     \input{images/dspChain/freqDomain.tikz}
-    \caption{%
+    \caption[Signals Passing Through the DSP Chain (Simplified)]{%
         Simplified  time-domain  (top)   and  frequency-domain  (bottom)  view
         of  the  signal  at  different  stages on  its  way  through  the  DSP
         chain. The circled  numbers correspond  to the  stages as  outlined in
@@ -110,7 +110,7 @@ Figure~\ref{fig:aliasing:band}.
 \begin{figure}
     \centering
     \input{images/aliasing/band.tikz}
-    \caption{%
+    \caption[Aliasing Illustrated via Signal Frequency Band]{%
         Simplified view  of a signal  which does not produce  aliasing between
         its recurrences  in the  frequency spectrum  (top), contrasted  with a
         signal whose  frequency band  has components  above half  the sampling
@@ -139,7 +139,7 @@ This overlap results in two primary problems:
 \begin{figure}
     \centering
     \input{images/aliasing/dirac.tikz}
-    \caption{%
+    \caption[Aliasing With Harmonic Signals]{%
         Example  of  two harmonic  signals  being  sampled. In the  top  plot,
         the  signal's  frequency is  below  half  the sampling  frequency  and
         there  is  no  aliasing. The   signal  can  be  reconstructed  without
@@ -199,6 +199,351 @@ downsampled  being a  \emph{digital} signal  instead  of an  analog one,  that
 low-pass filter must  naturally be a digital filter as  well. Designing such a
 digital low-pass filter is the core mission of this project.
 
+%>>>
+
+\section{Digital Filters}% <<< ----------------------------------------------- %
+\label{sec:digital_filters}
+
+Digital filters can  be distinguished by several  characteristics; common ways
+to  categorize them  are by  topology,  impulse response  and their  frequency
+response. There  are  two commonly  used  types  of digital  filters: Infinite
+impulse   response   (IIR)  filters   and   finite   impulse  response   (FIR)
+filters. Another important class of filters are cascaded integrator-comb (CIC)
+filters,  however, in  the strictest  sense they  are a  special class  of FIR
+filters rather than an entirely new  type of LTI system \cite{1163535}.  While
+our system uses FIR and CIC filters,  a brief overview of IIR filters is still
+presented here, for the sake of completeness.
+
+\subsection{IIR Filters} %<<< ------------------------------------------------ %
+\label{subsec:iir_filters}
+
+Infinite impulse response  filters are so named because  their imulse response
+continues  into perpetuity,  never  reaching zero. In  practice, the  response
+usually comes  sufficiently close to  zero at a certain  point that it  can be
+considered zero for most intents and purposes.
+
+IIR filters have feedback paths, resulting  in a filter response equation with
+non-trivial  denominator components. Their  basic  building  blocks are  delay
+elements, multipliers and adders.
+
+\begin{equation}
+    \label{eq:iir_filter}
+    H(z) = \frac{%
+            \sum_{k=0}^N b_k \cdot z^{-k}}{%
+            1 + \sum_{i=0}^M a_i \cdot z^{-i}}
+\end{equation}
+
+TODO: Move sum limits above and below sigma sign.
+
+IIR filters generally require a lower order (and therefore fewer resources) to
+approximate a  certain frequency  response specification  than FIR  filters do
+(particularly the constraint of a narrow transition band), but this comes at a
+cost:  IIR  filters have a  non-linear phase response;  linear-phase responses
+can only  be approximated. Furthermore, IIR  filters are not guaranteed  to be
+BIBO stable due to their feedback paths.
+
+\begin{figure}
+    \centering
+    \input{images/filtertopologies/iir.tikz}
+    \caption[IIR Filter: Biquad]{Example of an IIR filter topology for a biquad}
+    \label{fig:filtertopologies:iir}
+\end{figure}
+
+Some of the generally used types of IIR filters are:
+
+\begin{itemize}\tightlist
+    \item
+        Butterworth  filter: Named after  the British  engineer and  physicist
+        Stephen  Butterworth  (1885  --  1958),  who  first  described  it  in
+        1930. Characterized by a very flat passband (no passband ripple).
+    \item
+        Chebyshev filter  (type I  and II): Named after  Russian mathematician
+        Pafnuty Chebyshev  (1821 --  1894). They are steeper  than Butterworth
+        filters, at the cost of suffering from ripple in the passband (type I)
+        or stopband (type II).
+    \item
+        Bessel  filter: Named for  the German  mathematician Friedrich  Bessel
+        (1784 -- 1846). Optimized to have a maximally linear phase response in
+        order  to  minimize the  distortion  of  signals passing  through  the
+        filter.
+    \item
+        Elliptical  filters: Also known  as  Cauer filters,  after the  German
+        mathematician Wilhelm Cauer (1900 -- 1945), or Zolotarev filter, after
+        Russian mathematician Yegor Zolotarev (1847 -- 1878). Characterized by
+        equiripple in the  bassband and stopband and a  very narrow transition
+        band compared to other filters of the same order.
+\end{itemize}
+
+TODO: Check correct dashes for years.
+
+Digital IIR filters are often designed by way of the bilinear transform.
+
+%>>>
+
+\subsection{FIR Filters} %<<< ------------------------------------------------ %
+\label{subsec:FIR_filters}
+
+FIR filters are  characterized by an impulse response which  decays to zero in
+finite time (see  Figure~\ref{fig:filter_specs:coefs}, unlike IIR filters. The
+filter response is characterized by Equation~\ref{eq:fir_filter}:
+
+\begin{equation}
+    \label{eq:fir_filter}
+    H(z) = \sum_{k=0}^{N} b_k \cdot z^{-k}
+\end{equation}
+
+FIR filters have several advantages:
+
+\begin{itemize}\tightlist
+    \item
+        They are inherently BIBO stable because they lack feedback paths.
+    \item
+        They  can  be  easily  designed  to  have  a  linear  phase  response,
+        preventing signal distortion due to  different group delays for signal
+        components of different frequencies.
+    \item
+        The shape of  their frequency response can be  very finely tuned. This
+        makes them ideally  suited for certain purposes,  such as compensation
+        filters (see Section~\ref{subsec:CIC_filters}).
+    \item
+        Implemenation is usually rather straightforward.
+\end{itemize}
+TODO: Correct?
+
+Their  main  disadvantage   is  that  due  to  the  lack   of  feedback,  they
+generally require comparatively high filter  orders for narrow transition band
+widths. Illustratively, this can be understood by the following considerations:
+\begin{itemize}\tightlist
+    \item
+        The frequency response of an ideal low-pass filter is the brick wall
+        filter, i.e. a rectangle.
+    \item
+        The inverse  Fourier transform  of a rectangle  is a  $sinc$ function,
+        which is infinitely long.
+    \item
+        Therefore, the impulse  response of the ideal brick  wall filter would
+        have an infinite number of taps.
+    \item
+        Truncation of the number of taps  leads to a deviation of the filter's
+        frequency response from the brick wall  filter.  As the number of taps
+        (and  therefore the  FIR filter's  impulse response)  is reduced,  its
+        frequency response deviates more and  more from the brick wall filter,
+        resulting  in  a  flatter  transition between  the  passband  and  the
+        stopband as well as the introduction of ripple.
+\end{itemize}
+
+This     process     is     illustrated      in     simplified     form     in
+Figure~\ref{fig:brick_wall_vs_FIR}.
+
+The  FIR filter's  transition band  width  is particularly  important for  our
+application in order to reduce aliasing effects, as will be shown later {TODO:
+actually show later}.
+
+\begin{figure}
+    \centering
+    \input{images/brickwallVsFIR/bwVsFIR.tikz}
+    \caption[Brick Wall Filter vs. FIR Filter (simplified)]{%
+        The effect of  truncating a $sinc$ function in the  time domain on its
+        spectrum (simplified)%
+    }
+    \label{fig:brick_wall_vs_FIR}
+\end{figure}
+
+TODO: Equation for order estimation.
+
+Designing    FIR    filters    is     usually    performed    by    specifying
+certain     desired    characteristics     of    the     filter's    frequency
+response. Figure~\ref{fig:filter_specs:freqResponse} shows one possible way of
+doing this for FIR filters by specifying four constraint parameters:
+\begin{itemize}\tightlist
+    \item
+        pass band ripple: $A_P$
+    \item
+        stop band attenuation: $A_{St}$
+    \item
+        pass band edge frequency: $F_P$
+    \item
+        stop band edge frequency: $F_{St}$
+\end{itemize}
+
+The resulting  transition band  width $F_{Tb}$ is  the difference  between the
+pass band  edge frequency and  the stop band edge  frequency, and serves  as a
+useful indicator of how many coefficients (i.e. resources) the filter will end
+up using. Narrower transition bands tend to require a higher filter order, and
+therefore  more  resources. Coefficient  counts  of several  hundred  are  not
+uncommon for steep FIR filters.
+
+Other sets of  constraint parameters can be used to  design filters, but these
+are the ones used in this project, therefore the emphasis on them.
+
+Figure~\ref{fig:filter_specs:coefs}  shows  the   resulting  impulse  response
+(coefficient  set)  for  a  FIR  filter  designed  by  using  the  four  above
+mentioned parameters, with  values given by Equations~\ref{eq:filter_specs:ap}
+through \ref{eq:filter_specs:fst} handed to one  of Matlab's FIR filter design
+algorithms.
+
+\begin{align}
+    A_P    &= \SI{2}{\dB}   \label{eq:filter_specs:ap}\\
+    A_{St} &= \SI{60}{\dB}  \label{eq:filter_specs:ast}\\
+    F_P    &= 0.3 \cdot f_s \label{eq:filter_specs:fp}\\
+    F_{St} &= 0.4 \cdot f_s \label{eq:filter_specs:fst}
+\end{align}
+
+\begin{figure}
+    \centering
+    \input{images/filterSpecs/freqResponse.tikz}
+    \caption[Specifying FIR Filter Constraints]{
+        Specifications in the frequency domain and the resulting filter's
+        frequency response as designed by Matlab.%
+    }
+    \label{fig:filter_specs:freqResponse}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \input{images/filterSpecs/coefs.tikz}
+    \caption[Impulse Response of a FIR Filter]{
+        Impulse    response    (coefficients)     for    the    filter    from
+        Figure~\ref{fig:filter_specs:freqResponse}    with   the    parameters
+        as     given     by     Equations~\ref{eq:filter_specs:ap}     through
+        \ref{eq:filter_specs:fst}    passed   to    one   of    Matlab's   FIR
+        filter   design   algorithms,  resulting   in   a   set  of   \num{39}
+        coefficients.\protect\newline
+        Note that the  coefficients to the left and right  of these values are
+        zero, hence \emph{finite} impulse response filters.%
+    }
+    \label{fig:filter_specs:coefs}
+\end{figure}
+
+
+Figure~\ref{fig:filtertopologies:fir}   shows   one  possible   topology   for
+implementing a  FIR filter,  the so-called  direct form. As  can be  seen, the
+basic building  blocks of  a FIR  filter are  delay elements,  multipliers and
+adders, same as for IIR filters.
+
+\begin{figure}
+    \centering
+    \input{images/filtertopologies/fir.tikz}
+    \caption[FIR Filter Topology Example]
+        {One possible topology for a FIR filter (direct form)}
+    \label{fig:filtertopologies:fir}
+\end{figure}
+
+%>>>
+
+\subsection{CIC Filters} %<<< ------------------------------------------------ %
+\label{subsec:CIC_filters}
+
+CIC  filters  were  first  introduced  in 1981  in  \cite{1163535}  by  Eugene
+B. Hogenauer. They can be implemented both as decimation filters (reduction in
+sampling rate)  and interpolation filters (increase  in sampling rate). Before
+delving into the mathematics of the CIC filter, some of its general properties
+are first presented in graphical form.
+
+A   CIC  filter   is  a   cascade  of   integrator  and   comb  stages,   with
+either   a   sampling    rate   compressor   (in   case    of   a   decimator)
+or   a    sampling   rate    expander   (in    case   of    an   interpolator)
+between   the   integrator   and   comb   sections.    A   single   integrator
+stage   is   shown    in   Figure~\ref{fig:filtertopologies:integrator},   and
+Figure~\ref{fig:filtertopologies:comb}   shows   a   single  comb   stage   in
+feedforward form. Figure~\ref{fig:filtertopologies:cic}  shows a  complete CIC
+filter with three stages.
+
+The frequency response characteristics of a CIC filter can be deduced by first
+examining the frequency responses of the  integrator and the comb. As shown in
+the topmost  plot in Figure~\ref{fig:cic:freq_responses}, an  integrator is in
+essence a lowpass filter, with a pole  at $f = 0$. As multiple integrators are
+cascaded, the  slope of the  frequency response  increases, which can  be seen
+when comparing the single-stage integrator to the cascade of three integrators
+in the plot.
+
+A  comb   filter  is   a  filter  which   strongly  attenuates   one  specific
+frequency  component  along  with  its  multiples (in  a  notch  comb  filter;
+there  is  also the  inverse  concept  which  only  lets a  certain  frequency
+and  multiples   of  it  pass). As  can   be  seen  in  the   middle  plot  of
+Figure~\ref{fig:cic:freq_responses}, cascading  multiple comb stages  does not
+change the location  of the zeroes, but merely changes  shape of the magnitude
+response along the vertical axis.
+
+Cascading  integrators and  combs results  in the  frequency responses  in the
+bottom plot from Figure~\ref{fig:cic:freq_responses}. The integrator's pole at
+$f = 0$ compensates for the comb  section's zero at the same location, leading
+to  a significant,  but  finite, DC  gain  of the  CIC  filter. As the  number
+of  stages is  increased,  that  gain increases  accordingly,  along with  the
+difference  between  the DC  gain  and  the filter  gain  in  the side  lobes,
+increasing attenuation of undesired signal components.
+
+One  serious drawback  of CIC  filtes  is that  they have  no clearly  defined
+passband as such. Rather,  their freqiency response starts  dropping off right
+as the frequency  axis goes beyond zero. This effect  (sometimes also referred
+to as \emph{passband droop}) is visible in the magnified section of the bottom
+plot in  Figure~\ref{fig:cic:freq_responses}. This means that a  CIC filter by
+itself is rarely  a viable solution, since it attenuates  any non-DC frequency
+components at least somewhat.
+
+However,  CIC filters  are  computationally extremely  efficient because  they
+require no multipliers. This makes them ideally  suited for being used at high
+sampling frequencies as an innitial stage in a chain of filters. The following
+stages can then be used to compensate for the distortion introduced by the CIC
+filter. For those  stages, conventional  FIR filtes can  be used,  since those
+stages  run at  much lower  sampling  rates and  the  fact that  a FIR  filter
+performs many  more compuations  per sampling  cycle than a  CIC filter  is no
+longer as important  for overall resource usage. The FIR filter  has many more
+clock cycles available for computing each output value than the CIC filter.
+
+\begin{figure}
+    \centering
+    \begin{minipage}[t][][b]{0.45\textwidth}
+        \centering
+        \input{images/filtertopologies/integrator.tikz}
+        \caption[Integrator Stage]{A single integrator stage}
+        \label{fig:filtertopologies:integrator}
+    \end{minipage}
+    \begin{minipage}[t][][b]{0.45\textwidth}
+        \centering
+        \input{images/filtertopologies/comb.tikz}
+        \caption[Comb Stage]{A single comb stage in feedforward form}
+        \label{fig:filtertopologies:comb}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \input{images/filtertopologies/cic.tikz}
+    \caption[CIC Filter Topology]
+        {CIC filter topology with three integrator and comb stages}
+    \label{fig:filtertopologies:cic}
+\end{figure}
+
+\begin{figure}
+    \centering
+        \input{images/cic/cicFreqResponses.tikz}
+        \caption[Frequency Responses for Integrators, Combs and CIC Filters]{%
+            Frequency    respones   for    integrators,   combs    and   their
+            combination  into CIC  filters  for  single-stage and  three-stage
+            configurations. Both  have   a  rate  change  of   \num{9}  (hence
+            \num{4.5} lobes  fitting into the  plot between $f  = 0$ and  $f =
+            f_s/2$).\protect\newline
+            Note that  the zeroes do  not change  position as comb  stages are
+            cascaded. Also, the  frequency response  of the CIC  filter starts
+            dropping off immediately, as can  be seen in the magnified section
+            of the bottom plot.%
+        }
+        \label{fig:cic:freq_responses}
+\end{figure}
+
+Mathematical description,  design parameters, folding back of nulls, register
+growth, truncation and rounding, two's complement, \ldots
+
+%>>>
+%>>>
+
+\section{A More Detailled Analysis of Aliasing Errors} % <<< ----------------- %
+\label{sec:detail_aliasing}
+
+folding back issue
+
+%>>>
 
 %\subsection{Challenges in Downsampling}
 %\label{subsec:downsampling}
@@ -244,28 +589,5 @@ digital low-pass filter is the core mission of this project.
 %    \item
 %        CIC: compensation filters
 %\end{itemize}
-\clearpage
-\begin{figure}
-    \centering
-    \input{images/filtertopologies/fir.tikz}
-    \caption{Digital signal processing chain from analog signal to the digitally processed data stream}
-    \label{fig:filtertopologies:fir}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \input{images/filtertopologies/iir.tikz}
-    \caption{Digital signal processing chain from analog signal to the digitally processed data stream}
-    \label{fig:filtertopologies:iir}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \input{images/filtertopologies/cic.tikz}
-    \caption{Digital signal processing chain from analog signal to the digitally processed data stream}
-    \label{fig:filtertopologies:cic}
-\end{figure}
-
-%>>>
 
 %^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>
