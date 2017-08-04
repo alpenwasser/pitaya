@@ -173,6 +173,11 @@ int main(int argc, char* argv[]) {
 
             switch(s.mode){
             case modes::DEMO:
+            /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+             *
+             * I M P O R T A N T : D E M O   M O D E   I S   DE P R E C A T E D
+             *
+             * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */ 
                 if(!j["frameConfiguration"].is_null()){
                     std::cout << "Setting new Frame Configuration" << std::endl;
                     // Block until current frame was read (maybe there is a better way to do this)
@@ -312,7 +317,7 @@ int main(int argc, char* argv[]) {
                             ioctl(s.fd, WRITE_REG, &instruction);
                             std::cout << "New Suf is " << instruction.reg_value << std::endl;
                         }
-                    } catch(int e){
+                    } catch(...){
                         std::cout << "Failed to set Frame Configuration." << std::endl;
                     }
                     s.configuring = false;
@@ -363,7 +368,7 @@ int main(int argc, char* argv[]) {
                             
                             std::cout << "Wrote a Rising Edge Trigger at Level " << t["level"] << std::endl;
                         }
-                    } catch(int e){
+                    } catch(...){
                         std::cout << "Failed to write the Trigger." << std::endl;
                     }
                     s.configuring = false;
@@ -377,7 +382,7 @@ int main(int argc, char* argv[]) {
                     try {
                         s.numberOfChannels = j["setNumberOfChannels"].get<size_t>();
                         std::cout << s.numberOfChannels << " will be transmitted." << std::endl;
-                    } catch(int e){
+                    } catch(nlohmann::detail::type_error e){
                         std::cout << "Failed to select the channels." << std::endl;
                     }
                     s.configuring = false;
@@ -388,7 +393,7 @@ int main(int argc, char* argv[]) {
                     // ussleep(30);
                     try {
                         s.currentChannel = j["channel"].get<size_t>();
-                    } catch(int e) {
+                    } catch(nlohmann::detail::type_error e) {
                         std::cout << "No valid channel requested." << std::endl;
                     }
                     s.currentChannel = j["channel"].get<size_t>();
@@ -402,7 +407,7 @@ int main(int argc, char* argv[]) {
                     // ussleep(30);
                     try {
                         s.currentChannel = j["channel"].get<size_t>();
-                    } catch(int e) {
+                    } catch(nlohmann::detail::type_error e) {
                         std::cout << "No valid channel requested." << std::endl;
                     }
                     readAndSendChannel(&s);
@@ -415,8 +420,49 @@ int main(int argc, char* argv[]) {
                     try {
                         ioctl(s.fd, STOP_REC, NULL);
                         std::cout << "Forced a new Frame." << std::endl;
-                    } catch(int e){
+                    } catch(...){
                         std::cout << "Failed to force a new Frame." << std::endl;
+                    }
+                }
+
+                // Request a new frame of data
+                if(!j["samplingRate"].is_null()){
+                    try {
+                        auto samplingRate = j["samplingRate"].get<size_t>();
+                        instruction.reg_id = 13;
+                        auto match = true;
+                        switch(samplingRate){
+                            case 25000000:
+                                instruction.reg_value = 5;
+                                break;
+                            case  5000000:
+                                instruction.reg_value = 25;
+                                break;
+                            case  1000000:
+                                instruction.reg_value = 125;
+                                break;
+                            case    200000:
+                                instruction.reg_value = 625;
+                                break;
+                            case    100000:
+                                instruction.reg_value = 1250;
+                                break;
+                            case     50000:
+                                instruction.reg_value = 2500;
+                                break;
+                            default:
+                                match = false;
+                                break;
+                            
+                        }
+                        if(match){
+                            ioctl(s.fd, WRITE_REG, &instruction);
+                            std::cout << "Sampling Rate is " << samplingRate << std::endl;
+                        } else {
+                            std::cout << samplingRate << " is no valid sampling rate." << std::endl;
+                        }
+                    } catch(nlohmann::detail::type_error e) {
+                        std::cout << "No valid sampling rate requested." << std::endl;
                     }
                 }
                 break;
