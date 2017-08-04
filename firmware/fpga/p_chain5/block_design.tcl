@@ -568,7 +568,14 @@ connect_bd_intf_net [get_bd_intf_pins $muxf/MO]                             [get
 # ====================================================================================
 
 # Connect Control Logic
-connect_bd_net [get_bd_pins $decimation_rate/dout] [get_bd_pins $ctrl0/DecRate]
+if {$sim eq ""} {
+ 	# Adjustable rate for the FPGA Project
+	connect_bd_net [get_bd_pins logger/DecimationRatexDO] [get_bd_pins $ctrl0/DecRate]
+} {
+	# Fixed decimation rate for the Simulation
+	connect_bd_net [get_bd_pins $decimation_rate/dout] [get_bd_pins $ctrl0/DecRate]
+}
+
 connect_bd_net [get_bd_pins $ctrl0/Mux0]  [get_bd_pins $mux0/SelectxDI]
 connect_bd_net [get_bd_pins $ctrl0/Mux1]  [get_bd_pins $mux1/SelectxDI]
 connect_bd_net [get_bd_pins $ctrl0/Mux2]  [get_bd_pins $mux2/SelectxDI]
