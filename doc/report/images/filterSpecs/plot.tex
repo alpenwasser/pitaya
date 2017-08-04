@@ -1,0 +1,57 @@
+\documentclass[margin=3mm,tikz]{standalone}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\pgfplotsset{compat=newest}
+\newcommand*\freqzFile{freqResponse.csv}
+
+\begin{document}
+\pgfplotstableread[col sep=comma]{\freqzFile}\freqzTable
+
+% Discontinuities
+% Line 2502
+% 0,-12.566,0.7854
+% Line 5002:
+% 0,-18.85,1.5708
+
+\begin{tikzpicture}
+    \pgfplotsset{set layers}
+
+    %\begin{semilogyaxis}
+    %    \addplot[-] table[x=W, y=abs(H)] \freqzTable;
+    %\end{semilogyaxis}
+
+    \begin{axis}[
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            ylabel=$\left|H\right| (dB)$,
+            xlabel=$f$ (normed to $f_s/2$),
+            axis y line*=left,
+            xtick={0,0.3,0.4,1},
+            xticklabels={0,0.3,0.4,$f_s/2$},
+        ]
+        \addplot[blue,-] table[x=W, y=abs(H)] \freqzTable;
+    \end{axis}
+
+    \begin{axis}[
+            ylabel=$\angle H (deg)$,
+            axis y line*=right,
+            xtick=\empty,
+            xticklabels={},
+        ]
+        \addplot[
+            y filter/.code={\pgfmathparse{180*\pgfmathresult/3.141592654}},
+            unbounded coords=discard,
+            point meta=explicit,
+            -,
+            red,
+            filter point/.code={%
+                \pgfmathparse{\pgfkeysvalueof{/data point/meta}==0}
+                \ifpgfmathfloatcomparison
+                    \pgfkeyssetvalue{/data point/y}{nan}%
+                \fi
+            }
+        ] table[x=W,y=angle(H),meta=abs(H)] \freqzTable;
+    \end{axis}
+\end{tikzpicture}
+
+\end{document}

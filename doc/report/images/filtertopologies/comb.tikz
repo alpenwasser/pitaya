@@ -1,0 +1,23 @@
+% https://tex.stackexchange.com/a/183092/131649
+\begin{tikzpicture}
+    \coordinate (in)  at (0,0);
+    \coordinate (out) at (4,0);
+
+    % branching coordinates
+    \coordinate (b1) at (1,0);
+
+    % Delay elements
+    \node[draw] (d1) at (2,1) {$z^{-M}$};
+
+    % Adder
+    \node[draw,circle, inner sep=0.3mm] (a1) at (3,0) {$+$};
+
+    % subtractors
+    \node[above right=0.2ex] (s1) at (a1) {$-$};
+
+    % Lines
+    \draw[-latex] (in) -- (a1);
+    \draw[-latex] (a1) -- (out);
+    \draw[-latex] (b1) |- (d1);
+    \draw[-latex] (d1) -| (a1);
+\end{tikzpicture}

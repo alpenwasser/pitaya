@@ -1,0 +1,104 @@
+\newcommand*\freqzFileIntA{images/cic/integrator1.csv}
+\newcommand*\freqzFileIntB{images/cic/integrator3.csv}
+\newcommand*\freqzFileCombA{images/cic/comb1.csv}
+\newcommand*\freqzFileCombB{images/cic/comb3.csv}
+\newcommand*\freqzFileCICA{images/cic/cic1.csv}
+\newcommand*\freqzFileCICB{images/cic/cic3.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileIntA}\freqzTableIntA
+\pgfplotstableread[col sep=comma]{\freqzFileIntB}\freqzTableIntB
+\pgfplotstableread[col sep=comma]{\freqzFileCombA}\freqzTableCombA
+\pgfplotstableread[col sep=comma]{\freqzFileCombB}\freqzTableCombB
+\pgfplotstableread[col sep=comma]{\freqzFileCICA}\freqzTableCICA
+\pgfplotstableread[col sep=comma]{\freqzFileCICB}\freqzTableCICB
+\begin{tikzpicture}
+     \pgfplotsset{every axis/.style={
+            height=50mm,
+            width=0.5\textwidth,
+            grid=none,
+        },
+        set layers,
+    }
+    \begin{axis}[
+            at = {(0,0)},
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            ylabel=$\left|H\right| (dB)$,
+            xmin=0,
+            xmax=1,
+            xtick={0,1},
+            ytick={40,20,0},
+            xticklabels={0,$f_s/2$},
+        ]
+        \addplot[dv+5,-] table[x=w, y=abs(H)] \freqzTableIntA;
+    \end{axis}
+
+    \begin{axis}[
+            at = {(65mm,0)},
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            xmin=0,
+            xmax=1,
+            xtick={0,0.3,0.4,1},
+            ytick={0,-20,-40},
+            xticklabels={0,$F_P$,$F_{St}$,$f_s/2$},
+        ]
+        \addplot[dv+5,-] table[x=w, y=abs(H)] \freqzTableCombA;
+    \end{axis}
+
+    \begin{axis}[
+            at = {(0,-50mm)},
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            ylabel=$\left|H\right| (dB)$,
+            xmin=0,
+            xmax=1,
+            xtick={0,1},
+            ytick={120,60,0},
+            xticklabels={0,$f_s/2$},
+        ]
+        \addplot[dv+5,-] table[x=w, y=abs(H)] \freqzTableIntB;
+    \end{axis}
+
+    \begin{axis}[
+            at = {(65mm,-50mm)},
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            xmin=0,
+            xmax=1,
+            xtick={0,0.3,0.4,1},
+            ytick={0,-60,-120},
+            xticklabels={0,$F_P$,$F_{St}$,$f_s/2$},
+        ]
+        \addplot[dv+5,-] table[x=w, y=abs(H)] \freqzTableCombB;
+    \end{axis}
+
+    \begin{axis}[
+            width=\textwidth,
+            at = {(0,-100mm)},
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            ylabel=$\left|H\right| (dB)$,
+            xmin=0,
+            xmax=1,
+            xtick={0,1},
+            ytick={20,0,-40},
+            xticklabels={0,$f_s/2$},
+        ]
+        \addplot[dv+5,-] table[x=w, y=abs(H)] \freqzTableCICA;
+    \end{axis}
+
+    \begin{axis}[
+            width=\textwidth,
+            at = {(0mm,-150mm)},
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            ylabel=$\left|H\right| (dB)$,
+            xmin=0,
+            xmax=1,
+            xtick={0,0.3,0.4,1},
+            ytick={60,0,-60,-120},
+            xticklabels={0,$F_P$,$F_{St}$,$f_s/2$},
+        ]
+        \addplot[dv+5,-] table[x=w, y=abs(H)] \freqzTableCICB;
+    \end{axis}
+\end{tikzpicture}
