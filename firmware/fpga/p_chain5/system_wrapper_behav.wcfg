@@ -11,15 +11,124 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="249896000000fs"></ZoomStartTime>
-      <ZoomEndTime time="742896000001fs"></ZoomEndTime>
-      <Cursor1Time time="499396000000fs"></Cursor1Time>
+      <ZoomStartTime time="21455333333fs"></ZoomStartTime>
+      <ZoomEndTime time="70555333334fs"></ZoomEndTime>
+      <Cursor1Time time="62372000000fs"></Cursor1Time>
    </zoom_setting>
-   <WVObjectSize size="7" />
+   <WVObjectSize size="13" />
    <wvobject type="array" fp_name="/system_wrapper/system_i/dec_rate_constant/dout">
+      <obj_property name="DisplayName">label</obj_property>
       <obj_property name="ElementShortName">dout[31:0]</obj_property>
       <obj_property name="ObjectShortName">dout[31:0]</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="label">DEC RATE</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/system_wrapper/system_i/axis_multiplexer_f/DataxDO">
+      <obj_property name="ElementShortName">DataxDO[31:0]</obj_property>
+      <obj_property name="ObjectShortName">DataxDO[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/system_wrapper/system_i/slice_10/Dout">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">Dout[15:0]</obj_property>
+      <obj_property name="ObjectShortName">Dout[15:0]</obj_property>
+      <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+      <obj_property name="CellHeight">100</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      <obj_property name="label">SLICE FOR CIC</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/system_wrapper/system_i/slice_4/Dout">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">Dout[15:0]</obj_property>
+      <obj_property name="ObjectShortName">Dout[15:0]</obj_property>
+      <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+      <obj_property name="CellHeight">100</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      <obj_property name="label">SLICE NO CIC</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/system_wrapper/system_i/axis2lanes/Data0xDO">
+      <obj_property name="ElementShortName">Data0xDO[15:0]</obj_property>
+      <obj_property name="ObjectShortName">Data0xDO[15:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+      <obj_property name="CellHeight">100</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/system_wrapper/system_i/axis2lanes/Data1xDO">
+      <obj_property name="ElementShortName">Data1xDO[15:0]</obj_property>
+      <obj_property name="ObjectShortName">Data1xDO[15:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+      <obj_property name="CellHeight">100</obj_property>
+   </wvobject>
+   <wvobject type="vbus" fp_name="vbus1690">
+      <obj_property name="label">MUX F</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+      <obj_property name="CellHeight">100</obj_property>
+      <wvobject type="logic" fp_name="/system_wrapper/system_i/axis_multiplexer_f/DataxDO[15]">
+         <obj_property name="ElementShortName">[15]</obj_property>
+         <obj_property name="ObjectShortName">[15]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/system_wrapper/system_i/axis_multiplexer_f/DataxDO[14]">
+         <obj_property name="ElementShortName">[14]</obj_property>
+         <obj_property name="ObjectShortName">[14]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/system_wrapper/system_i/axis_multiplexer_f/DataxDO[13]">
+         <obj_property name="ElementShortName">[13]</obj_property>
+         <obj_property name="ObjectShortName">[13]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/system_wrapper/system_i/axis_multiplexer_f/DataxDO[12]">
+         <obj_property name="ElementShortName">[12]</obj_property>
+         <obj_property name="ObjectShortName">[12]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/system_wrapper/system_i/axis_multiplexer_f/DataxDO[11]">
+         <obj_property name="ElementShortName">[11]</obj_property>
+         <obj_property name="ObjectShortName">[11]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/system_wrapper/system_i/axis_multiplexer_f/DataxDO[10]">
+         <obj_property name="ElementShortName">[10]</obj_property>
+         <obj_property name="ObjectShortName">[10]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/system_wrapper/system_i/axis_multiplexer_f/DataxDO[9]">
+         <obj_property name="ElementShortName">[9]</obj_property>
+         <obj_property name="ObjectShortName">[9]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/system_wrapper/system_i/axis_multiplexer_f/DataxDO[8]">
+         <obj_property name="ElementShortName">[8]</obj_property>
+         <obj_property name="ObjectShortName">[8]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/system_wrapper/system_i/axis_multiplexer_f/DataxDO[7]">
+         <obj_property name="ElementShortName">[7]</obj_property>
+         <obj_property name="ObjectShortName">[7]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/system_wrapper/system_i/axis_multiplexer_f/DataxDO[6]">
+         <obj_property name="ElementShortName">[6]</obj_property>
+         <obj_property name="ObjectShortName">[6]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/system_wrapper/system_i/axis_multiplexer_f/DataxDO[5]">
+         <obj_property name="ElementShortName">[5]</obj_property>
+         <obj_property name="ObjectShortName">[5]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/system_wrapper/system_i/axis_multiplexer_f/DataxDO[4]">
+         <obj_property name="ElementShortName">[4]</obj_property>
+         <obj_property name="ObjectShortName">[4]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/system_wrapper/system_i/axis_multiplexer_f/DataxDO[3]">
+         <obj_property name="ElementShortName">[3]</obj_property>
+         <obj_property name="ObjectShortName">[3]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/system_wrapper/system_i/axis_multiplexer_f/DataxDO[2]">
+         <obj_property name="ElementShortName">[2]</obj_property>
+         <obj_property name="ObjectShortName">[2]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/system_wrapper/system_i/axis_multiplexer_f/DataxDO[1]">
+         <obj_property name="ElementShortName">[1]</obj_property>
+         <obj_property name="ObjectShortName">[1]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/system_wrapper/system_i/axis_multiplexer_f/DataxDO[0]">
+         <obj_property name="ElementShortName">[0]</obj_property>
+         <obj_property name="ObjectShortName">[0]</obj_property>
+      </wvobject>
    </wvobject>
    <wvobject type="vbus" fp_name="vbus815">
       <obj_property name="label">MUX 0</obj_property>
@@ -27,7 +136,6 @@
       <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
       <obj_property name="CellHeight">100</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <obj_property name="AnalogYRangeType">ANALOG_YRANGETYPE_FIXED</obj_property>
       <obj_property name="AnalogYRangeMin">-8388608.000000</obj_property>
       <obj_property name="AnalogYRRangeMax">8388608.000000</obj_property>
@@ -137,7 +245,6 @@
       <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
       <obj_property name="CellHeight">100</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/system_wrapper/system_i/axis_multiplexer_1/DataxDO[23]">
          <obj_property name="ElementShortName">[23]</obj_property>
          <obj_property name="ObjectShortName">[23]</obj_property>
