@@ -218,10 +218,29 @@ set slice8 slice_8
 set slice9 slice_9
 set slice10 slice_10
 set slice11 slice_11
-spawn_slice $slice0 16 15 2 14
-spawn_slice $slice1 16 15 2 14
-spawn_slice $slice2 16 15 15 1
-spawn_slice $slice3 16 15 15 1
+
+if {$sim eq ""} {
+
+ 	# FPGA project
+ 	# 2 channel 16bit ADC input => 32bit wide => different signals on channels 0 & 1
+
+ 	spawn_slice $slice0 32 13 0 14
+	spawn_slice $slice1 32 29 16 14
+	spawn_slice $slice2 32 15 15 1
+	spawn_slice $slice3 32 31 31 1
+
+} else {
+
+	# Sim project
+	# 1 channel 16bit ADC input => 16bit wide => same signal both channels
+
+	spawn_slice $slice0 16 15 2 14
+	spawn_slice $slice1 16 15 2 14
+	spawn_slice $slice2 16 15 15 1
+	spawn_slice $slice3 16 15 15 1
+
+}
+
 spawn_slice $slice4 48 21 6 16
 spawn_slice $slice5 48 45 30 16
 spawn_slice $slice6 40 32 17 16
