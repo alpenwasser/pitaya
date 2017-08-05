@@ -473,50 +473,92 @@ transfer functions of the $N$ cascaded integrator and comb stages, yielding
 \end{equation}
 
 Looking at  the last form  of the CIC  filter's transfer function,  it becomes
-evident that it is in essence a FIR filter with unitary coefficients.
+evident  that it  is in  essence a  FIR filter  with unitary  coefficients. Of
+particular note is the fact that this is so despite each stage having feedback
+paths and the integrator stages having poles  at $f = 0$ (i.e. the integrators
+by themselves  are not in  fact BIBO stable,  even though the  complete system
+is). The  fact that  the  resulting filter  has no  poles  can be  intuitively
+understood by  looking at the frequency  responses of the integrator  and comb
+stages, and finally their cascade.
 
+As  shown  in  the  topmost plot  in  Figure~\ref{fig:cic:freq_responses},  an
+integrator is in essence a lowpass filter, with a pole at $f = 0$. As multiple
+integrators are cascaded, the slope of the frequency response increases, which
+can be seen when comparing the single-stage integrator to the cascade of three
+integrators in the plot.
 
-The frequency response characteristics of a CIC filter can be deduced by first
-examining the frequency responses of the  integrator and the comb. As shown in
-the topmost  plot in Figure~\ref{fig:cic:freq_responses}, an  integrator is in
-essence a lowpass filter, with a pole  at $f = 0$. As multiple integrators are
-cascaded, the  slope of the  frequency response  increases, which can  be seen
-when comparing the single-stage integrator to the cascade of three integrators
-in the plot.
+A comb  filter is a  filter which  strongly attenuates one  specific frequency
+component  along  with  its  multiples  (in a  notch  comb  filter;  there  is
+also  the  inverse  concept  of  a  peak filter  which  only  lets  a  certain
+frequency  and multiples  of  it pass). As  can  be seen  in  the middle  plot
+of  Figure~\ref{fig:cic:freq_responses}, cascading  multiple comb  stages does
+not  change the  location  of the  zeroes,  but merely  changes  shape of  the
+magnitude  response along  the vertical  axis. It  is also  evident that  comb
+filters  have  no  poles  (a  fact  which can  also  be  easily  deduced  from
+Equation~\ref{eq:cic:comb_stage}).
 
-A  comb   filter  is   a  filter  which   strongly  attenuates   one  specific
-frequency  component  along  with  its  multiples (in  a  notch  comb  filter;
-there  is  also the  inverse  concept  which  only  lets a  certain  frequency
-and  multiples   of  it  pass). As  can   be  seen  in  the   middle  plot  of
-Figure~\ref{fig:cic:freq_responses}, cascading  multiple comb stages  does not
-change the location  of the zeroes, but merely changes  shape of the magnitude
-response along the vertical axis.
-
-Cascading  integrators and  combs results  in the  frequency responses  in the
+Cascading integrators  and combs results  in the frequency responses  from the
 bottom plot from Figure~\ref{fig:cic:freq_responses}. The integrator's pole at
 $f = 0$ compensates for the comb  section's zero at the same location, leading
 to  a significant,  but  finite, DC  gain  of the  CIC  filter. As the  number
 of  stages is  increased,  that  gain increases  accordingly,  along with  the
-difference  between  the DC  gain  and  the filter  gain  in  the side  lobes,
-increasing attenuation of undesired signal components.
+difference between  the DC  gain and the  filter gain in  the side  lobes (the
+slope of the enveloping curve of the entire filter), increasing attenuation of
+undesired signal components.
 
 One  serious drawback  of CIC  filtes  is that  they have  no clearly  defined
-passband as such. Rather,  their freqiency response starts  dropping off right
+passband as such. Rather,  their frequency response starts  dropping off right
 as the frequency  axis goes beyond zero. This effect  (sometimes also referred
 to as \emph{passband droop}) is visible in the magnified section of the bottom
 plot in  Figure~\ref{fig:cic:freq_responses}. This means that a  CIC filter by
 itself is rarely  a viable solution, since it attenuates  any non-DC frequency
 components at least somewhat.
 
-However,  CIC filters  are  computationally extremely  efficient because  they
-require no multipliers. This makes them ideally  suited for being used at high
-sampling frequencies as an initial stage  in a chain of filters. The following
-stages can then be used to compensate for the distortion introduced by the CIC
-filter. For those stages,  FIR filtes are well-suited, since  those stages run
-at much  lower sampling rates. The fact  that a FIR filter  performs many more
-compuations per  sampling cycle than  a CIC filter  is therefore no  longer as
-important  for overall  resource usage; the  FIR  filter has  many more  clock
-cycles available for computing each output value than the CIC filter.
+Despite  this drawback,  CIC filters  are well-suited  to large  reductions in
+sampling rates because they are  very economical in their resource usage. This
+economy is based on six primary factors (see also \cite{1163535}):
+\begin{itemize}\tightlist
+    \item
+        The filter requires no multipliers.
+    \item
+        There are no filter coefficients which might require storage.
+    \item
+        The amount  of storage needed  for intermediate results is  reduced by
+        running the comb stages at a reduced sampling rate. A conventional FIR
+        filter topology implementing the  same transfer function would require
+        more resources for storing its intermediate results because the entire
+        filter would run at the incoming sampling rate.
+    \item
+        The  topology of  the  FIR filter  has a  high  degree of  regularity;
+        consisting of two  primary building blocks. This lends  itself well to
+        optimization.
+    \item
+        The control logic can be kept simple.
+    \item
+        The  same  filter  design can  be  used  for  a  large range  of  rate
+        change  factors $R$,  requiring  minimal  adaption in  circuitry. This
+        effect   can  be   seen   in  the   frequency   response  plotted   in
+        Figure~\ref{fig:cic:freq_responses:R3vsR9}.    Despite  the   filter's
+        structure  not having  been modified,  the frequency  response changes
+        signifiantly  merely by  adjusting $R$. This  can also  be deduced  by
+        looking  at  Equation~\ref{eq:cic:comb_stage}. The  order  of  a  comb
+        stage, and therefore  the number and placements of  its nulls, depends
+        on the rate change factor.
+        A  higher rate change factor increases the
+        number of lobes in the CIC filter, as well as its DC gain.
+\end{itemize}
+
+The frugality of the filter's resource usage makes it ideally suited for being
+used at high sampling  frequencies as an initial stage in  a chain of filters,
+despite the passband droop in its frequency response.
+
+The  following stages  can  then  be used  to  compensate  for the  distortion
+introduced by  the CIC filter. For  those stages, FIR filtes  are well-suited,
+since  they run  at much  lower  sampling rates. The  fact that  a FIR  filter
+performs many more (and more difficult) computations per sampling cycle than a
+CIC filter is therefore no longer as important for overall resource usage; the
+FIR filter  has many  more clock  cycles available  for computing  each output
+value than the CIC filter.
 
 \begin{figure}
     \centering
@@ -559,10 +601,20 @@ cycles available for computing each output value than the CIC filter.
         \label{fig:cic:freq_responses}
 \end{figure}
 
+\begin{figure}
+    \centering
+        \input{images/cic/cicFreqResponsesRvar.tikz}
+        \caption[Frequency Responses: CIC w/ $R=9$ vs. $R=3$]{%
+            Frequency  responses  for  two  CIC filters  with  different  rate
+            changes, but otherwise identical form.%
+        }
+        \label{fig:cic:freq_responses:R3vsR9}
+\end{figure}
+
 As  can  be  seen in  Equation~\ref{eq:cic:integrator_stage},  the  integrator
-stages have  unit gain. In  the case  of CIC decimators,  this will  result in
-register overflow in the integrator stages. This is without harm as long as
-two conditions are fulfilled:
+stages have  unity feedback coefficients. In  the case of CIC  decimators, the
+registers of  the integrators  will therefore  suffer from  register overflow.
+This is without harm as long as two conditions are fulfilled:
 \begin{itemize}\tightlist
     \item
         The filter's  implementation is based  on two's complement  or another

@@ -1,0 +1,32 @@
+\newcommand*\freqzFileCICA{images/cic/cic3.csv}
+\newcommand*\freqzFileCICB{images/cic/cic33.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileCICA}\freqzTableCICA
+\pgfplotstableread[col sep=comma]{\freqzFileCICB}\freqzTableCICB
+\begin{tikzpicture}
+     \pgfplotsset{every axis/.style={
+            height=50mm,
+            width=\textwidth,
+            grid=none,
+        },
+        every axis legend/.append style={
+            at={(0.025,0.05)},  % if attached to bottom plot
+            anchor=south west,
+            cells={anchor=east},
+        },
+    }
+    \begin{axis}[
+            at = {(0,0)},
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            ylabel=$\left|H\right| (\si{\dB})$,
+            xmin=0,
+            xmax=1,
+            xtick={0,0.5,1},
+            ytick={60,0,-60,-120},
+            xticklabels={0,$f_s/4$,$f_s/2$},
+        ]
+        \addplot[dv+5,-] table[x=w, y=abs(H)] \freqzTableCICA;
+        \addplot[dv-5,-] table[x=w, y=abs(H)] \freqzTableCICB;
+        \legend{$R=3$, $R=9$};
+    \end{axis}
+\end{tikzpicture}

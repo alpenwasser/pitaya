@@ -27,12 +27,24 @@ Acomb3 = conv(conv(A,A),A);
 Bcomb3 = 1;
 % fvtool(Acomb3,Bcomb3);
 
+%% Comb of order 3 for rate reduction 3
+A = [1 0 0 -1];
+B = 1;
+
+Acomb1 = A;
+Bcomb1 = B;
+Acomb33 = conv(conv(A,A),A);
+Bcomb33 = 1;
+% fvtool(Acomb33,Bcomb33,Acomb3,Bcomb3);
+
 %% Cascade
 Acic1 = conv(Aint1,Acomb1);
 Bcic1 = conv(Bint1,Bcomb1);
 Acic3 = conv(Aint3,Acomb3);
 Bcic3 = conv(Bint3,Bcomb3);
-% fvtool(Acic3,Bcic3);
+Acic33 = conv(Aint3,Acomb33);
+Bcic33 = conv(Bint3,Bcomb33);
+% fvtool(Acic3,Bcic3,Acic33,Bcic33);
 
 %% Store to Disk
 [H,w] = freqz(Acomb1,Bcomb1);
@@ -111,6 +123,21 @@ dlmwrite(...
 
 [H,w] = freqz(Acic3,Bcic3);
 plotFile = 'cic3.csv';
+fh = fopen(plotFile,'w'); 
+if fh ~= -1
+    fprintf(fh, '%s,%s\n', 'abs(H)', 'w');
+    fclose(fh);
+end
+dlmwrite(...
+    plotFile,...
+    [abs(H) w],...
+    '-append',...
+    'delimiter', ',',...
+    'newline', 'unix'...
+);
+
+[H,w] = freqz(Acic33,Bcic33);
+plotFile = 'cic33.csv';
 fh = fopen(plotFile,'w'); 
 if fh ~= -1
     fprintf(fh, '%s,%s\n', 'abs(H)', 'w');
