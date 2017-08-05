@@ -1,0 +1,29 @@
+\begin{tikzpicture}
+    \node (b1) at   (0:3) {\texttt{010}};
+    \node (b2) at  (45:3) {\texttt{001}};
+    \node (b3) at  (90:3) {\texttt{000}};
+    \node (b4) at (135:3) {\texttt{111}};
+    \node (b5) at (180:3) {\texttt{110}};
+    \node (b6) at (225:3) {\texttt{101}};
+    \node (b7) at (270:3) {\texttt{100}};
+    \node (b8) at (315:3) {\texttt{011}};
+
+    \node (d1) at   (0:4) {$2$};
+    \node (d2) at  (45:4) {$1$};
+    \node (d3) at  (90:4) {$0$};
+    \node (d4) at (135:4) {$-1$};
+    \node (d5) at (180:4) {$-2$};
+    \node (d6) at (225:4) {$-3$};
+    \node (d7) at (270:4) {$-4$};
+    \node (d8) at (315:4) {$3$};
+
+    \draw[thick,dv-5,-latex] (b6) -- (b7);
+    \draw[thick,dv-5,-latex] (b7) -- (b8);
+    \draw[thick,dv-5,-latex] (b8) -- (b1);
+
+    \draw[thick,dv-5,-latex] (0:1.5) arc[start angle=0, end angle=120, radius=1.5cm];
+    \draw[thick,ct3,-latex] (300:1.0) arc[start angle=300, end angle=180, radius=1.0cm];
+
+    \node at  (60:1.25) {\color{dv-5}$-$};
+    \node at (240:0.75) {\color{ct3}$+$};
+\end{tikzpicture}

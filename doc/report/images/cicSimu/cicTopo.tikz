@@ -1,0 +1,41 @@
+% https://tex.stackexchange.com/a/183092/131649
+\begin{tikzpicture}
+    \coordinate (in)  at (0,0);
+    \coordinate (out) at (8,0);
+
+    % branching coordinates
+    \coordinate (b1) at (3,0);
+    \coordinate (b2) at (5,0);
+
+    % Delay elements
+    \node[draw] (d1) at  (2,1) {$z^{-1}$};
+    \node[draw] (d2) at  (6,1) {$z^{-1}$};
+
+    % Downsampler
+    \node[draw] (r1) at (4,0) {$2\downarrow$};
+
+    % Adders
+    \node[draw,circle, inner sep=0.3mm] (a1) at  (1,0) {$+$};
+    \node[draw,circle, inner sep=0.3mm] (a2) at  (7,0) {$+$};
+
+    % subtractors
+    \node[above right=0.2ex] (s1) at (a2) {$-$};
+
+    % Lines
+    \draw[-latex] (in) -- (a1);
+    \draw[-latex] (a1) -- (r1);
+    \draw[-latex] (r1) -- (a2);
+    \draw[-latex] (a2) -- (out);
+    \draw[-latex] (b1) |- (d1);
+    \draw[-latex] (b2) |- (d2);
+    \draw[-latex] (d1) -| (a1);
+    \draw[-latex] (d2) -| (a2);
+
+    % Annotations
+    \node[below left =2ex] at (a1) {$f_s$};
+    \node[below right=2ex] at (a2) {$f_s/2$};
+    \node[anchor=east] at (in) {$IN$};
+    \node[anchor=west] at (out) {$OUT$};
+    \node[anchor=north,below=2ex] at (b1) {$OUT_{INT}$};
+    \node[anchor=north,below=2ex] at (b2) {$IN_{COMB}$};
+\end{tikzpicture}

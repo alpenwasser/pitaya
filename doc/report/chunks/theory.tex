@@ -436,9 +436,7 @@ adders, same as for IIR filters.
 
 CIC  filters  were  first  introduced  in 1981  in  \cite{1163535}  by  Eugene
 B. Hogenauer. They can be implemented both as decimation filters (reduction in
-sampling rate)  and interpolation filters (increase  in sampling rate). Before
-delving into the mathematics of the CIC filter, some of its general properties
-are first presented in graphical form.
+sampling rate)  and interpolation filters (increase  in sampling rate).
 
 A   CIC  filter   is  a   cascade  of   integrator  and   comb  stages,   with
 either   a   sampling    rate   compressor   (in   case    of   a   decimator)
@@ -448,6 +446,35 @@ stage   is   shown    in   Figure~\ref{fig:filtertopologies:integrator},   and
 Figure~\ref{fig:filtertopologies:comb}   shows   a   single  comb   stage   in
 feedforward form. Figure~\ref{fig:filtertopologies:cic}  shows a  complete CIC
 filter with three stages.
+
+The integrator stages have a transfer function of
+\begin{equation}
+    \label{eq:cic:integrator_stage}
+    H_I(z) = \frac{1}{1-z^{-1}}
+\end{equation}
+
+The comb stages run at the reduced frequency of $f_s/R$ and have the transfer
+function
+\begin{equation}
+    \label{eq:cic:comb_stage}
+    H_C(z) = 1 - z^{-RM}
+\end{equation}
+where  $M$  is the  \emph{differential  delay},  one  of the  filter's  design
+parameters.
+
+The  transfer function  of  a  complete CIC  filter  (referenced  to the  high
+sampling rate  $f_s$) consisting of $N$  stages is deduced by  multiplying the
+transfer functions of the $N$ cascaded integrator and comb stages, yielding
+\begin{equation}
+    \label{eq:cic:complete}
+    H_{CIC}(z) = H_I^N(z) \cdot H_C^N(z) = 
+    \frac{\left(1 - z^{-RM}\right)^N}{\left( 1 - z^{-1} \right)^N} =
+    \left[\sum_{k = 0}^{RM-1} z^{-k}\right]^N
+\end{equation}
+
+Looking at  the last form  of the CIC  filter's transfer function,  it becomes
+evident that it is in essence a FIR filter with unitary coefficients.
+
 
 The frequency response characteristics of a CIC filter can be deduced by first
 examining the frequency responses of the  integrator and the comb. As shown in
@@ -483,13 +510,13 @@ components at least somewhat.
 
 However,  CIC filters  are  computationally extremely  efficient because  they
 require no multipliers. This makes them ideally  suited for being used at high
-sampling frequencies as an innitial stage in a chain of filters. The following
+sampling frequencies as an initial stage  in a chain of filters. The following
 stages can then be used to compensate for the distortion introduced by the CIC
-filter. For those  stages, conventional  FIR filtes can  be used,  since those
-stages  run at  much lower  sampling  rates and  the  fact that  a FIR  filter
-performs many  more compuations  per sampling  cycle than a  CIC filter  is no
-longer as important  for overall resource usage. The FIR filter  has many more
-clock cycles available for computing each output value than the CIC filter.
+filter. For those stages,  FIR filtes are well-suited, since  those stages run
+at much  lower sampling rates. The fact  that a FIR filter  performs many more
+compuations per  sampling cycle than  a CIC filter  is therefore no  longer as
+important  for overall  resource usage; the  FIR  filter has  many more  clock
+cycles available for computing each output value than the CIC filter.
 
 \begin{figure}
     \centering
@@ -511,7 +538,7 @@ clock cycles available for computing each output value than the CIC filter.
     \centering
     \input{images/filtertopologies/cic.tikz}
     \caption[CIC Filter Topology]
-        {CIC filter topology with three integrator and comb stages}
+        {CIC decimation filter topology with three integrator and comb stages}
     \label{fig:filtertopologies:cic}
 \end{figure}
 
@@ -531,6 +558,24 @@ clock cycles available for computing each output value than the CIC filter.
         }
         \label{fig:cic:freq_responses}
 \end{figure}
+
+As  can  be  seen in  Equation~\ref{eq:cic:integrator_stage},  the  integrator
+stages have  unit gain. In  the case  of CIC decimators,  this will  result in
+register overflow in the integrator stages. This is without harm as long as
+two conditions are fulfilled:
+\begin{itemize}\tightlist
+    \item
+        The filter's  implementation is based  on two's complement  or another
+        number system allowing wrap-around between  its most positive and most
+        negative numbers.
+    \item
+        The maximum  magnitude which is expected  at the output is  within the
+        range of that number system.
+\end{itemize}
+
+A numerical  example to demonstrate this  effect and better explain  the inner
+workings  of a  CIC filter  can be  found in  Appendix~\ref{sec:app:cic_simu},
+starting on page~\pageref{sec:app:cic_simu}.
 
 Mathematical description,  design parameters, folding back of nulls, register
 growth, truncation and rounding, two's complement, \ldots

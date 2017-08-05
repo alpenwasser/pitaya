@@ -1,0 +1,31 @@
+\newcommand*\freqzFileInt{images/cicSimu/cic1.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileInt}\freqzTableInt
+\begin{tikzpicture}[
+        spy using outlines={magnification=4, connect spies}
+    ]
+     \pgfplotsset{every axis/.style={
+            height=50mm,
+            width=\textwidth,
+            grid=none,
+        },
+        every axis legend/.append style={
+            at={(1,-0.25)},  % if attached to bottom plot
+            anchor=north east,
+            cells={anchor=east},
+        },
+    }
+    \begin{axis}[
+            title=Integrator Frequency Responses,
+            at = {(0,0)},
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            ylabel=$\left|H\right| (\si{\dB})$,
+            xmin=0,
+            xmax=1,
+            xtick={0,0.5,1},
+            ytick={6,0,-20,-40},
+            xticklabels={0,$f_s/4$,$f_s/2$},
+        ]
+        \addplot[dv+5,-] table[x=w, y=abs(H)] \freqzTableInt;
+    \end{axis}
+\end{tikzpicture}
