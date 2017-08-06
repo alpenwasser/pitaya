@@ -1,1 +1,0 @@
-    user:> if [ -f "${myfile}" ];then echo "${myfile} exists!"

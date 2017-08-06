@@ -18,12 +18,13 @@
         },
     }
     \begin{axis}[
-            title=Filter Output,
+            title=Integrator Output,
             at = {(0,0)},
-            ytick={0,1,2},
-            ymin=0,
+            ymin=-5,
+            ymax=4,
         ]
-        \addplot[ycomb,mark=*,dv+5,-] table[x=t,y=y] \freqzTableIntA;
+        \addplot[ycomb,mark=*,dv+5,-] table[x=t,y=y] \freqzTableIntC;
+        \draw[gray] (-1,0) -- (15,0);
     \end{axis}
 
     \begin{axis}[
@@ -37,12 +38,11 @@
     \end{axis}
 
     \begin{axis}[
-            title=Integrator Output,
+            title=Filter Output,
             at = {(0,-110mm)},
-            ymin=-5,
-            ymax=4,
+            ytick={0,1,2},
+            ymin=0,
         ]
-        \addplot[ycomb,mark=*,dv+5,-] table[x=t,y=y] \freqzTableIntC;
-        \draw[gray] (-1,0) -- (15,0);
+        \addplot[ycomb,mark=*,dv+5,-] table[x=t,y=y] \freqzTableIntA;
     \end{axis}
 \end{tikzpicture}

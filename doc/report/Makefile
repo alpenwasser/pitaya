@@ -110,15 +110,21 @@ tidy:
 	@rm -f $(OUT_DIR)/$(DOCUMENT).lot
 	@rm -f $(OUT_DIR)/$(DOCUMENT).makefile
 	@rm -f $(OUT_DIR)/$(DOCUMENT).mw
+	@rm -f $(DOCUMENT).mw
+	@rm -f $(DOCUMENT).listing
 	@rm -f $(OUT_DIR)/$(DOCUMENT).out
 	@rm -f $(OUT_DIR)/$(DOCUMENT).toc
 	@rm -f $(OUT_DIR)/$(DOCUMENT).ind
 	@rm -f $(OUT_DIR)/$(DOCUMENT).ilg
 	@rm -f $(OUT_DIR)/$(DOCUMENT).idx
 	@rm -f $(OUT_DIR)/$(DOCUMENT).dep
+	@rm -f $(DOCUMENT).dep
 
 # Clean out all the files and symlinks.
 clean:
+	@rm -f $(DOCUMENT).mw
+	@rm -f $(DOCUMENT).dep
+	@rm -f $(DOCUMENT).listing
 	@mv $(OUT_DIR)/$(DOCUMENT).ctr ./
 	@rm -rf $(OUT_DIR)/*
 	@mv $(DOCUMENT).ctr $(OUT_DIR)/

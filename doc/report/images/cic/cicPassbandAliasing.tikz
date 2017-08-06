@@ -1,0 +1,106 @@
+\newcommand*\freqzFileCICA{images/cic/pbAliasing914Complete.csv}
+\newcommand*\freqzFileCICB{images/cic/pbAliasing914Null1Left.csv}
+\newcommand*\freqzFileCICC{images/cic/pbAliasing914Null1Right.csv}
+\newcommand*\freqzFileCICD{images/cic/pbAliasing914Null2Left.csv}
+\newcommand*\freqzFileCICE{images/cic/pbAliasing914Null2Right.csv}
+\newcommand*\freqzFileCICF{images/cic/pbAliasing914Null3Left.csv}
+\newcommand*\freqzFileCICG{images/cic/pbAliasing914Null3Right.csv}
+\newcommand*\freqzFileCICH{images/cic/pbAliasing914Null4Left.csv}
+\newcommand*\freqzFileCICI{images/cic/pbAliasing914Null4Right.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileCICA}\freqzTableCICA
+\pgfplotstableread[col sep=comma]{\freqzFileCICB}\freqzTableCICB
+\pgfplotstableread[col sep=comma]{\freqzFileCICC}\freqzTableCICC
+\pgfplotstableread[col sep=comma]{\freqzFileCICD}\freqzTableCICD
+\pgfplotstableread[col sep=comma]{\freqzFileCICE}\freqzTableCICE
+\pgfplotstableread[col sep=comma]{\freqzFileCICF}\freqzTableCICF
+\pgfplotstableread[col sep=comma]{\freqzFileCICG}\freqzTableCICG
+\pgfplotstableread[col sep=comma]{\freqzFileCICH}\freqzTableCICH
+\pgfplotstableread[col sep=comma]{\freqzFileCICI}\freqzTableCICI
+\begin{tikzpicture}[
+        spy using outlines={magnification=4, connect spies}
+    ]
+     \pgfplotsset{every axis/.style={
+            height=100mm,
+            width=\textwidth,
+            grid=none,
+        },
+        every axis legend/.append style={
+            at={(0,-0.15)},
+            anchor=north west,
+            cells={anchor=west},
+        },
+    }
+    \begin{axis}[
+            at = {(0,0)},
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            ylabel=$\left|H\right| (\si{\dB})$,
+            xmin=0.001,
+            xmax=1,
+            ymin=-250,
+            ymax=100,
+            xtick={
+                0,
+                0.222222,
+                0.444444,
+                0.666666,
+                0.888888,
+                1%
+            },
+            xticklabels={%
+                $0$,
+                $1 \cdot f_\mathrm{s,low}$,
+                $2 \cdot f_\mathrm{s,low}$,
+                $3 \cdot f_\mathrm{s,low}$,
+                $4 \cdot f_\mathrm{s,low}$,
+                $f_\mathrm{s,high}/2$%
+            },
+        ]
+        \fill[q0,opacity=0.20] ($(0.2222*0.75,100)$) rectangle ($(0.2222*1.00,-250)$);
+        \fill[q1,opacity=0.20] ($(0.2222*1.00,100)$) rectangle ($(0.2222*1.25,-250)$);
+        \fill[q2,opacity=0.20] ($(0.4444-0.2222*0.25,100)$) rectangle ($(0.4444+0.2222*0.00,-250)$);
+        \fill[q3,opacity=0.20] ($(0.4444-0.2222*0.00,100)$) rectangle ($(0.4444+0.2222*0.25,-250)$);
+        \fill[q4,opacity=0.20] ($(0.6666-0.2222*0.25,100)$) rectangle ($(0.6666+0.2222*0.00,-250)$);
+        \fill[q5,opacity=0.20] ($(0.6666-0.2222*0.00,100)$) rectangle ($(0.6666+0.2222*0.25,-250)$);
+        \fill[q6,opacity=0.20] ($(0.8888-0.2222*0.25,100)$) rectangle ($(0.8888+0.2222*0.00,-250)$);
+        \fill[q7,opacity=0.20] ($(0.8888-0.2222*0.00,100)$) rectangle ($(0.8888+0.2222*0.25,-250)$);
+
+        \fill[br1,opacity=0.50] (0,100) rectangle ($(0.2222*0.25,-250)$);
+        \node[rotate=90,anchor=east] at ($(0.2222*0.25*0.5,-100)$) {%
+            \footnotesize
+            Passband: $f_c = 0.25 \cdot f_\mathrm{s,low}$
+        };
+
+        \draw ($(0,76.31416-41.8)$) -- ($(0.2222*0.425,76.31416-41.8)$);
+        \draw (0,76.31416) -- ($(0.2222*0.425,76.31416)$);
+        \draw[-latex] ($(0.2222*0.375,76.31416+5)$) -- ($(0.2222*0.375,76.31416)$);
+        \draw ($(0.2222*0.375,76.31416)$) -- ($(0.2222*0.375,76.31416-41.8)$);
+        \draw[-latex] ($(0.2222*0.375,-50)$) -- ($(0.2222*0.375,76.31416-41.8)$);
+        \node[rotate=90,anchor=north west] at ($(0.2222*0.375,-50)$) {\footnotesize\SI{-41.8}{\dB}};
+
+        \addplot[thick,da1,-] table[x=w, y=abs(H)] \freqzTableCICA;
+        \addplot[thick,q0,-] table[x=w, y=abs(H)] \freqzTableCICB;
+        \addplot[thick,q1,-] table[x=w, y=abs(H)] \freqzTableCICC;
+        \addplot[thick,q2,-] table[x=w, y=abs(H)] \freqzTableCICD;
+        \addplot[thick,q3,-] table[x=w, y=abs(H)] \freqzTableCICE;
+        \addplot[thick,q4,-] table[x=w, y=abs(H)] \freqzTableCICF;
+        \addplot[thick,q5,-] table[x=w, y=abs(H)] \freqzTableCICG;
+        \addplot[thick,q6,-] table[x=w, y=abs(H)] \freqzTableCICH;
+        \addplot[thick,q7,-] table[x=w, y=abs(H)] \freqzTableCICH;
+
+        \legend{%
+            {},
+            Left side of first null (flipped),
+            Right side of first null (not flipped),
+            Left side of second null (flipped),
+            Right side of second null (not flipped),
+            Left side of third null (flipped),
+            Right side of third null (not flipped),
+            Left side of fourth null (flipped),
+            Right side of fourth null (not flipped),
+        };
+        %\draw (0,-3.65)   -- (0.085,-3.65);
+        %\draw (0.02777,-3) -- (0.02777,-17);
+        %\draw (0.05555,-3) -- (0.05555,-17);
+    \end{axis}
+\end{tikzpicture}

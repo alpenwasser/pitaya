@@ -1,9 +1,15 @@
-\newcommand*\freqzFileIntB{images/cic/integrator3.csv}
-\newcommand*\freqzFileCombB{images/cic/comb913.csv}
+\newcommand*\freqzFileCICA{images/cic/cic313.csv}
 \newcommand*\freqzFileCICB{images/cic/cic913.csv}
-\pgfplotstableread[col sep=comma]{\freqzFileIntB}\freqzTableIntB
-\pgfplotstableread[col sep=comma]{\freqzFileCombB}\freqzTableCombB
+\newcommand*\freqzFileCICC{images/cic/cic911.csv}
+\newcommand*\freqzFileCICD{images/cic/cic921.csv}
+\newcommand*\freqzFileCICE{images/cic/cic911.csv}
+\newcommand*\freqzFileCICF{images/cic/cic913.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileCICA}\freqzTableCICA
 \pgfplotstableread[col sep=comma]{\freqzFileCICB}\freqzTableCICB
+\pgfplotstableread[col sep=comma]{\freqzFileCICC}\freqzTableCICC
+\pgfplotstableread[col sep=comma]{\freqzFileCICD}\freqzTableCICD
+\pgfplotstableread[col sep=comma]{\freqzFileCICE}\freqzTableCICE
+\pgfplotstableread[col sep=comma]{\freqzFileCICF}\freqzTableCICF
 \begin{tikzpicture}[
         spy using outlines={magnification=4, connect spies}
     ]
@@ -13,13 +19,13 @@
             grid=none,
         },
         every axis legend/.append style={
-            at={(1,-0.25)},  % if attached to bottom plot
-            anchor=north east,
+            at={(0.02,0.05)},  % if attached to bottom plot
+            anchor=south west,
             cells={anchor=east},
         },
     }
     \begin{axis}[
-            title=Integrator,
+            title=Influence of Rate Change $R$,
             at = {(0,0)},
             y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
             x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
@@ -27,14 +33,17 @@
             xmin=0,
             xmax=1,
             xtick={0,0.5,1},
-            ytick={120,80,40,0},
+            ytick={60,0,-60,-120},
             xticklabels={0,$f_s/4$,$f_s/2$},
         ]
-        \addplot[dv-5,-] table[x=w, y=abs(H)] \freqzTableIntB;
+        \addplot[dv+5,-] table[x=w, y=abs(H)] \freqzTableCICA;
+        \addplot[dv-5,-] table[x=w, y=abs(H)] \freqzTableCICB;
+
+        \legend{$R = 3$, $R = 9$};
     \end{axis}
 
     \begin{axis}[
-            title=Comb Filter,
+            title=Influence of Differential Delay $M$,
             at = {(0,-50mm)},
             y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
             x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
@@ -42,14 +51,17 @@
             xmin=0,
             xmax=1,
             xtick={0,0.5,1},
-            ytick={0,-60,-120},
+            ytick={20,0,-20,-40},
             xticklabels={0,$f_s/4$,$f_s/2$},
         ]
-        \addplot[dv-5,-] table[x=w, y=abs(H)] \freqzTableCombB;
+        \addplot[dv+5,-] table[x=w, y=abs(H)] \freqzTableCICC;
+        \addplot[dv-5,-] table[x=w, y=abs(H)] \freqzTableCICD;
+
+        \legend{$M = 1$, $M = 2$};
     \end{axis}
 
     \begin{axis}[
-            title=CIC Filter,
+            title=Influence of Number of Stages $N$,
             at = {(0,-100mm)},
             y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
             x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
@@ -60,12 +72,9 @@
             ytick={60,0,-60,-120},
             xticklabels={0,$f_s/4$,$f_s/2$},
         ]
-        \addplot[dv-5,-] table[x=w, y=abs(H)] \freqzTableCICB;
+        \addplot[dv+5,-] table[x=w, y=abs(H)] \freqzTableCICE;
+        \addplot[dv-5,-] table[x=w, y=abs(H)] \freqzTableCICF;
 
-        \coordinate (spypoint)     at (0.031,60);
-        \coordinate (magnifyglass) at (rel axis cs:0.123,-0.40);
+        \legend{$N = 1$, $N = 3$};
     \end{axis}
-
-    \spy [br0, width=3cm,height=1cm] 
-        on (spypoint) in node[fill=white] at (magnifyglass);
 \end{tikzpicture}

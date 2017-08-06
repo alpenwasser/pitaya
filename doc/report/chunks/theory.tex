@@ -438,6 +438,9 @@ CIC  filters  were  first  introduced  in 1981  in  \cite{1163535}  by  Eugene
 B. Hogenauer. They can be implemented both as decimation filters (reduction in
 sampling rate)  and interpolation filters (increase  in sampling rate).
 
+\subsubsection{General Description}
+\label{subsubsec:cic:general_description}
+
 A   CIC  filter   is  a   cascade  of   integrator  and   comb  stages,   with
 either   a   sampling    rate   compressor   (in   case    of   a   decimator)
 or   a    sampling   rate    expander   (in    case   of    an   interpolator)
@@ -446,6 +449,30 @@ stage   is   shown    in   Figure~\ref{fig:filtertopologies:integrator},   and
 Figure~\ref{fig:filtertopologies:comb}   shows   a   single  comb   stage   in
 feedforward form. Figure~\ref{fig:filtertopologies:cic}  shows a  complete CIC
 filter with three stages.
+
+\begin{figure}
+    \centering
+    \begin{minipage}[t][][b]{0.45\textwidth}
+        \centering
+        \input{images/filtertopologies/integrator.tikz}
+        \caption[Integrator Stage]{A single integrator stage}
+        \label{fig:filtertopologies:integrator}
+    \end{minipage}
+    \begin{minipage}[t][][b]{0.45\textwidth}
+        \centering
+        \input{images/filtertopologies/comb.tikz}
+        \caption[Comb Stage]{A single comb stage in feedforward form}
+        \label{fig:filtertopologies:comb}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \input{images/filtertopologies/cic.tikz}
+    \caption[CIC Filter Topology]
+        {CIC decimation filter topology with three integrator and comb stages}
+    \label{fig:filtertopologies:cic}
+\end{figure}
 
 The integrator stages have a transfer function of
 \begin{equation}
@@ -475,61 +502,29 @@ transfer functions of the $N$ cascaded integrator and comb stages, yielding
 Looking at  the last form  of the CIC  filter's transfer function,  it becomes
 evident  that it  is in  essence a  FIR filter  with unitary  coefficients. Of
 particular note is the fact that this is so despite each stage having feedback
-paths and the integrator stages having poles  at $f = 0$ (i.e. the integrators
-by themselves  are not in  fact BIBO stable,  even though the  complete system
-is). The  fact that  the  resulting filter  has no  poles  can be  intuitively
-understood by  looking at the frequency  responses of the integrator  and comb
-stages, and finally their cascade.
+or feedforward paths and  the integrator stages having poles at  $f = 0$ (i.e.
+the integrators  by themselves are  not in fact  BIBO stable, even  though the
+complete  system  is). The  fact  that  the  resulting  filter  has  no  poles
+can  be  intuitively   understood  by  looking  at   the  frequency  responses
+of  the   integrator  and  comb   stages,  and  finally  their   cascade  (see
+Section~\ref{subsubsec:cic:frequency_characteristics}).
 
-As  shown  in  the  topmost plot  in  Figure~\ref{fig:cic:freq_responses},  an
-integrator is in essence a lowpass filter, with a pole at $f = 0$. As multiple
-integrators are cascaded, the slope of the frequency response increases, which
-can be seen when comparing the single-stage integrator to the cascade of three
-integrators in the plot.
-
-A comb  filter is a  filter which  strongly attenuates one  specific frequency
-component  along  with  its  multiples  (in a  notch  comb  filter;  there  is
-also  the  inverse  concept  of  a  peak filter  which  only  lets  a  certain
-frequency  and multiples  of  it pass). As  can  be seen  in  the middle  plot
-of  Figure~\ref{fig:cic:freq_responses}, cascading  multiple comb  stages does
-not  change the  location  of the  zeroes,  but merely  changes  shape of  the
-magnitude  response along  the vertical  axis. It  is also  evident that  comb
-filters  have  no  poles  (a  fact  which can  also  be  easily  deduced  from
-Equation~\ref{eq:cic:comb_stage}).
-
-Cascading integrators  and combs results  in the frequency responses  from the
-bottom plot from Figure~\ref{fig:cic:freq_responses}. The integrator's pole at
-$f = 0$ compensates for the comb  section's zero at the same location, leading
-to  a significant,  but  finite, DC  gain  of the  CIC  filter. As the  number
-of  stages is  increased,  that  gain increases  accordingly,  along with  the
-difference between  the DC  gain and the  filter gain in  the side  lobes (the
-slope of the enveloping curve of the entire filter), increasing attenuation of
-undesired signal components.
-
-One  serious drawback  of CIC  filtes  is that  they have  no clearly  defined
-passband as such. Rather,  their frequency response starts  dropping off right
-as the frequency  axis goes beyond zero. This effect  (sometimes also referred
-to as \emph{passband droop}) is visible in the magnified section of the bottom
-plot in  Figure~\ref{fig:cic:freq_responses}. This means that a  CIC filter by
-itself is rarely  a viable solution, since it attenuates  any non-DC frequency
-components at least somewhat.
-
-Despite  this drawback,  CIC filters  are well-suited  to large  reductions in
-sampling rates because they are  very economical in their resource usage. This
-economy is based on six primary factors (see also \cite{1163535}):
+CIC filters are well-suited to large reductions in sampling rates because they
+are very  economical in  their resource  usage. This economy  is based  on six
+primary factors (see also \cite{1163535}):
 \begin{itemize}\tightlist
     \item
         The filter requires no multipliers.
     \item
-        There are no filter coefficients which might require storage.
+        There are no filter coefficients to store.
     \item
         The amount  of storage needed  for intermediate results is  reduced by
-        running the comb stages at a reduced sampling rate. A conventional FIR
+        running the comb  stages at a lower sampling  rate. A conventional FIR
         filter topology implementing the  same transfer function would require
         more resources for storing its intermediate results because the entire
         filter would run at the incoming sampling rate.
     \item
-        The  topology of  the  FIR filter  has a  high  degree of  regularity;
+        The  topology  of  the  filter   has  a  high  degree  of  regularity;
         consisting of two  primary building blocks. This lends  itself well to
         optimization.
     \item
@@ -537,84 +532,33 @@ economy is based on six primary factors (see also \cite{1163535}):
     \item
         The  same  filter  design can  be  used  for  a  large range  of  rate
         change  factors $R$,  requiring  minimal  adaption in  circuitry. This
-        effect   can  be   seen   in  the   frequency   response  plotted   in
-        Figure~\ref{fig:cic:freq_responses:R3vsR9}.    Despite  the   filter's
-        structure  not having  been modified,  the frequency  response changes
-        signifiantly  merely by  adjusting $R$. This  can also  be deduced  by
-        looking  at  Equation~\ref{eq:cic:comb_stage}. The  order  of  a  comb
-        stage, and therefore  the number and placements of  its nulls, depends
-        on the rate change factor.
-        A  higher rate change factor increases the
-        number of lobes in the CIC filter, as well as its DC gain.
+        effect  can be  seen  in the  frequency response  plotted  in the  top
+        plot of  Figure~\ref{fig:cic:freq_responses:var}.
 \end{itemize}
 
-The frugality of the filter's resource usage makes it ideally suited for being
-used at high sampling  frequencies as an initial stage in  a chain of filters,
-despite the passband droop in its frequency response.
+However, CIC filters do suffer from some drawbacks. The two primary ones are:
+\begin{itemize}\tightlist
+    \item
+        For large rate  change factors $R$, the register growth  of the filter
+        can become very large. TODO: see section blabla
+    \item
+        A   CIC  filter   has   only  three   design  parameters   determining
+        its   frequency  response: Rate   change   factor  $R$,   differential
+        delay   $M$,    and   the    number   of   stages    $N$. The   amount
+        of   fine-tuning   which   can    be   conducted   on   the   filter's
+        frequency   response  is   therefore   extremely   limited  (more   in
+        Section~\ref{subsubsec:cic:frequency_characteristics}).
+\end{itemize}
 
-The  following stages  can  then  be used  to  compensate  for the  distortion
-introduced by  the CIC filter. For  those stages, FIR filtes  are well-suited,
-since  they run  at much  lower  sampling rates. The  fact that  a FIR  filter
-performs many more (and more difficult) computations per sampling cycle than a
-CIC filter is therefore no longer as important for overall resource usage; the
-FIR filter  has many  more clock  cycles available  for computing  each output
-value than the CIC filter.
-
-\begin{figure}
-    \centering
-    \begin{minipage}[t][][b]{0.45\textwidth}
-        \centering
-        \input{images/filtertopologies/integrator.tikz}
-        \caption[Integrator Stage]{A single integrator stage}
-        \label{fig:filtertopologies:integrator}
-    \end{minipage}
-    \begin{minipage}[t][][b]{0.45\textwidth}
-        \centering
-        \input{images/filtertopologies/comb.tikz}
-        \caption[Comb Stage]{A single comb stage in feedforward form}
-        \label{fig:filtertopologies:comb}
-    \end{minipage}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \input{images/filtertopologies/cic.tikz}
-    \caption[CIC Filter Topology]
-        {CIC decimation filter topology with three integrator and comb stages}
-    \label{fig:filtertopologies:cic}
-\end{figure}
-
-\begin{figure}
-    \centering
-        \input{images/cic/cicFreqResponses.tikz}
-        \caption[Frequency Responses for Integrators, Combs and CIC Filters]{%
-            Frequency    respones   for    integrators,   combs    and   their
-            combination  into CIC  filters  for  single-stage and  three-stage
-            configurations. Both  have   a  rate  change  of   \num{9}  (hence
-            \num{4.5} lobes  fitting into the  plot between $f  = 0$ and  $f =
-            f_s/2$).\protect\newline
-            Note that  the zeroes do  not change  position as comb  stages are
-            cascaded. Also, the  frequency response  of the CIC  filter starts
-            dropping off immediately, as can  be seen in the magnified section
-            of the bottom plot.%
-        }
-        \label{fig:cic:freq_responses}
-\end{figure}
-
-\begin{figure}
-    \centering
-        \input{images/cic/cicFreqResponsesRvar.tikz}
-        \caption[Frequency Responses: CIC w/ $R=9$ vs. $R=3$]{%
-            Frequency  responses  for  two  CIC filters  with  different  rate
-            changes, but otherwise identical form.%
-        }
-        \label{fig:cic:freq_responses:R3vsR9}
-\end{figure}
+% TODO:  why  is  register  growth  an   isssue  if  it  is  not  actually  an
+% issue? Clarify:   overflow   is   no   issue  for   calculating   the   comb
+% stages. However, the registers must still  be able to represent the expected
+% output.
 
 As  can  be  seen in  Equation~\ref{eq:cic:integrator_stage},  the  integrator
 stages have  unity feedback coefficients. In  the case of CIC  decimators, the
 registers of  the integrators  will therefore  suffer from  register overflow.
-This is without harm as long as two conditions are fulfilled:
+This causes no harm as long as two conditions are fulfilled:
 \begin{itemize}\tightlist
     \item
         The filter's  implementation is based  on two's complement  or another
@@ -629,8 +573,298 @@ A numerical  example to demonstrate this  effect and better explain  the inner
 workings  of a  CIC filter  can be  found in  Appendix~\ref{sec:app:cic_simu},
 starting on page~\pageref{sec:app:cic_simu}.
 
-Mathematical description,  design parameters, folding back of nulls, register
-growth, truncation and rounding, two's complement, \ldots
+
+\subsubsection{Frequency Characteristics}
+\label{subsubsec:cic:frequency_characteristics}
+
+This section presents some of  the more important frequency characteristics of
+the  CIC  filter. We  will  start  with  some  considerations  about  how  the
+integrators and comb  sections interact in the frequency domain  to create the
+CIC filter's frequency response.
+
+As  shown  in  the  topmost plot  in  Figure~\ref{fig:cic:freq_responses},  an
+integrator is  in essence a lowpass  filter, with a pole  at $f = 0$.   A comb
+filter is  a filter  which attenuates one  specific frequency  component along
+with its multiples (in a notch comb  filter; there is also the inverse concept
+of a  peak filter  which only  lets a  certain frequency  and multiples  of it
+pass).  It is also  evident that comb filters have no poles  (a fact which can
+be deduced from Equation~\ref{eq:cic:comb_stage} as well, of course).
+
+Cascading integrators and  combs results in a frequency response  like the one
+in the bottom  plot from Figure~\ref{fig:cic:freq_responses}. The integrator's
+pole at $f = 0$ compensates for  the comb section's zero at the same location,
+leading to a significant, but finite, DC gain of the CIC filter.
+
+One  drawback of  CIC filtes  is that  they have  no clearly  defined passband
+as  such. Rather,  their  frequency  response starts  dropping  off  right  as
+the  frequency axis  goes  beyond  zero. This effect  (  also  referred to  as
+\emph{passband  droop}  or  \emph{passband  attenuation}) is  visible  in  the
+magnified section  of the  bottom plot  in Figure~\ref{fig:cic:freq_responses}
+and  in   Figure~\ref{fig:cic:freq_responses:passband:attenuation}. Since  CIC
+filters lack  a clearly defined  transition band edge, defining  the frequency
+band which  is to  actually be  used, i.e.  the actual  passband, is  a design
+decision  and can  vary even  when  using the  same filter,  depending on  the
+application.
+
+The  amount  of  passband  droop  is  constant for  a  given  product  of  the
+differential  delay $M$  and  the cutoff  frequency $f_c$,  where  $f_c$ is  a
+fraction  of the  lower sampling  rate (i.e.  a fraction  of the  first lobe's
+width). Figure~\ref{fig:cic:freq_responses:passband:attenuation}    highlights
+this  effect  for  two  different  filters. Table~\ref{tab:cic:pb_attenuation}
+in                 Appendix~\ref{sec:app:cic_filter_tables}                 on
+page~\pageref{tab:cic:pb_attenuation}  contains a  list with  more values  for
+some common configurations.
+
+Because  of the  passband droop,  a CIC  filer by  itself is  rarely a  viable
+solution. Rather, it is generally deployed as  the first element in a chain of
+filters,  where the  later stages  are FIR  filters. Due to  the CIC  filter's
+frugality  in terms  of resource  usage, it  is ideally  suited as  an initial
+stage, where the most samples per time need to be processed. The fact that FIR
+filters need  to perform many  more computations  (and more complex  ones) per
+sample is then no longer as much of  a problem, since those FIR filters run at
+lower sampling frequencies and have therefore many more clock cycles available
+to compute each  output. Also, because the frequency response of  a FIR filter
+can be very finely tuned to a  desired profile, they can be used to compensate
+for the  CIC filter's passband droop;  this is generally known  as a \emph{CIC
+compensation filter}.
+TODO: altera application note
+
+Another  effect which  must be  taken  into consideration  when designing  CIC
+filters is  the amount  of aliasing  which occurs from  the stopband  into the
+passband. A  region  of  width  $f_c$  above and  below  each  $M$th  null  is
+folded  back  into  the  filter's  passband. This  effect  is  highlighted  in
+Figure~\ref{fig:cic:freq_responses:passband:aliasing}.   The  gravity of  this
+effect depends  on the  width of  the cutoff  frequency $f_c$  as well  as the
+differential delay $M$. Table  TODO in Appendix TODO contains  some values for
+common ranges for M and $f_c$.
+
+As  mentioned, the  CIC filter  has  only three  design paramterers: Its  rate
+change factor  $R$, the differential delay  $M$ and the number  of stages $N$.
+The influence  of these paramters  on the  CIC filter's frequency  response is
+portrayed in Figure~\ref{fig:cic:freq_responses:var}. Some things of note are:
+\begin{itemize}\tightlist
+    \item
+        Increasing $R$  increases the amount of  nulls as well as  the overall
+        gain of the filter.
+    \item
+        Increasing  $M$ also  increases the  number of  nulls as  well as  the
+        filter's gain.  Note that for  CIC decimators, the region around every
+        $M$th null is folded back into the passband.
+
+        For practical purposes, $M$ is usually  set to \num{1} or \num{2}, see
+        \cite{1163535}.
+    \item
+        Adding more stages leads to a  high increase in filter gain, since $N$
+        occurs in the exponent of the filter's transfer function. It does not,
+        however, change the number or placement of the nulls.
+\end{itemize}
+
+\begin{figure}
+    \centering
+        \input{images/cic/cicFreqResponses.tikz}
+        \caption[Frequency Responses for Integrators, Combs and CIC Filters]{%
+            Frequency responses  for integrators, combs and  their combination
+            into a three-stage CIC filter with a rate change factor of \num{9}
+            and a differential delay of \num{1}.\protect\newline
+            Note that \num{4.5}  lobes fit into the plot for  the comb filter,
+            due to $R\cdot M = 9$ (the order of the comb filter).
+            The enlarged  box shows  a close-up of  the CIC  filter's passband
+            droop.%
+        }
+        \label{fig:cic:freq_responses}
+\end{figure}
+
+\begin{figure}
+    \centering
+        \input{images/cic/cicFreqResponsesVar.tikz}
+        \caption[Influence of Design Parameters on Frequency Response]{%
+            The influence  of the design paramters  $R$, $M$ and $N$  on a CIC
+            filter' frequency response.\protect\newline
+            Inreaseing $R$ and $M$, respectively, leads to an increased number
+            of nulls, as visible in the top  two plots, as well as an increase
+            in the DC gain.\protect\newline
+            Adding more stages does not change  the location of the nulls, but
+            does add significant DC gain.%
+        }
+        \label{fig:cic:freq_responses:var}
+\end{figure}
+
+\begin{figure}
+    \centering
+        \input{images/cic/cicPassbandAttenuation.tikz}
+        \caption[CIC Filter: Passband and Aliasing Attenuation]{%
+            Passband  attenation for  two CIC  filters with  $R=9$, $N=4$  and
+            $M=1$ and  $M=2$, respectively. The  attenuation is  identical for
+            the bandwidth-differential delay product,  which is $1/8$ for both
+            of these configurations.\protect\newline
+            The   attenuation   is   \SI{-3.65}{\dB}  in   both   cases;   the
+            value  can  be   found  in  Table~\ref{tab:cic:pb_attenuation}  on
+            page~\pageref{tab:cic:pb_attenuation}.%
+        }
+        \label{fig:cic:freq_responses:passband:attenuation}
+\end{figure}
+
+\begin{figure}
+    \centering
+        \input{images/cic/cicPassbandAliasing.tikz}
+        \caption[CIC Filter: Passband and Aliasing Attenuation]{%
+            Passband aliasing for  a CIC filter with $R =  9$, $N=4$ and $M=1$
+            and a  cutoff frequency of $f_c  = 0.25$, referenced to  the lower
+            sampling frequency $f_\mathrm{s,low}$.\protect\newline
+            The region of  width $f_c$ around every $M$th null  is folded back
+            into the  passband. The regions beyond  that are of  course folded
+            back  as  well, but  since  we  choose  to arbitrarily  limit  the
+            passband, those regions are not of interest to us.%
+        }
+        \label{fig:cic:freq_responses:passband:aliasing}
+\end{figure}
+
+TODO: passband droop table, aliasing attenuation, 
+
+\subsubsection{Register Growth}
+\label{subsubsec:cic:register_growth}
+
+As shown by Hogenauer in~\cite{1163535}, the maximum register growth is
+\begin{equation}
+    \label{eq:cic:maximum_register_growth}
+    G_\mathrm{max} = (R\ cdot M)^N
+\end{equation}
+The most  significant bit $B_\mathrm{max}$ of  the output register as  well as
+for all  stages (both the  integrators and the comb  stages) of the  filter is
+determined to be
+\begin{equation}
+    \label{eq:cic:maximum_register_growth:bit_width}
+    B_\mathrm{max} = \lceil N \log_2 RM + B_\mathrm{in} - 1 \rceil
+\end{equation}
+where $B_\mathrm{in}$ is  the bit width of the input  register.  For high rate
+change  factors, these  values can  become very  large.  A  filter with  three
+stages, a  differential delay of  \num{1}, a rate  change of \num{128}  and an
+input  width of  \num{16}\,bits  yields  \num{36}\,bits output  width at  full
+precision.
+
+\subsubsection{Errors Due to Truncation and Rounding}
+\label{subsubsec:cic:truncation_and_rounding}
+
+In practical cases, it is often not feasible to retain full precision; in such
+situations, either truncation or rounding may  be used at each filter stage to
+reduce register widths and keep resource usage within certain limits. For this
+purpose, it is necessary  to know the system function from  the $j$th stage up
+to and including the last:
+\begin{equation}
+    \label{eq:cic:truncation_rounding:system_function}
+    H_j(z) = \left\lbrace
+        \begin{aligned}
+            H_I^{N-j+1}H_C^N                        &
+            = \sum_{k=0}^{(RM-1)N+j-1} h_j[k]z^{-k} &
+            \quad j                                 &
+            = 1, 2, \cdots, N                       \\
+            H_C^{j-N}                                          &
+            = \hspace{1.1em}\sum_{k=0}^{2N+1-j} h_j[k]z^{-kRM} &
+            \quad j                                            &
+            = N+1, \cdots, 2N
+        \end{aligned}
+    \right.
+\end{equation}
+where
+\begin{equation}
+    \label{eq:cic:truncation_rounding:system_function}
+    h_j[k] = \left\lbrace
+        \begin{aligned}
+            \sum_{l=0}^{\lfloor k/(RM) \rfloor} (-1)^l 
+            {{N}\choose{l}}{{N-j+k-RMl}\choose{k = RMl}} &
+            j                                            &
+            = 1, 2, \cdots N                             \\
+            (-1)^k{{2N+1-j}\choose{k}} &
+            j                          &
+            = N+1, \cdots 2N
+        \end{aligned}
+    \right.
+\end{equation}
+are the  impulse response  coefficients. These functions  are also  derived by
+Hogenauer in~\cite{1163535}.
+
+In a  filter with $N$ stages,  there are $2N+1$  error sources in the  case of
+limited precision: Each stage,  and the output register. Each  error source is
+presumed to have  white noise characteristics, i.e. its  noise is uncorrelated
+to its input as well as other error sources.  The error at the $j$th source is
+assumed to have a uniform probability distribution with a width of
+\begin{equation}
+    \label{eq:cic:truncation_rounding:probability_distribution}
+    E_j = \left\lbrace
+        \begin{aligned}
+            0        & \quad\text{without truncation or rounding}\\
+            2^{B_j}  & \quad\text{otherwise}
+        \end{aligned}
+    \right.
+\end{equation}
+where the number of bits discarded at the $j$th error source is $B_j$. The mean
+of this error is
+\begin{equation}
+    \label{eq:cic:truncation_rounding:mean}
+    \mu_j = \left\lbrace
+        \begin{aligned}
+            \frac{1}{2}E_j & \quad\text{for truncation}\\
+            0              & \quad\text{otherwise}
+        \end{aligned}
+    \right.
+\end{equation}
+and the variance comes out to
+\begin{equation}
+    \label{eq:cic:truncation_rounding:variance}
+    \sigma_j^2 = \frac{1}{12}E_j^2.
+\end{equation}
+
+The total mean error at the filter's output due to the $j$th stage is
+\begin{equation}
+    \label{eq:cic:truncation_rounding:total_mean_error_jth_stage}
+    \mu_{T_j} = \mu_jD_j
+\end{equation}
+where
+\begin{equation}
+    \label{eq:cic:truncation_rounding:mean_error_gain}
+    D_j = \left\lbrace
+        \begin{aligned}
+            (RM)^N         & \quad j = 1\\
+            0              & \quad j = 2, 3, \cdots, 2N\\
+            1              & \quad j = 2N+1
+        \end{aligned}
+    \right.
+\end{equation}
+is the \emph{mean  error gain} for the $j$th error  source. Note that only the
+first and the last  error source contribute to the filter's  mean error at the
+output. This is because  the sum of the impulse response  coefficients is zero
+for all other  stages. Consequently, whether one chooses to  truncate or round
+is  without  consequence except  in  the  case of  the  first  and last  error
+sources. In an analogous manner, the total variance computes to
+\begin{equation}
+    \label{eq:cic:truncation_rounding:total_variance_jth_stage}
+    \sigma_{T_j}^2 = \sigma_j^2F_j^2
+\end{equation}
+where
+\begin{equation}
+    \label{eq:cic:truncation_rounding:variance_error_gain}
+    F_j = \left\lbrace
+        \begin{aligned}
+            \sum_k h_j^2[k]  & \quad j = 1, 2, \cdots, 2N\\
+            1                & \quad j = 2N+1
+        \end{aligned}
+    \right.
+\end{equation}
+is called the \emph{variance error gain} for the $jth$ error source.
+
+We can now compute the global mean error and variance of the filter:
+\begin{align}
+    \label{eq:cic:truncation_rounding:global:mean_error}
+    \mu_T &= \sum_{j = 1}^{2N+1} \mu_{T_j} = \mu_{T_1} + \mu_{T_{2N+1}}\\
+    \label{eq:cic:truncation_rounding:global:variance}
+    \sigma_{T}^2 &= \sum_{j=1}^{2N+1} \sigma_{T_j}
+\end{align}
+
+These equations  are used  to calculate  the properties of  the CIC  filter as
+deployed in our design. TODO: see section blabla
+
+\subsubsection{Summary}
+\label{subsubsec:cic:summary}
 
 %>>>
 %>>>

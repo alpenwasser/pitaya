@@ -1,0 +1,54 @@
+\newcommand*\freqzFileCICA{images/cic/pbattenuation914.csv}
+\newcommand*\freqzFileCICB{images/cic/pbattenuation924.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileCICA}\freqzTableCICA
+\pgfplotstableread[col sep=comma]{\freqzFileCICB}\freqzTableCICB
+\begin{tikzpicture}[
+        spy using outlines={magnification=4, connect spies}
+    ]
+     \pgfplotsset{every axis/.style={
+            height=50mm,
+            width=\textwidth,
+            grid=none,
+        },
+        %every axis legend/.append style={
+        %    at={(1,-0.25)},  % if attached to bottom plot
+        %    anchor=north east,
+        %    cells={anchor=east},
+        %},
+    }
+    \begin{axis}[
+            at = {(0,0)},
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            ylabel=$\left|H\right| (\si{\dB})$,
+            xmin=0,
+            xmax=0.12,
+            xtick={
+                0.111111,
+                0.055555,
+                0.027777,
+                0%
+            },
+            xticklabels={%
+                $\frac{f_\mathrm{s,low}}{2}$,
+                $\frac{f_\mathrm{s,low}}{4}$,
+                $\frac{f_\mathrm{s,low}}{8}$,
+                %$\frac{f_\mathrm{s,low}}{32}$,
+                0%
+            },
+            %ytick={120,80,40,0},
+            %xticklabels={0,$f_s/4$,$f_s/2$},
+            ymin=-17,
+            ymax=1,
+        ]
+        \addplot[dv-5,-] table[x=w, y=abs(H)] \freqzTableCICA;
+        \addplot[dv+5,-] table[x=w, y=abs(H)] \freqzTableCICB;
+        \legend{%
+            $M=1${,} $f_c = \frac{f_\mathrm{s,low}}{8}$,
+            $M=2${,} $f_c = \frac{f_\mathrm{s,low}}{4}$
+        };
+        \draw (0,-3.65)   -- (0.085,-3.65);
+        \draw (0.02777,-3) -- (0.02777,-17);
+        \draw (0.05555,-3) -- (0.05555,-17);
+    \end{axis}
+\end{tikzpicture}
