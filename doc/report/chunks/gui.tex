@@ -422,10 +422,45 @@ Listing \ref{lst:app_structure} shows an extract of the tree structure.
 \end{tcolorbox}
 
 All of the values that can be controlled through the GUI - and many more - are also controllable directly through the state tree.
-On application start the entire statetree is loaded. TODO: export function
+On application start the entire statetree is loaded.
 
+The structure of the application is hierarchical as depicted in TODO: ?
 
-TODO: basic structure of the application
+Scope
+    Source
+        Trace 1
+            Marker 1
+            ...
+        Trace 2
+        ...
+    ...
+...
+
+Each node has a controller which manages it's own and the lifecycles of it's children. This means that for example a source node holds all it's traces and calls Trace.draw() for each of it's children.
+A node can also have a GUI representation. The controller and the view then communicate over the state tree which holds a reference to the controller during run time but which will not be exported.
+
+Essentially controllers just contain a constructor and a draw() method. The draw() method will always be called by the controllers parent draw() method and will be passed the canvas o draw onto.
+Each draw call is autonomous and guaranteed not being influenced by it's caller.
+
+\subsubsection*{Oscilloscope}
+
+The oscilloscope prototype is the controller for exactly one source. It is responsible for handling all mouse event and react accordingly, such as moving the trigger level or zooming.
+the draw controller also calls all the trace draw controllers as the source needs no draw controller of it's own.
+
+\subsubsection*{Source}
+
+The source manages all calls from and to the server. It contains a lot of helper calls to set a trigger or issue a new frame.
+It also contains the important callbacks to send and receive data from the server.
+The source stores all received frames on itself which then, later in the call chain, will be copied and worked on by the trace controller.
+Each frame received will always be overridden by the next one, ensuring no memory leaks and current data.
+
+\subsubsection*{Trace}
+
+Whilst the oscilloscpe controller and source controller are rather like helper classes, the trace controller is where the magic happens.
+The trace controller can be managing an FFT or a normal Timetrace. This could be extensible to general Math traces e.g. subtracting two differential pair traces for noise cancelling in the future.
+Each trace calculates some metrics and a grid to quantize the signal.
+
+The FFT trace calculates some more metrics such as the power density or the SNR.
 
 \subsection{Power Calculation}
 
