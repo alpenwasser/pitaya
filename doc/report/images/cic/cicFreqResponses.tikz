@@ -66,6 +66,8 @@
         \coordinate (magnifyglass) at (rel axis cs:0.123,-0.40);
     \end{axis}
 
-    \spy [br0, width=3cm,height=1cm] 
+    \spy [black, width=3cm,height=1cm] 
         on (spypoint) in node[fill=white] at (magnifyglass);
+
+    \node[anchor=west,xshift=20mm] at (magnifyglass) {Passband Droop};
 \end{tikzpicture}

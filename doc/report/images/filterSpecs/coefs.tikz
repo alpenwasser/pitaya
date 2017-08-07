@@ -1,7 +1,7 @@
 \begin{tikzpicture}
      \pgfplotsset{every axis/.style={
             height=50mm,
-            width=100mm,
+            width=\textwidth,
             grid=none,
             % TODO: fix x axis unit
         }
@@ -11,6 +11,8 @@
         xmin=-22,
         xmax=22,
         xtick={-19,-10,0,10,19},
+        ylabel=$y$,
+        xlabel=$n$,
     ]
         \addplot[ycomb,mark=*,dv+5] table[x=x,y=y,col sep=comma] {images/filterSpecs/coefs.csv};
 

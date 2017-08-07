@@ -17,7 +17,7 @@
 \pgfplotstableread[col sep=comma]{\freqzFileCICH}\freqzTableCICH
 \pgfplotstableread[col sep=comma]{\freqzFileCICI}\freqzTableCICI
 \begin{tikzpicture}[
-        spy using outlines={magnification=3}
+        spy using outlines={magnification=3},
     ]
      \pgfplotsset{every axis/.style={
             height=140mm,
@@ -79,14 +79,14 @@
         \node[thick,da1,rotate=90,anchor=north west] at ($(0.2222*0.375,-50)$) {\footnotesize\SI{41.8}{\dB}};
 
         \addplot[very thick,da1,-] table[x=w, y=abs(H)] \freqzTableCICA;
-        \addplot[very thick,q0,-] table[x=w, y=abs(H)] \freqzTableCICB;
-        \addplot[very thick,q1,-] table[x=w, y=abs(H)] \freqzTableCICC;
-        \addplot[very thick,q2,-] table[x=w, y=abs(H)] \freqzTableCICD;
-        \addplot[very thick,q3,-] table[x=w, y=abs(H)] \freqzTableCICE;
-        \addplot[very thick,q4,-] table[x=w, y=abs(H)] \freqzTableCICF;
-        \addplot[very thick,q5,-] table[x=w, y=abs(H)] \freqzTableCICG;
-        \addplot[very thick,q6,-] table[x=w, y=abs(H)] \freqzTableCICH;
-        \addplot[very thick,q7,-] table[x=w, y=abs(H)] \freqzTableCICI;
+        \addplot[line cap=round,very thick,q0,-] table[x=w, y=abs(H)] \freqzTableCICB;
+        \addplot[line cap=round,very thick,q1,-] table[x=w, y=abs(H)] \freqzTableCICC;
+        \addplot[line cap=round,very thick,q2,-] table[x=w, y=abs(H)] \freqzTableCICD;
+        \addplot[line cap=round,very thick,q3,-] table[x=w, y=abs(H)] \freqzTableCICE;
+        \addplot[line cap=round,very thick,q4,-] table[x=w, y=abs(H)] \freqzTableCICF;
+        \addplot[line cap=round,very thick,q5,-] table[x=w, y=abs(H)] \freqzTableCICG;
+        \addplot[line cap=round,very thick,q6,-] table[x=w, y=abs(H)] \freqzTableCICH;
+        \addplot[line cap=round,very thick,q7,-] table[x=w, y=abs(H)] \freqzTableCICI;
 
         \legend{%
             {},
