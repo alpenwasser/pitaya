@@ -280,7 +280,7 @@ simulation with the modified input also comfirms this result.
         from~\cite{1163535}.%
     }
     \label{tab:cic:pb_attenuation}
-    \begin{tabular}{rccccccc}
+    \begin{tabular}{rrrrrrrr}
         \toprule
             \parbox[t]{40mm}{
                 Relative \\
@@ -289,7 +289,7 @@ simulation with the modified input also comfirms this result.
             \multicolumn{7}{c}{\parbox[t]{60mm}{
                 Passband attenuation at $f_c$ in \si{\dB} \\
                 as a Function of \\
-                Number of Stages $N$}}                                    \\
+                Number of Stages ($N$)}}                                  \\
         \midrule
             & 1 & 2 & 3 & 4 & 5 & 6 \\
         \midrule
@@ -299,6 +299,48 @@ simulation with the modified input also comfirms this result.
             $1/16 $ & $0.06$ & $0.11$ & $0.17$ & $0.22$ & $0.28$ & $0.34$ \\
             $1/8  $ & $0.22$ & $0.45$ & $0.67$ & $0.90$ & $1.12$ & $1.35$ \\
             $1/4  $ & $0.91$ & $1.82$ & $2.74$ & $3.65$ & $4.56$ & $5.47$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{table}
+    \centering
+    \caption[CIC Filter Passband Aliasing Attenuation]{%
+        Passband  aliasing   attenuation  for   CIC  filters  as   a  function
+        of   the  bandwidth   and  the   differential  delay. Taken   directly
+        from~\cite{1163535}.%
+    }
+    \label{tab:cic:pb_aliasing}
+    \begin{tabular}{rrrrrrrrr}
+        \toprule
+            \parbox[t]{20mm}{
+                Differential\\
+                Delay\\
+                ($M$)%
+            } &
+            \parbox[t]{20mm}{
+                Relative \\
+                Bandwidth\\
+                ($f_c$)} &
+            \multicolumn{7}{c}{\parbox[t]{70mm}{
+                Aliasing/Imaging Attenuation at $f_\mathrm{s,low}$ in \si{\dB}\\
+                as a Function of Number of Stages ($N$)}}\\
+        \midrule
+            & & 1 & 2 & 3 & 4 & 5 & 6 \\
+        \midrule
+            1 & $1/128$ & $42.1$ & $84.2$ & $126.2$ & $168.3$ & $210.4$ & $252.5$ \\
+            1 & $1/64 $ & $36.0$ & $72.0$ & $108.0$ & $144.0$ & $180.0$ & $215.9$ \\
+            1 & $1/32 $ & $29.8$ & $59.7$ & $ 89.5$ & $119.4$ & $149.2$ & $179.0$ \\
+            1 & $1/16 $ & $23.6$ & $47.2$ & $ 70.7$ & $ 94.3$ & $117.9$ & $141.5$ \\
+            1 & $1/8  $ & $17.1$ & $34.3$ & $ 51.4$ & $ 68.5$ & $ 85.6$ & $102.8$ \\
+            1 & $1/4  $ & $10.5$ & $20.9$ & $ 31.4$ & $ 41.8$ & $ 52.3$ & $ 62.7$ \\
+        \midrule
+            2 & $1/256$ & $48.1$ & $96.3$ & $144.4$ & $192.5$ & $240.7$ & $288.8$ \\
+            2 & $1/128$ & $42.1$ & $84.2$ & $126.2$ & $168.3$ & $210.4$ & $252.5$ \\
+            2 & $1/64 $ & $36.0$ & $72.0$ & $108.0$ & $144.0$ & $180.0$ & $216.0$ \\
+            2 & $1/32 $ & $29.9$ & $59.8$ & $ 89.6$ & $119.5$ & $149.4$ & $179.3$ \\
+            2 & $1/16 $ & $23.7$ & $47.5$ & $ 71.2$ & $ 95.0$ & $118.7$ & $179.3$ \\
+            2 & $1/8  $ & $17.8$ & $35.6$ & $ 53.4$ & $ 71.3$ & $ 89.1$ & $106.9$ \\
         \bottomrule
     \end{tabular}
 \end{table}

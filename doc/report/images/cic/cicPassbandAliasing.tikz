@@ -17,16 +17,16 @@
 \pgfplotstableread[col sep=comma]{\freqzFileCICH}\freqzTableCICH
 \pgfplotstableread[col sep=comma]{\freqzFileCICI}\freqzTableCICI
 \begin{tikzpicture}[
-        spy using outlines={magnification=4, connect spies}
+        spy using outlines={magnification=3}
     ]
      \pgfplotsset{every axis/.style={
-            height=100mm,
+            height=140mm,
             width=\textwidth,
             grid=none,
         },
         every axis legend/.append style={
-            at={(0,-0.15)},
-            anchor=north west,
+            at={(1,-0.15)},
+            anchor=north east,
             cells={anchor=west},
         },
     }
@@ -56,8 +56,8 @@
                 $f_\mathrm{s,high}/2$%
             },
         ]
-        \fill[q0,opacity=0.20] ($(0.2222*0.75,100)$) rectangle ($(0.2222*1.00,-250)$);
-        \fill[q1,opacity=0.20] ($(0.2222*1.00,100)$) rectangle ($(0.2222*1.25,-250)$);
+        \fill[q0,opacity=0.20] ($(0.2222*0.75,100)$)        rectangle ($(0.2222*1.00,-250)$);
+        \fill[q1,opacity=0.20] ($(0.2222*1.00,100)$)        rectangle ($(0.2222*1.25,-250)$);
         \fill[q2,opacity=0.20] ($(0.4444-0.2222*0.25,100)$) rectangle ($(0.4444+0.2222*0.00,-250)$);
         \fill[q3,opacity=0.20] ($(0.4444-0.2222*0.00,100)$) rectangle ($(0.4444+0.2222*0.25,-250)$);
         \fill[q4,opacity=0.20] ($(0.6666-0.2222*0.25,100)$) rectangle ($(0.6666+0.2222*0.00,-250)$);
@@ -65,28 +65,28 @@
         \fill[q6,opacity=0.20] ($(0.8888-0.2222*0.25,100)$) rectangle ($(0.8888+0.2222*0.00,-250)$);
         \fill[q7,opacity=0.20] ($(0.8888-0.2222*0.00,100)$) rectangle ($(0.8888+0.2222*0.25,-250)$);
 
-        \fill[br1,opacity=0.50] (0,100) rectangle ($(0.2222*0.25,-250)$);
+        \fill[br0,opacity=0.50] (0,100) rectangle ($(0.2222*0.25,-250)$);
         \node[rotate=90,anchor=east] at ($(0.2222*0.25*0.5,-100)$) {%
             \footnotesize
             Passband: $f_c = 0.25 \cdot f_\mathrm{s,low}$
         };
 
-        \draw ($(0,76.31416-41.8)$) -- ($(0.2222*0.425,76.31416-41.8)$);
-        \draw (0,76.31416) -- ($(0.2222*0.425,76.31416)$);
-        \draw[-latex] ($(0.2222*0.375,76.31416+5)$) -- ($(0.2222*0.375,76.31416)$);
-        \draw ($(0.2222*0.375,76.31416)$) -- ($(0.2222*0.375,76.31416-41.8)$);
-        \draw[-latex] ($(0.2222*0.375,-50)$) -- ($(0.2222*0.375,76.31416-41.8)$);
-        \node[rotate=90,anchor=north west] at ($(0.2222*0.375,-50)$) {\footnotesize\SI{-41.8}{\dB}};
+        \draw[thick,da1] ($(0,76.31416-41.8)$) -- ($(0.2222*0.425,76.31416-41.8)$);
+        \draw[thick,da1] (0,76.31416) -- ($(0.2222*0.425,76.31416)$);
+        \draw[thick,da1,-latex] ($(0.2222*0.375,76.31416+5)$) -- ($(0.2222*0.375,76.31416)$);
+        \draw[thick,da1] ($(0.2222*0.375,76.31416)$) -- ($(0.2222*0.375,76.31416-41.8)$);
+        \draw[thick,da1,-latex] ($(0.2222*0.375,-50)$) -- ($(0.2222*0.375,76.31416-41.8)$);
+        \node[thick,da1,rotate=90,anchor=north west] at ($(0.2222*0.375,-50)$) {\footnotesize\SI{41.8}{\dB}};
 
-        \addplot[thick,da1,-] table[x=w, y=abs(H)] \freqzTableCICA;
-        \addplot[thick,q0,-] table[x=w, y=abs(H)] \freqzTableCICB;
-        \addplot[thick,q1,-] table[x=w, y=abs(H)] \freqzTableCICC;
-        \addplot[thick,q2,-] table[x=w, y=abs(H)] \freqzTableCICD;
-        \addplot[thick,q3,-] table[x=w, y=abs(H)] \freqzTableCICE;
-        \addplot[thick,q4,-] table[x=w, y=abs(H)] \freqzTableCICF;
-        \addplot[thick,q5,-] table[x=w, y=abs(H)] \freqzTableCICG;
-        \addplot[thick,q6,-] table[x=w, y=abs(H)] \freqzTableCICH;
-        \addplot[thick,q7,-] table[x=w, y=abs(H)] \freqzTableCICH;
+        \addplot[very thick,da1,-] table[x=w, y=abs(H)] \freqzTableCICA;
+        \addplot[very thick,q0,-] table[x=w, y=abs(H)] \freqzTableCICB;
+        \addplot[very thick,q1,-] table[x=w, y=abs(H)] \freqzTableCICC;
+        \addplot[very thick,q2,-] table[x=w, y=abs(H)] \freqzTableCICD;
+        \addplot[very thick,q3,-] table[x=w, y=abs(H)] \freqzTableCICE;
+        \addplot[very thick,q4,-] table[x=w, y=abs(H)] \freqzTableCICF;
+        \addplot[very thick,q5,-] table[x=w, y=abs(H)] \freqzTableCICG;
+        \addplot[very thick,q6,-] table[x=w, y=abs(H)] \freqzTableCICH;
+        \addplot[very thick,q7,-] table[x=w, y=abs(H)] \freqzTableCICI;
 
         \legend{%
             {},
@@ -99,8 +99,11 @@
             Left side of fourth null (flipped),
             Right side of fourth null (not flipped),
         };
-        %\draw (0,-3.65)   -- (0.085,-3.65);
-        %\draw (0.02777,-3) -- (0.02777,-17);
-        %\draw (0.05555,-3) -- (0.05555,-17);
+
+        %\coordinate (spypoint)     at (0.0300,9);
+        %\coordinate (magnifyglass) at (rel axis cs:0.078,-0.35);
     \end{axis}
+
+    %\spy [br0, width=1.9cm,height=5.3cm] 
+    %    on (spypoint) in node[fill=white] at (magnifyglass);
 \end{tikzpicture}

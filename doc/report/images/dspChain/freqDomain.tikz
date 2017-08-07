@@ -28,7 +28,7 @@
     \draw[-latex] (2.5,0.75) -- (3.85,0.75);
     \draw[-latex] (6.5,0.75) -- (7.85,0.75);
 
-    \node[draw,inner sep=0.3mm,circle] at (1.25,1.75) {\footnotesize 1};
-    \node[draw,inner sep=0.3mm,circle] at (5.25,1.75) {\footnotesize 2};
-    \node[draw,inner sep=0.3mm,circle] at (9.25,1.75) {\footnotesize 3};
+    %\node[draw,inner sep=0.3mm,circle] at (1.25,1.75) {\footnotesize 1};
+    %\node[draw,inner sep=0.3mm,circle] at (5.25,1.75) {\footnotesize 2};
+    %\node[draw,inner sep=0.3mm,circle] at (9.25,1.75) {\footnotesize 3};
 \end{tikzpicture}

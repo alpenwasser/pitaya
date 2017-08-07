@@ -174,11 +174,11 @@ the data stream, one may choose to
 \end{itemize}
 The  last case  is the  route  which is  chosen in  our application. The  main
 constraint on the Red Pitaya is that  the data being generated cannot be moved
-off the  device in  real time,  and the  device itself  does not  really offer
-sufficient storage for capturing a meaningful amount of data which can then be
-moved onto another  device for further processing at  a later point. Therefore
-the amount of data must be reduced before  it can be moved off the device to a
-computer for viewing or further processing.
+off the device in  real time, and the device itself  does not offer sufficient
+storage for capturing a meaningful amount of data which can then be moved onto
+another device for  further processing at a later  point. Therefore the amount
+of data must  be reduced before it can  be moved off the device  to a computer
+for viewing or further processing.
 
 TODO: Amount of data being generated on the PITA.
 
@@ -198,6 +198,53 @@ filtered  before being  passed into  the  ADC. In light  of the  signal to  be
 downsampled  being a  \emph{digital} signal  instead  of an  analog one,  that
 low-pass filter must  naturally be a digital filter as  well. Designing such a
 digital low-pass filter is the core mission of this project.
+
+The key properites of such a filter which are relevant to our application are
+\begin{itemize}\tightlist
+    \item
+        its transition band width (filter steepness), and
+    \item
+        its aliasing attenuation.
+\end{itemize}
+The aliasing attenuation refers  to the fact that when a  filter is being used
+for  downsampling,  copies  of  its  frequency response  will  be  created  at
+intervals  of the  lower  sampling  rate (analogous  to  the sampling  process
+producing spectral copies of a signal when sampling an analog signal).
+
+The stopband  components of these  copies overlap with the  intended passband,
+leading to aliasing  (it should be noted that this  phenomenon is also present
+in the  case of the  analog intput filter for  the DSP chain). This  effect is
+portrayed  in  Figure~\ref{fig:aliasing:iirCopies}. The  top  plot  shows  the
+filter's frequency response  along with four copies to  illustrate the overlap
+effect. The bottom plot shows the aliasing effect more clearly by removing the
+spectral copies and retaining the aliased regions.
+
+The overlapping parts  of the spetrum are composed of  spectral copies both to
+the right  and left side of  the original. Therefore, the aliased  regions are
+alternately flipped around the vertical axis. This creates in essence the same
+effect  as if  the paper  were folded  along multiples  of the  lower sampling
+rate  over the  frequency  range of  the  central  copy (in  the  case of  our
+example: $0.2f_s$, $0.4f_s$, $0.6f_s$ and $0.8f_s$) like an accordion. This is
+where the term \emph{folding back} originates.
+
+\begin{figure}
+    \centering
+    \input{images/aliasing/iirCopies.tikz}
+    \caption[Folding Back of Stopband Components Into Passband]{%
+        The phenomenon  of folding back  when downsampling, illustrated  for a
+        lowpass IIR filter with with a  cutoff frequency of $0.2\cdot f_s$ for
+        a  downsampling  ratio  of $R=5$.\protect\newline
+        The  downsampling process  produces copies  of the  filter's frequency
+        response at intervals of the  lower sampling frequency, visible in the
+        top  plot.   The stopbands  of  these  copies  then overlap  with  the
+        intended passband.\protect\newline
+        The bottom plot  shows an uncluttered version with  the copies removed
+        and the aliasing components retained.\protect\newline
+        As can be seen, the folding back within the filter's edge results in
+        an aliasing component with potentially significant magnitude.%
+    }
+    \label{fig:aliasing:iirCopies}
+\end{figure}
 
 %>>>
 
@@ -711,10 +758,17 @@ portrayed in Figure~\ref{fig:cic:freq_responses:var}. Some things of note are:
             Passband aliasing for  a CIC filter with $R =  9$, $N=4$ and $M=1$
             and a  cutoff frequency of $f_c  = 0.25$, referenced to  the lower
             sampling frequency $f_\mathrm{s,low}$.\protect\newline
-            The region of  width $f_c$ around every $M$th null  is folded back
-            into the  passband. The regions beyond  that are of  course folded
-            back  as  well, but  since  we  choose  to arbitrarily  limit  the
-            passband, those regions are not of interest to us.%
+            The  region of  width  $f_c$  around every  $M$th  null is  folded
+            back  into the  passband. The regions  beyond that  are of  course
+            folded  back  as   well,  but  since  we   choose  to  arbitrarily
+            limit  the  passband,  those  regions   are  not  of  interest  to
+            us.\protect\newline
+            The  resulting passband  aliasing  attenuation is  \SI{41.8}{\dB},
+            as     indicated     in     Table~\ref{tab:cic:pb_aliasing}     on
+            page~\pageref{tab:cic:pb_aliasing}.\protect\newline
+            It  is  also  evident   that  the  aliasing  attenuation  improves
+            significantly as  the cutoff frequency decreases  and the passband
+            comes closer to \num{0}.%
         }
         \label{fig:cic:freq_responses:passband:aliasing}
 \end{figure}
@@ -727,7 +781,7 @@ TODO: passband droop table, aliasing attenuation,
 As shown by Hogenauer in~\cite{1163535}, the maximum register growth is
 \begin{equation}
     \label{eq:cic:maximum_register_growth}
-    G_\mathrm{max} = (R\ cdot M)^N
+    G_\mathrm{max} = (R \cdot M)^N
 \end{equation}
 The most  significant bit $B_\mathrm{max}$ of  the output register as  well as
 for all  stages (both the  integrators and the comb  stages) of the  filter is
@@ -866,14 +920,25 @@ deployed in our design. TODO: see section blabla
 \subsubsection{Summary}
 \label{subsubsec:cic:summary}
 
+In conclusion, the key properties of CIC filters are:
+\begin{itemize}\tightlist
+    \item
+        They can be implemented both as decimators and interpolators.
+    \item
+        Neither multipliers nor storage for coefficients are needed.
+    \item
+        CIC  decimation  filters have  a  high  gain, leading  to  significant
+        register  growth.  Truncation  or rounding  can be  used to  limit the
+        resource usage, both at the filter's output and internally.
+    \item
+        The three design parameters are  the rate change $R$, the differential
+        delay $M$ and the number of stages $N$.
+    \item
+        The  presence of  passband  droop requires  a  compensation filter  to
+        achieve a flat passband response.
+\end{itemize}
+
 %>>>
-%>>>
-
-\section{A More Detailled Analysis of Aliasing Errors} % <<< ----------------- %
-\label{sec:detail_aliasing}
-
-folding back issue
-
 %>>>
 
 %\subsection{Challenges in Downsampling}

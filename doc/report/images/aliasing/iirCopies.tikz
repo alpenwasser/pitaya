@@ -1,0 +1,119 @@
+\newcommand*\freqzFileCICA{images/aliasing/iirAliasingZero.csv}
+\newcommand*\freqzFileCICB{images/aliasing/iirAliasingP2.csv}
+\newcommand*\freqzFileCICC{images/aliasing/iirAliasingN2.csv}
+\newcommand*\freqzFileCICD{images/aliasing/iirAliasingP4.csv}
+\newcommand*\freqzFileCICE{images/aliasing/iirAliasingN4.csv}
+\newcommand*\freqzFileCICF{images/aliasing/iirAliasingCleanZero.csv}
+\newcommand*\freqzFileCICG{images/aliasing/iirAliasingCleanP2.csv}
+\newcommand*\freqzFileCICH{images/aliasing/iirAliasingCleanN2.csv}
+\newcommand*\freqzFileCICI{images/aliasing/iirAliasingCleanP4.csv}
+\newcommand*\freqzFileCICJ{images/aliasing/iirAliasingCleanN4.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileCICA}\freqzTableCICA
+\pgfplotstableread[col sep=comma]{\freqzFileCICB}\freqzTableCICB
+\pgfplotstableread[col sep=comma]{\freqzFileCICC}\freqzTableCICC
+\pgfplotstableread[col sep=comma]{\freqzFileCICD}\freqzTableCICD
+\pgfplotstableread[col sep=comma]{\freqzFileCICE}\freqzTableCICE
+\pgfplotstableread[col sep=comma]{\freqzFileCICF}\freqzTableCICF
+\pgfplotstableread[col sep=comma]{\freqzFileCICG}\freqzTableCICG
+\pgfplotstableread[col sep=comma]{\freqzFileCICH}\freqzTableCICH
+\pgfplotstableread[col sep=comma]{\freqzFileCICI}\freqzTableCICI
+\pgfplotstableread[col sep=comma]{\freqzFileCICJ}\freqzTableCICJ
+\begin{tikzpicture}[
+        spy using outlines={magnification=3}
+    ]
+     \pgfplotsset{every axis/.style={
+            height=50mm,
+            width=\textwidth,
+            grid=none,
+        },
+        every axis legend/.append style={
+            at={(1,-0.15)},
+            anchor=north east,
+            cells={anchor=west},
+        },
+    }
+    \begin{axis}[
+            title={Folding Back Due to Spectral Copies{,} $f_\mathrm{s,low} = \frac{f_\mathrm{s,high}}{5}$},
+            at = {(0,0)},
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            ylabel=$\left|H\right| (\si{\dB})$,
+            xmin=-1.8,
+            xmax=1.8,
+            ymin=-120,
+            ymax=5,
+            xtick={
+                -1,
+                -0.8,
+                -0.4,
+                0,
+                0.4,
+                0.8,
+                1%
+            },
+            xticklabels={%
+                $-f_\mathrm{s,high}/2$,
+                $-2 \cdot f_\mathrm{s,low}$,
+                $-1 \cdot f_\mathrm{s,low}$,
+                $0$,
+                $1 \cdot f_\mathrm{s,low}$,
+                $2 \cdot f_\mathrm{s,low}$,
+                $f_\mathrm{s,high}/2$%
+            },
+            xticklabel style={rotate=90},
+        ]
+        \fill[q0,opacity=0.20] (0.2,5) rectangle (0.4,-120);
+        \fill[q1,opacity=0.20] (0.4,5) rectangle (0.6,-120);
+        \fill[q2,opacity=0.20] (0.6,5) rectangle (0.8,-120);
+        \fill[q3,opacity=0.20] (0.8,5) rectangle (1.0,-120);
+
+        \draw[black] (0,5) -- (0,-120);
+
+        \addplot[very thick,da1,-] table[x=w, y=abs(H)] \freqzTableCICA;
+        \addplot[q0,-] table[x=w, y=abs(H)] \freqzTableCICB;
+        \addplot[q1,-] table[x=w, y=abs(H)] \freqzTableCICC;
+        \addplot[q2,-] table[x=w, y=abs(H)] \freqzTableCICD;
+        \addplot[q3,-] table[x=w, y=abs(H)] \freqzTableCICE;
+    \end{axis}
+
+    \begin{axis}[
+            title={Folding Back Due to Spectral Copies: Uncluttered},
+            at = {(0,-125mm)},
+            height=110mm,
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            ylabel=$\left|H\right| (\si{\dB})$,
+            xmin=0,
+            xmax=1,
+            ymin=-150,
+            ymax=5,
+            xtick={
+                0,
+                0.2,
+                0.4,
+                0.6,
+                0.8,
+                1%
+            },
+            xticklabels={%
+                $0$,
+                $1 \cdot f_\mathrm{s,low}$,
+                $2 \cdot f_\mathrm{s,low}$,
+                $3 \cdot f_\mathrm{s,low}$,
+                $4 \cdot f_\mathrm{s,low}$,
+                $f_\mathrm{s,high}/2$%
+            },
+            xticklabel style={rotate=90},
+        ]
+        \fill[q0,opacity=0.20] (0.2,5) rectangle (0.4,-150);
+        \fill[q1,opacity=0.20] (0.4,5) rectangle (0.6,-150);
+        \fill[q2,opacity=0.20] (0.6,5) rectangle (0.8,-150);
+        \fill[q3,opacity=0.20] (0.8,5) rectangle (1.0,-150);
+
+        \addplot[very thick,da1,-] table[x=w, y=abs(H)] \freqzTableCICF;
+        \addplot[thick,q0,-] table[x=w, y=abs(H)] \freqzTableCICG;
+        \addplot[thick,q1,-] table[x=w, y=abs(H)] \freqzTableCICH;
+        \addplot[thick,q2,-] table[x=w, y=abs(H)] \freqzTableCICI;
+        \addplot[thick,q3,-] table[x=w, y=abs(H)] \freqzTableCICJ;
+    \end{axis}
+\end{tikzpicture}
