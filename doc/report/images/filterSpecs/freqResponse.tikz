@@ -3,7 +3,7 @@
 \begin{tikzpicture}
      \pgfplotsset{every axis/.style={
             height=60mm,
-            width=100mm,
+            width=\textwidth,
             grid=none,
         },
         set layers,
@@ -13,7 +13,7 @@
             x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
             ylabel=$\left|H\right| (dB)$,
             % TODO: Fix unit for xlabel
-            xlabel=$f$,
+            %xlabel=$f$,
             xmin=0,
             xmax=1,
             xtick={0,0.3,0.4,1},
