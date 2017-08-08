@@ -10,3 +10,6 @@
     path = scope
     url  = ssh://git@github.com:22/Yatekii/scope.git
     #url = https://github.com/Yatekii/scope.git
+[submodule "doc/verification/MatlabWebSocket"]
+	path = doc/verification/MatlabWebSocket
+	url = https://github.com/jebej/MatlabWebSocket
