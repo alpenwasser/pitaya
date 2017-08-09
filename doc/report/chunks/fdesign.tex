@@ -1,2 +1,70 @@
-\chapter{Filter Design}
+\chapter{Filter Design} % <<< ------------------------------------------------ %
 \label{ch:filter_design}
+% ---------------------------------------------------------------------------- %
+
+\begin{figure}
+    \centering
+    \input{images/fdesign/tbwDemo.tikz}
+    \caption
+        [Influence of Sampling Frequency on Absolute Transition Band Width]{%
+        Influence of sampling frequency on a filter's absolute transition band
+        width.  Both plots depict the same filter; in the top plot it is being
+        run  at \SI{2}{\MHz},  while in  the bottom  plot it  is being  run at
+        \SI{1}{\MHz}. Because the \emph{relative} transition band width is the
+        same in both cases ($0.1 \cdot f_s/2$), the \emph{absolute} transition
+        band width is twice as large in the top plot as in the bottom plot. Or
+        alternatively: The same filter can achieve a steeper passband-stopband
+        transition if it  is being run at a lower  sampling frequency. This is
+        why cascading  filters is often  a desirable thing  to do in  order to
+        save resources.%
+    }
+    \label{fic:fdesign:tbw_width}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \input{images/fdesign/cascadeDemoGood.tikz}
+    \caption[Cascade: No Transition Band Overlap]{%
+        Cascade of two halfband filters with no overlap in their transition
+        band. The cascade fulfills the requirements.%
+    }
+    \label{fig:fdesign:cascade:good}
+\end{figure}
+\begin{figure}
+    \centering
+    \input{images/fdesign/cascadeDemoBad.tikz}
+    \caption[Cascade: Transition Band Overlap]{%
+        Cascade  of   two  halfband   filters  with  their   transition  bands
+        overlapping,  leading  to  a  spike above  the  desired  threshold  of
+        \SI{-40}{\dB}  in  the  stop  band. This  configuration  is  therefore
+        unsuitable.%
+    }
+    \label{fig:fdesign:cascade:bad}
+\end{figure}
+
+%>>>
+
+%
+%\section{Designing a Filter System}
+%\label{sec:designing-a-filter-system}
+%
+%Talking about which type of filter has which properties is all good and well in theory, but
+%how does one actually apply this knowledge to a practical problem? This section answers that
+%question insofar as it applies to our project.
+%
+%\begin{itemize}\tightlist
+%    \item
+%        limited HW resources
+%    \item
+%        single-stage vs. multi-stage
+%    \item
+%        TBW issue with multi-stage
+%    \item
+%        filters at lower frequencies use fewer resources
+%    \item
+%        halfband filtres
+%    \item
+%        CIC: compensation filters
+%\end{itemize}
+
+%^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>

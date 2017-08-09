@@ -6,21 +6,20 @@
         spy using outlines={magnification=4, connect spies}
     ]
      \pgfplotsset{every axis/.style={
-            height=50mm,
+            height=60mm,
             width=\textwidth,
             grid=none,
-        },
-        %every axis legend/.append style={
-        %    at={(1,-0.25)},  % if attached to bottom plot
-        %    anchor=north east,
-        %    cells={anchor=east},
-        %},
-    }
-    \begin{axis}[
-            at = {(0,0)},
             y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
             x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
-            ylabel=$\left|H\right| (\si{\dB})$,
+            xlabel=Normalized Frequency,
+            ylabel=Magnitude,
+            x unit=\times\,\pi\,\si{\radian}/\si{\sample},
+            y unit=\si{dB},
+        },
+    }
+    \begin{axis}[
+            title=Passband Droop in CIC Filters,
+            at = {(0,0)},
             xmin=0,
             xmax=0.12,
             xtick={
@@ -33,22 +32,26 @@
                 $\frac{f_\mathrm{s,low}}{2}$,
                 $\frac{f_\mathrm{s,low}}{4}$,
                 $\frac{f_\mathrm{s,low}}{8}$,
-                %$\frac{f_\mathrm{s,low}}{32}$,
                 0%
             },
-            %ytick={120,80,40,0},
-            %xticklabels={0,$f_s/4$,$f_s/2$},
-            ymin=-17,
+            ytick={
+                0,
+                -3.65,
+                -10,
+                -15
+            },
+            ymin=-15,
             ymax=1,
         ]
-        \addplot[dv-5,-] table[x=w, y=abs(H)] \freqzTableCICA;
-        \addplot[dv+5,-] table[x=w, y=abs(H)] \freqzTableCICB;
+        \draw[da0,thick] (0      ,-3.65) -- (0.058   ,-3.65);
+        \draw[da0,thick] (0.02777,-3)    -- (0.02777,-15);
+        \draw[da0,thick] (0.05555,-3)    -- (0.05555,-15);
+
+        \addplot[thick,q1,-] table[x=w, y=abs(H)] \freqzTableCICA;
+        \addplot[thick,q3,-] table[x=w, y=abs(H)] \freqzTableCICB;
         \legend{%
             $M=1${,} $f_c = \frac{f_\mathrm{s,low}}{8}$,
             $M=2${,} $f_c = \frac{f_\mathrm{s,low}}{4}$
         };
-        \draw (0,-3.65)   -- (0.085,-3.65);
-        \draw (0.02777,-3) -- (0.02777,-17);
-        \draw (0.05555,-3) -- (0.05555,-17);
     \end{axis}
 \end{tikzpicture}

@@ -11,7 +11,10 @@
 \tcbuselibrary{breakable}
 \tcbset{shield externalize}
 \usepgfplotslibrary{fillbetween}
+\usepgfplotslibrary{units}
 \usepackage{pgfplotstable}
+\DeclareSIUnit\sample{sample}
+\usepackage[simplified]{pgf-umlcd}
 \makeindex
 %\includeonly{chunks/introduction,chunks/theory}
 % >>>
@@ -120,6 +123,7 @@ front-end.
 % ---------------------------------------------------------------------------- %
 
 \include{chunks/binary}
+\include{chunks/licenses}
 
 % Matlab-prettifier: Uses the lstlisting counter
 % Minted: Uses the listing counter
