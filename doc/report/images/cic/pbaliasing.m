@@ -44,8 +44,6 @@ Acic924 = conv(Aint4,Acomb924);
 Bcic924 = conv(Bint4,Bcomb924);
 
 %% Aliasing
-fc = [1/256 1/128 1/64 1/32 1/16 1/8 1/4]; % cutoff freqs
-
 N = 2^8; % Number of points per lobe in f direction
 R = 9;
 fc = 1/2;
