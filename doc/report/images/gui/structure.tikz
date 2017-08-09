@@ -1,0 +1,42 @@
+\begin{tikzpicture}[show background grid]
+    \begin{class}{Oscilloscope}{0,0}
+        \operation{draw(void)}
+    \end{class}
+    \begin{class}{Source}{0,-2}
+        \operation{forceTrigger(void)}
+        \operation{samplingRate(s: u32)}
+        \operation{frameConfiguration(frameSize: u32, pre: u32, suf: u32)}
+        \operation{triggerOn(trigger: Trigger)}
+        \operation{single(channel: u32)}
+        \operation{normal(channel: u32)}
+        \operation{auto(channel: u32, timeout: u32)}
+    \end{class}
+    \begin{class}{WebSocketSource}{8,-3}
+        \inherit{Source}
+
+        \operation{sendJSON(string: String)}
+        \operation{onOpen(void)}
+        \operation{onMessage(e: Event)}
+    \end{class}
+    \begin{class}{Trace}{0,-8}
+        \operation{draw(canvas: Canvas)}
+        \operation{calc(void)}
+    \end{class}
+    \begin{class}{TimeTrace}{8,-6}
+        \inherit{Trace}
+    \end{class}
+    \begin{class}{FFTrace}{8,-10}
+        \inherit{Trace}
+    \end{class}
+    \begin{class}{GeneralPrefPane}{16,0}
+    \end{class}
+    \begin{class}{TimeTracePrefPane}{16,-6}
+    \end{class}
+    \begin{class}{FFTracePrefPane}{16,-10}
+    \end{class}
+    \composition{Oscilloscope}{source}{1}{Source}
+    \composition{Source}{traces}{1..*}{Trace}
+    \composition{Oscilloscope}{}{1}{GeneralPrefPane}
+    \composition{TimeTrace}{}{1}{TimeTracePrefPane}
+    \composition{FFTrace}{}{1}{FFTracePrefPane}
+\end{tikzpicture}

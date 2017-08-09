@@ -3,13 +3,11 @@
 % ---------------------------------------------------------------------------- %
 
 This chapter presents a brief summary of the hardware platform and some of its
-key  characteristics  which are  of  interest  to us. From  that  information,
-the  objectives of  this  project are  derived. Possible  approaches to  reach
-those  objectives are  presented  and  evaluated, and  a  decision is  reached
-on  how  to  achieve  this  project's   aims. At  the  end  of  this  chapter,
-the  reader  will know  what  we  intend to  do  and  why. For the  impatient,
-Section~\ref{subsec:concept:summary}  on page~\pageref{subsec:concept:summary}
-contains a summary of our findings and decisions from this chapter.
+key characteristics  which are of  interest to us TODO: (impersonal). From that  information, the
+objectives of  this project  are derived. Possible  approaches to  reach those
+objectives are  presented and evaluated, and  a decision is reached  on how to
+achieve this project's aims. At the end  of this chapter, the reader will know
+what we TODO: (impersonal) intend to do and why.
 
 
 \section{The Red Pitaya STEMlab 125-14} % <<< -------------------------------- %
@@ -30,7 +28,7 @@ instrument (it fits into the palm of  a hand) which can replace more expensive
 devices like  oscilloscopes by using  a computer for data  storage, processing
 and presentation.
 
-Some of its key specifications relevant to us are:
+Some of its key specifications relevant to us TODO: (impersonal) are:
 \begin{itemize}\tightlist
     \item
         two high-speed analog inputs and outputs via coaxial connectors
@@ -39,13 +37,13 @@ Some of its key specifications relevant to us are:
         on      those      inputs:      \num{14}\,bits      resolution      at
         \num{125}\,MS$\cdot$s\textsuperscript{-1} per channel.
     \item
-        Xylinx SOC  with an FPGA component  for data processing on  the device
-        itself and two ARM Cortex9 chips for general-purpose tasks
+        Xilinx SOC  with an FPGA component  for data processing on  the device
+        itself and two ARM Cortex9 cores for general-purpose tasks
     \item
-        Ethernet and USB connections for data transmission and device control
+        Ethernet and USB PHYs for data transmission and device control
     \item
         Has its own operating system, a GNU/Linux distribution (Ubuntu is used
-        in our project), running on the ARM cores.
+        in our TODO: (impersonal) project), running on the ARM cores.
     \item
         The software used is open-source and available under \cite{pita:github}.
 \end{itemize}
@@ -113,7 +111,7 @@ case of  $R=8$ and  a signal  of \SI{5}{\MHz}. The  incoming sampling  rate is
 \SI{15.625}{\MHz}$. Therefore, anything  above half that frequency  is aliased
 back into the region below $\SI{15.625}{\MHz} \div 2 = \SI{7.8125}{\MHz}$.  In
 the case of a signal at  \SI{5}{\MHz}, this results in an aliasing attenuation
-of a paltry \SI{8.06}{\dB}. Combined with the passband droop of \SI{1.48}{\dB}
+of a paltry TODO: (objectivity) \SI{8.06}{\dB}. Combined with the passband droop of \SI{1.48}{\dB}
 (a signal  attenuation of  almost \SI{16}{\percent})  at that  frequency, this
 makes for a  margin of a mere \SI{6.58}{\dB} between  the signal's attenuation
 and the aliasing attenuation!
@@ -131,7 +129,7 @@ and the aliasing attenuation!
     \label{fig:stl125:moving_averager}
 \end{figure}
 
-As  a benchmark  for  or  own solution,  we  will  use measurements  conducted
+As  a benchmark  for  or  own solution,  we TODO: (impersonal)  will  use measurements  conducted
 by  our  predecessors  with  the  STEMlab's  stock  configuration,  listed  in
 Table~\ref{tab:stl125:measurements_bucher_kuery}. The   measurements  do   not
 actually  suggest  a very  bad  performance  of  the filter. This  is  because
@@ -140,7 +138,7 @@ issue  with  a   moving  averager  is  less  SNR   for  specific  frequencies,
 but  aliasing  when  measuring  a  non-harmonic  signal  which  has  frequency
 components above  $f_\mathrm{s,low}/2$. In that case, the  considerations from
 Figure~\ref{fig:stl125:moving_averager}  become crucial  to understanding  the
-aliasing issue.  This behavior was also confirmed in~\cite{bucher:kuery}.  Our
+aliasing issue.  This behavior was also confirmed in~\cite{bucher:kuery}.  Our TODO: (impersonal)
 primary aim  is therefore more  to reduce  these aliasing effects  rather than
 purely trying to improve SNR for specific single frequencies.
 
@@ -172,7 +170,7 @@ In conclusion, we can formulate three main objectives:
         Reduce  aliasing   of  out-of-range  frequency  components   into  the
         passband.
     \item
-        Improve SNR.
+        Improve SNR TODO: (all thre points sloppy formulated?).
     \item
         Have a nicer set of reduced sampling rates.
 \end{itemize}
@@ -197,7 +195,7 @@ Problematic is that  as of spring 2017,  the official code by  Red Pitaya base
 has been  split into  two: There is  a new  development branch  bringing major
 changes, while  the old code  (which has been  used in the  projects preceding
 this one) is no longer being maintained, as explained by one of the developers
-(see~\cite{pita:github:issue:huesser:jeras}):
+(see~\cite{pita:github:issue:huesser:jeras}): TODO: (citation wrong? gertiser will incapacitate us?)
 \begin{quote}
     Current  development  is done  on  the  \code{mercury} branch  on  the
     FPGA  subproject of  the same  name.  The  code is  still under  heavy
@@ -394,8 +392,8 @@ On the most abstract level, the FPGA part of our system will need to be able to
 
 Due to the  platform's open nature, there exist some  projects for the STEMlab
 by parties other than Red Pitaya  themselves. One of these is \emph{Red Pitaya
-Notes} by  Pavel Denim, available  at~\cite{pita:github:pitaya-notes}. As part
-of that  project, Mr. Denim  has implemented  an ADC core  for the  FPGA which
+Notes} by  Pavel Demin, available  at~\cite{pita:github:pitaya-notes}. As part
+of that  project, Mr. Demin  has implemented  an ADC core  for the  FPGA which
 acquires  data from  the ADC's  two  channels and  passes  it on  via an  AXI4
 streaming interface\footnotemark.
 \footnotetext{%
@@ -420,7 +418,7 @@ we use these two building blocks in our design.
 Interfacing  between the  FPGA  and  the outside  world  requires a  component
 which  can take  data  from the  filters  and  hand it  off  to the  GNU/Linux
 running  on the  ARM cores. Additionally,  the user  must be  able to  trigger
-measurements   from  the   operating  system. Luckily,   Mr. H\"usser  already
+measurements   from  the   operating  system. Luckily,   Mr. H\"usser TODO: (impersonal) already
 developed  such  a  data  logging  core  for  a  Xilinx  FPGA  in  an  earlier
 project~\cite{pita:github:huesser:zynq-logger},  which  comes  with  a  kernel
 module to interface  with GNU/Linux. With some minor adaption  work, this core
@@ -434,7 +432,7 @@ implemented by ourselves as a custom block.
 In summary, the concept for the FPGA data processing system looks as follows:
 \begin{itemize}\tightlist
     \item
-        The ADC is accessed via Pavel Denim's ADC core.
+        The ADC is accessed via Pavel Demin's ADC core.
     \item
         Filtering the data is conducted with Xilinx's CIC and FIR compilers.
     \item

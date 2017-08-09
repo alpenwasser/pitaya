@@ -1,6 +1,11 @@
+% ==============================================================================
+%
+%                          R E Q U I R E M E N T S
+%
+% ==============================================================================
+
 \chapter{Graphical Front End} % <<< ------------------------------------------ %
 \label{ch:graphical_front_end}
-
 
 To view measured data a graphical user interface (GUI in further text) was created. It can receive the recorded samples over the network and display them on a canvas. Furthermore it manages triggers and does a lot of math to get more specific metrics of a signal.
 In this section the requirements for this piece of software, the design choices and the implementation details are discussed.
@@ -19,12 +24,18 @@ The requirements were as follows
     \item Calculate the THD ratio of the signal.
 \end{itemize}
 
+% ==============================================================================
+%
+%                         D E S I G N   C H O I C E S
+%
+% ==============================================================================
+
 \section{Design Choices}
 
 There is a wealth of programming languages to choose from. And there are as many libraries helping with graphics and networking as well for most of those languages.
 In the following it is explained why we chose JavaScript and web technologies to implement a basic GUI.
 
-In the comparison matrix \ref{fig:gui_language_choices} a select few popular possibilities were given weights for certain attributes of the respective language.
+In the comparison matrix \ref{fig:gui:language_choices} a select few popular possibilities were given weights for certain attributes of the respective language.
 
 All the attributes are explained in the following.
 
@@ -63,7 +74,7 @@ Networking is not a trivial thing and standards can be quite engineering and fea
                        & Total &28 &36 &31 &39 & 40\\\cline{2-7}
 \end{tabular}
 \caption{Weights of certain aspects of possible programming languages.}
-\label{fig:gui_language_choices}
+\label{fig:gui:language_choices}
 \end{centering}
 \end{table}
 
@@ -73,6 +84,12 @@ A few years ago, JavaScript would not have been a viable choice for graphics and
 With JavaScript deploying the application to the enduser is as simple as making it accessible via a website that runs on the RedPitaya board. Thus it is very convenient for the user to work with the board, considering the assumption that every user has a webbrowser that is able to run the application.
 A downside of JavaScript is the huge runtime the browser needs to execute the application and thus resulting in a lot of memory ressources used. Since those are easily available nowadays, this issue was considered non-relevant.
 Another downside of JavaScript is that it leaves very little room when it comes to networking choices. For streaming data there is only WebSockets that performs well. Since WebSockets is a quite capable solution, this issue was also weighted rather light.
+
+% ==============================================================================
+%
+%                          N E T W O R K I N G
+%
+% ==============================================================================
 
 \subsection{Networking}
 
@@ -88,6 +105,188 @@ Two of those subprotocols are HTTP and WebSockets. HTTP comes with great overhea
 WebSockets on the contrary are meant for data streaming.
 Since JavaScript enforces WebSockets the functionality is explained a little bit more in the following.
 
+% ==============================================================================
+%
+%                              P R O D U C T
+%
+% ==============================================================================
+
+\subsection{Product}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/gui/scope}
+    \caption[The scope application]{%
+        The scope application in it's current state, displaying time and FFT data.%
+    }
+    \label{fig:gui:structure}
+\end{figure}
+
+% ==============================================================================
+%
+%                  A P P L I C A T I O N   S T R U C T U R E
+%
+% ==============================================================================
+
+\subsection{Application Structure}
+
+\begin{figure}
+    \centering
+    \input{images/gui/structure.tikz}
+    \caption[The scope structure]{%
+        The structure of the scope application with all it's important relations.%
+    }
+    \label{fig:gui:structure}
+\end{figure}
+
+The entire application consists of a single state tree that should make it very easy to import and export settings as well as concentrate all the states in one place which gives a way better overview than in the case all the states are scattered in various objects in the application.
+Listing \ref{lst:app_structure} shows an extract of the tree structure.
+
+\begin{tcolorbox}[
+        title={
+            \refstepcounter{listing}
+            Listing \thelisting: JavaScript ``Get 2D Rendering Context''
+            \label{lst:js2dcontext}
+            \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}}
+        }
+    ]
+    \begin{minted}[
+        linenos,
+        numbersep=4pt,
+        style=solarizedlight,
+    ]{javascript}
+
+        var appState = {
+            scopes: [{
+                id: 1,
+                name: 'Scope ' + 1,
+                top: 250,
+                left: 350,
+                mode: 'normal',
+                ui: {
+                    mover: {
+                        width: 50,
+                        height: 20,
+                        horizontalPosition: 0,
+                    },
+                    prefPane: {
+                        open: true,
+                        width: 400,
+                    }
+                },
+                source: {
+                    id: 2,
+                    name: 'Source ' + 1,
+                    top: 300,
+                    left: 50,
+                    location: 'ws://localhost:50090',
+                    frameSize: 4096,
+                    samplingRate: 5000000,
+                    bits: 16,
+                    vpp: 2.1, // Volts per bit
+                    buffer: {
+                        upperSize: 4,
+                        lowerSize: 1,
+                    },
+                    trigger: {
+                        type: 'risingEdge',
+                        level: 0,
+                        channel: 1,
+                        hysteresis: 30,
+                        slope: 0
+                    },
+                    triggerTrace: 0,
+                    triggerPosition: 1 / 8,
+                    numberOfChannels: 2,
+                    mode: 'normal',
+                    activeTrace: 0,
+                    traces: [
+                        {
+                            id: 4,
+                            offset: { x: 0, y: 0 },
+                            windowFunction: 'hann',
+                            halfSpectrum: true,
+                            SNRmode: 'auto',
+                            info: {},
+                            name: 'Trace ' + 2,
+                            channelID: 1,
+                            type: 'FFTrace',
+                            color: '#E8830C',
+                            scaling: {
+                                x: 1,
+                                y: 1,
+                            },
+                            markers: [
+                                {
+                                    id: 'SNRfirst',
+                                    type: 'vertical',
+                                    x: 0,
+                                    dashed: true,
+                                    color: 'purple',
+                                    active: true,
+                                },
+                                {
+                                    id: 'SNRsecond',
+                                    type: 'vertical',
+                                    x: 0,
+                                    dashed: true,
+                                    color: 'purple',
+                                    active: true,
+                                },
+                            ]
+                        }
+                    ],
+                }
+            }]
+        };
+    \end{minted}
+\end{tcolorbox}
+
+All of the values that can be controlled through the GUI - and many more - are also controllable directly through the state tree.
+On application start the entire statetree is loaded.
+
+The structure of the application is hierarchical as depicted in TODO: ?
+
+Scope
+    Source
+        Trace 1
+            Marker 1
+            ...
+        Trace 2
+        ...
+    ...
+...
+
+Each node has a controller which manages it's own and the lifecycles of it's children. This means that for example a source node holds all it's traces and calls Trace.draw() for each of it's children.
+A node can also have a GUI representation. The controller and the view then communicate over the state tree which holds a reference to the controller during run time but which will not be exported.
+
+Essentially controllers just contain a constructor and a draw() method. The draw() method will always be called by the controllers parent draw() method and will be passed the canvas o draw onto.
+Each draw call is autonomous and guaranteed not being influenced by it's caller.
+
+% ==============================================================================
+%
+%                                  N O D E S
+%
+% ==============================================================================
+
+\subsubsection*{Oscilloscope}
+
+The oscilloscope prototype is the controller for exactly one source. It is responsible for handling all mouse event and react accordingly, such as moving the trigger level or zooming.
+the draw controller also calls all the trace draw controllers as the source needs no draw controller of it's own.
+
+\subsubsection*{Source}
+
+The source manages all calls from and to the server. It contains a lot of helper calls to set a trigger or issue a new frame.
+It also contains the important callbacks to send and receive data from the server.
+The source stores all received frames on itself which then, later in the call chain, will be copied and worked on by the trace controller.
+Each frame received will always be overridden by the next one, ensuring no memory leaks and current data.
+
+% ==============================================================================
+%
+%                             W E B S O C K E T S
+%
+% ==============================================================================
+
 \subsubsection{WebSockets}
 
 WebSockets final RFC 6455\cite{TODO: https://tools.ietf.org/html/rfc6455,} was released in December 2011 and is thus still quite young. It is meant to compensate the lack of raw UDP and TCP sockets in JavaScript which is due to security threats that are not further elaborated here.
@@ -101,7 +300,66 @@ Basically it is intended to be as close to just exposing raw TCP to script as po
 The only exception is that WebSockets adds framing to make it packet rather than stream based and to differentiate between binary and text data.
 This differentiation is very useful for this project. Instructions to the server are issued via the text channel whilst data is sent back through the binary channel, allowing for very convenient interfacing with close to no effort.
 
-\subsection{Graphics}
+To receive data over the network, WebSockets are used. WebSockes could be explained as bare TCP sockets whose connection is initiated via HTTP.
+JavaScript provides a very easy to use interface which makes it really easy to shove data back and forth.
+As anything in JavaScript this again is done using callbacks. There is callbacks that handle connections, messages and errors. All the details can be read in the Mozilla documentation \cite{TODO: https://www.html5rocks.com/en/tutorials/websockets/basics/}. The code snippet in \ref{lst:TODO:} should give only a short hint how WebSockets in JavaScript are used.
+
+\begin{tcolorbox}[
+        title={
+            \refstepcounter{listing}
+            Listing \thelisting: JavaScript ``Get 2D Rendering Context''
+            \label{lst:js2dcontext}
+            \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}}
+        }
+    ]
+    \begin{minted}[
+        linenos,
+        numbersep=4pt,
+        style=solarizedlight,
+    ]{javascript}
+
+        // Open a new socket
+        this.socket = new WebSocket('ws://localhost');
+        // Make sure the binary data transmitted
+        // is interpreted as an ArrayBuffer
+        // More on ArrayBuffers and Blobs in:
+        // - https://developer.mozilla.org/en/docs/Web/API/Blob
+        // - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer
+        this.socket.binaryType = 'arraybuffer';
+
+        // Define all the callback handlers
+        connection.onopen = function () {
+            // The connection was established; send some regards.
+            connection.send('Hello World!');
+        };
+
+        connection.onerror = function (error) {
+            // An error has occurred; print it to the console.
+            console.log('WebSocket Error: ' + error);
+        };
+
+        connection.onmessage = function (e) {
+            if (typeof e.data == 'string') {
+                // If a text type message was received, print it out.
+                console.log('Text message received: ' + e.data);
+            } else {
+                // A binary type message was received.
+                // Interpret the values as 16 bit uints.
+                var arr = new Uint16Array(e.data);
+                // Plot the data.
+                plot(arr);
+            }
+        };
+    \end{minted}
+\end{tcolorbox}
+
+\subsubsection*{Trace}
+
+Whilst the oscilloscpe controller and source controller are rather like helper classes, the trace controller is where the magic happens.
+The trace controller can be managing an FFT or a normal Timetrace. This could be extensible to general Math traces e.g. subtracting two differential pair traces for noise cancelling in the future.
+Each trace calculates some metrics and a grid to quantize the signal.
+
+The FFT trace calculates some more metrics such as the power density or the SNR.
 
 The graphics portion of the GUI is the most important part. Since the GUI should plot data fast and conveniently as well as display some numbers and provide controls to manipulate the view, it is important to have a good library, that enables all those things. It is absolutely key to render the graphics on the GPU. Since the application should be cross platform and open source, libraries using OpenGL are a good choice.
 
@@ -116,7 +374,11 @@ Practical experience and tests have shown that both of them are not meant and pe
 Thus it was decided to use WebGL draw calls directly to draw on a HTML canvas. A HTML canvas is an environment that is directly exposed from the GPU to the user such that he can use GPU rendering inside the browser.
 More on WebGL and it's functioning in section \ref{WebGL}
 
-\section{Implementation}
+% ==============================================================================
+%
+%                                  W E B G L
+%
+% ==============================================================================
 
 \subsection{WebGL}
 
@@ -259,208 +521,7 @@ As this section should only give a base overview on mithril and is not meant to 
 TODO: https://mithril.js.org/vnodes.html
 TODO: https://mithril.js.org/
 
-\subsection{WebSockets}
-
-To receive data over the network, WebSockets are used. WebSockes could be explained as bare TCP sockets whose connection is initiated via HTTP.
-JavaScript provides a very easy to use interface which makes it really easy to shove data back and forth.
-As anything in JavaScript this again is done using callbacks. There is callbacks that handle connections, messages and errors. All the details can be read in the Mozilla documentation \cite{TODO: https://www.html5rocks.com/en/tutorials/websockets/basics/}. The code snippet in \ref{lst:TODO:} should give only a short hint how WebSockets in JavaScript are used.
-
-\begin{tcolorbox}[
-        title={
-            \refstepcounter{listing}
-            Listing \thelisting: JavaScript ``Get 2D Rendering Context''
-            \label{lst:js2dcontext}
-            \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}}
-        }
-    ]
-    \begin{minted}[
-        linenos,
-        numbersep=4pt,
-        style=solarizedlight,
-    ]{javascript}
-
-        // Open a new socket
-        this.socket = new WebSocket('ws://localhost');
-        // Make sure the binary data transmitted
-        // is interpreted as an ArrayBuffer
-        // More on ArrayBuffers and Blobs in:
-        // - https://developer.mozilla.org/en/docs/Web/API/Blob
-        // - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer
-        this.socket.binaryType = 'arraybuffer';
-
-        // Define all the callback handlers
-        connection.onopen = function () {
-            // The connection was established; send some regards.
-            connection.send('Hello World!');
-        };
-
-        connection.onerror = function (error) {
-            // An error has occurred; print it to the console.
-            console.log('WebSocket Error: ' + error);
-        };
-
-        connection.onmessage = function (e) {
-            if (typeof e.data == 'string') {
-                // If a text type message was received, print it out.
-                console.log('Text message received: ' + e.data);
-            } else {
-                // A binary type message was received.
-                // Interpret the values as 16 bit uints.
-                var arr = new Uint16Array(e.data);
-                // Plot the data.
-                plot(arr);
-            }
-        };
-    \end{minted}
-\end{tcolorbox}
-
 TODO: how do we work with websockets (important callbacks, code-samples)
-
-\subsection{Application Structure}
-
-The entire application consists of a single state tree that should make it very easy to import and export settings as well as concentrate all the states in one place which gives a way better overview than in the case all the states are scattered in various objects in the application.
-Listing \ref{lst:app_structure} shows an extract of the tree structure.
-
-\begin{tcolorbox}[
-        title={
-            \refstepcounter{listing}
-            Listing \thelisting: JavaScript ``Get 2D Rendering Context''
-            \label{lst:js2dcontext}
-            \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}}
-        }
-    ]
-    \begin{minted}[
-        linenos,
-        numbersep=4pt,
-        style=solarizedlight,
-    ]{javascript}
-
-        var appState = {
-            scopes: [{
-                id: 1,
-                name: 'Scope ' + 1,
-                top: 250,
-                left: 350,
-                mode: 'normal',
-                ui: {
-                    mover: {
-                        width: 50,
-                        height: 20,
-                        horizontalPosition: 0,
-                    },
-                    prefPane: {
-                        open: true,
-                        width: 400,
-                    }
-                },
-                source: {
-                    id: 2,
-                    name: 'Source ' + 1,
-                    top: 300,
-                    left: 50,
-                    location: 'ws://localhost:50090',
-                    frameSize: 4096,
-                    samplingRate: 5000000,
-                    bits: 16,
-                    vpp: 2.1, // Volts per bit
-                    buffer: {
-                        upperSize: 4,
-                        lowerSize: 1,
-                    },
-                    trigger: {
-                        type: 'risingEdge',
-                        level: 0,
-                        channel: 1,
-                        hysteresis: 30,
-                        slope: 0
-                    },
-                    triggerTrace: 0,
-                    triggerPosition: 1 / 8,
-                    numberOfChannels: 2,
-                    mode: 'normal',
-                    activeTrace: 0,
-                    traces: [
-                        {
-                            id: 4,
-                            offset: { x: 0, y: 0 },
-                            windowFunction: 'hann',
-                            halfSpectrum: true,
-                            SNRmode: 'auto',
-                            info: {},
-                            name: 'Trace ' + 2,
-                            channelID: 1,
-                            type: 'FFTrace',
-                            color: '#E8830C',
-                            scaling: {
-                                x: 1,
-                                y: 1,
-                            },
-                            markers: [
-                                {
-                                    id: 'SNRfirst',
-                                    type: 'vertical',
-                                    x: 0,
-                                    dashed: true,
-                                    color: 'purple',
-                                    active: true,
-                                },
-                                {
-                                    id: 'SNRsecond',
-                                    type: 'vertical',
-                                    x: 0,
-                                    dashed: true,
-                                    color: 'purple',
-                                    active: true,
-                                },
-                            ]
-                        }
-                    ],
-                }
-            }]
-        };
-    \end{minted}
-\end{tcolorbox}
-
-All of the values that can be controlled through the GUI - and many more - are also controllable directly through the state tree.
-On application start the entire statetree is loaded.
-
-The structure of the application is hierarchical as depicted in TODO: ?
-
-Scope
-    Source
-        Trace 1
-            Marker 1
-            ...
-        Trace 2
-        ...
-    ...
-...
-
-Each node has a controller which manages it's own and the lifecycles of it's children. This means that for example a source node holds all it's traces and calls Trace.draw() for each of it's children.
-A node can also have a GUI representation. The controller and the view then communicate over the state tree which holds a reference to the controller during run time but which will not be exported.
-
-Essentially controllers just contain a constructor and a draw() method. The draw() method will always be called by the controllers parent draw() method and will be passed the canvas o draw onto.
-Each draw call is autonomous and guaranteed not being influenced by it's caller.
-
-\subsubsection*{Oscilloscope}
-
-The oscilloscope prototype is the controller for exactly one source. It is responsible for handling all mouse event and react accordingly, such as moving the trigger level or zooming.
-the draw controller also calls all the trace draw controllers as the source needs no draw controller of it's own.
-
-\subsubsection*{Source}
-
-The source manages all calls from and to the server. It contains a lot of helper calls to set a trigger or issue a new frame.
-It also contains the important callbacks to send and receive data from the server.
-The source stores all received frames on itself which then, later in the call chain, will be copied and worked on by the trace controller.
-Each frame received will always be overridden by the next one, ensuring no memory leaks and current data.
-
-\subsubsection*{Trace}
-
-Whilst the oscilloscpe controller and source controller are rather like helper classes, the trace controller is where the magic happens.
-The trace controller can be managing an FFT or a normal Timetrace. This could be extensible to general Math traces e.g. subtracting two differential pair traces for noise cancelling in the future.
-Each trace calculates some metrics and a grid to quantize the signal.
-
-The FFT trace calculates some more metrics such as the power density or the SNR.
 
 \subsection{Power Calculation}
 
