@@ -1,0 +1,97 @@
+\newcommand*\freqzFileCascA{images/fdesign/cascadeDemoHBGoodCascade.csv}
+\newcommand*\freqzFileCascB{images/fdesign/cascadeDemoHBGoodStage1.csv}
+\newcommand*\freqzFileCascC{images/fdesign/cascadeDemoHBGoodStage2.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileCascA}\freqzTableCascA
+\pgfplotstableread[col sep=comma]{\freqzFileCascB}\freqzTableCascB
+\pgfplotstableread[col sep=comma]{\freqzFileCascC}\freqzTableCascC
+\begin{tikzpicture}
+     \pgfplotsset{every axis/.style={
+            height=60mm,
+            width=\textwidth,
+            grid=none,
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            xlabel=Normalized Frequency,
+            ylabel=Magnitude,
+            x unit=\times\,\pi\,\si{\radian}/\si{\sample},
+            y unit=\si{dB},
+            ymax=5,
+            ymin=-100,
+            xmin=0,
+            xmax=1,
+            xmajorgrids=true,
+            ymajorgrids=true,
+            ytick={
+                0,
+                -40,
+                -80
+            },
+        },
+    }
+    \begin{axis}[
+            title=Cascade,
+            at = {(0,0)},
+            xtick={
+                0,
+                0.175,
+                0.325,
+                0.5,
+                1
+            },
+            xticklabels={
+                0,
+                0.175,
+                0.325,
+                $f_{s2}/2$,
+                $f_{s1}/2$
+            },
+        ]
+        \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableCascA;
+        \addplot[thin,gray,dashed,-] table[x=W, y=abs(H)] \freqzTableCascB;
+        \addplot[thin,gray,dashed,-] table[x=W, y=abs(H)] \freqzTableCascC;
+    \end{axis}
+    \begin{axis}[
+            title=Stage 1: Runs at $f_{s1}$,
+            at = {(0,-70mm)},
+            xtick={
+                0,
+                0.35,
+                0.50,
+                0.65,
+                1
+            },
+            xticklabels={
+                0,
+                0.35,
+                0.50,
+                0.65,
+                1
+            },
+        ]
+        \addplot[thick,q2,-] table[x=W, y=abs(H)] \freqzTableCascB;
+    \end{axis}
+    \begin{axis}[
+            title={Stage 2: Runs at $f_{s2} = f_{s1} \div R_1 = f_{s1} \div 2$},
+            at = {(0,-140mm)},
+            xtick={
+                0,
+                0.175,
+                0.325,
+                0.5,
+                0.675,
+                0.825,
+                1
+            },
+            xticklabels={
+                0,
+                0.175,
+                0.325,
+                0.500,
+                0.675,
+                0.825,
+                1
+            },
+        ]
+        \addplot[thick,q3,-] table[x=W, y=abs(H)] \freqzTableCascC;
+    \end{axis}
+\end{tikzpicture}

@@ -19,18 +19,21 @@
             height=140mm,
             width=\textwidth,
             grid=none,
-        },
-        every axis legend/.append style={
-            at={(1,-0.15)},
-            anchor=north east,
-            cells={anchor=west},
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            x SI prefix=mega,
+            x unit=\si{Hz},
+            xticklabel style={font=\footnotesize},
+            y unit=\si{dB},
+            xlabel=Frequency,
+            ylabel=Magnitude,
+            xticklabel style={rotate=90},
+            xmajorgrids=true,
         },
     }
     \begin{axis}[
+            title=Passband Aliasing for Moving Averager,
             at = {(0,0)},
-            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
-            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
-            ylabel=$\left|H\right| (\si{\dB})$,
             xmin=0.001,
             xmax=1,
             ymin=-60,
@@ -49,14 +52,12 @@
                 $f_\mathrm{s,low}  = \SI{15.625}{\MHz}$,
                 $f_\mathrm{s,high}/2 = \SI{62.5}{\MHz}$%
             },
-            xticklabel style={rotate=90},
             ytick={
                 0,
                 -20,
                 -40,
                 -60%
             },
-            xmajorgrids=true,
         ]
         % Aliasing rectangles
         \fill[q0,opacity=0.20] ($(0.25*0.75,     -8.0571)$) rectangle ($(0.25*1.00,-60)$);

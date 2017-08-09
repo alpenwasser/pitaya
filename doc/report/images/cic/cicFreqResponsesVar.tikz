@@ -14,12 +14,18 @@
         spy using outlines={magnification=4, connect spies}
     ]
      \pgfplotsset{every axis/.style={
-            height=50mm,
+            height=60mm,
             width=\textwidth,
             grid=none,
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            xlabel=Normalized Frequency,
+            ylabel=Magnitude,
+            x unit=\times\,\pi\,\si{\radian}/\si{\sample},
+            y unit=\si{dB},
         },
         every axis legend/.append style={
-            at={(0.02,0.05)},  % if attached to bottom plot
+            at={(0.02,0.05)},
             anchor=south west,
             cells={anchor=east},
         },
@@ -27,53 +33,44 @@
     \begin{axis}[
             title=Influence of Rate Change $R$,
             at = {(0,0)},
-            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
-            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
-            ylabel=$\left|H\right| (\si{\dB})$,
             xmin=0,
             xmax=1,
             xtick={0,0.5,1},
             ytick={60,0,-60,-120},
             xticklabels={0,$f_s/4$,$f_s/2$},
         ]
-        \addplot[dv+5,-] table[x=w, y=abs(H)] \freqzTableCICA;
-        \addplot[dv-5,-] table[x=w, y=abs(H)] \freqzTableCICB;
+        \addplot[thick,q1,-] table[x=w, y=abs(H)] \freqzTableCICA;
+        \addplot[thick,q3,-] table[x=w, y=abs(H)] \freqzTableCICB;
 
         \legend{$R = 3$, $R = 9$};
     \end{axis}
 
     \begin{axis}[
             title=Influence of Differential Delay $M$,
-            at = {(0,-50mm)},
-            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
-            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
-            ylabel=$\left|H\right| (\si{\dB})$,
+            at = {(0,-70mm)},
             xmin=0,
             xmax=1,
             xtick={0,0.5,1},
             ytick={20,0,-20,-40},
             xticklabels={0,$f_s/4$,$f_s/2$},
         ]
-        \addplot[dv+5,-] table[x=w, y=abs(H)] \freqzTableCICC;
-        \addplot[dv-5,-] table[x=w, y=abs(H)] \freqzTableCICD;
+        \addplot[thick,q1,-] table[x=w, y=abs(H)] \freqzTableCICC;
+        \addplot[thick,q3,-] table[x=w, y=abs(H)] \freqzTableCICD;
 
         \legend{$M = 1$, $M = 2$};
     \end{axis}
 
     \begin{axis}[
             title=Influence of Number of Stages $N$,
-            at = {(0,-100mm)},
-            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
-            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
-            ylabel=$\left|H\right| (\si{\dB})$,
+            at = {(0,-140mm)},
             xmin=0,
             xmax=1,
             xtick={0,0.5,1},
             ytick={60,0,-60,-120},
             xticklabels={0,$f_s/4$,$f_s/2$},
         ]
-        \addplot[dv+5,-] table[x=w, y=abs(H)] \freqzTableCICE;
-        \addplot[dv-5,-] table[x=w, y=abs(H)] \freqzTableCICF;
+        \addplot[thick,q1,-] table[x=w, y=abs(H)] \freqzTableCICE;
+        \addplot[thick,q3,-] table[x=w, y=abs(H)] \freqzTableCICF;
 
         \legend{$N = 1$, $N = 3$};
     \end{axis}

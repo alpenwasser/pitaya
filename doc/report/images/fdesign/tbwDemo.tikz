@@ -1,0 +1,42 @@
+\newcommand*\freqzFileTBWA{images/fdesign/tbw-fs-high.csv}
+\newcommand*\freqzFileTBWB{images/fdesign/tbw-fs-low.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileTBWA}\freqzTableTBWA
+\pgfplotstableread[col sep=comma]{\freqzFileTBWB}\freqzTableTBWB
+\begin{tikzpicture}
+     \pgfplotsset{every axis/.style={
+            height=60mm,
+            width=\textwidth,
+            grid=none,
+            x unit prefix=M,
+            change x base=true,
+            x SI prefix=mega,
+            x unit=\si{Hz},
+            xticklabel style={font=\footnotesize},
+            y unit=\si{dB},
+            ylabel=Magnitude,
+            xlabel=Frequency,
+            xmin=0,
+            xmax=1000000,
+            ymax=5,
+            ymin=-120,
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+        },
+    }
+    \begin{axis}[
+            title={Filter Running at \SI{2}{\MHz}{,} $\text{Transition Band Width} = 0.1 \cdot f_s/2 = \SI{100}{\kHz}$},
+            at = {(0,0)},
+            xtick={0,0.3e6,0.4e6,1e6},
+        ]
+        \fill[dv-2] (300000,-120) rectangle (400000,5);
+        \addplot[thick,q1,-] table[x=F, y=abs(H)] \freqzTableTBWA;
+    \end{axis}
+    \begin{axis}[
+            title={Filter Running at \SI{1}{\MHz}{,} $\text{Transition Band Width} = 0.1 \cdot f_s/2 = \SI{50}{\kHz}$},
+            at = {(0,-70mm)},
+            xtick={0,0.15e6,0.2e6,0.5e6,0.8e6,0.85e6,1e6},
+        ]
+        \fill[dv-2] (150000,-120) rectangle (200000,5);
+        \fill[dv-2] (800000,-120) rectangle (850000,5);
+        \addplot[thick,q1,-] table[x=F, y=abs(H)] \freqzTableTBWB;
+    \end{axis}
+\end{tikzpicture}

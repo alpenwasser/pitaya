@@ -2,25 +2,26 @@
 \pgfplotstableread[col sep=comma]{\freqzFile}\freqzTable
 \begin{tikzpicture}
      \pgfplotsset{every axis/.style={
-            height=60mm,
+            height=80mm,
             width=\textwidth,
             grid=none,
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            xlabel=Normalized Frequency,
+            ylabel=Magnitude,
+            x unit=\times\,\pi\,\si{\radian}/\si{\sample},
+            y unit=\si{dB},
         },
         set layers,
     }
     \begin{axis}[
-            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
-            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
-            ylabel=$\left|H\right| (dB)$,
-            % TODO: Fix unit for xlabel
-            %xlabel=$f$,
             xmin=0,
             xmax=1,
             xtick={0,0.3,0.4,1},
             ytick={0,-60,-120},
             xticklabels={0,$F_P$,$F_{St}$,$f_s/2$},
         ]
-        \addplot[dv+5,-] table[x=W, y=abs(H)] \freqzTable;
+        \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTable;
 
         % Passband Edge and Stopband Edge Frequency, Transition Band Width
         \draw[gray,dashed] (rel axis cs:0.3,0) -- (rel axis cs:0.3,1);
