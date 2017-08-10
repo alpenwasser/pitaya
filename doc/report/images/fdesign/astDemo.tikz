@@ -1,0 +1,81 @@
+\newcommand*\freqzFileAstA{images/fdesign/ast-60.csv}
+\newcommand*\freqzFileAstB{images/fdesign/ast-40.csv}
+\newcommand*\freqzFileAstC{images/fdesign/ast-40-60.csv}
+\newcommand*\freqzFileAstD{images/fdesign/ast-60-40.csv}
+\newcommand*\freqzFileAstE{images/fdesign/ast-60-ref-high.csv}
+\newcommand*\freqzFileAstF{images/fdesign/ast-40-ref-high.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileAstA}\freqzTableAstA
+\pgfplotstableread[col sep=comma]{\freqzFileAstB}\freqzTableAstB
+\pgfplotstableread[col sep=comma]{\freqzFileAstC}\freqzTableAstC
+\pgfplotstableread[col sep=comma]{\freqzFileAstD}\freqzTableAstD
+\pgfplotstableread[col sep=comma]{\freqzFileAstE}\freqzTableAstE
+\pgfplotstableread[col sep=comma]{\freqzFileAstF}\freqzTableAstF
+\begin{tikzpicture}
+     \pgfplotsset{every axis/.style={
+            height=60mm,
+            width=\textwidth,
+            grid=none,
+            ylabel=Magnitude,
+            xlabel=Normalized Frequency,
+            xmin=0,
+            xmax=1,
+            ymax=5,
+            ymin=-100,
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            x unit=\times\,\pi\,\si{\radian}/\si{\sample},
+            y unit=\si{dB},
+            xticklabel style={font=\footnotesize},
+            ytick={0,-40,-80},
+        },
+    }
+    % 40 -> 60
+    \begin{axis}[
+            title={Stage 1: \SI{40}{\dB}, Stage 2: \SI{60}{\dB}},
+            at = {(0,0)},
+            ytick={0,-40,-60},
+            %xtick={0,0.5,0.6,1},
+            %xticklabels={0,0.5,0.6,$f_\mathrm{s1}/2$},
+        ]
+        \addplot[thin,gray,dashed,-] table[x=W, y=abs(H)] \freqzTableAstE;
+        \addplot[thin,gray,dashed,-] table[x=W, y=abs(H)] \freqzTableAstB;
+        \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableAstC;
+    \end{axis}
+     60 -> 40
+    \begin{axis}[
+            title={Stage 1: \SI{60}{\dB}, Stage 2: \SI{40}{\dB}},
+            at = {(0,-65mm)},
+            ytick={0,-40,-60},
+            %xtick={0,0.5,0.6,1},
+            %xticklabels={0,0.5,0.6,$f_\mathrm{s1}/2$},
+        ]
+        \addplot[thin,gray,dashed,-] table[x=W, y=abs(H)] \freqzTableAstF;
+        \addplot[thin,gray,dashed,-] table[x=W, y=abs(H)] \freqzTableAstA;
+        \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableAstD;
+    \end{axis}
+    % 60 dB
+    \begin{axis}[
+            title={\SI{60}{\dB} Stopband Attenuation},
+            width=0.53\textwidth,
+            at = {(0,-130mm)},
+            ytick={0,-60},
+            %xtick={0,0.5,0.6,1},
+            %xticklabels={0,0.5,0.6,$f_\mathrm{s1}/2$},
+        ]
+        \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableAstA;
+    \end{axis}
+    % 40 dB
+    \begin{axis}[
+            title={\SI{40}{\dB} Stopband Attenuation},
+            width=0.53\textwidth,
+            at = {(0.47\textwidth,-130mm)},
+            ylabel={},
+            y unit={},
+            yticklabel pos=right,
+            yticklabel style={font=\footnotesize},
+            %xtick={0,0.5,0.6,1},
+            %xticklabels={0,0.5,0.6,$f_\mathrm{s1}/2$},
+        ]
+        \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableAstB;
+    \end{axis}
+\end{tikzpicture}
