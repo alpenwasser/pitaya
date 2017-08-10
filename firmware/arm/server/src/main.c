@@ -7,7 +7,6 @@
 #include <string>
 #include "logger_types.h"
 #include <sys/ioctl.h>
-#include <thread>
 #include <fstream>
 #include <streambuf>
 #include <sys/stat.h>
@@ -19,6 +18,7 @@
 #define WRITE_TRG _IOWR(MAGIC_NUMBER, 3, void*)
 #define START_REC _IOWR(MAGIC_NUMBER, 4, void*)
 #define STOP_REC _IOWR(MAGIC_NUMBER, 5, void*)
+#define STATUS _IOWR(MAGIC_NUMBER, 6, void*)
 
 using json = nlohmann::json;
 
@@ -40,6 +40,7 @@ struct state {
     int fd;
     bool configuring;
     bool reading;
+    Timer* timer;
 };
 
 bool hasEnding (std::string const &fullString, std::string const &ending) {
@@ -67,22 +68,31 @@ void readAndSendChannel(state* s){
     }
 };
 
-void waitForFrame(state* s){
+bool startFrame(state& s){
     // Block until configuration was done (maybe there is a better way to do this)
-    while(s->configuring || s->reading);
-    s->reading = true;
+    if(s.configuring || s.reading){
+        std::cout << "already started!" << std::endl;
+        return false;
+    }
+    s.reading = true;
     try {
-        ioctl(s->fd, START_REC, NULL);
+        ioctl(s.fd, START_REC, NULL);
         std::cout << "Started a new Frame." << std::endl;
-        std::cout << s->frameSize << " " << s->packetSize << " " << s->numberOfChannels << " " << s->data.size() << std::endl;
-
-        readAndSendChannel(s);
-        std::cout << "sent frame" << std::endl;
+        std::cout << s.frameSize << " " << s.packetSize << " " << s.numberOfChannels << " " << s.data.size() << std::endl;
     } catch(int e){
         std::cout << "Failed to start a new Frame." << std::endl;
     }
-    
-    s->reading = false;
+};
+
+bool readFrame(state& s){
+    // Block until configuration was done (maybe there is a better way to do this)
+    if(s.configuring || s.reading){
+        std::cout << "already reading!" << std::endl;
+        return false;
+    }
+    s.reading = true;
+    std::cout << "Reading a new Frame." << std::endl;
+    //readAndSendChannel(s);
 };
 
 int main(int argc, char* argv[]) {
@@ -127,6 +137,24 @@ int main(int argc, char* argv[]) {
 
         std::cout << "Initialized logger." << std::endl;
     }
+
+    s.timer = new Timer(h.getLoop());
+    s.timer->setData(&s);
+    // Check for a new frame every 3 milliseconds
+    s.timer->start([](Timer *timer) {
+        struct state* s = (struct state *) timer->getData();
+        if(s->reading){
+            if(ioctl(s->fd, STATUS, NULL)){
+                // We are still working
+            } else {
+                // Frame was recorded
+                // Send it
+                readAndSendChannel(s);
+                s->reading = false;
+                std::cout << "Sent a fresh frame!" << std::endl;
+            }
+        }
+    }, 1, 1);
 
     h.onHttpRequest([](uWS::HttpResponse *res, uWS::HttpRequest req, char *data, size_t length, size_t remainingBytes) {
         std::string url;
@@ -417,9 +445,7 @@ int main(int argc, char* argv[]) {
                         std::cout << "No valid channel requested." << std::endl;
                     }
                     s.currentChannel = j["channel"].get<size_t>();
-                    std::thread t1(waitForFrame, &s);
-                    // TODO: do not detach but join
-                    t1.detach();
+                    startFrame(s);
                 }
 
                 // Request a new frame of data
@@ -430,7 +456,7 @@ int main(int argc, char* argv[]) {
                     } catch(nlohmann::detail::type_error e) {
                         std::cout << "No valid channel requested." << std::endl;
                     }
-                    readAndSendChannel(&s);
+                    readFrame(s);
                 }
 
                 // Force a trigger
