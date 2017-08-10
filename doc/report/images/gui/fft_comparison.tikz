@@ -1,0 +1,28 @@
+\newcommand*\freqzFile{images/gui/fft_comparison.csv}
+\pgfplotstableread[col sep=comma]{\freqzFile}\freqzTable
+\begin{tikzpicture}
+     \pgfplotsset{every axis/.style={
+            height=60mm,
+            width=\textwidth,
+            grid=none,
+        },
+        set layers,
+    }
+    \begin{axis}[
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            ylabel=$\left|H\right| (dB)$,
+            % TODO: Fix unit for xlabel
+            %xlabel=$f$,
+            xmin=0,
+            xmax=1,
+            xtick={1},
+            ytick={0},
+            xticklabels={$f_s/2$}
+        ]
+        \addplot[red,-] table[x=w, y=abs(js)] \freqzTable;
+        \addlegendentry{JS FFT};
+        \addplot[blue,-] table[x=w, y=abs(ml)] \freqzTable;
+        \addlegendentry{Matlab FFT};
+    \end{axis}
+\end{tikzpicture}

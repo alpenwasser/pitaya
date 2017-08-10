@@ -1,6 +1,6 @@
 function calculateSNR(x, samplingRate)
     figure;
-    snr(x, samplingRate, 10);
+    snr(x, samplingRate, 24);
     
     figure;
     H = fft(x);
