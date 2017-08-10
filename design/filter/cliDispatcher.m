@@ -79,7 +79,8 @@ switch filtertype
         % ------------- ---------- Stop band frequencies ("How steep is the filter?")
         % NOTE: The smallest number in Fst must be larger than the largest number in
         %       Fp (see above).
-        Fst = [0.225];
+        Fst = [0.225]; % As implemented per 2017-08-04
+
         %Fst = 0.22;
 
         % ------------------------------------------------- Ripple in Passband in dB
@@ -91,7 +92,7 @@ switch filtertype
         Ast = [60];
 
         % Hd: Contains the Filter Objects along with their properties (R, Fs, Fp,...)
-        Hd = pardecFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir);
+        Hd = decFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir);
     case 'DEC25'
         % 5 MHz, 200 ns
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
@@ -140,14 +141,14 @@ switch filtertype
         Ast  = 60;
 
         % Hd: Contains the Filter Objects along with their properties (R, Fs, Fp,...)
-        Hd1 = pardecFIR(R1, Fp1, Fst1, Ap1, Ast1, coefDir, plotDir);
-        Hd2 = pardecFIR(R2, Fp2, Fst2, Ap2, Ast2, coefDir, plotDir);
+        Hd1 = decFIR(R1, Fp1, Fst1, Ap1, Ast1, coefDir, plotDir);
+        Hd2 = decFIR(R2, Fp2, Fst2, Ap2, Ast2, coefDir, plotDir);
 
         % ---------------------------------------------------- Filter Design Objects
         stages = cell(2,1);
         stages{1} = Hd1;
         stages{2} = Hd2;
-        Hcasc = parcascador(R, Fp, Fst, Ap, Ast, 1, plotDir, stages);
+        Hcasc = cascador(R, Fp, Fst, Ap, Ast, 1, plotDir, stages);
     case 'DEC125'
         % 1 MHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
@@ -207,12 +208,12 @@ switch filtertype
 
         HdCIC   =    decCIC(RCIC,  FpCIC, Ast, DL, plotDir);
         HdComp =   compCIC(RComp, FpComp, FstComp, ApComp, AstComp, DL, HdCIC, coefDir, plotDir);
-        HdFIR  = pardecFIR(RFIR, FpFIR,  FstFIR,  ApFIR, AstFIR, coefDir, plotDir);
+        HdFIR  = decFIR(RFIR, FpFIR,  FstFIR,  ApFIR, AstFIR, coefDir, plotDir);
 
         stages    = cell(2,1);
         stages{1} = HdComp;
         stages{2} = HdFIR;
-        Hcasc     = parcascador(R, Fp, Fst, Ap, Ast, DL, plotDir, stages);
+        Hcasc     = cascador(R, Fp, Fst, Ap, Ast, DL, plotDir, stages);
 
         % NOTE: Something doesn't quite work correctly when iterating and sometimes
         %       not all configurations might be iterated. Fixing this bug might not
@@ -265,7 +266,7 @@ switch filtertype
         %       on the compensator's frequency axis, it will be 0.2 wide (0.008*RCIC).
         FstComp = FpComp + 0.008; % Must be smaller than or equal to 0.04 (1/RCIC). FpComp = 0.008
                                   % FpComp,max = 0.032
-        FstFIR1 = 0.30;
+        FstFIR1 = 0.225;
         FstFIR2 = 0.225;
         Fst     = FstFIR2 / RCIC / RFIR1; % overall stop band imposed by the final FIR filter. Only used for filename.
 
@@ -286,14 +287,14 @@ switch filtertype
 
         HdCIC  =    decCIC(RCIC,  FpCIC, Ast, DL, plotDir);
         HdComp =   compCIC(RComp, FpComp, FstComp, ApComp, AstComp, DL, HdCIC, coefDir, plotDir);
-        HdFIR1 = pardecFIR(RFIR1, FpFIR1,  FstFIR1,  ApFIR1, AstFIR1, coefDir, plotDir);
-        HdFIR2 = pardecFIR(RFIR2, FpFIR2,  FstFIR2,  ApFIR2, AstFIR2, coefDir, plotDir);
+        HdFIR1 = decFIR(RFIR1, FpFIR1,  FstFIR1,  ApFIR1, AstFIR1, coefDir, plotDir);
+        HdFIR2 = decFIR(RFIR2, FpFIR2,  FstFIR2,  ApFIR2, AstFIR2, coefDir, plotDir);
 
         stages    = cell(3,1);
         stages{1} = HdComp;
         stages{2} = HdFIR1;
         stages{3} = HdFIR2;
-        Hcasc     = parcascador(R, Fp, Fst, Ap, Ast, DL, plotDir, stages);
+        Hcasc     = cascador(R, Fp, Fst, Ap, Ast, DL, plotDir, stages);
 
         % NOTE: Something doesn't quite work correctly when iterating and sometimes
         %       not all configurations might be iterated. Fixing this bug might not
@@ -699,6 +700,225 @@ switch filtertype
         % ->   40 -> 5 -> 3 ->  2 -> 2 ->
         % ->   30 -> 8 -> 5 ->   2 ->
         % ->   30 -> 5 -> 2 ->  2 -> 2 -> 2 ->
+    case 'SPECS_DEMO'
+        % Cleanup if the script is called multiple times from the same Matlab instance.
+        clear all;close all;
+        filtertype='SPECS_DEMO';
+        genDir = 'generators';
+        coefDir = 'coefData';
+        plotDir = 'plotData';
+
+        % ------------------------------------------- Input Sampling Frequency in Hz
+        Fs  = 125e6;
+
+        % -------------------------------------------------------- Decimation Factor
+        R   = 1;
+
+        % ---------------------- Frequency at the Start of the Pass Band; Normalized
+        % NOTE: The smallest number in Fp must be smaller than the smallest number
+        %       in Fst (see below).
+        Fp  = 0.3;
+
+        % ------------- ---------- Stop band frequencies ("How steep is the filter?")
+        % NOTE: The smallest number in Fst must be larger than the largest number in
+        %       Fp (see above).
+        Fst = [0.40];
+
+        % ------------------------------------------------- Ripple in Passband in dB
+        Ap  = [2];
+
+        % ------------------------------------------- Attenuation in Stop Band in dB
+        Ast = [60];
+
+        % Hd: Contains the Filter Objects along with their properties (R, Fs, Fp,...)
+        Hd = decFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir);
+    case 'TBW_DEMO'
+        % Cleanup if the script is called multiple times from the same Matlab instance.
+        clear all;close all;
+        filtertype='TBW_DEMO';
+        genDir = 'generators';
+        coefDir = 'coefData';
+        plotDir = 'plotData';
+
+        % ------------------------------------------- Input Sampling Frequency in Hz
+        Fs_high  = 2e6;;
+        Fs_low   = 1e6;;
+
+        % -------------------------------------------------------- Decimation Factor
+        R   = 1;
+
+        % ---------------------- Frequency at the Start of the Pass Band; Normalized
+        % NOTE: The smallest number in Fp must be smaller than the smallest number
+        %       in Fst (see below).
+        Fp  = 0.3;
+
+        % ------------- ---------- Stop band frequencies ("How steep is the filter?")
+        % NOTE: The smallest number in Fst must be larger than the largest number in
+        %       Fp (see above).
+        Fst = [0.40];
+
+        % ------------------------------------------------- Ripple in Passband in dB
+        Ap  = [2];
+
+        % ------------------------------------------- Attenuation in Stop Band in dB
+        Ast = [60];
+
+        % Hd: Contains the Filter Objects along with their properties (R, Fs, Fp,...)
+        Hd = decFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir);
+        %fvtool(Hd{1,1},Hd{1,1},'Fs',[2e6,1e6]);
+
+        plotDir  = fullfile(plotDir,'TBWDemo');
+        if ~exist(plotDir,'dir')
+            mkdir(plotDir);
+        end
+
+        % Save Filter Plot Data
+        [H_high,F_high] = freqz(Hd{1,1}, 1e3, Fs_high);
+        plotFile = fullfile(plotDir, 'fs-high.csv');
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s\n', 'abs(H)', 'F');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H_high) F_high],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
+
+        [H_low,F_low] = freqz(Hd{1,1}, 0.5e3, Fs_low);
+        H_low = [H_low' fliplr(H_low')]';
+        plotFile = fullfile(plotDir, 'fs-low.csv');
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s\n', 'abs(H)', 'F');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H_low) F_high],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
+    case 'CASCADE_DEMO'
+        % Cleanup if the script is called multiple times from the same Matlab instance.
+        clear all;close all;
+        filtertype='CASCADE_DEMO';
+        genDir = 'generators';
+        coefDir = 'coefData';
+        plotDir = 'plotData';
+
+        % Demonistrates Two Cascaded HAlfband filters, once with overlap, once without
+        R1 = 2;
+        R2 = 2;
+        R = 4;
+        TwHB  = [0.3 0.6];
+        Fp    = [0.35/R1 0.2/R1];
+        Fst   = [0.65/R1 0.8/R1];
+        AstHB = 40;
+        Ap = 0.5;
+        HdHB  = halfbandFIR(2, [TwHB TwHB], AstHB, coefDir, plotDir);
+        stages = cell(2,1);
+        stages{1} = HdHB;
+        stages{2} = HdHB;
+        Hcasc = cascador(R, Fp, Fst, Ap, AstHB, 0, plotDir, stages);
+
+        plotDir  = fullfile(plotDir,'CascadeDemo');
+        if ~exist(plotDir,'dir')
+            mkdir(plotDir);
+        end
+
+        % Save Filter Plot Data
+        [H_good_cascade,W_good_cascade] = freqz(Hcasc{1,1}, 1e3);
+        plotFile = fullfile(plotDir, 'cascadeDemoHBGoodCascade.csv');
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s\n', 'abs(H)', 'W');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H_good_cascade) W_good_cascade],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
+        [H_good_stage1,W_good_stage1] = freqz(Hcasc{1,1}.Stage1, 1e3);
+        plotFile = fullfile(plotDir, 'cascadeDemoHBGoodStage1.csv');
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s\n', 'abs(H)', 'W');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H_good_stage1) W_good_stage1],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
+        [H_good_stage2,W_good_stage2] = freqz(Hcasc{1,1}.Stage2, 0.5e3);
+        H_good_stage2 = [H_good_stage2' fliplr(H_good_stage2')]';
+        plotFile = fullfile(plotDir, 'cascadeDemoHBGoodStage2.csv');
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s\n', 'abs(H)', 'W');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H_good_stage2) W_good_stage1],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
+
+        [H_bad_cascade,W_bad_cascade] = freqz(Hcasc{2,1}, 1e3);
+        plotFile = fullfile(plotDir, 'cascadeDemoHBBadCascade.csv');
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s\n', 'abs(H)', 'W');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H_bad_cascade) W_bad_cascade],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
+        [H_bad_stage1,W_bad_stage1] = freqz(Hcasc{2,1}.Stage1, 1e3);
+        plotFile = fullfile(plotDir, 'cascadeDemoHBBadStage1.csv');
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s\n', 'abs(H)', 'W');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H_bad_stage1) W_bad_stage1],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
+        [H_bad_stage2,W_bad_stage2] = freqz(Hcasc{2,1}.Stage2, 0.5e3);
+        H_bad_stage2 = [H_bad_stage2' fliplr(H_bad_stage2')]';
+        plotFile = fullfile(plotDir, 'cascadeDemoHBBadStage2.csv');
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s\n', 'abs(H)', 'W');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H_bad_stage2) W_bad_stage1],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
     otherwise
         error('No valid filter type specified. Please assign a valid value to filtertype')
 end

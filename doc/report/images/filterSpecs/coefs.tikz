@@ -1,12 +1,12 @@
 \begin{tikzpicture}
      \pgfplotsset{every axis/.style={
-            height=50mm,
+            height=60mm,
             width=\textwidth,
             grid=none,
-            % TODO: fix x axis unit
         }
     }
     \begin{axis}[
+        title=Impulse Response (Coefficients) of a FIR Filter,
         at = {(0,0)},
         xmin=-22,
         xmax=22,
@@ -14,8 +14,7 @@
         ylabel=$y$,
         xlabel=$n$,
     ]
-        \addplot[ycomb,mark=*,dv+5] table[x=x,y=y,col sep=comma] {images/filterSpecs/coefs.csv};
-
         \draw[gray] (-22,0) -- (22,0);
+        \addplot[ycomb,mark=*,dv+5] table[x=x,y=y,col sep=comma] {images/filterSpecs/coefs.csv};
     \end{axis}
 \end{tikzpicture}

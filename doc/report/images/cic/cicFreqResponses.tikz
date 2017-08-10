@@ -8,9 +8,15 @@
         spy using outlines={magnification=4, connect spies}
     ]
      \pgfplotsset{every axis/.style={
-            height=50mm,
+            height=60mm,
             width=\textwidth,
             grid=none,
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            xlabel=Normalized Frequency,
+            ylabel=Magnitude,
+            x unit=\times\,\pi\,\si{\radian}/\si{\sample},
+            y unit=\si{dB},
         },
         every axis legend/.append style={
             at={(1,-0.25)},  % if attached to bottom plot
@@ -21,48 +27,39 @@
     \begin{axis}[
             title=Integrator,
             at = {(0,0)},
-            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
-            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
-            ylabel=$\left|H\right| (\si{\dB})$,
             xmin=0,
             xmax=1,
             xtick={0,0.5,1},
             ytick={120,80,40,0},
             xticklabels={0,$f_s/4$,$f_s/2$},
         ]
-        \addplot[dv-5,-] table[x=w, y=abs(H)] \freqzTableIntB;
+        \addplot[thick,q1,-] table[x=w, y=abs(H)] \freqzTableIntB;
     \end{axis}
 
     \begin{axis}[
             title=Comb Filter,
-            at = {(0,-50mm)},
-            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
-            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
-            ylabel=$\left|H\right| (\si{\dB})$,
+            at = {(0,-70mm)},
             xmin=0,
             xmax=1,
             xtick={0,0.5,1},
             ytick={0,-60,-120},
             xticklabels={0,$f_s/4$,$f_s/2$},
         ]
-        \addplot[dv-5,-] table[x=w, y=abs(H)] \freqzTableCombB;
+        \addplot[thick,q1,-] table[x=w, y=abs(H)] \freqzTableCombB;
     \end{axis}
 
     \begin{axis}[
             title=CIC Filter,
-            at = {(0,-100mm)},
-            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
-            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
-            ylabel=$\left|H\right| (\si{\dB})$,
+            at = {(0,-140mm)},
             xmin=0,
             xmax=1,
             xtick={0,0.5,1},
             ytick={60,0,-60,-120},
             xticklabels={0,$f_s/4$,$f_s/2$},
         ]
-        \addplot[dv-5,-] table[x=w, y=abs(H)] \freqzTableCICB;
+        \addplot[thick,q1,-] table[x=w, y=abs(H)] \freqzTableCICB;
 
-        \coordinate (spypoint)     at (0.031,60);
+        \coordinate (spypoint)     at (0.033,58);
         \coordinate (magnifyglass) at (rel axis cs:0.123,-0.40);
     \end{axis}
 

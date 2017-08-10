@@ -25,6 +25,12 @@
             height=50mm,
             width=\textwidth,
             grid=none,
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            xlabel=Normalized Frequency,
+            ylabel=Magnitude,
+            x unit=\times\,\pi\,\si{\radian}/\si{\sample},
+            y unit=\si{dB},
         },
         every axis legend/.append style={
             at={(1,-0.15)},
@@ -35,9 +41,6 @@
     \begin{axis}[
             title={Folding Back Due to Spectral Copies{,} $f_\mathrm{s,low} = \frac{f_\mathrm{s,high}}{5}$},
             at = {(0,0)},
-            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
-            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
-            ylabel=$\left|H\right| (\si{\dB})$,
             xmin=-1.8,
             xmax=1.8,
             ymin=-120,
@@ -78,11 +81,8 @@
 
     \begin{axis}[
             title={Folding Back Due to Spectral Copies: Uncluttered},
-            at = {(0,-125mm)},
+            at = {(0,-130mm)},
             height=110mm,
-            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
-            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
-            ylabel=$\left|H\right| (\si{\dB})$,
             xmin=0,
             xmax=1,
             ymin=-150,

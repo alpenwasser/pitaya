@@ -8,6 +8,9 @@
 #include "logger_types.h"
 #include <sys/ioctl.h>
 #include <thread>
+#include <fstream>
+#include <streambuf>
+#include <sys/stat.h>
 
 #define MAGIC_NUMBER 42
 #define DATA_SETTINGS _IOWR(MAGIC_NUMBER, 0, void*)
@@ -39,6 +42,14 @@ struct state {
     bool reading;
 };
 
+bool hasEnding (std::string const &fullString, std::string const &ending) {
+    if (fullString.length() >= ending.length()) {
+        return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
+    } else {
+        return false;
+    }
+}
+
 void readAndSendChannel(state* s){
     struct data_instruction d_instruction;
     d_instruction.resolution = 0;
@@ -66,37 +77,6 @@ void waitForFrame(state* s){
         std::cout << s->frameSize << " " << s->packetSize << " " << s->numberOfChannels << " " << s->data.size() << std::endl;
 
         readAndSendChannel(s);
-
-{
-            // std::cout << "--------- " << c << "--------- " << std::endl;
-
-            // for(int k=2048; k < 2048+10; k++)
-            //     std::cout << s->data[k] << " ";
-            // std::cout << std::endl;
-
-            // struct reg_instruction instruction;
-            // printf("Read number of recorded samples ... \n");
-            // instruction.reg_id = 11;
-            // ioctl(s->fd, READ_REG, &instruction);
-            // printf("Return value: %u\n", instruction.reg_value);
-            // instruction.reg_id = 12;
-            // ioctl(s->fd, READ_REG, &instruction);
-            // printf("Return value: %u\n", instruction.reg_value);
-
-            // printf("Checking error code ... ");
-            // instruction.reg_id = 8;
-            // ioctl(s->fd, READ_REG, &instruction);
-            // printf("Return value: %u\n", instruction.reg_value);
-
-            // printf("Checking faulty address ... ");
-            // instruction.reg_id = 9;
-            // ioctl(s->fd, READ_REG, &instruction);
-            // printf("Return value: %u\n", instruction.reg_value);
-
-            // std::cout << "read" << ret << "/" << toRead << std::endl;
-            // std::cout << s->data.size() << "/" << ret << std::endl;
-
-}
         std::cout << "sent frame" << std::endl;
     } catch(int e){
         std::cout << "Failed to start a new Frame." << std::endl;
@@ -149,7 +129,47 @@ int main(int argc, char* argv[]) {
     }
 
     h.onHttpRequest([](uWS::HttpResponse *res, uWS::HttpRequest req, char *data, size_t length, size_t remainingBytes) {
-        res->end("KEKE", 4);
+        std::string url;
+        if(req.getUrl().toString() == "/"){
+            url = std::string("/opt/server/webapp/index.html");
+        } else {
+            url = std::string("/opt/server/webapp") + req.getUrl().toString();
+        }
+        
+        std::cout << "Got a HTTP request on: " << url << std::endl;
+
+        std::ifstream stream(url);
+        struct stat statbuf;
+        stat(url.c_str(), &statbuf);
+
+        if(stream.good()){//&& statbuf.st_mode == S_IFREG){
+            std::string str((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
+            
+            std::string mime;
+            if(hasEnding(url, std::string(".css"))){
+                mime = std::string("text/css");
+            } else if(hasEnding(url, std::string(".js"))){
+                mime = std::string("text/javascript");
+            } else {
+                mime = std::string("text/html");
+            }
+            char header[128];
+            int header_length = std::sprintf(
+                header,
+                "HTTP/1.1 200 OK\r\nContent-Length: %u\r\nContent-Type: %s\r\n\r\n",
+                str.size(),
+                mime.c_str()
+            );
+            res->write(header, header_length);
+            res->end(str.c_str(), str.size());
+            std::cout << "File found!" << std::endl;
+        } else {
+            std::cout << "File " << url << " not found!" << std::endl;
+            char header[128];
+            int header_length = std::sprintf(header, "HTTP/1.1 404 Not Found\r\nContent-Length: %u\r\n\r\n", 0);
+            res->write(header, header_length);
+            res->end(nullptr, 0);
+        }
     });
 
     h.onConnection([&s](uWS::WebSocket<uWS::SERVER> *ws, uWS::HttpRequest req) mutable {

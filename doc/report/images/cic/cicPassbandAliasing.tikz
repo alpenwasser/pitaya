@@ -16,13 +16,18 @@
 \pgfplotstableread[col sep=comma]{\freqzFileCICG}\freqzTableCICG
 \pgfplotstableread[col sep=comma]{\freqzFileCICH}\freqzTableCICH
 \pgfplotstableread[col sep=comma]{\freqzFileCICI}\freqzTableCICI
-\begin{tikzpicture}[
-        spy using outlines={magnification=3},
-    ]
+\begin{tikzpicture}
      \pgfplotsset{every axis/.style={
             height=140mm,
             width=\textwidth,
             grid=none,
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            xticklabel style={font=\footnotesize},
+            x unit=\times\,\pi\,\si{\radian}/\si{\sample},
+            y unit=\si{dB},
+            xlabel=Normalized Frequency,
+            ylabel=Magnitude,
         },
         every axis legend/.append style={
             at={(1,-0.15)},
@@ -32,9 +37,6 @@
     }
     \begin{axis}[
             at = {(0,0)},
-            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
-            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
-            ylabel=$\left|H\right| (\si{\dB})$,
             xmin=0.001,
             xmax=1,
             ymin=-250,
@@ -99,11 +101,5 @@
             Left side of fourth null (flipped),
             Right side of fourth null (not flipped),
         };
-
-        %\coordinate (spypoint)     at (0.0300,9);
-        %\coordinate (magnifyglass) at (rel axis cs:0.078,-0.35);
     \end{axis}
-
-    %\spy [br0, width=1.9cm,height=5.3cm] 
-    %    on (spypoint) in node[fill=white] at (magnifyglass);
 \end{tikzpicture}
