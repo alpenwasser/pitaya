@@ -1,0 +1,52 @@
+\chapter{Filter Design} % <<< ------------------------------------------------ %
+\label{ch:app:fdesign}
+% ---------------------------------------------------------------------------- %
+
+This  chapter contains  some additional  information about  the filter  design
+process.
+
+\section{Decimation of 625: Variants} % <<< ---------------------------------- %
+\label{sec:dec625_variants}
+% ---------------------------------------------------------------------------- %
+
+\begin{figure}
+    \centering
+    \input{images/fdesign/dec625Variants.tikz}
+    \caption[Decimation Chain Variants for Rate of 625]{%
+        Semilog  (top)  and   linear  plot  (middle)  for   two  variants  for
+        implementing  a  decimation   chain  for  a  rate   change  factor  of
+        $R=625$. As is  evident, both  choices show  almost the  same behavior
+        with regards to magnitude. The bottom plot shows the phase response of
+        the two filters; here, too, the behavior is very similar. \emph{Note:}
+        These plots show the frequency  responses of the entire filter cascade
+        for the two respective variants.%
+    }
+    \label{fig:dec625_variants}
+\end{figure}
+
+%>>>
+
+\section{Resource Usage for FIR Filters on the FPGA} % <<< ------------------- %
+\label{sec:fir_filter_resouce_usage}
+% ---------------------------------------------------------------------------- %
+
+This   section   contains  the   experimental   results   of  how   many   DSP
+slices  a  given   FIR  filter  needs  when  implemented   with  Xilinx's  FIR
+Compiler. These  figures were  used  to determine  reasonable  bounds for  the
+FIR  filter  \code{5steep}  (see  Figure~  \ref{fig:fdesign:chain_concept}  on
+page~\pageref{fig:fdesign:chain_concept}).
+TODO: source
+
+
+
+%>>>
+
+\section{Halfband Filters} % <<< --------------------------------------------- %
+\label{sec:halfband_filters}
+% ---------------------------------------------------------------------------- %
+
+
+%>>>
+
+%>>>
+%^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>

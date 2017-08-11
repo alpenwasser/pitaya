@@ -1,0 +1,69 @@
+\newcommand*\freqzFileDECA{images/fdesign/dec625--125-5.csv}
+\newcommand*\freqzFileDECB{images/fdesign/dec625--25-5-5.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileDECA}\freqzTableDECA
+\pgfplotstableread[col sep=comma]{\freqzFileDECB}\freqzTableDECB
+\begin{tikzpicture}
+     \pgfplotsset{every axis/.style={
+            height=60mm,
+            width=\textwidth,
+            grid=none,
+            x unit=\times\,\pi\,\si{\radian}/\si{\sample},
+            ylabel=Magnitude,
+            xlabel=Normalized Frequency,
+            xmin=0,
+            xmax=3e-3,
+            %xmin=0,
+            %xmax=1000000,
+            %ymax=5,
+            %ymin=-120,
+            every axis legend/.append style={
+                at={(1,-0.30)},  % if attached to bottom plot
+                anchor=north east,
+                cells={anchor=west},
+            },
+        },
+    }
+    \begin{axis}[
+            title={Decimation of $R=625$: Variants},
+            at = {(0,0)},
+            y unit=\si{dB},
+            ymax=5,
+            ymin=-180,
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+        ]
+        \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableDECA;
+        \addplot[thick,q3,-] table[x=W, y=abs(H)] \freqzTableDECB;
+    \end{axis}
+    \begin{axis}[
+            at = {(0,-60mm)},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            %xtick={0,0.3e6,0.4e6,1e6},
+        ]
+        \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableDECA;
+        \addplot[thick,q3,-] table[x=W, y=abs(H)] \freqzTableDECB;
+    \end{axis}
+    \begin{axis}[
+            at = {(0,-120mm)},
+            ylabel=Phase,
+            y unit=\si{\degree},
+            ymin=-2800,
+            ymax=0,
+            y filter/.code={\pgfmathparse{180*\pgfmathresult/3.141592654}},
+            unbounded coords=discard,
+            point meta=explicit,
+            filter point/.code={%
+                \pgfmathparse{\pgfkeysvalueof{/data point/meta}==0}
+                \ifpgfmathfloatcomparison
+                    \pgfkeyssetvalue{/data point/y}{nan}%
+                \fi
+            }
+        ]
+        \addplot[thick,-,q1,] table[x=W,y=angle(H),meta=abs(H)] \freqzTableDECA;
+        \addplot[thick,-,q3] table[x=W,y=angle(H),meta=abs(H)] \freqzTableDECB;
+        \legend{%
+            $125 \rightarrow \text{CFIR} \rightarrow 5$,
+            $ 25 \rightarrow \text{CFIR} \rightarrow 5 \rightarrow 5$%
+        };
+    \end{axis}
+\end{tikzpicture}

@@ -17,7 +17,7 @@ following chapter, beginning on page~\pageref{ch:fpga}.
 \label{sec:requirements}
 % ---------------------------------------------------------------------------- %
 
-The overarching  objective is downsampling the  signal coming out of  the ADC,
+The overarching  objective is downsampling the  signal coming out of  the ADC.
 This  section will  derive  upper  and lower  boundaries  for the  downsampled
 frequency range, and then define the specific downsampling ratios to be used.
 
@@ -86,21 +86,283 @@ corresponding sampling frequencies.
 %>>>
 
 
-\section{Concept} % <<< ------------------------------------------------------ %
-\label{sec:Concept}
+\section{Cascade Concept} % <<< ---------------------------------------------- %
+\label{sec:cascade_concept}
 % ---------------------------------------------------------------------------- %
 
 Based  on the  downsampling factors  from Table~\ref{tab:downsampling_ratios},
-this section presents the concept for a filtering sytem which implements those
-ratios. This  process needs  to take  into  account contraints  both from  the
-filtering process itself as well as available resources on the hardware.
+this section  presents the  general concept for  the cascades  which implement
+those rate changes.
 
+As  discussed  in  Section~\ref{sec:multi_stage_filter_designs},  implementing
+high   downsampling   ratios   in   a    single   stage   is   generally   not
+a   sound   design   choice. Consequently,  the   downsampling   ratios   from
+Table~\ref{tab:downsampling_ratios} must  be decomposed into  smaller factors,
+which can then be distributed along a chain. These factors must fulfill the
+following criteria:
+\begin{itemize}\tightlist
+    \item
+        Filters  for  different stages  should  be  re-usable across  multiple
+        downsampling ratios  in order  to save resources. Rate  change factors
+        which  are  common  to  multiple rate  change  factors  are  therefore
+        preferred.
+    \item
+        The factors for the individual stages  should be large enough to be of
+        utility,  but small  enough so  as not  to make  the resulting  filter
+        impractically narrow.
+\end{itemize}
+CIC  filters  are  well-suited  for  large   rate  changes,  but  are  not  an
+optimal solution  for smaller  ones. As an  example of  a low-rate  change CIC
+filter,  Figure~\ref{fig:cic_simu:freqz} on  page~\pageref{fig:cic_simu:freqz}
+in  Appendix~\ref{sec:app:cic_simu}  shows the  frequency  response  of a  CIC
+filter with a rate change of \num{2}.
 
+Based on that observation, it is reasonable to implement the lower rate change
+factors without CIC  filters, while using CIC filters as  the first element in
+the filter  chain for  the higher rate  changes. This allows  taking advantage
+of  the CIC  filter's  high computational  efficiency  for large  downsampling
+rates,  while still  having good  frequency  response behavior  for the  lower
+rate  changes. Table~\ref{tab:ratio_decompositions}  shows  the  prime  factor
+decomposition for the overall rate changes,  as well as the factors chosen for
+the individual filter chain stages.
 
+\begin{table}
+    \centering
+    \caption[Downsampling Ratio Decompositions and Factors for Filter Stages]{
+        The downsampling ratios, their prime factor decompositions, and the
+        filtering stages with their downsampling ratios%
+    }
+    \label{tab:ratio_decompositions}
+    \begin{tabular}{S >{$}r<{$} >{$}r<{$} }
+        \toprule
+        {R}  & \text{Decomposition}                                                 & \text{Stages} \\
+        \midrule
+           5 &  5                                                   = 5^1           &   5                             \\
+          25 &  5 \cdot 5                                           = 5^2           &   5 \rightarrow 5               \\
+         125 &  5 \cdot 5 \cdot 5                                   = 5^3           &  25 \rightarrow 5               \\
+         625 &  5 \cdot 5 \cdot 5 \cdot 5 \cdot 5                   = 5^4           &  25 \rightarrow 5 \rightarrow 5 \\
+        1250 &  2 \cdot 5 \cdot 5 \cdot 5 \cdot 5 \cdot 5           = 2^1 \cdot 5^4 & 125 \rightarrow 5 \rightarrow 2 \\
+        2500 &  2 \cdot 2 \cdot 5 \cdot 5 \cdot 5 \cdot 5 \cdot 5   = 2^1 \cdot 5^4 & 125 \rightarrow 5 \rightarrow 2 \rightarrow 2 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Other choices  are of  course possible. Particularly in  the case  of $R=625$,
+one  may  choose to  implement  a  chain of  $125  \rightarrow  5$ instead  of
+$25  \rightarrow 5  \rightarrow 5$. However,  since these  two implementations
+show  almost  the same  behavior  over  the  relevant  parts of  the  spectrum
+(passband  and transition  band), the  choice is  somewhat arbitrary. The  two
+variants  are  graphically  compared  in  Figure~\ref{fig:dec625_variants}  on
+\pageref{fig:dec625_variants}  in  Appendix~\ref{sec:dec625_variants} both  in
+terms of magnitude and phase response.   Lastly, a CIC filter block for $R=25$
+along with its compensator is needed anyway for the filter chain with $R=125$,
+so neither  variant for the  \num{625} chain  requires new building  blocks in
+terms of resource usage.
 %>>>
-\subsection{Filter Chains} % <<< --------------------------------------------- %
-\label{subsec:filter_chains}
+
+\section{Filter Specifications} % <<< ---------------------------------------- %
+\label{sec:fdesign:filter_specifications}
 % ---------------------------------------------------------------------------- %
+
+Continuing  from Table~\ref{tab:ratio_decompositions},  this section  presents
+the  concept for  the cascades  which  are used  in our  design. Specifically,
+requirements and constraints for the  filters in those cascades are specified.
+For this purpose, it is no longer sufficient to merely consider the filters in
+the mathematical  sense; resource  usage on  the hardware  must be  taken into
+account.
+
+The hardware places two main contrainst on the design:
+\begin{itemize}\tightlist
+    \item
+        Number of available LUTs: \num{17600}
+    \item
+        Number of available DSP slices: \num{80}
+\end{itemize}
+The number  of LUTs  is relevant  for storage  (filter coefficients),  the CIC
+filters\footnote{%
+    The CIC compiler block by Xilinx can be configured to utilize LUTs instead
+    of DSP  slices for  its computations. The  FIR compiler  can only  use DSP
+    slices for its computations.%
+},
+the  rest of  the processing  system, and  control logic. The  DSP slices  can
+therefore  be  reserved  for  the  FIR filters. Because  the  device  has  two
+channels, only 40 slices may be used per channel.
+
+In order to have  a realistic gauge for resource usage of  the FIR filters, it
+is  necessary to  keep  in  mind the  two  factors  which primarily  influence
+resource usage:
+\begin{itemize}\tightlist
+    \item
+        the sampling frequency at which the filter runs (its incoming sampling
+        rate),
+    \item
+         and the number of coefficients, and therefore, adders and multipliers.
+\end{itemize}
+It is  therefore important to  know which filters in  the design run  at which
+sampling  rates. For this  to  be possible,  a concept  of  the six  different
+filter  chains   is  needed. Based   on  Table~\ref{tab:ratio_decompositions},
+Figure~\ref{fig:fdesign:chain_concept} depicts  that concept. It  includes all
+the required  filters of the  design, including  the compensators for  the CIC
+filters. Note that  one of  the compensators  is itself  used as  a decimation
+filter in the case of the $R=1250$ and $R=2500$ chains.
+
+\begin{figure}
+    \centering
+    \input{images/fdesign/chainConcept.tikz}
+    \caption[Filter Chain Concept]{The concept for the filter chains}
+    \label{fig:fdesign:chain_concept}
+\end{figure}
+
+Because the final filter in a cascade  is the one which determines the overall
+transition  band  (see  Section~\ref{sec:multi_stage_filter_designs}),  it  is
+desirable to have maximally steep  output filters in a cascade. Therefore, the
+filter \code{5steep} should be as sharp  as possible. Since that filter is not
+just used as the  final stage in some cascades, but also  as the single filter
+for the $R=5$ chain, it runs  at the highest sampling frequency%
+\footnote{%
+    It should be noted at this point  that a filter which is configured to run
+    at a high  sampling rate can be re-used  as a lower stage in  a cascade in
+    the Xilinx toolchain. The filter's behavior  in that case is correct, even
+    when being run at a lower rate than maximally possible.%
+}.
+\code{5steep}  is therefore  the most  critical  filter in  terms of  resource
+usage. The filter \code{5flat} also runs  at the highest sampling frequency in
+the $R=25$  chain, but because it  is not the  final filter in that  chain, it
+need not be as steep.
+
+While  it is  possible to  estimate  the needed  resources of  a given  filter
+design,  reliable  figures  are  best   obtained  by  way  of  experiment. The
+FPGA  toolchain  might  make  optimizations   which  are  hard  to  take  into
+account   when  performing   estimates  by   hand.   The   results  of   these
+measurements are  available in  Appendix~\ref{sec:fir_filter_resouce_usage} on
+page~\pageref{sec:fir_filter_resouce_usage}. Based on those  numbers, a filter
+size  of around  \num{200}  is  determined to  be  a  reasonable boundary  for
+\code{5steep}; a filter of that size uses about
+TODO
+DSP slices. This leaves
+TODO
+number  of  slices   for  the  remaining  filters   (per  channel). Of  these,
+\code{5flat} is the most critical, because it  must also be able to run at the
+full incoming sampling frequency. \code{2steep}  runs at a much lower sampling
+rate  and can therefore be of significant size without a notable penalty in
+resource usage.
+
+Based  on  these  findings  and   the  measurements  of  the  STEMlab's  stock
+configuration from  Section~\ref{subsec:stl125:ds_default}, it is  possible to
+define performance specifications  for the filters without needing  to prod in
+the dark,  so to  speak. The following  paragraphs explain  the considerations
+which lead to  the final filter specifications. The results  are summarized in
+Table~\ref{tab:filter_specs}.
+
+\paragraph{Requirements  for   \code{5steep}:}   Based   on  the   results  of
+the  moving  averager   used  in  the  STEMlab's   stock  configuration,  even
+a  FIR  filter  with   moderate  performance  characteristics  should  already
+offer   significant   improvements. In   order  to   achieve   notable   gains
+over  the   default  configuration,   the  following  performance   goals  for
+\code{5steep}   are  specified,   according  to   the  pattern   explained  in
+Section~\ref{subsec:FIR_filters}:
+\begin{itemize}\tightlist
+    \item
+        Passband ripple: better than \SI{0.25}{\dB}
+    \item
+        Stopband attenuation: \SI{60}{\dB} or better
+    \item
+        Transition band width: $0.05 \cdot f_\mathrm{s}/2$ or better
+\end{itemize}
+The     stopband    attenuation     criterion    is     also    applied     to
+all    other     filters. Anything    else    would    be     a    waste    of
+resources,   as   shown    in   Figure~\ref{fig:fdesign:cascade:ast_demo}   in
+Section~\ref{sec:multi_stage_filter_designs}.
+
+\paragraph{Requirements   for  \code{5flat}:} This   filter   need  not   have
+a   drop-off  as   sharp   as   \code{5steep},  as   long   as   the  end   of
+its   transition   band   does   not   overlap   with   the   first   spectral
+copy  of  \code{5steep} (see  Figure~\ref{fig:fdesign:cascade:good_vs_bad}  in
+Section~\ref{sec:multi_stage_filter_designs}).   However, because  it is  in a
+cascade with  \code{5steep}, a sharper  requirement on its passband  ripple is
+imposed,  in order  not  to worsen  overall passband  ripple  behavior of  the
+cascade too much.
+
+\paragraph{Requirements    for    \code{2steep}:} In   theory,    the    first
+decimator-by-two in  the chain  for $R=2500$  could be  designed with  a wider
+transition band than the one which is  being used as the last stage (hence the
+designator \code{5steep}). However, because  these filters do not  have to run
+at high sampling rates, the amount of DSP slices they use is very low (\num{1}
+DSP slice per channel),  so the same filter can be  re-used without a resource
+penalty.
+
+TODO: halfband
+
+\paragraph{Requirements     for     \code{CIC25}:} The     relevant     design
+criteria    for   the    CIC    filter   are    its   stopband    attenuation,
+its   decimation    rate,   and   the   cutoff    frequency/desired   passband
+width    (see   Figure~\ref{fig:cic:freq_responses:passband:attenuation}    in
+Section~\ref{subsubsec:cic:frequency_characteristics}).  The  cutoff frequency
+is chosen such that it matches the  frequency band which is of interest at the
+end of the filter chain  for $R=125$, i.e. $f_\mathrm{P} = f_\mathrm{s,high}/R
+=  0.008$. This means  that  the passband  of  \code{CIC25} and  \code{CFIR25}
+combined is too wide by a factor of \num{5} for the $R=625$ chain, but this is
+of no concern because it will be cut  off by \code{5flat} as the last stage in
+that  case. This allows  the  re-use of  the two  filters  across both  chains
+without changing their design parameters.
+
+\paragraph{Requirements for \code{CIC125}:} The same considerations as for the
+other CIC  filter apply. The filter  and its  compensator are specified  for a
+rate  change  of  \num{125}  and  \num{5} instead  of  \num{25}  and  \num{1},
+respectively, and  the cutoff frequency  is set to  match the filter  chain of
+$R=1250$. This makes it twice as wide as it needs to be for $R=2500$, which is
+corrected by a second halfband filter.
+
+\paragraph{Requirements     for     compensators:} The    compensators     are
+specified     according    to     the    considerations     laid    out     in
+Section~\ref{subsubsec:cic:compensators},   with   the    added   feature   of
+\code{CIC125} also being used as a decimator.
+
+\paragraph{Summary:} With  the  above  considerations,  and  the  experimental
+results for  resource usage  from Appendix~\ref{sec:fir_filter_resouce_usage},
+it  is  possible  to  formulate  a complete  set  of  specifications  for  the
+filters. They are summarized in Table~\ref{tab:filter_specs}.
+
+\begin{table}
+    \centering
+    \caption[Summary of Filter Specifications]{
+        The   target   filter   specifications. These  parameters   are  based
+        both  on  the  desired  frequency   domain  behavior  of  the  filters
+        as   well  as   the  feasibility   of  implementation   in  terms   of
+        resource   usage. For  resource   considerations,  the   results  from
+        Appendix~\ref{sec:fir_filter_resouce_usage} are used as a guideline.%
+    }
+    \label{tab:filter_specs}
+    \newcommand*\NA{\footnotesize N/A}
+    \begin{tabular}{>{\ttfamily}lSSSS}
+        \toprule
+        \sffamily Filter                                                          &
+        {\parbox[t]{26.5mm}{Passband Edge \\ ($\times \pi \si{\radian\per\sample}$)}} &
+        {\parbox[t]{26.5mm}{Stopband Edge \\ ($\times \pi \si{\radian\per\sample}$)}} &
+        {\parbox[t]{26.5mm}{Passband Ripple \\ (\si{\dB})}}                           &
+        {\parbox[t]{26.5mm}{Stopband \\ Attenuation (\si{\dB})}}                     \\
+        \midrule
+        5steep  & 0.2    & 0.225  & 0.2   & 60 \\
+        5flat   & 0.2    & 0.3    & 0.05  & 60 \\
+        CIC25   & 0.008  & {\NA}  & {\NA} & 60 \\
+        CFIR25  & 0.008  & 0.016  & 0.05  & 60 \\
+        CIC125  & 0.0016 & {\NA}  & {\NA} & 60 \\
+        CFIR125 & 0.0016 & 0.0024 & 0.05  & 60 \\
+        \midrule
+        & 
+        \multicolumn{2}{l}{{\parbox[t]{53.0mm}{Transition  Band Width \\ ($\times \pi \si{\radian\per\sample}$)}}} &
+        &
+        {\parbox[t]{26.5mm}{Stopband \\ Attenuation (\si{\dB})}}                     \\
+        \midrule
+        2steep  & 0.004  & {\NA}   & {\NA}  & 60 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+
+%25 -> 1 -> 5 -> 5 instead of 25 -> cfir5 -> 5: compensation filter is needed anyway
+%but can be kept smaller. 5flat is needed anyway and runs at higher sampling frequency
+%than cfir25.
 
 %>>>
 
