@@ -149,6 +149,7 @@ How the application is structured and certain features are implemented is explai
 % ==============================================================================
 
 \subsection{Application Structure}
+\label{subsec:gui:application_structure}
 
 The entire application consists of a single state tree. This makes it very easy to import and export settings on one hand and on the other it concentrates all the states in one place which gives a way better overview than in the case all the states are scattered in various objects in the application.
 Listing~\ref{lst:gui:app_structure} shows an extract of the tree structure.
@@ -354,7 +355,7 @@ A virtual DOM consists of many vnodes and can be mounted on any node of the brow
 
 A component can be mounted on any DOM node and becomes a vnode in the virtual DOM. The developer can create new Components by simply creating an object that holds at least a \textit{view()} function that instantiates new vnodes.
 The new Component can then be instantiated via the \textit{m()} or \textit{m.mount()} command.
-As this section should only give a base overview on mithril and is not meant to be a manual, further information on mithrils features and usage can be obtained on it's webpage~\cite{mithril::home}.
+As this section should only give a base overview on mithril and is not meant to be a manual, further information on mithrils features and usage can be obtained on it's webpage~\cite{mithril:home}.
 
 \subsection{Power Calculation}
 

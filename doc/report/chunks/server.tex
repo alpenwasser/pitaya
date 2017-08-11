@@ -1,2 +1,63 @@
+% ==============================================================================
+%
+%                          R E Q U I R E M E N T S
+%
+% ==============================================================================
+
 \chapter{Server}
 \label{ch:server}
+
+Once the FPGA has recorded data that data has to be transmitted over the network. Since implementing networking in hardware is not feasible in most cases this is done via the ARM Cortex A9 core that already has a PHY. To controll all the hardware of the SoC a Embedded Ubuntu Linux is running on the ARM core which can control all hardware units as known from normal Linuxes.
+An application is then needed that reads the necessary data from the RAM and sends it to the network. In this section the design choices and the internal structure of the server application are explained.
+
+\section{Requirements}
+\label{sec:server:requirements}
+
+The functional requirements of the server application are:
+
+\begin{itemize}
+    \item Read the system status and transmit it over the network.
+    \item Receive commands over the network, translate them where needed and relay them to the FPGA IP.
+    \item Read data from the RAM and transmit it over the network.
+\end{itemize}
+
+More requirements came in after choosing the client side model but are not part of the base requirements and will thus only be explained in the Section~\ref{sec:server:design_choices}.
+
+% ==============================================================================
+%
+%                         D E S I G N   C H O I C E S
+%
+% ==============================================================================
+
+\section{Design Choices}
+\label{sec:server:design_choices}
+
+As the ZYNQ Logger comes with a kernel module that has to be interfaces via IOCTL calls it is recommended to write the application in C or C++. This is due to the nature of the Linux which still requires mostly C for interfacing. There is some IOCTL interfaces in Python and Rust for example but as those bear even more problems on ARM Linux as not all libraries and features are present.
+
+As the server application is rather on a high level in the complexity sense C++ would be a good choice as it eliminates quite some caveats C has. Furthermore all the C features can be used equally in C++.
+
+For this reason C++ was chosen as the environment to implement the server application.
+
+Because JavaScript was chosen for the client side, WebSockets became mandatory. This is not really a design choice but rather a inherited requirement. Before the final descision on JavaScript was made, existing WebSockets libraries were tested. With a uWebSockets~\cite{uws:github} a great, performant, but badly documented library was chosen. More on this in Section~\ref{subsec:server:uws}.
+
+As a data format for settings and stats, JSON is used. This is for the simple reason that JSON has by far the biggest usage of all the available formats, the specification is simple and JavaScript can parse it natively into a JavaScript object.
+Here again C++ is a better choice than C as it has a lot of high level libraries that can serialize and more importantly deserialize JSON objects.
+
+\section{Implementation}
+\label{sec:server:implementation}
+
+\subsection{uWebSockets}
+\label{subsec:server:uws}
+
+To expose a WebSocket uWebSockets~\cite{uws:github} (uWS in further text) is used. It is a library with a tiny footprint that is very performant~\cite{uws:github}. Of course the server application will never reach the limits of uWS as the network will give up before but it is important that this is actually the case.
+
+uWS is based on libuv an async library which makes it possible to do 
+
+% ==============================================================================
+%
+%                  A P P L I C A T I O N   S T R U C T U R E
+%
+% ==============================================================================
+
+\subsection{Application Structure}
+\label{subsec}
