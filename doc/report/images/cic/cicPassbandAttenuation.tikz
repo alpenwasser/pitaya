@@ -50,8 +50,8 @@
         \addplot[thick,q1,-] table[x=w, y=abs(H)] \freqzTableCICA;
         \addplot[thick,q3,-] table[x=w, y=abs(H)] \freqzTableCICB;
         \legend{%
-            $M=1${,} $f_c = \frac{f_\mathrm{s,low}}{8}$,
-            $M=2${,} $f_c = \frac{f_\mathrm{s,low}}{4}$
+            $M=1${,} $f_c = \frac{f_\mathrm{s,low}}{4}$,
+            $M=2${,} $f_c = \frac{f_\mathrm{s,low}}{8}$
         };
     \end{axis}
 \end{tikzpicture}

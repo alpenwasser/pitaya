@@ -37,17 +37,12 @@ zynq_logger:
 	cd zynq_logger && make core
 
 project:
-	$(VIVADO) -source make_project.tcl -tclargs src
+	$(VIVADO) -source make_project.tcl -tclargs p_main
 	rm -f vivado*
 	rm -f webtalk*
 
-chain5:
-	$(VIVADO) -source make_project.tcl -tclargs p_chain5
-	rm -f vivado*
-	rm -f webtalk*
-
-chain5sim:
-	$(VIVADO) -source make_project.tcl -tclargs p_chain5 sim
+projectsim:
+	$(VIVADO) -source make_project.tcl -tclargs p_main sim
 	rm -f vivado*
 	rm -f webtalk*
 
@@ -87,7 +82,7 @@ clean:
 	rm -rf .tmp_versions
 
 clean_project:
-	rm -rf $(BUILD)/src
+	rm -rf $(BUILD)/p_main
 	rm -rf .Xil
 	rm -rf .tmp_versions
 

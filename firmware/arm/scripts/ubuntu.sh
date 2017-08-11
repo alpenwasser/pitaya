@@ -30,15 +30,35 @@ mkfs.ext4 -F -j $root_dev
 mount $boot_dev $boot_dir
 mount $root_dev $root_dir
 
-# Copy files to the boot file system
+# Copy SoC bootfiles files to the boot file system
 
 cp boot.bin devicetree.dtb uImage uEnv.txt $boot_dir
 
 # Copy Ubuntu Core to the root file system
-
 test -f $root_tar || curl -L $root_url -o $root_tar
 
 tar -zxf $root_tar --directory=$root_dir
+
+# Copy kernelmodule
+mkdir $root_dir/opt/logger
+cp ../fpga/zynq_logger/build/kernel_module/zynq_logger_main.ko $root_dir/opt/logger
+
+# Copy server
+mkdir $root_dir/opt/server
+cp server/build/server $root_dir/opt/server
+cp server/external/build/uWS/lib/libuWS.so $root_dir/opt/server
+#TODO: check if this is right
+cp /vagrant/Xilinx/SDK/2016.2/gnu/arm/lin/arm-xilinx-linux-gnueabi/libc/usr/lib/libstdc++.so.6 $root_dir/opt/server
+
+# Copy webapp
+cp -R ../../scope/build/ $root_dir/opt/server/webapp
+rm $root_dir/opt/server/webapp/js/bundle.js.map
+rm $root_dir/opt/server/webapp/js/bundle.mjs
+
+# Copy initfiles
+# ATTENTION: Adding the server service is in the chroot section!
+cp server/init_server.sh $root_dir/opt/server
+cp server/service.sh $root_dir/etc/init.d/server
 
 # Add missing configuration files and packages
 
@@ -248,6 +268,8 @@ echo root:$passwd | chpasswd
 
 service ntp stop
 service ssh stop
+
+update-rc.d "server" defaults
 
 history -c
 

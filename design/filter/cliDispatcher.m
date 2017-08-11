@@ -803,6 +803,233 @@ switch filtertype
             'delimiter', ',',...
             'newline', 'unix'...
         );
+    case 'AST_DEMO'
+        % Cleanup if the script is called multiple times from the same Matlab instance.
+        clear all;close all;
+        filtertype='AST_DEMO';
+        genDir = 'generators';
+        coefDir = 'coefData';
+        plotDir = 'plotData';
+
+        % ------------------------------------------- Input Sampling Frequency in Hz
+        Fs = 2e6;;
+
+        % -------------------------------------------------------- Decimation Factor
+        R1 = 4;
+        R2 = 4;
+
+        % ---------------------- Frequency at the Start of the Pass Band; Normalized
+        % NOTE: The smallest number in Fp must be smaller than the smallest number
+        %       in Fst (see below).
+        Fp1 = 0.25;
+        Fp2 = 0.25;
+
+        % ------------- ---------- Stop band frequencies ("How steep is the filter?")
+        % NOTE: The smallest number in Fst must be larger than the largest number in
+        %       Fp (see above).
+        Fst1 = 0.3;
+        Fst2 = 0.3;
+
+        % ------------------------------------------------- Ripple in Passband in dB
+        Ap1 = 1;
+        Ap2 = 1;
+
+        % ------------------------------------------- Attenuation in Stop Band in dB
+        Ast1 = 60;
+        Ast2 = 40;
+
+        % Hd: Contains the Filter Objects along with their properties (R, Fs, Fp,...)
+        Hd1 = decFIR(R1, Fp1, Fst1, Ap1, Ast1, coefDir, plotDir);
+        Hd2 = decFIR(R2, Fp2, Fst2, Ap2, Ast2, coefDir, plotDir);
+        Hcasc1 = cascade(Hd1{1,1},Hd2{1,1});
+        Hcasc2 = cascade(Hd2{1,1},Hd1{1,1});
+
+        plotDir  = fullfile(plotDir,'AstDemo');
+        if ~exist(plotDir,'dir')
+            mkdir(plotDir);
+        end
+
+        % Save Filter Plot Data
+        % Cascades
+        [H_21,W_21] = freqz(Hcasc1, 2e3);
+        plotFile = fullfile(plotDir, 'ast-60-40.csv');
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s\n', 'abs(H)', 'W');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H_21) W_21],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
+        [H_12,W_12] = freqz(Hcasc2, 2e3);
+        plotFile = fullfile(plotDir, 'ast-40-60.csv');
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s\n', 'abs(H)', 'W');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H_12) W_12],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
+        % Stages
+        [H_1,W_1] = freqz(Hd1{1,1}, 2e3);
+        plotFile = fullfile(plotDir, 'ast-60.csv');
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s\n', 'abs(H)', 'W');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H_1) W_1],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
+        [H_2,W_2] = freqz(Hd2{1,1}, 2e3);
+        plotFile = fullfile(plotDir, 'ast-40.csv');
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s\n', 'abs(H)', 'W');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H_2) W_2],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
+        % Stages referenced to incoming frequency for copies
+        [H_1,W_1] = freqz(Hd1{1,1}, 0.5e3);
+        plotFile = fullfile(plotDir, 'ast-60-ref-high.csv');
+        H_1_ref_high = [H_1' fliplr(H_1') H_1' fliplr(H_1')]';
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s\n', 'abs(H)', 'W');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H_1_ref_high) W_21],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
+        [H_2,W_2] = freqz(Hd2{1,1}, 0.5e3);
+        plotFile = fullfile(plotDir, 'ast-40-ref-high.csv');
+        H_2_ref_high = [H_2' fliplr(H_2') H_2' fliplr(H_2')]';
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s\n', 'abs(H)', 'W');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H_2_ref_high) W_21],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
+
+    case 'TBW_DEMO2'
+        % Cleanup if the script is called multiple times from the same Matlab instance.
+        clear all;close all;
+        filtertype='TBW_DEMO2';
+        genDir = 'generators';
+        coefDir = 'coefData';
+        plotDir = 'plotData';
+
+        % ------------------------------------------- Input Sampling Frequency in Hz
+        Fs = 2e6;;
+
+        % -------------------------------------------------------- Decimation Factor
+        R1 = 2;
+        R2 = 4;
+
+        % ---------------------- Frequency at the Start of the Pass Band; Normalized
+        % NOTE: The smallest number in Fp must be smaller than the smallest number
+        %       in Fst (see below).
+        Fp1 = 0.5;
+        Fp2 = 0.25;
+
+        % ------------- ---------- Stop band frequencies ("How steep is the filter?")
+        % NOTE: The smallest number in Fst must be larger than the largest number in
+        %       Fp (see above).
+        Fst1 = 0.6;
+        Fst2 = 0.3;
+
+        % ------------------------------------------------- Ripple in Passband in dB
+        Ap1 = 1;
+        Ap2 = 1;
+
+        % ------------------------------------------- Attenuation in Stop Band in dB
+        Ast1 = 40;
+        Ast2 = 40;
+
+        % Hd: Contains the Filter Objects along with their properties (R, Fs, Fp,...)
+        Hd1 = decFIR(R1, Fp1, Fst1, Ap1, Ast1, coefDir, plotDir);
+        Hd2 = decFIR(R2, Fp2, Fst2, Ap2, Ast2, coefDir, plotDir);
+
+        plotDir  = fullfile(plotDir,'TBWDemo');
+        if ~exist(plotDir,'dir')
+            mkdir(plotDir);
+        end
+
+        % Save Filter Plot Data
+        [H_wide,W_wide] = freqz(Hd1{1,1}, 1e3);
+        plotFile = fullfile(plotDir, 'fs-wide.csv');
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s\n', 'abs(H)', 'W');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H_wide) W_wide],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
+
+        [H_narrow,W_narrow] = freqz(Hd2{1,1}, 1e3);
+        plotFile = fullfile(plotDir, 'fs-narrow.csv');
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s\n', 'abs(H)', 'W');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H_narrow) W_narrow],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
+    case 'RIDICULOUS'
+        % NOTE: This takes a long time to run (an hour in one of my tests) and
+        % generates a filter with almost 9000 coefficients.
+        % Cleanup if the script is called multiple times from the same Matlab instance.
+        clear all;close all;
+        filtertype='RIDICULOUS';
+        genDir = 'generators';
+        coefDir = 'coefData';
+        plotDir = 'plotData';
+
+        R = 625;
+        Fp = 1/R;
+        Fst = 1/R*1.2;
+        Ap = 1;
+        Ast = 40;
+        Hd = decFIR(R, Fp, Fst, Ap, Ast, coefDir, plotDir);
     case 'CASCADE_DEMO'
         % Cleanup if the script is called multiple times from the same Matlab instance.
         clear all;close all;
@@ -915,6 +1142,95 @@ switch filtertype
         dlmwrite(...
             plotFile,...
             [abs(H_bad_stage2) W_bad_stage1],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
+    case 'CASCADE_DEMO2'
+        % Cleanup if the script is called multiple times from the same Matlab instance.
+        clear all;close all;
+        filtertype='CASCADE_DEMO2';
+        genDir = 'generators';
+        coefDir = 'coefData';
+        plotDir = 'plotData';
+
+        % ------------------------------------------- Input Sampling Frequency in Hz
+        Fs = 2e6;;
+
+        % -------------------------------------------------------- Decimation Factor
+        R1 = 2;
+        R2 = 4;
+
+        % ---------------------- Frequency at the Start of the Pass Band; Normalized
+        % NOTE: The smallest number in Fp must be smaller than the smallest number
+        %       in Fst (see below).
+        Fp1 = 0.5;
+        Fp2 = 0.25;
+
+        % ------------- ---------- Stop band frequencies ("How steep is the filter?")
+        % NOTE: The smallest number in Fst must be larger than the largest number in
+        %       Fp (see above).
+        Fst1 = 0.6;
+        Fst2 = 0.3;
+
+        % ------------------------------------------------- Ripple in Passband in dB
+        Ap1 = 1;
+        Ap2 = 1;
+
+        % ------------------------------------------- Attenuation in Stop Band in dB
+        Ast1 = 40;
+        Ast2 = 40;
+
+        % Hd: Contains the Filter Objects along with their properties (R, Fs, Fp,...)
+        Hd1 = decFIR(R1, Fp1, Fst1, Ap1, Ast1, coefDir, plotDir);
+        Hd2 = decFIR(R2, Fp2, Fst2, Ap2, Ast2, coefDir, plotDir);
+
+        plotDir  = fullfile(plotDir,'CascadeDemo');
+        if ~exist(plotDir,'dir')
+            mkdir(plotDir);
+        end
+
+        % Save Filter Plot Data
+        [H_wide,W_wide] = freqz(Hd1{1,1}, 1e3);
+        plotFile = fullfile(plotDir, 'fs-wide.csv');
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s\n', 'abs(H)', 'W');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H_wide) W_wide],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
+
+        [H_narrow,W_narrow] = freqz(Hd2{1,1}, 1e3);
+        plotFile = fullfile(plotDir, 'fs-narrow.csv');
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s\n', 'abs(H)', 'W');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H_narrow) W_narrow],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
+
+        [H_narrow,W_narrow] = freqz(cascade(Hd1{1,1},Hd1{1,1}), 1e3);
+        plotFile = fullfile(plotDir, 'cascade-of-wide.csv');
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s\n', 'abs(H)', 'W');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H_narrow) W_narrow],...
             '-append',...
             'delimiter', ',',...
             'newline', 'unix'...

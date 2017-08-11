@@ -941,6 +941,159 @@ In conclusion, the key properties of CIC filters are:
 Compensation Filter?
 
 %>>>
+
 %>>>
+
+\section{Multi-Stage Filter Designs} % <<< ----------------------------------- %
+\label{sec:multi_stage_filter_designs}
+% ---------------------------------------------------------------------------- %
+
+At  first   sight,  the   most  obvious  way   to  implement   a  downsampling
+system  might  appear  to be  to  design  one  filter  for each  desired  rate
+change   factor.   However,   this  would   be  highly   impractical. Instead,
+multi-stage  designs  are usually  used  in  practice. An in-depth  discussion
+of  their  advantages and  drawbacks  was  offered  by Crochiere  and  Rabiner
+in~\cite{crochiere-rabiner:multirate-dsp}. A few aspects of multi-stage filter
+design which are relevant to our application shall be presented here.
+
+To  reduce  aliasing  effects  in  the passband,  it  is  generally  desirable
+to  keep  the width  of  the  transition  band  roughly constant  in  relation
+to  the   width  of   the  passband   (visible  in   the  filter's   flank  in
+Figure~\ref{fig:aliasing:iirCopies}).   As  the downsampling  ratio  increases
+and  the  passband width  decreases,  the  transition band  therefore  becomes
+progressively narrower,  necessitating higher filter orders  in a single-stage
+design.
+
+This   effect  is   illustrated  in   Figure~\ref{fig:fdesign:tbw_width_Rvar},
+comparing two filters with a transition band $1/5$ as wide as the passband for
+downsampling  ratios of  \num{2} and  \num{4}. The filter  for $R=4$  requires
+\num{60}  coefficients,  compared  to  \num{30} coefficients  for  the  filter
+designed  for $R=2$.   The other  specifications (passband  ripple, stop  band
+attenuation) are identical.   As an extreme case, a filter  designed by Matlab
+with the  same parameters for  a downsampling  ratio of $R=625$  is \num{8860}
+coefficients in size.
+
+Using multi-stage  designs helps to avoid  the need to implement  filters with
+such large  kernels.  When  cascading filters,  it is the  last stage  of  the
+chain which defines  the overall passband and transition  band width. The same
+overall transition band in absolute terms can be achieved with smaller filters
+in multi-stage designs,  because a filter's transition band  width is relative
+to the sampling rate at which it  is running.  This is shown in the bottommost
+plot in Figure~\ref{fig:fdesign:tbw_width_Rvar}.
+
+\begin{figure}
+    \centering
+    \input{images/fdesign/tbwDemoRVar.tikz}
+    \caption
+        [Frequency Response of Multi-Stage Vs. Single-Stage Design]{%
+        Two filters are  used here: Both have a transition band  $1/5$ as wide
+        as  their passbands. The  top filter  is designed  for a  downsampling
+        ratio $R=2$ and  has a coefficient count of  $N=30$. The second filter
+        is designed for $R=4$ and  has \num{60} coefficients. Cascading two of
+        the top  filters into a  two-stage design, depicted in  the bottommost
+        plot, results in  the same overall passband and  transition band width
+        as the single-stage design.%
+    }
+    \label{fig:fdesign:tbw_width_Rvar}
+\end{figure}
+
+Since  cascading  multiple  filters   does  increase  coefficient  count  (and
+storage), one might  be inclined to think that not  much has been won. Indeed,
+the  overall  number  of  coefficients   is  identical  for  both  filters  in
+Figure~\ref{fig:fdesign:tbw_width_Rvar} (though, this obviously need not be so
+in other  examples). However: Merely \num{30} multipliers and  \num{29} adders
+(those  of the  first filter  in  the cascade)  run at  the incoming  sampling
+frequency  in the  case of  the cascade,  while the  components of  the second
+filter  run  at half  that.   In  the case  of  the  single-stage filter,  all
+its  \num{60}  multipliers  and  \num{59}  adders run  at  the  full  sampling
+frequency. Distributing  the  calculations  over   two  stages  has  therefore
+yielded  an overall  reduction  in needed  computation  power. As rate  change
+factors  increase,  the  benefits  of multi-stage  designs  become  even  more
+pronounced~\cite{crochiere-rabiner:multirate-dsp}.
+
+Another advantage of  cascading filters is that successive stages  can be used
+to  shape the  overall frequency  response, as  seen in  the case  of the  CIC
+compensator  in Section~TODO:reference. A  drawback  of cascades  is that  the
+ripple in their  passband shows additive behavior, so the  stages in a cascade
+of filters  have more  stringent ripple  requirements in  the passband  then a
+single-stage. However, the cost  for this is usually offset  by the advantages
+of multi-stage designs. 
+
+When designing multi-stage filters, it can  happen that the transition band of
+an earlier stage overlaps with the spectral copy of a later stage running at a
+reduced sampling rate.  In that case, the stopband response of the cascade can
+have  peaks exceeding  the  desired overall  stopband attenuation. To  prevent
+this, the following condition must be satisfied:
+\begin{equation}
+    \label{eq:cascade:transition_band_overlap}
+    f_\mathrm{st,1} < \frac{f_\mathrm{s,1} - f_\mathrm{st,2}}{R_1}
+\end{equation}
+where
+\begin{align*}
+    f_\mathrm{s,1}  &: \text{high sampling rate} \\
+    f_\mathrm{st,1} &: \text{stopband frequency of first filter} \\
+    f_\mathrm{st,2} &: \text{stopband frequency of second filter} \\
+    R_1             &: \text{rate reduction in first filter}
+\end{align*}
+Figure~\ref{fig:fdesign:cascade:good_vs_bad}  shows  some  examples  for  this
+condition being broken or fulfilled.
+
+\begin{figure}
+    \centering
+    \input{images/fdesign/cascadeDemo.tikz}
+    \caption[Cascade: Transition Band Overlap]{%
+        Comparison   of   two   cascades: The   first   cascade   (blue)   has
+        sufficient  distance   between  the  start  of   its  stopband  ($0.65
+        \cdot  f_\mathrm{s1}$)  and  the  start  of  the  transition  band  of
+        the  second stage's  first copy  around $f_\mathrm{s2}$  ($0.675 \cdot
+        f_\mathrm{s1}$). The  second  cascade  (violet)  has a  preak  in  its
+        stopband because the transition band  of its first stage overlaps with
+        the  copy of  the second  stage ($0.8  \cdot f_\mathrm{s1}$  vs.  $0.6
+        \cdot f_\mathrm{s1}$). \emph{Note:} All  frequencies are referenced to
+        the high sampling rate $f_\mathrm{s1}$.%
+    }
+    \label{fig:fdesign:cascade:good_vs_bad}
+\end{figure}
+
+One last effect of note when cascading filters concerns stopband attenuation:
+When cascading two filters with different stopband attenuations, two things
+can happen:
+\begin{itemize}\tightlist
+    \item
+        The second  filter attenuates more  strongly than the  first one. This
+        results  in peaks  above  the second  filter's  stopband attuation  in
+        the  regions  where  the  spectral   copies  of  the  second  filter's
+        passband  are   located. This  can  be   seen  in  the  top   plot  in
+        Figure~\ref{fig:fdesign:cascade:ast_demo}.
+    \item
+        The first filter attenuates more  strongly than the first one. In that
+        case, the stopband region of the  cascade right next to its transition
+        band is  less strongly  attenuated than  the stopband  regions farther
+        away  from  the  edge. This  case  is shown  in  the  middle  plot  in
+        Figure~\ref{fig:fdesign:cascade:ast_demo}.
+\end{itemize}
+Either  of  these  two  effects   is  usually  not  desired,  barring  special
+scenarios. In both  cases, the  resources invested  into the  steeper filter's
+stronger  attenuation  are  wasted  by  the  other  filter's  weaker  stopband
+attenuation. It therefore makes more sense for the various stages in a cascade
+to have the same stopband attenuation, in general.
+
+\begin{figure}
+    \centering
+    \input{images/fdesign/astDemo.tikz}
+    \caption[Cascade: Stopband Attenuation]{%
+        Cascading two filtes with different stopband attenuations: If a filter
+        with stronger  stopband attenuation  is cascaded  after a  filter with
+        weaker attenuation, the  resultant cascade has peaks  above the second
+        filter's stopband  attenuation (top  plot). If the stronger  filter is
+        first in the  cascade, the drop-off in the stopband  right next to the
+        transition band is weaker. The two  filters by themselves are shown in
+        the bottom plots.%
+    }
+    \label{fig:fdesign:cascade:ast_demo}
+\end{figure}
+
+%>>>
+
 %>>>
 %^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>

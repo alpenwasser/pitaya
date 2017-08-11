@@ -2,45 +2,107 @@
 \label{ch:filter_design}
 % ---------------------------------------------------------------------------- %
 
-\begin{figure}
-    \centering
-    \input{images/fdesign/tbwDemo.tikz}
-    \caption
-        [Influence of Sampling Frequency on Absolute Transition Band Width]{%
-        Influence of sampling frequency on a filter's absolute transition band
-        width.  Both plots depict the same filter; in the top plot it is being
-        run  at \SI{2}{\MHz},  while in  the bottom  plot it  is being  run at
-        \SI{1}{\MHz}. Because the \emph{relative} transition band width is the
-        same in both cases ($0.1 \cdot f_s/2$), the \emph{absolute} transition
-        band width is twice as large in the top plot as in the bottom plot. Or
-        alternatively: The same filter can achieve a steeper passband-stopband
-        transition if it  is being run at a lower  sampling frequency. This is
-        why cascading  filters is often  a desirable thing  to do in  order to
-        save resources.%
-    }
-    \label{fic:fdesign:tbw_width}
-\end{figure}
+Some    key    points    underlying     the    theory    of    filters    have
+been   treated   in  Chapter~\ref{ch:analog-to-digital_data_aquisition},   and
+Chapter~\ref{ch:mission}  defines  the  overall objectives  of  this  project;
+implementing a  custom filtering system  on the FPGA among  them. This chapter
+will now develop a concrete concept for that filtering system, address some of
+the issues encountered when moving from  the theory of filters to the practice
+of designing them, and then define the  actual filters which are to be used on
+the FPGA. The implementation of those filters  on the FPGA is addressed in the
+following chapter, beginning on page~\pageref{ch:fpga}.
 
-\begin{figure}
+
+\section{Requirements} % <<< ------------------------------------------------- %
+\label{sec:requirements}
+% ---------------------------------------------------------------------------- %
+
+The overarching  objective is downsampling the  signal coming out of  the ADC,
+This  section will  derive  upper  and lower  boundaries  for the  downsampled
+frequency range, and then define the specific downsampling ratios to be used.
+
+The total data rate from the ADC is
+\sisetup{inter-unit-product = \ensuremath { { } \cdot { } }}
+\begin{alignat}{4}
+    S                  &= \SI{125}{\mega\sample\per\second}                                  & & \nonumber  \\
+    N_\mathrm{ch}      &= 2                                                                  & & \nonumber  \\
+    B_\mathrm{ch}      &= \SI{14}{\bit\per\sample}                                           & & \nonumber  \\
+    B_\mathrm{ch,pad}  &= \SI{2}{\bit\per\sample}                                            & & \nonumber  \\
+    B_\mathrm{ADC}     &= N_\mathrm{ch} \cdot \left(B_\mathrm{ch} + B_\mathrm{ch,pad}\right) \,\,&=&\,\, \SI{32}{\bit\per\sample} \nonumber \\
+    R                  &= S \cdot B_\mathrm{ADC}                                             \,\,&=&\,\, \SI{4}{\giga\bit\per\second} \label{eq:adc_data_rate}
+\end{alignat}
+%\sisetup{inter-unit-product = \,}
+where
+\begin{align*}
+    S                  &: \text{sampling rate}                        \\
+    N_\mathrm{ch}      &: \text{number of channels}                   \\
+    B_\mathrm{ch}      &: \text{channel width}                        \\
+    B_\mathrm{ch,pad}  &: \text{padding per channel}                  \\
+    B_\mathrm{ADC}     &: \text{total width of bit stream out of ADC} \\
+    R                  &: \text{total data rate out of ADC in bit}
+\end{align*}
+
+The   upper   boundary  for   the   resulting   sampling   rate  is   set   by
+the   STEMlab's   network    connection,   which   has   a    data   rate   of
+\SI{1000}{\mega\bit\per\second}. A downsampling factor of  at least \num{4} is
+therefore required  for real-time data transmission. Because  \num{125} is not
+divisible by \num{4}, a factor of  \num{5} is chosen instead. This makes for a
+resulting data  rate of  \SI{800}{\mega\bit\per\second}, which should  also be
+easily sufficient for protocol overhead.
+
+On the lower end  of the spectrum, the system should still  be able to process
+audio  signals. Common  sampling  frequencies for  audio  are  \SI{44.1}{\kHz}
+for  audio applications  like audio  CDs, and  \SI{48}{\kHz} for  audio-visual
+applications. Neither of these frequencies fit very nicely into \SI{125}{\MHz}
+(requiring large  prime factor  for the  rate change),  so the  lower boundary
+is  specified  as \SI{50}{\kHz},  corresponding  to  a downsampling  ratio  of
+\num{2500}.
+
+To cover additional use cases, it is  desirable to specify a few more sampling
+frequencies between  these two boundaries. Table~\ref{tab:downsampling_ratios}
+contains  the   complete  list   of  downsampling   ratios,  along   with  the
+corresponding sampling frequencies.
+
+\begin{table}
     \centering
-    \input{images/fdesign/cascadeDemoGood.tikz}
-    \caption[Cascade: No Transition Band Overlap]{%
-        Cascade of two halfband filters with no overlap in their transition
-        band. The cascade fulfills the requirements.%
+    \caption[List of Downsampling Ratios and Resultant Frequencies]{
+        The list  of downsampling  ratios which are  to be  implemented, along
+        with the resultant sampling frequencies.%
     }
-    \label{fig:fdesign:cascade:good}
-\end{figure}
-\begin{figure}
-    \centering
-    \input{images/fdesign/cascadeDemoBad.tikz}
-    \caption[Cascade: Transition Band Overlap]{%
-        Cascade  of   two  halfband   filters  with  their   transition  bands
-        overlapping,  leading  to  a  spike above  the  desired  threshold  of
-        \SI{-40}{\dB}  in  the  stop  band. This  configuration  is  therefore
-        unsuitable.%
-    }
-    \label{fig:fdesign:cascade:bad}
-\end{figure}
+    \label{tab:downsampling_ratios}
+    \begin{tabular}{SS}
+        \toprule
+        {R} & {$f_s$ (\si{\kHz})} \\
+        \midrule
+           5 & 25000 \\
+          25 &  5000 \\
+         125 &  1000 \\
+         625 &   200 \\
+        1250 &   100 \\
+        2500 &    50 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+%>>>
+
+
+\section{Concept} % <<< ------------------------------------------------------ %
+\label{sec:Concept}
+% ---------------------------------------------------------------------------- %
+
+Based  on the  downsampling factors  from Table~\ref{tab:downsampling_ratios},
+this section presents the concept for a filtering sytem which implements those
+ratios. This  process needs  to take  into  account contraints  both from  the
+filtering process itself as well as available resources on the hardware.
+
+
+
+%>>>
+\subsection{Filter Chains} % <<< --------------------------------------------- %
+\label{subsec:filter_chains}
+% ---------------------------------------------------------------------------- %
+
+%>>>
 
 %>>>
 

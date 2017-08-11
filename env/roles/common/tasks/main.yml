@@ -11,6 +11,15 @@
     - build-essential
     - autoconf
 
+- name: Prepare node.js
+  shell: 'curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -'
+
+- name: Add yarn pubkey
+  shell: 'curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -'
+
+- name: Add yarn repo
+  shell: 'echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list'
+
 - name: Install toolchain packages
   apt: name={{ item }} state=latest
   with_items:
@@ -41,6 +50,8 @@
     - lib32stdc++6
     # - schroot
     # - qemu qemu-user qemu-user-static
+    - nodejs
+    - yarn
 
 - name: allow any user to startx
   replace: dest=/etc/X11/Xwrapper.config regexp='allowed_users=.*$' replace='allowed_users=anybody' backup=yes
@@ -59,3 +70,7 @@
 
 - name: copy bashrc to have the proper PATH variable for the Xilinx tools
   copy: src=roles/common/files/.bashrc dest=/home/vagrant backup=yes force=yes
+
+- name: Symlinking make to gmake
+  file: src=make dest=/usr/bin/gmake state=link
+  become: true

@@ -8,12 +8,12 @@
 # solution taken from http://www.googoolia.com/wp/2015/04/21/awk-symbol-lookup-error-awk-undefined-symbol-mpfr_z_sub/
 LD_LIBRARY_PATH =
 
-NAME        = src
+NAME        = p_main
 PART        = xc7z010clg400-1
 PROC        = ps7_cortexa9_0
 BUILD_DIR   = build
 FPGA_DIR    = ../fpga
-FPGA_BUILD := $(FPGA_DIR)/build/src
+FPGA_BUILD := $(FPGA_DIR)/$(BUILD_DIR)/$(NAME)
 LOGGER_DIR := $(FPGA_DIR)/zynq_logger
 
 VIVADO = vivado -nolog -nojournal -mode batch
@@ -121,7 +121,7 @@ project:
 	make -C $(FPGA_DIR) project
 
 hwdef:
-	mkdir -p $(BUILD)
+	mkdir -p $(BUILD_DIR)
 	$(VIVADO) -source scripts/hwdef.tcl -tclargs $(FPGA_BUILD) $(NAME)
 
 bitstream:
@@ -135,8 +135,8 @@ fsbl: hwdef
 devicetree: $(DTREE_DIR)
 	mkdir -p $(BUILD_DIR)/$(NAME).dts
 	$(HSI) -source scripts/devicetree.tcl -tclargs $(FPGA_BUILD) $(NAME) $(PROC) $(DTREE_DIR)
-	patch -d .. fpga/build/src/$(NAME).tree/system.dts arm/patches/devicetree.patch
-	patch -d .. fpga/build/src/$(NAME).tree/system.dts arm/patches/logger.patch
+	patch -d .. fpga/$(BUILD_DIR)/$(NAME)/$(NAME).tree/system.dts arm/patches/devicetree.patch
+	patch -d .. fpga/$(BUILD_DIR)/$(NAME)/$(NAME).tree/system.dts arm/patches/logger.patch
 
 kernel_module:
 	make -C $(LOGGER_DIR) VIVADO_VER=$(VIVADO_VER) kernel_module

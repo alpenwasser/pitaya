@@ -60,8 +60,15 @@
                 0.8,
                 1
             },
+            xticklabels={
+                0,
+                0.2,
+                $f_{s2}/2$,
+                0.8,
+                $f_{s1}/2$
+            },
         ]
-        \addplot[thick,q2,-] table[x=W, y=abs(H)] \freqzTableCascE;
+        \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableCascE;
     \end{axis}
     \begin{axis}[
             title={Stage 2: Runs at $f_{s2} = f_{s1} \div R_1 = f_{s1} \div 2$},
@@ -75,7 +82,16 @@
                 0.9,
                 1
             },
+            xticklabels={
+                0,
+                0.1,
+                0.4,
+                $f_{s2}/2$,
+                0.6,
+                0.9,
+                $f_{s1}/2$
+            },
         ]
-        \addplot[thick,q3,-] table[x=W, y=abs(H)] \freqzTableCascF;
+        \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableCascF;
     \end{axis}
 \end{tikzpicture}

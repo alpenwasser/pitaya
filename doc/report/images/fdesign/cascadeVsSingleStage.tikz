@@ -1,0 +1,48 @@
+\newcommand*\freqzFileTBWA{images/fdesign/tbw-fs-wide.csv}
+\newcommand*\freqzFileTBWB{images/fdesign/tbw-fs-narrow.csv}
+\newcommand*\freqzFileTBWC{images/fdesign/cascade-of-wide.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileTBWA}\freqzTableTBWA
+\pgfplotstableread[col sep=comma]{\freqzFileTBWB}\freqzTableTBWB
+\pgfplotstableread[col sep=comma]{\freqzFileTBWC}\freqzTableTBWC
+\begin{tikzpicture}
+     \pgfplotsset{every axis/.style={
+            height=60mm,
+            width=\textwidth,
+            grid=none,
+            ylabel=Magnitude,
+            xlabel=Normalized Frequency,
+            xmin=0,
+            xmax=1,
+            ymax=5,
+            ymin=-100,
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            x unit=\times\,\pi\,\si{\radian}/\si{\sample},
+            y unit=\si{dB},
+            xticklabel style={font=\footnotesize},
+            ytick={0,-40,-80},
+        },
+        every axis legend/.append style={
+            cells={anchor=east},
+        },
+    }
+    \begin{axis}[
+            title={Single-Stage Filter for Rate Change $R=4$},
+            at = {(0,0)},
+            xtick={0,0.25,0.3,1},
+        ]
+        \fill[dv-2] (0.25,5) rectangle (0.3,-100);
+        \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableTBWB;
+    \end{axis}
+    \begin{axis}[
+            title={Cascade of Filters for Rate Change $R=4$},
+            at = {(0,-70mm)},
+            xtick={0,0.25,0.3,0.5,0.6,1},
+        ]
+        \fill[dv-2] (0.25,5) rectangle (0.3,-100);
+        \fill[gray!20!white] (0.50,5) rectangle (0.6,-100);
+        \addplot[thin,gray,dashed,-] table[x=W, y=abs(H)] \freqzTableTBWA;
+        \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableTBWC;
+        \legend{Stage 1,Cascade};
+    \end{axis}
+\end{tikzpicture}

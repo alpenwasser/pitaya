@@ -68,7 +68,7 @@
                 1
             },
         ]
-        \addplot[thick,q2,-] table[x=W, y=abs(H)] \freqzTableCascB;
+        \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableCascB;
     \end{axis}
     \begin{axis}[
             title={Stage 2: Runs at $f_{s2} = f_{s1} \div R_1 = f_{s1} \div 2$},
@@ -92,6 +92,6 @@
                 1
             },
         ]
-        \addplot[thick,q3,-] table[x=W, y=abs(H)] \freqzTableCascC;
+        \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableCascC;
     \end{axis}
 \end{tikzpicture}
