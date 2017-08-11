@@ -14,7 +14,18 @@
 \usepgfplotslibrary{units}
 \usepackage{pgfplotstable}
 \DeclareSIUnit\sample{sample}
+\DeclareSIUnit\channel{channel}
 \usepackage[simplified]{pgf-umlcd}
+\pgfplotsset{
+    %title style={font=\bfseries\sffamily\mathversion{boldsf}},
+    title style={font=\sffamily\mathversion{sf}},
+    xlabel near ticks=true,
+    ylabel near ticks=true,
+    xticklabel style={font=\footnotesize},
+    yticklabel style={font=\footnotesize},
+    xlabel style={font=\footnotesize},
+    ylabel style={font=\footnotesize},
+}
 \makeindex
 %\includeonly{chunks/introduction,chunks/theory}
 % >>>
