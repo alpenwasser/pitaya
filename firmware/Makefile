@@ -43,7 +43,7 @@ VIVADO_VER  = 2016.4
 
 .DEFAULT: init
 
-init: cores linux kernel_module kernel_module_test server
+init: project linux kernel_module server webapp
 
 cores:
 	make -C $(FPGA_DIR) all-cores
@@ -66,6 +66,9 @@ server:
 
 project: cores
 	make -C $(FPGA_DIR) project
+
+webapp:
+	cd ../scope/ && yarn install && yarn build
 
 clean:
 	make -C $(ARM_DIR) clean

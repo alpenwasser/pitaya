@@ -1,5 +1,4 @@
 device=$1
-libstd6=$2
 
 boot_dir=`mktemp -d /tmp/BOOT.XXXXXXXXXX`
 root_dir=`mktemp -d /tmp/ROOT.XXXXXXXXXX`
@@ -35,34 +34,31 @@ mount $root_dev $root_dir
 
 cp boot.bin devicetree.dtb uImage uEnv.txt $boot_dir
 
-# Copy kernelmodule
-mkdir $root_dir/opt/logger
-cp ../../fpga/zynq_logger/build/kernel_module/zynq_logger_main.ko $root_dir/opt/logger
-
-# Copy server
-mkdir $root_dir/opt/server
-cp ../server/build/server $root_dir/opt/server
-cp ../server/external/build/uv/lib/libuv.so.1 $root_dir/opt/server
-cp ../server/external/build/uWS/lib/libuWS.so $root_dir/opt/server
-#TODO: check if this is right
-if [ "$libstd6" -eq "" ]; then
-  cp /vagrant/Xilinx/SDK/2016.2/gnu/arm/lin/arm-xilinx-linux-gnueabi/libc/usr/lib/libstdc++.so.6 $root_dir/opt/server
-else
-  cp $libstd6 $root_dir/opt/server
-fi
-
-# Copy webapp
-cp -R ../../../scope/build/ $root_dir/opt/server/webapp
-
-# Copy initfiles
-# ATTENTION: Adding the server service is in the chroot section!
-cp ../server/init_server.sh $root_dir/opt/server
-cp ../server/service.sh $root_dir/etc/init.d/server
-
 # Copy Ubuntu Core to the root file system
 test -f $root_tar || curl -L $root_url -o $root_tar
 
 tar -zxf $root_tar --directory=$root_dir
+
+# Copy kernelmodule
+mkdir $root_dir/opt/logger
+cp ../fpga/zynq_logger/build/kernel_module/zynq_logger_main.ko $root_dir/opt/logger
+
+# Copy server
+mkdir $root_dir/opt/server
+cp server/build/server $root_dir/opt/server
+cp server/external/build/uWS/lib/libuWS.so $root_dir/opt/server
+#TODO: check if this is right
+cp /vagrant/Xilinx/SDK/2016.2/gnu/arm/lin/arm-xilinx-linux-gnueabi/libc/usr/lib/libstdc++.so.6 $root_dir/opt/server
+
+# Copy webapp
+cp -R ../../scope/build/ $root_dir/opt/server/webapp
+rm $root_dir/opt/server/webapp/js/bundle.js.map
+rm $root_dir/opt/server/webapp/js/bundle.mjs
+
+# Copy initfiles
+# ATTENTION: Adding the server service is in the chroot section!
+cp server/init_server.sh $root_dir/opt/server
+cp server/service.sh $root_dir/etc/init.d/server
 
 # Add missing configuration files and packages
 

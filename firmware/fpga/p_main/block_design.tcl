@@ -263,8 +263,8 @@ set dataWidthIn 24
 set fracWidthIn 7
 set nPaths 2
 
-# current_dir: resolves to firmware/fpga/build/p_chain5
-set coef_dir "${current_dir}/../../p_chain5/coefData"
+# current_dir: resolves to firmware/fpga/build/p_main
+set coef_dir "${current_dir}/../../p_main/coefData"
 
 # Coefficient files
 set coef_halfband  "${coef_dir}/halfband.coe"
