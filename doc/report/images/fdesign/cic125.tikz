@@ -1,0 +1,25 @@
+\newcommand*\freqzFileDECE{images/fdesign/r-125--fp-002--ast-060--dl-1.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileDECE}\freqzTableDECE
+\begin{tikzpicture}
+     \pgfplotsset{every axis/.style={
+            height=60mm,
+            width=\textwidth,
+            grid=none,
+            x unit=\times\,\pi\,\si{\radian}/\si{\sample},
+            y unit=\si{dB},
+            ylabel=Magnitude,
+            xlabel=Normalized Frequency,
+            xmin=0,
+            xmax=1,
+            ymax=200,
+            ymin=-50,
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+        },
+    }
+    \begin{axis}[
+            at = {(0,0)},
+        ]
+        \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableDECE;
+    \end{axis}
+\end{tikzpicture}

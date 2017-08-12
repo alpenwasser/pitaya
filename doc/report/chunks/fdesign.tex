@@ -31,16 +31,15 @@ The total data rate from the ADC is
     B_\mathrm{ADC}     &= N_\mathrm{ch} \cdot \left(B_\mathrm{ch} + B_\mathrm{ch,pad}\right) \,\,&=&\,\, \SI{32}{\bit\per\sample} \nonumber \\
     R                  &= S \cdot B_\mathrm{ADC}                                             \,\,&=&\,\, \SI{4}{\giga\bit\per\second} \label{eq:adc_data_rate}
 \end{alignat}
+\begin{conditions}
+    S                  & sampling rate                         \\
+    N_\mathrm{ch}      & number of channels                    \\
+    B_\mathrm{ch}      & channel width                         \\
+    B_\mathrm{ch,pad}  & padding per channel                   \\
+    B_\mathrm{ADC}     & total width of bit stream out of ADC  \\
+    R                  & total data rate out of ADC in bit     \\
+\end{conditions}
 %\sisetup{inter-unit-product = \,}
-where
-\begin{align*}
-    S                  &: \text{sampling rate}                        \\
-    N_\mathrm{ch}      &: \text{number of channels}                   \\
-    B_\mathrm{ch}      &: \text{channel width}                        \\
-    B_\mathrm{ch,pad}  &: \text{padding per channel}                  \\
-    B_\mathrm{ADC}     &: \text{total width of bit stream out of ADC} \\
-    R                  &: \text{total data rate out of ADC in bit}
-\end{align*}
 
 The   upper   boundary  for   the   resulting   sampling   rate  is   set   by
 the   STEMlab's   network    connection,   which   has   a    data   rate   of
@@ -52,37 +51,40 @@ easily sufficient for protocol overhead.
 
 On the lower end  of the spectrum, the system should still  be able to process
 audio  signals. Common  sampling  frequencies for  audio  are  \SI{44.1}{\kHz}
-for  audio applications  like audio  CDs, and  \SI{48}{\kHz} for  audio-visual
-applications. Neither of these frequencies fit very nicely into \SI{125}{\MHz}
+for  audio CDs,  and \SI{48}{\kHz}  for  the audio  component of  audio-visual
+applications. Neither  of these  frequencies  fit  nicely into  \SI{125}{\MHz}
 (requiring large  prime factor  for the  rate change),  so the  lower boundary
 is  specified  as \SI{50}{\kHz},  corresponding  to  a downsampling  ratio  of
 \num{2500}.
 
-To cover additional use cases, it is  desirable to specify a few more sampling
-frequencies between  these two boundaries. Table~\ref{tab:downsampling_ratios}
+To cover  additional use cases,  some additional sampling  frequencies between
+these   two  boundaries   are  specified. Table~\ref{tab:ratio_decompositions}
 contains  the   complete  list   of  downsampling   ratios,  along   with  the
 corresponding sampling frequencies.
 
 \begin{table}
     \centering
-    \caption[List of Downsampling Ratios and Resultant Frequencies]{
-        The list  of downsampling  ratios which are  to be  implemented, along
-        with the resultant sampling frequencies.%
+    \caption[Downsampling Ratios, Decompositions, and Target Frequencies]{
+        The  chosen downsampling  ratios, their  prime factor  decompositions,
+        the  downsampling ratios  distribet across  stages, and  the resultant
+        sampling rates%
     }
-    \label{tab:downsampling_ratios}
-    \begin{tabular}{SS}
+    \label{tab:ratio_decompositions}
+    \begin{tabular}{S >{$}r<{$} >{$}l<{$} S}
         \toprule
-        {R} & {$f_s$ (\si{\kHz})} \\
+        {R}  & \text{Decomposition}                                                 & \text{Stages}                                 & {$f_s$ (\si{\kHz})} \\
         \midrule
-           5 & 25000 \\
-          25 &  5000 \\
-         125 &  1000 \\
-         625 &   200 \\
-        1250 &   100 \\
-        2500 &    50 \\
+           5 &  5                                                   = 5^1           &   5                                           & 25000               \\
+          25 &  5 \cdot 5                                           = 5^2           &   5 \rightarrow 5                             &  5000               \\
+         125 &  5 \cdot 5 \cdot 5                                   = 5^3           &  25 \rightarrow 5                             &  1000               \\
+         625 &  5 \cdot 5 \cdot 5 \cdot 5 \cdot 5                   = 5^4           &  25 \rightarrow 5 \rightarrow 5               &   200               \\
+        1250 &  2 \cdot 5 \cdot 5 \cdot 5 \cdot 5 \cdot 5           = 2^1 \cdot 5^4 & 125 \rightarrow 5 \rightarrow 2               &   100               \\
+        2500 &  2 \cdot 2 \cdot 5 \cdot 5 \cdot 5 \cdot 5 \cdot 5   = 2^1 \cdot 5^4 & 125 \rightarrow 5 \rightarrow 2 \rightarrow 2 &    50               \\
         \bottomrule
     \end{tabular}
 \end{table}
+
+
 %>>>
 
 
@@ -126,38 +128,17 @@ rate  changes. Table~\ref{tab:ratio_decompositions}  shows  the  prime  factor
 decomposition for the overall rate changes,  as well as the factors chosen for
 the individual filter chain stages.
 
-\begin{table}
-    \centering
-    \caption[Downsampling Ratio Decompositions and Factors for Filter Stages]{
-        The downsampling ratios, their prime factor decompositions, and the
-        filtering stages with their downsampling ratios%
-    }
-    \label{tab:ratio_decompositions}
-    \begin{tabular}{S >{$}r<{$} >{$}r<{$} }
-        \toprule
-        {R}  & \text{Decomposition}                                                 & \text{Stages} \\
-        \midrule
-           5 &  5                                                   = 5^1           &   5                             \\
-          25 &  5 \cdot 5                                           = 5^2           &   5 \rightarrow 5               \\
-         125 &  5 \cdot 5 \cdot 5                                   = 5^3           &  25 \rightarrow 5               \\
-         625 &  5 \cdot 5 \cdot 5 \cdot 5 \cdot 5                   = 5^4           &  25 \rightarrow 5 \rightarrow 5 \\
-        1250 &  2 \cdot 5 \cdot 5 \cdot 5 \cdot 5 \cdot 5           = 2^1 \cdot 5^4 & 125 \rightarrow 5 \rightarrow 2 \\
-        2500 &  2 \cdot 2 \cdot 5 \cdot 5 \cdot 5 \cdot 5 \cdot 5   = 2^1 \cdot 5^4 & 125 \rightarrow 5 \rightarrow 2 \rightarrow 2 \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-
-Other choices  are of  course possible. Particularly in  the case  of $R=625$,
-one  may  choose to  implement  a  chain of  $125  \rightarrow  5$ instead  of
-$25  \rightarrow 5  \rightarrow 5$. However,  since these  two implementations
-show  almost  the same  behavior  over  the  relevant  parts of  the  spectrum
-(passband  and transition  band), the  choice is  somewhat arbitrary. The  two
-variants  are  graphically  compared  in  Figure~\ref{fig:dec625_variants}  on
-\pageref{fig:dec625_variants}  in  Appendix~\ref{sec:dec625_variants} both  in
-terms of magnitude and phase response.   Lastly, a CIC filter block for $R=25$
-along with its compensator is needed anyway for the filter chain with $R=125$,
-so neither  variant for the  \num{625} chain  requires new building  blocks in
-terms of resource usage.
+Other choices are of course possible. Particularly in the case of $R=625$, one
+may  choose  to implement  a  chain  of $125  \rightarrow  5$  instead of  $25
+\rightarrow  5 \rightarrow  5$.   The  two implementations  as  they would  be
+in  the  final  design  are compared  in  Figure~\ref{fig:dec625_variants}  on
+\pageref{fig:dec625_variants} in Appendix~\ref{sec:dec625_variants}. While the
+$125 \rightarrow 5$ chain would offer better stopband attunation behavior over
+certain frequency  ranges and  therefore improved SNR,  the $25  \rightarrow 5
+\rightarrow 5$ chain  offers the advantage that if the  design is ever changed
+and only  the higher sampling rates  are implemented (removing the  chains for
+$R=1250$ and $R=2500$), it can re-use the elements from the higher chains. The
+$25 \rightarrow  5 \rightarrow 5$  chain is  therefore chosen.
 %>>>
 
 \section{Filter Specifications} % <<< ---------------------------------------- %
@@ -318,10 +299,15 @@ specified     according    to     the    considerations     laid    out     in
 Section~\ref{subsubsec:cic:compensators},   with   the    added   feature   of
 \code{CIC125} also being used as a decimator.
 
-\paragraph{Summary:} With  the  above  considerations,  and  the  experimental
+\paragraph{Summary:} With  the  above   considerations  and  the  experimental
 results for  resource usage  from Appendix~\ref{sec:fir_filter_resouce_usage},
 it  is  possible  to  formulate  a complete  set  of  specifications  for  the
-filters. They are summarized in Table~\ref{tab:filter_specs}.
+filters. They  are  compiled   in  Table~\ref{tab:filter_specs}.   Translating
+the   specifications    from   Table~\ref{tab:filter_specs}    into   absolute
+frequencies  results  in   the  values  from  Table~\label{tab:tb_widths}. The
+frequency    responses    of   all    filters    and    filter   chains    are
+depicted   in   Appendix~\ref{sec:filter_frequency_responses},   starting   on
+page~\pageref{sec:filter_frequency_responses}.
 
 \begin{table}
     \centering
@@ -359,6 +345,29 @@ filters. They are summarized in Table~\ref{tab:filter_specs}.
     \end{tabular}
 \end{table}
 
+\begin{table}
+    \centering
+    \caption[Transition Band Widths]{%
+        The  expected   relative  and  absolute  transition   band  widths  of
+        the  various   filter  chains,   based  on  the   specifications  from
+        Table~\ref{tab:filter_specs}.%
+    }
+    \label{tab:tb_widths}
+    \begin{tabular}{SSS}
+        \toprule
+        {Chain}                                                                                          &
+        {\parbox[t]{40mm}{Relative TB Width \\of Final Filter \\($\times \pi \si{\radian\per\sample}$)}} &
+        {\parbox[t]{40mm}{Absolute TB Width \\of Chain \\(\si{\kHz})}}                                   \\
+        \midrule
+           5 &  0.025 & 1562.5 \\
+          25 &  0.025 &  312.5 \\
+         125 &  0.025 &   62.5 \\
+         625 &  0.025 &   12.5 \\
+        1250 &  0.040 &     4.0 \\
+        2500 &  0.040 &     2.0 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 %25 -> 1 -> 5 -> 5 instead of 25 -> cfir5 -> 5: compensation filter is needed anyway
 %but can be kept smaller. 5flat is needed anyway and runs at higher sampling frequency
@@ -367,28 +376,4 @@ filters. They are summarized in Table~\ref{tab:filter_specs}.
 %>>>
 
 %>>>
-
-%
-%\section{Designing a Filter System}
-%\label{sec:designing-a-filter-system}
-%
-%Talking about which type of filter has which properties is all good and well in theory, but
-%how does one actually apply this knowledge to a practical problem? This section answers that
-%question insofar as it applies to our project.
-%
-%\begin{itemize}\tightlist
-%    \item
-%        limited HW resources
-%    \item
-%        single-stage vs. multi-stage
-%    \item
-%        TBW issue with multi-stage
-%    \item
-%        filters at lower frequencies use fewer resources
-%    \item
-%        halfband filtres
-%    \item
-%        CIC: compensation filters
-%\end{itemize}
-
 %^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>
