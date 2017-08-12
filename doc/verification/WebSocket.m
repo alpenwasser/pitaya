@@ -6,6 +6,7 @@ classdef WebSocket < WebSocketClient
         Callback
         SamplingRate
         FrameSize
+        TimeOut
     end
     
     methods
@@ -16,6 +17,10 @@ classdef WebSocket < WebSocketClient
             obj.SamplingRate = varargin{3};
             obj.FrameSize = varargin{4};
         end
+        function stop(obj)
+            obj.send('{ "forceTrigger": "true" }');
+            fprintf('Stopping\n');
+        end
     end
     
     methods (Access = protected)
@@ -25,8 +30,12 @@ classdef WebSocket < WebSocketClient
             obj.send('{ "setNumberOfChannels": 2 }');
             obj.send(strcat('{ "frameConfiguration": { "frameSize": ', int2str(obj.FrameSize), ', "pre": ', int2str(obj.FrameSize / 2), ', "suf": ', int2str(obj.FrameSize / 2), ' } }'));
             obj.send('{ "triggerOn": {"type": "risingEdge", "channel": 1,"level": 32768, "slope":0}}');
-            obj.send('{ "requestFrame": true, "channel": 1}');
             obj.send(strcat('{ "samplingRate": ', int2str(obj.SamplingRate), ' }'));
+            pause(1);
+            obj.send('{ "requestFrame": true, "channel": 1}');
+            obj.TimeOut = timer('TimerFcn', {@(o,e,s)(s.stop()),obj},... 
+                 'StartDelay',1);
+            start(obj.TimeOut)
         end
         
         function onTextMessage(obj,message)
@@ -40,6 +49,8 @@ classdef WebSocket < WebSocketClient
             x = typecast(bytearray, 'uint16');
             x = cast(cast(x, 'int32') - 2^15, 'double');
             obj.Callback(x, obj.SamplingRate);
+            stop(obj.TimeOut);
+            delete(obj.TimeOut);
             obj.close();
         end
         
@@ -52,5 +63,7 @@ classdef WebSocket < WebSocketClient
             % This function simply displays the message received
             fprintf('%s\n',message);
         end
+        
+        
     end
 end
