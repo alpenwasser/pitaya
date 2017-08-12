@@ -8,7 +8,7 @@ set coe_files [glob -type f *]
 cd $path
 
 # from firmware/fpga/design_cores.tcl
-foreach coe_file $coe_files {                                                                                                                                                                                                                   
+foreach coe_file $coe_files {
     set argv "$decFIR_dir/$coe_file"
     source filters.tcl
     set report_target decFIR--$coe_file

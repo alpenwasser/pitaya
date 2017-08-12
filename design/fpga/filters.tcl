@@ -19,8 +19,10 @@ set vlnv_fircomp xilinx.com:ip:fir_compiler:7.2
 set fircomp_instance fir_compiler_0
 set clk 125
 set decRate 5
-set dataWidth 16
+set dataWidthIn 24
+set dataWidthOut 32
 set fracBits 17
+set fracWidthIn 7
 
 # Create Project
 create_project -force filter $proj_dir -part $part
@@ -52,7 +54,7 @@ set_property -dict [list CONFIG.Sample_Frequency $clk] [get_bd_cells $fircomp_in
 set_property -dict [list CONFIG.Clock_Frequency $clk] [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.BestPrecision {true}] [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.Output_Rounding_Mode {Truncate_LSBs}] [get_bd_cells $fircomp_instance]
-set_property -dict [list CONFIG.Output_Width $dataWidth] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Output_Width $dataWidthOut] [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.Coefficient_Sets {1}] [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.Interpolation_Rate {1}] [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.Zero_Pack_Factor {1}] [get_bd_cells $fircomp_instance]
@@ -60,11 +62,13 @@ set_property -dict [list CONFIG.Number_Channels {1}] [get_bd_cells $fircomp_inst
 set_property -dict [list CONFIG.RateSpecification {Frequency_Specification}] [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.Clock_Frequency $clk] [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.Coefficient_Sign {Signed}] [get_bd_cells $fircomp_instance]
-set_property -dict [list CONFIG.Quantization {Quantize_Only}] [get_bd_cells $fircomp_instance]
-set_property -dict [list CONFIG.Coefficient_Width $dataWidth] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Quantization {Maximize_Dynamic_Range}] [get_bd_cells $fircomp_instance]
+#set_property -dict [list CONFIG.Coefficient_Width $dataWidth] [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.Coefficient_Fractional_Bits $fracBits] [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.Coefficient_Structure {Inferred}] [get_bd_cells $fircomp_instance]
-set_property -dict [list CONFIG.Data_Width $dataWidth] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Data_Width $dataWidthIn] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Data_Fractional_Bits.VALUE_SRC USER] [get_bd_cells $fircomp_instance]
+set_property -dict [list CONFIG.Data_Fractional_Bits $fracWidthIn] [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.Filter_Architecture {Systolic_Multiply_Accumulate}] [get_bd_cells $fircomp_instance]
 set_property -dict [list CONFIG.ColumnConfig {31}] [get_bd_cells $fircomp_instance] [get_bd_cells $fircomp_instance]
 save_bd_design
