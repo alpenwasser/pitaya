@@ -107,7 +107,7 @@ for l = 0:L-1
         end
 
         % Save Filter Plot Data
-        [H,W] = freqz(Hd{n,4}, 1e3);
+        [H,W] = freqz(Hd{n,1}, 1e3);
         fh = fopen(plotFile, 'w');
         if fh ~= -1
             fprintf(fh, '%s,%s,%s\n', 'abs(H)', 'angle(H)', 'W');
