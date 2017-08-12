@@ -1,7 +1,7 @@
 \RequirePackage{snapshot}
 \documentclass[a4paper,oneside]{alpenthesis/alpenthesis}
 % <<< ----------------------------------------------------------------PREAMBLE %
-\hextrue
+\hexfalse
 \paperfalse
 %https://tex.stackexchange.com/a/210456/131649
 \renewcommand\partnumberlinebox[2]{#2\hspace{2em}}
@@ -16,6 +16,9 @@
 \DeclareSIUnit\sample{sample}
 \DeclareSIUnit\channel{channel}
 \usepackage[simplified]{pgf-umlcd}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
 \pgfplotsset{
     %title style={font=\bfseries\sffamily\mathversion{boldsf}},
     title style={font=\sffamily\mathversion{sf}},

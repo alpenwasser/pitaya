@@ -1,0 +1,84 @@
+\newcommand*\freqzFileSNRA{images/gui/snrComparison1.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileSNRA}\freqzTableSNRA
+\newcommand*\freqzFileSNRB{images/gui/snrComparison2sliced.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileSNRB}\freqzTableSNRB
+\newcommand*\freqzFileSNRC{images/gui/snrComparison2main.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileSNRC}\freqzTableSNRC
+\newcommand*\freqzFileSNRD{images/gui/snrComparison2side1.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileSNRD}\freqzTableSNRD
+\newcommand*\freqzFileSNRE{images/gui/snrComparison2side2.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileSNRE}\freqzTableSNRE
+\newcommand*\freqzFileSNRF{images/gui/snrComparison2side3.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileSNRF}\freqzTableSNRF
+\newcommand*\freqzFileSNRG{images/gui/snrComparison2side4.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileSNRG}\freqzTableSNRG
+\newcommand*\freqzFileSNRH{images/gui/snrComparison2side5.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileSNRH}\freqzTableSNRH
+\newcommand*\freqzFileSNRI{images/gui/snrComparison2side6.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileSNRI}\freqzTableSNRI
+\newcommand*\freqzFileSNRJ{images/gui/snrComparison2side7.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileSNRJ}\freqzTableSNRJ
+\newcommand*\freqzFileSNRK{images/gui/snrComparison2side8.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileSNRK}\freqzTableSNRK
+\newcommand*\freqzFileSNRL{images/gui/snrComparison2side9.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileSNRL}\freqzTableSNRL
+\newcommand*\freqzFileSNRM{images/gui/snrComparison2side10.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileSNRM}\freqzTableSNRM
+
+\begin{tikzpicture}[
+        spy using outlines={magnification=3}
+    ]
+     \pgfplotsset{every axis/.style={
+            height=50mm,
+            width=\textwidth,
+            grid=none,
+            % y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult * 25e3}},
+            xlabel=Frequency,
+            ylabel=Power,
+            x unit=\si{\Hz},
+            y unit=\si{\dB},
+        },
+        every axis legend/.append style={
+            at={(1,-0.15)},
+            anchor=north east,
+            cells={anchor=west},
+        },
+    }
+    \begin{axis}[
+            title={The SNR calculation methods},
+            at = {(0,0)},
+            xmin=0,
+            xmax=25e3,
+            %ymin=-120,
+            %ymax=5,
+        ]
+        \draw[black] (rel axis cs:0.03953147877013177,1) -- (rel axis cs:0.03953147877013177,0);
+        \draw[black] (rel axis cs:0.04050756466569058,1) -- (rel axis cs:0.04050756466569058,0);
+        \addplot[q1,-] table[x=f, y=P] \freqzTableSNRA;
+    \end{axis}
+
+    \begin{axis}[
+            title={Comparison of the iterative and static SNR calculation methods},
+            at = {(0,-60mm)},
+            xmin=0,
+            xmax=25e3,
+            %ymin=-120,
+            %ymax=5,
+        ]
+        \addplot[q1,-] table[x=f, y=P] \freqzTableSNRB;
+        \addplot[q5,-] table[x=f, y=P] \freqzTableSNRC;
+        \addplot[q3,-] table[x=f, y=P] \freqzTableSNRD;
+        \addplot[q3,-] table[x=f, y=P] \freqzTableSNRE;
+        \addplot[q3,-] table[x=f, y=P] \freqzTableSNRF;
+        \addplot[q3,-] table[x=f, y=P] \freqzTableSNRG;
+        \addplot[q3,-] table[x=f, y=P] \freqzTableSNRH;
+        \addplot[q3,-] table[x=f, y=P] \freqzTableSNRH;
+        \addplot[q3,-] table[x=f, y=P] \freqzTableSNRI;
+        \addplot[q3,-] table[x=f, y=P] \freqzTableSNRJ;
+        \addplot[q3,-] table[x=f, y=P] \freqzTableSNRK;
+        \addplot[q3,-] table[x=f, y=P] \freqzTableSNRL;
+        \addplot[q3,-] table[x=f, y=P] \freqzTableSNRM;
+    \end{axis}
+    
+\end{tikzpicture}

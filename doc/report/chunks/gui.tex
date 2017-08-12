@@ -154,6 +154,17 @@ How the application is structured and certain features are implemented is explai
 The entire application consists of a single state tree. This makes it very easy to import and export settings on one hand and on the other it concentrates all the states in one place which gives a way better overview than in the case all the states are scattered in various objects in the application.
 Listing~\ref{lst:gui:app_structure} shows an extract of the tree structure.
 
+As every JavaScript application this application runs asynchronous too. The entire eventloop structure can be seen in Figure~\ref{fig:gui:eventloop}.
+
+\begin{figure}
+    \centering
+    \input{images/gui/eventloop.tikz}
+    \caption[Scope event structure]{%
+        The scope event structure.%
+    }
+    \label{fig:gui:eventstructure}
+\end{figure}
+
 \begin{tcolorbox}[
         title={
             \refstepcounter{listing}
@@ -372,11 +383,99 @@ This is done using the FFT algorithm developped by Cooley \& Tukey. The FFT code
     \label{fig:gui:fft_comparison}
 \end{figure}
 
-For an input signal $x$ we obtain the one-sided spectrum with the 
+For an input signal $x$ we obtain the spectrum with
+
+\begin{equation}
+    Y[i] = \frac{1}{N}FFT\{x[i]w[i]\}
+    \label{eq:gui:onesidedf}
+\end{equation}
+
+The one-sided power spectrum is not far away and we find it with
+
+\begin{equation}
+    P_{yy}[0] = \frac{Y[0]\cdot Y[0]^*}{NG} and P_{yy}[i] = 2\cdot\frac{Y[i]\cdot Y[i]^*}{NG} for 0 < i <= N / 2
+    \label{eq:gui:onesidedp}
+\end{equation}
+
+The power between two frequency can be found by integrationg all the frequencies or in this case summing all the bins
+
+\begin{equation}
+    P_{1,2} = \int_{f1}^{f2} P'_{yy}(f)df \approx \sum_{i_1}^{i_2}P_{yy}[i]
+    \label{eq:gui:power}
+\end{equation}
+
+The noise gain (NG) can be extracted from the Table~\ref{tbl:gui:corrfactors}.
+
+\begin{table}
+    \centering
+    \begin{tabular}{lSS}
+    \toprule
+    Window & {CG} & {NG}\\
+    \midrule
+    Rectangular & 1 & 1\\
+    Hamming & 0.54 & 0.3974\\
+    Hanning & 0.5 & 0.375\\
+    Blackman-Harris & 0.3587 & 0.258\\
+    Flat Top & 0.2156 & 0.1752\\
+    \bottomrule
+    \end{tabular}
+\caption{Correction factors for the different window types used in the scope application as seen in \cite{gui:hanspi}.}
+\label{tbl:gui:corrfactors}
+\end{table}
+
+The exact reasoning behind the math can be read in \ref{gui:hanspi}.
 
 \subsection{SNR Autodetection}
 
-TODO: how do we calculate the snr (incl. windowing etc)
+The SNR Autodetection can be done in a static approach based on Section~4.4.3~of~\cite{gui:meyer} and especially Table~4.3. The basic idea is to find the peak in the spectrum which normally is the signal and regard it and the $\frac{n}{2}$ spectral lines before and after as the actual signal. The number $n$ is determined using Table~4.3~in~\cite{gui:meyer}.
+The rest of the spectrum is regarded as noise except for the DC offset and it's next $\frac{n}{2}$ spectral lines.
+
+The SNR can be calculated with
+
+\begin{equation}
+    SNR = 10log_{10}(\frac{P_s}{P_n})
+    \label{eq:gui:power}
+\end{equation}
+
+During tests only an average SNR of \textasciitilde\SI{33}{\dB} could be measured in the given signal with the Matlab built in function \textit{snr()} consistently finding an SNR of 78dB and more for the same signal.
+Accounting for the harmonics cancellation the Matlab function has, our SNR would still only be \textasciitilde\SI{43}{\dB} with 10 harmonics cancelled.
+
+A second approach to auto-determining the SNR, is to iteratively increase the number of lines beneath the peak that are still considered signal and do this until the SNR does not change drastically anymore.
+In our implementation the change is considered irrelevant when below \SI{0.05}{\dB} which leads us to the following algorithm:
+
+\begin{algorithm}
+    \centering
+    \begin{algorithmic}
+    \State $l\gets 1$
+    \State $max_i\gets 0$
+    \State $SNR_p\gets 0$
+    \State $SNR_n\gets 0$
+    \While{$|SNR_p - nextSNR| > 0.05$}
+        \State $SNR_p\gets SNR_n$
+
+        \State $Ps\gets power(spectrum[max_i - l:max_i + l + 1])$
+
+        \State $Pn\gets power([l:max_i - l] + power(spectrum[max_i + l + 1:]$
+
+        \State $SNR_n\gets 10\cdot log_{10}\Bigg(\frac{P_s}{P_n}\Bigg)$
+        \State $l\gets l + 1$
+    \EndWhile
+    \State $SNR\gets SNR_p$
+    \end{algorithmic}
+    \caption{An algorithm to iteratively determine the SNR of a spectrum.}
+    \label{alg:gui:snr}
+\end{algorithm}
+
+The algorithm in \ref{alg:gui:snr} can be repeated for any number of harmonics to cancel them out.
+
+\begin{figure}
+    \centering
+    \input{images/gui/snr_comparison.tikz}
+    \caption[SNR comparison]{%
+        The iterative and static SNR detection compared.%
+    }
+    \label{fig:gui:snr_comparison}
+\end{figure}
 
 \subsection{THD Calculation}
 

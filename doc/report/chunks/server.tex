@@ -43,15 +43,14 @@ Because JavaScript was chosen for the client side, WebSockets became mandatory. 
 As a data format for settings and stats, JSON is used. This is for the simple reason that JSON has by far the biggest usage of all the available formats, the specification is simple and JavaScript can parse it natively into a JavaScript object.
 Here again C++ is a better choice than C as it has a lot of high level libraries that can serialize and more importantly deserialize JSON objects.
 
+% ==============================================================================
+%
+%                         I M P L E M E N T A T I O N
+%
+% ==============================================================================
+
 \section{Implementation}
 \label{sec:server:implementation}
-
-\subsection{uWebSockets}
-\label{subsec:server:uws}
-
-To expose a WebSocket uWebSockets~\cite{uws:github} (uWS in further text) is used. It is a library with a tiny footprint that is very performant~\cite{uws:github}. Of course the server application will never reach the limits of uWS as the network will give up before but it is important that this is actually the case.
-
-uWS is based on libuv an async library which makes it possible to do 
 
 % ==============================================================================
 %
@@ -61,3 +60,25 @@ uWS is based on libuv an async library which makes it possible to do
 
 \subsection{Application Structure}
 \label{subsec}
+
+The application is based on an asynchronous event loop. A struct holds the entire application state such that any event can access the entire data such as the socket handle, the current sample rate or the requested number of bytes.
+
+The event loop can be observed in Figure~\ref{fig:server:eventstructure}.
+
+\begin{figure}
+    \centering
+    \input{images/server/eventloop.tikz}
+    \caption[Server event structure]{%
+        The servers event structure.%
+    }
+    \label{fig:server:eventstructure}
+\end{figure}
+
+\subsection{uWebSockets}
+\label{subsec:server:uws}
+
+To expose a WebSocket uWebSockets~\cite{uws:github} (uWS in further text) is used. It is a library with a tiny footprint that is very performant~\cite{uws:github}. Of course the server application will never reach the limits of uWS as the network will give up before but it is important that this is actually the case.
+
+uWS is based on epoll, libuv or boost::asio depending on the users choice. All of those are async (more on this topic can be read in~\cite{uws:async}) libraries which makes networking very conventient.
+
+uWS comes with callbacks that can be registered for each WebSocket event (see Section~\ref{subsec:gui:websockets}). Furthermore the user can hook into the event loop and register other events such as a reocurring timeout (timer).
