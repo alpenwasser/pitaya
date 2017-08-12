@@ -149,6 +149,29 @@ switch filtertype
         stages{1} = Hd1;
         stages{2} = Hd2;
         Hcasc = cascador(R, Fp, Fst, Ap, Ast, 1, plotDir, stages);
+
+        % Plot detail of passband
+        % This is for the report.
+        plotDirDetail  = fullfile(plotDir,'chainDetails');
+        if ~exist(plotDirDetail,'dir')
+            mkdir(plotDirDetail);
+        end
+
+        W = 0:pi/(R*1e3)*2:pi/R*2;
+        H = freqz(Hcasc{1,1}, W);
+        plotFile = fullfile(plotDirDetail, 'chain25detail.csv');
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s,%s\n', 'abs(H)', 'angle(H)', 'W');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H)' unwrap(angle(H))' W'],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
     case 'DEC125'
         % 1 MHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
@@ -224,6 +247,29 @@ switch filtertype
         %stages{1}  = repmat(HdComp, [sizeHdFIR(1) / sizeHdComp(1),1]);
         %stages{2}  = HdFIR;
         %Hcasc      = parcascador(R, Fp, FstFIR, Ap, Ast, DL, plotDir, stages);
+
+        % Plot detail of passband
+        % This is for the report.
+        plotDirDetail  = fullfile(plotDir,'chainDetails');
+        if ~exist(plotDirDetail,'dir')
+            mkdir(plotDirDetail);
+        end
+
+        W = 0:pi/(R*1e3)*2:pi/R*2;
+        H = freqz(Hcasc{1,1}, W);
+        plotFile = fullfile(plotDirDetail, 'chain125detail.csv');
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s,%s\n', 'abs(H)', 'angle(H)', 'W');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H)' unwrap(angle(H))' W'],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
     case 'DEC625'
         % 200 kHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
@@ -305,6 +351,29 @@ switch filtertype
         %stages{1}  = repmat(HdComp, [sizeHdFIR(1) / sizeHdComp(1),1]);
         %stages{2}  = HdFIR;
         %Hcasc      = parcascador(R, Fp, FstFIR, Ap, Ast, DL, plotDir, stages);
+
+        % Plot detail of passband
+        % This is for the report.
+        plotDirDetail  = fullfile(plotDir,'chainDetails');
+        if ~exist(plotDirDetail,'dir')
+            mkdir(plotDirDetail);
+        end
+
+        W = 0:pi/(R*1e3)*2:pi/R*2;
+        H = freqz(Hcasc{1,1}, W);
+        plotFile = fullfile(plotDirDetail, 'chain625detail.csv');
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s,%s\n', 'abs(H)', 'angle(H)', 'W');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H)' unwrap(angle(H))' W'],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
     case 'DEC1250'
         % 100 kHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
@@ -384,6 +453,29 @@ switch filtertype
         %stages{1}  = repmat(HdComp, [sizeHdFIR(1) / sizeHdComp(1),1]);
         %stages{2}  = HdFIR;
         %Hcasc      = parcascador(R, Fp, FstFIR, Ap, Ast, DL, plotDir, stages);
+
+        % Plot detail of passband
+        % This is for the report.
+        plotDirDetail  = fullfile(plotDir,'chainDetails');
+        if ~exist(plotDirDetail,'dir')
+            mkdir(plotDirDetail);
+        end
+
+        W = 0:pi/(R*1e3)*2:pi/R*2;
+        H = freqz(Hcasc{1,1}, W);
+        plotFile = fullfile(plotDirDetail, 'chain1250detail.csv');
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s,%s\n', 'abs(H)', 'angle(H)', 'W');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H)' unwrap(angle(H))' W'],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
     case 'DEC2500'
         % 50 kHz
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
@@ -404,6 +496,8 @@ switch filtertype
 
         % -------------------------------------------------------- Decimation Factor
         R    = 1250; % overall decimation rate
+                     % NOTE: This is not a typo! Set to 1250 so that the same CIC
+                     % Filter results.
         RCIC  = 125; % decimation rate in CIC
         RComp =   5; % Compensator decimation rate
         RFIR1 =   2; % decimation rate in flat FIR filter
@@ -471,6 +565,29 @@ switch filtertype
         %stages{1}  = repmat(HdComp, [sizeHdFIR(1) / sizeHdComp(1),1]);
         %stages{2}  = HdFIR;
         %Hcasc      = parcascador(R, Fp, FstFIR, Ap, Ast, DL, plotDir, stages);
+
+        % Plot detail of passband
+        % This is for the report.
+        plotDirDetail  = fullfile(plotDir,'chainDetails');
+        if ~exist(plotDirDetail,'dir')
+            mkdir(plotDirDetail);
+        end
+
+        W = 0:pi/(2*R*1e3)*2:pi/(2*R)*2;
+        H = freqz(Hcasc{1,1}, W);
+        plotFile = fullfile(plotDirDetail, 'chain2500detail.csv');
+        fh = fopen(plotFile, 'w');
+        if fh ~= -1
+            fprintf(fh, '%s,%s,%s\n', 'abs(H)', 'angle(H)', 'W');
+            fclose(fh);
+        end
+        dlmwrite(...
+            plotFile,...
+            [abs(H)' unwrap(angle(H))' W'],...
+            '-append',...
+            'delimiter', ',',...
+            'newline', 'unix'...
+        );
     case 'DEC4'
         % 31.25 MHz, T = 32 ns
         % Chain Possibilities (not exhaustive), both sensible and not sensible:
@@ -1041,7 +1158,7 @@ switch filtertype
         % Demonistrates Two Cascaded HAlfband filters, once with overlap, once without
         R1 = 2;
         R2 = 2;
-        R = 4;
+        R  = 4;
         TwHB  = [0.3 0.6];
         Fp    = [0.35/R1 0.2/R1];
         Fst   = [0.65/R1 0.8/R1];

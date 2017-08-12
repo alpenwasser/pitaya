@@ -1,0 +1,38 @@
+\newcommand*\freqzFileDECH{images/fdesign/chain25detail.csv}
+\newcommand*\freqzFileDECI{images/fdesign/r-025--fp-04000--fst-22500--ap-100--ast-60--dl-1--stages-2.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileDECH}\freqzTableDECH
+\pgfplotstableread[col sep=comma]{\freqzFileDECI}\freqzTableDECI
+\begin{tikzpicture}
+     \pgfplotsset{every axis/.style={
+            height=60mm,
+            width=\textwidth,
+            grid=none,
+            x unit=\times\,\pi\,\si{\radian}/\si{\sample},
+            y unit=\si{dB},
+            ylabel=Magnitude,
+            xlabel=Normalized Frequency,
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+        },
+    }
+    \begin{axis}[
+            title={Entire Frequency Range},
+            at={(0,0)},
+            xmin=0,
+            xmax=1,
+            ymax=5,
+            ymin=-150,
+        ]
+        \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableDECI;
+    \end{axis}
+    \begin{axis}[
+            title={Passband Detail},
+            at = {(0,-70mm)},
+            xmin=0,
+            xmax=8e-2,
+            ymax=5,
+            ymin=-80,
+        ]
+        \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableDECH;
+    \end{axis}
+\end{tikzpicture}

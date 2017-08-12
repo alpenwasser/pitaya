@@ -250,6 +250,7 @@ where the term \emph{folding back} originates.
 
 \section{Digital Filters}% <<< ----------------------------------------------- %
 \label{sec:digital_filters}
+% ---------------------------------------------------------------------------- %
 
 Digital filters can  be distinguished by several  characteristics; common ways
 to  categorize them  are by  topology,  impulse response  and their  frequency
@@ -263,6 +264,7 @@ presented here, for the sake of completeness.
 
 \subsection{IIR Filters} %<<< ------------------------------------------------ %
 \label{subsec:iir_filters}
+% ---------------------------------------------------------------------------- %
 
 Infinite impulse response  filters are so named because  their imulse response
 continues  into perpetuity,  never  reaching zero. In  practice, the  response
@@ -329,6 +331,7 @@ Digital IIR filters are often designed by way of the bilinear transform.
 
 \subsection{FIR Filters} %<<< ------------------------------------------------ %
 \label{subsec:FIR_filters}
+% ---------------------------------------------------------------------------- %
 
 FIR filters are  characterized by an impulse response which  decays to zero in
 finite time (see  Figure~\ref{fig:filter_specs:coefs}, unlike IIR filters. The
@@ -480,6 +483,7 @@ adders, same as for IIR filters.
 
 \subsection{CIC Filters} %<<< ------------------------------------------------ %
 \label{subsec:CIC_filters}
+% ---------------------------------------------------------------------------- %
 
 CIC  filters  were  first  introduced  in 1981  in  \cite{1163535}  by  Eugene
 B. Hogenauer. They can be implemented both as decimation filters (reduction in
@@ -1031,13 +1035,12 @@ this, the following condition must be satisfied:
     \label{eq:cascade:transition_band_overlap}
     f_\mathrm{st,1} < \frac{f_\mathrm{s,1} - f_\mathrm{st,2}}{R_1}
 \end{equation}
-where
-\begin{align*}
-    f_\mathrm{s,1}  &: \text{high sampling rate} \\
-    f_\mathrm{st,1} &: \text{stopband frequency of first filter} \\
-    f_\mathrm{st,2} &: \text{stopband frequency of second filter} \\
-    R_1             &: \text{rate reduction in first filter}
-\end{align*}
+\begin{conditions}
+    f_\mathrm{s,1}  & high sampling rate                  \\
+    f_\mathrm{st,1} & stopband frequency of first filter  \\
+    f_\mathrm{st,2} & stopband frequency of second filter \\
+    R_1             & rate reduction in first filter      \\
+\end{conditions}
 Figure~\ref{fig:fdesign:cascade:good_vs_bad}  shows  some  examples  for  this
 condition being broken or fulfilled.
 

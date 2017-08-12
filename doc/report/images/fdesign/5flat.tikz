@@ -1,0 +1,30 @@
+\newcommand*\freqzFileDECB{images/fdesign/r-005--fp-200--fst-300--ap-050--ast-60.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileDECB}\freqzTableDECB
+\begin{tikzpicture}
+     \pgfplotsset{every axis/.style={
+            height=60mm,
+            width=\textwidth,
+            grid=none,
+            x unit=\times\,\pi\,\si{\radian}/\si{\sample},
+            y unit=\si{dB},
+            ylabel=Magnitude,
+            xlabel=Normalized Frequency,
+            xmin=0,
+            xmax=1,
+            ymax=5,
+            ymin=-100,
+            every axis legend/.append style={
+                at={(1,-0.30)},  % if attached to bottom plot
+                anchor=north east,
+                cells={anchor=west},
+            },
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+        },
+    }
+    \begin{axis}[
+            at = {(0,0)},
+        ]
+        \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableDECB;
+    \end{axis}
+\end{tikzpicture}
