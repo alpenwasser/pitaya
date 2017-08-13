@@ -1,4 +1,4 @@
-tikzsetnextfilename{server-eventloop}
+\tikzsetnextfilename{server-eventloop}
 \begin{tikzpicture}[%
         align=center,
         text=q1,
@@ -51,77 +51,160 @@ tikzsetnextfilename{server-eventloop}
             inner sep=2mm,
         } % database tables
     ]
-        \node (open) [
+        \node (openEvent) [
             dec,
             align=center,
             diamond,
             minimum width=33mm,
             minimum height=33mm,
-        ] at (0,0) {open};
+        ] at (0,0) {open\\event\\happened\\?};
         \node (event) [
             proc,
-            above=of open,
+            above=of openEvent,
             align=center,
         ] {New event};
-        \node (message) [
+        \node (eventLoop) [
+            circ,
+            left=of event,
+            align=center,
+        ] {Event Loop};
+        \node (messageEvent) [
             dec,
             align=center,
             diamond,
-            below=of open,
+            below=of openEvent,
             minimum width=33mm,
             minimum height=33mm,
-        ] {message};
-        \node (close) [
+        ] {message\\event\\happened\\?};
+        \node (closeEvent) [
             dec,
             align=center,
             diamond,
-            below=of message,
+            below=of messageEvent,
             minimum width=33mm,
             minimum height=33mm,
-        ] {close};
+        ] {close\\event\\happened\\?};
+        \node (open) [
+            proc,
+            right=of openEvent,
+            align=center,
+        ] {Open a new socket};
+        \node (prevSock) [
+            dec,
+            align=center,
+            diamond,
+            right=of open,
+            minimum width=33mm,
+            minimum height=33mm,
+        ] {Currently\\opened socket?};
+        \node (close2) [
+            proc,
+            right=of prevSock,
+            align=center,
+        ] {Close\\the socket};
         \node (parse) [
             proc,
-            right=of message,
+            right=of messageEvent,
             align=center,
-        ] {parse};
-        \node (state) [
+        ] {Parse the request};
+        \node (close) [
             proc,
-            right=of parse,
+            right=of closeEvent,
             align=center,
-        ] {state};
-        \node (startRecording) [
+        ] {Close\\the socket};
+        \node (recordingRequest) [
             dec,
             align=center,
             diamond,
             right=of parse,
             minimum width=33mm,
             minimum height=33mm,
-        ] {Start a new recording};
-        % \node (send) [
-        %     proc,
-        %     left=of crc,
-        %     align=center,
-        % ] {Datenpaket\\senden};
-        % \node (getADC) [
-        %     proc,
-        %     below=of send,
-        %     align=center,
-        % ] {ADC-Messung\\ausf\"uhren};
-        % \node (movAvg) [
-        %     proc,
-        %     below right=of getADC,
-        %     align=center,
-        % ] {Moving\\Average\\berechnen};
-        % \node (LED) [
-        %     proc,
-        %     below left=of movAvg,
-        %     align=center,
-        % ] {LED\\blinken\\lassen};
-        % \node (systick) [
-        %     proc,
-        %     above left=of LED,
-        %     align=center,
-        % ] {auf n\"achsten\\\texttt{systick} warten};
+        ] {A new\\recording is\\requested?};
+        \node (readRequest) [
+            dec,
+            align=center,
+            diamond,
+            below=of recordingRequest,
+            minimum width=33mm,
+            minimum height=33mm,
+        ] {A frame\\is requested?};
+        \node (configureRequest) [
+            dec,
+            align=center,
+            diamond,
+            below=of readRequest,
+            minimum width=33mm,
+            minimum height=33mm,
+        ] {A configuration\\is issued?};
+        \node (recording) [
+            proc,
+            right=of recordingRequest,
+            align=center,
+        ] {Start a new\\recording with\\the kernel module};
+        \node (kernelmodule) [
+            circ,
+            right=of recording,
+            align=center,
+        ] {Kernel Module};
+        \node (read) [
+            proc,
+            right=of readRequest,
+            align=center,
+        ] {Store\\read request\\in state};
+        \node (state) [
+            stor,
+            right=of read,
+            align=center,
+        ] {State};
+        \node (configure) [
+            proc,
+            right=of configureRequest,
+            align=center,
+        ] {Add configuration to state};
+        \node (discard) [
+            proc,
+            below=of configureRequest,
+            align=center,
+        ] {Discard request};
+        \node (network) [
+            circ,
+            above=of kernelmodule,
+            align=center,
+        ] {Network};
+
+        % --------------- T I M E R ------------------- %
+
+        \node (timerPreDescision) [
+            dec,
+            align=center,
+            diamond,
+            right=of state,
+            minimum width=33mm,
+            minimum height=33mm,
+        ] {A new frame\\was requested?};
+        \node (timer) [
+            circ,
+            above=of timerPreDescision,
+            align=center,
+        ] {Timer};
+        \node (timerCheck) [
+            proc,
+            below=of timerPreDescision,
+            align=center,
+        ] {Check for trigger\\with the kernelmodule};
+        \node (timerDescision) [
+            dec,
+            align=center,
+            diamond,
+            right=of timerCheck,
+            minimum width=33mm,
+            minimum height=33mm,
+        ] {Logger running?};
+        \node (data) [
+            proc,
+            right=of timerDescision,
+            align=center,
+        ] {Send data to network};
     \end{scope}
 
     \begin{scope}[
@@ -129,19 +212,39 @@ tikzsetnextfilename{server-eventloop}
             every path/.append style={draw=q1,},
             >=latex',
     ]
-        % \draw[-latex] (init) -- (newUART);
-        % \draw[-latex] (newUART) -- node[midway,anchor=south] {ja} (forMe);
-        % \draw[-latex] (forMe) -- node[midway,anchor=south] {ja} (package);
-        % \draw[-latex] (package) -- (crc);
-        % \draw[-latex] (crc) -- (send);
-        % \draw[-latex] (forMe) edge[bend left] node[midway,anchor=north] {nein} (newUART);
-        % \draw[-latex] (send) edge[bend left] (newUART);
-        % \draw (newUART) edge[loop below]  node {nein} (newUART);
+        \draw[-latex] (eventLoop) -- (event);
+        \draw[-latex] (event) -- (openEvent);
+        \draw[-latex] (openEvent) -- node[midway,anchor=south] {yes} (open);
+        \draw[-latex] (openEvent) -- node[midway,anchor=west] {no} (messageEvent);
+        \draw[-latex] (messageEvent) -- node[midway,anchor=south] {yes} (parse);
+        \draw[-latex] (messageEvent) -- node[midway,anchor=west] {no} (closeEvent);
+        \draw[-latex] (closeEvent) -- node[midway,anchor=south] {yes} (close);
+        \draw[-latex] (closeEvent) edge[bend left] node[midway,anchor=east] {no} (eventLoop);
 
-        % \draw[-latex] (getADC) edge[bend left] (movAvg);
-        % \draw[-latex] (movAvg) edge[bend left] (LED);
-        % \draw[-latex] (LED) edge[bend left] (systick);
-        % \draw[-latex] (systick) edge[bend left] (getADC);
+        \draw[-latex] (open) -- (prevSock);
+        \draw[-latex] (prevSock) -- node[midway,anchor=south] {yes} (close2);
+        \draw[-latex] (parse) -- (recordingRequest);
+        \draw[-latex] (recordingRequest) -- node[midway,anchor=south] {yes} (recording);
+        \draw[-latex] (recordingRequest) -- node[midway,anchor=west] {no} (readRequest);
+        \draw[-latex] (readRequest) -- node[midway,anchor=south] {yes} (read);
+        \draw[-latex] (readRequest) -- node[midway,anchor=west] {no} (configureRequest);
+        \draw[-latex] (configureRequest) -- node[midway,anchor=south] {yes} (configure);
+        \draw[-latex] (configureRequest) -- node[midway,anchor=west] {no} (discard);
+
+        \draw[-latex] (recording) -- (kernelmodule);
+        \draw[-latex] (open) -- (prevSock);
+        \draw[-latex] (state) -- (recording);
+        \draw[-latex] (read) -- (state);
+        \draw[-latex] (configure) -- (state);
+
+        \draw[-latex] (state) -- (timerPreDescision);
+        \draw[-latex] (timer) -- (timerPreDescision);
+        \draw[-latex] (timerPreDescision) -- (timerCheck);
+        \draw[-latex] (kernelmodule) edge[bend left] (timerDescision);
+        \draw[-latex] (timerCheck) -- (timerDescision);
+        \draw[-latex] (timerDescision) -- node[midway,anchor=south] {yes} (data);
+        \draw[-latex] (data) edge[bend right] (network);
+        \draw[-latex] (network) edge[bend right] (eventLoop);
 
     \end{scope}
 
