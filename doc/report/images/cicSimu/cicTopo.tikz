@@ -1,4 +1,5 @@
 % https://tex.stackexchange.com/a/183092/131649
+\tikzsetnextfilename{cicTopology}
 \begin{tikzpicture}
     \coordinate (in)  at (0,0);
     \coordinate (out) at (8,0);

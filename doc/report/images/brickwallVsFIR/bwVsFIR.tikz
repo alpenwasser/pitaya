@@ -1,7 +1,8 @@
+\tikzsetnextfilename{bwVsFIR}
 \begin{tikzpicture}
      \pgfplotsset{every axis/.style={
-            height=40mm,
-            width=60mm,
+            height=30mm,
+            width=50mm,
             grid=none,
             axis x line=middle,
             axis y line=middle,
@@ -10,7 +11,7 @@
         }
     }
     \begin{axis}[
-        at = {(0,30mm)},
+        at = {(0,33mm)},
         xmin=-10,
         xmax=10,
         xtick={},
@@ -26,7 +27,7 @@
     \end{axis}
 
     \begin{axis}[
-        at = {(50mm,30mm)},
+        at = {(60mm,33mm)},
         xmin=-10,
         xmax=10,
         xtick={},
@@ -59,7 +60,7 @@
     \end{axis}
 
     \begin{axis}[
-        at = {(50mm,0)},
+        at = {(60mm,0)},
         xmin=0,
         xmax=3,
         xtick={},

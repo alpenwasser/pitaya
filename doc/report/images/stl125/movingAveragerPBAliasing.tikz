@@ -1,3 +1,4 @@
+\tikzsetnextfilename{movingAveragerFrequencyResponse}
 \newcommand*\freqzFileMAA{images/stl125/movingAveragerPBAliasingComplete.csv}
 \newcommand*\freqzFileMAB{images/stl125/movingAveragerPBAliasingNull1Left.csv}
 \newcommand*\freqzFileMAC{images/stl125/movingAveragerPBAliasingNull1Right.csv}
@@ -14,9 +15,12 @@
 \pgfplotstableread[col sep=comma]{\freqzFileMAF}\freqzTableMAF
 \pgfplotstableread[col sep=comma]{\freqzFileMAG}\freqzTableMAG
 \pgfplotstableread[col sep=comma]{\freqzFileMAH}\freqzTableMAH
-\begin{tikzpicture}
+\begin{tikzpicture}[
+    trim axis left,
+    trim axis right,
+]
      \pgfplotsset{every axis/.style={
-            height=140mm,
+            height=110mm,
             width=\textwidth,
             grid=none,
             y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
@@ -27,7 +31,7 @@
             y unit=\si{dB},
             xlabel=Frequency,
             ylabel=Magnitude,
-            xticklabel style={rotate=90},
+            xticklabel style={rotate=45},
             xmajorgrids=true,
         },
     }
@@ -60,16 +64,16 @@
             },
         ]
         % Aliasing rectangles
-        \fill[q0,opacity=0.20] ($(0.25*0.75,     -8.0571)$) rectangle ($(0.25*1.00,-60)$);
-        \fill[q1,opacity=0.20] ($(0.25*1.00,     -8.0571)$) rectangle ($(0.25*1.25,-60)$);
-        \fill[q2,opacity=0.20] ($(0.50-0.25*0.25,-8.0571)$) rectangle ($(0.50+0.25*0.00,-60)$);
-        \fill[q3,opacity=0.20] ($(0.50-0.25*0.00,-8.0571)$) rectangle ($(0.50+0.25*0.25,-60)$);
-        \fill[q4,opacity=0.20] ($(0.75-0.25*0.25,-8.0571)$) rectangle ($(0.75+0.25*0.00,-60)$);
-        \fill[q5,opacity=0.20] ($(0.75-0.25*0.00,-8.0571)$) rectangle ($(0.75+0.25*0.25,-60)$);
-        \fill[q6,opacity=0.20] ($(1.00-0.25*0.25,-8.0571)$) rectangle ($(1.00+0.25*0.00,-60)$);
+        \fill[q2!20!white] ($(0.25*0.75,     -8.0571)$) rectangle ($(0.25*1.00,-60)$);
+        \fill[q6!20!white] ($(0.25*1.00,     -8.0571)$) rectangle ($(0.25*1.25,-60)$);
+        \fill[q3!20!white] ($(0.50-0.25*0.25,-8.0571)$) rectangle ($(0.50+0.25*0.00,-60)$);
+        \fill[q7!20!white] ($(0.50-0.25*0.00,-8.0571)$) rectangle ($(0.50+0.25*0.25,-60)$);
+        \fill[q4!20!white] ($(0.75-0.25*0.25,-8.0571)$) rectangle ($(0.75+0.25*0.00,-60)$);
+        \fill[q0!20!white] ($(0.75-0.25*0.00,-8.0571)$) rectangle ($(0.75+0.25*0.25,-60)$);
+        \fill[q5!20!white] ($(1.00-0.25*0.25,-8.0571)$) rectangle ($(1.00+0.25*0.00,-60)$);
 
         % Signal Frequency
-        \draw[very thick,q5] (0.08,-60) -- (0.08,5);
+        \draw[very thick,ct5] (0.08,-60) -- (0.08,5);
 
         % Matlab results (copied by hand from movingAverager.m's output
         % aliasing_max_db         = -8.057121813367473 
@@ -89,13 +93,13 @@
             at (0.825,-4.9914) 
             {\footnotesize signal to aliasing attenuation at $f_\mathrm{signal}$: \SI{6.58}{\dB}};
 
-        \addplot[very thick,da1,-] table[x=w, y=abs(H)] \freqzTableMAA;
-        \addplot[line cap=round,very thick,q0,-] table[x=w, y=abs(H)] \freqzTableMAB;
-        \addplot[line cap=round,very thick,q1,-] table[x=w, y=abs(H)] \freqzTableMAC;
-        \addplot[line cap=round,very thick,q2,-] table[x=w, y=abs(H)] \freqzTableMAD;
-        \addplot[line cap=round,very thick,q3,-] table[x=w, y=abs(H)] \freqzTableMAE;
+        \addplot[line cap=round,very thick,q2,-] table[x=w, y=abs(H)] \freqzTableMAB;
+        \addplot[line cap=round,very thick,q6,-] table[x=w, y=abs(H)] \freqzTableMAC;
+        \addplot[line cap=round,very thick,q3,-] table[x=w, y=abs(H)] \freqzTableMAD;
+        \addplot[line cap=round,very thick,q7,-] table[x=w, y=abs(H)] \freqzTableMAE;
         \addplot[line cap=round,very thick,q4,-] table[x=w, y=abs(H)] \freqzTableMAF;
-        \addplot[line cap=round,very thick,q5,-] table[x=w, y=abs(H)] \freqzTableMAG;
-        \addplot[line cap=round,very thick,q6,-] table[x=w, y=abs(H)] \freqzTableMAH;
+        \addplot[line cap=round,very thick,q0,-] table[x=w, y=abs(H)] \freqzTableMAG;
+        \addplot[line cap=round,very thick,q5,-] table[x=w, y=abs(H)] \freqzTableMAH;
+        \addplot[very thick,q1,-] table[x=w, y=abs(H)] \freqzTableMAA;
     \end{axis}
 \end{tikzpicture}

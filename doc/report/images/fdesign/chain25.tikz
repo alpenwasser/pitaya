@@ -1,18 +1,33 @@
+\tikzsetnextfilename{chain25FreqResponse}
 \newcommand*\freqzFileDECH{images/fdesign/chain25detail.csv}
 \newcommand*\freqzFileDECI{images/fdesign/r-025--fp-04000--fst-22500--ap-100--ast-60--dl-1--stages-2.csv}
 \pgfplotstableread[col sep=comma]{\freqzFileDECH}\freqzTableDECH
 \pgfplotstableread[col sep=comma]{\freqzFileDECI}\freqzTableDECI
-\begin{tikzpicture}
+\begin{tikzpicture}[
+    trim axis left,
+    trim axis right,
+]
      \pgfplotsset{every axis/.style={
-            height=60mm,
+            height=45mm,
             width=\textwidth,
             grid=none,
-            x unit=\times\,\pi\,\si{\radian}/\si{\sample},
-            y unit=\si{dB},
+            x unit={\mathversion{sf}\times\,\pi\,\si[detect-all]{\radian}/\si[detect-all]{\sample}},
+            y unit={\si[detect-all,mode=text]{\dB}},
             ylabel=Magnitude,
             xlabel=Normalized Frequency,
             y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
             x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            %xlabel style={font=\sffamily},
+            %ylabel style={font=\sffamily},
+            %xtick={0,0.04,0.25,0.5,0.75,1},
+            %xticklabels={0,0.04,0.25,0.50,0.75,1},
+            %ytick={0,-60,-120},
+            %yticklabels={0,-60,-120},
+            %font={\sffamily\mathversion{sf}},
+            %xticklabel style={font=\sffamily\mathversion{sf}},
+            %yticklabel style={font=\sffamily\mathversion{sf}},
+            %xmajorgrids=true,
+            %ymajorgrids=true,
         },
     }
     \begin{axis}[
@@ -23,11 +38,11 @@
             ymax=5,
             ymin=-150,
         ]
-        \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableDECI;
+        \addplot[thin,q1,-] table[x=W, y=abs(H)] \freqzTableDECI;
     \end{axis}
     \begin{axis}[
             title={Passband Detail},
-            at = {(0,-70mm)},
+            at = {(0,-65mm)},
             xmin=0,
             xmax=8e-2,
             ymax=5,

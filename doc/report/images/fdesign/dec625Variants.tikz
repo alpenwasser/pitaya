@@ -1,10 +1,14 @@
+\tikzsetnextfilename{dec625VariantsFreqResponse}
 \newcommand*\freqzFileDECA{images/fdesign/dec625--125-5.csv}
 \newcommand*\freqzFileDECB{images/fdesign/dec625--25-5-5.csv}
 \pgfplotstableread[col sep=comma]{\freqzFileDECA}\freqzTableDECA
 \pgfplotstableread[col sep=comma]{\freqzFileDECB}\freqzTableDECB
-\begin{tikzpicture}
+\begin{tikzpicture}[
+    trim axis left,
+    trim axis right,
+]
      \pgfplotsset{every axis/.style={
-            height=60mm,
+            height=45mm,
             width=\textwidth,
             grid=none,
             x unit=\times\,\pi\,\si{\radian}/\si{\sample},
@@ -16,9 +20,10 @@
             %xmax=1000000,
             %ymax=5,
             %ymin=-120,
+            legend columns=2,
             every axis legend/.append style={
-                at={(1,-0.30)},  % if attached to bottom plot
-                anchor=north east,
+                at={(0.5,-0.30)},  % if attached to bottom plot
+                anchor=north,
                 cells={anchor=west},
             },
         },
@@ -33,18 +38,18 @@
             x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
         ]
         \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableDECA;
-        \addplot[thick,q3,-] table[x=W, y=abs(H)] \freqzTableDECB;
+        \addplot[thick,q5,-] table[x=W, y=abs(H)] \freqzTableDECB;
     \end{axis}
     \begin{axis}[
-            at = {(0,-60mm)},
+            at = {(0,-62mm)},
             x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
             %xtick={0,0.3e6,0.4e6,1e6},
         ]
         \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableDECA;
-        \addplot[thick,q3,-] table[x=W, y=abs(H)] \freqzTableDECB;
+        \addplot[thick,q5,-] table[x=W, y=abs(H)] \freqzTableDECB;
     \end{axis}
     \begin{axis}[
-            at = {(0,-120mm)},
+            at = {(0,-124mm)},
             ylabel=Phase,
             y unit=\si{\degree},
             ymin=-2800,
@@ -60,7 +65,7 @@
             }
         ]
         \addplot[thick,-,q1,] table[x=W,y=angle(H),meta=abs(H)] \freqzTableDECA;
-        \addplot[thick,-,q3] table[x=W,y=angle(H),meta=abs(H)] \freqzTableDECB;
+        \addplot[thick,-,q5] table[x=W,y=angle(H),meta=abs(H)] \freqzTableDECB;
         \legend{%
             $125 \rightarrow \text{CFIR} \rightarrow 5$,
             $ 25 \rightarrow \text{CFIR} \rightarrow 5 \rightarrow 5$%

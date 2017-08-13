@@ -1,3 +1,4 @@
+\tikzsetnextfilename{dspChain}
 \begin{tikzpicture}[
     dspBlock/.style={
         draw=sqC,

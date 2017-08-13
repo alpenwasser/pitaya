@@ -1,12 +1,16 @@
+\tikzsetnextfilename{tbwDemoRVarCascadeVsSingleStage}
 \newcommand*\freqzFileTBWA{images/fdesign/tbw-fs-wide.csv}
 \newcommand*\freqzFileTBWB{images/fdesign/tbw-fs-narrow.csv}
 \newcommand*\freqzFileTBWC{images/fdesign/cascade-of-wide.csv}
 \pgfplotstableread[col sep=comma]{\freqzFileTBWA}\freqzTableTBWA
 \pgfplotstableread[col sep=comma]{\freqzFileTBWB}\freqzTableTBWB
 \pgfplotstableread[col sep=comma]{\freqzFileTBWC}\freqzTableTBWC
-\begin{tikzpicture}
+\begin{tikzpicture}[
+    trim axis left,
+    trim axis right,
+]
      \pgfplotsset{every axis/.style={
-            height=60mm,
+            height=45mm,
             width=\textwidth,
             grid=none,
             ylabel=Magnitude,
@@ -29,21 +33,21 @@
             xtick={0,0.5,0.6,1},
             xticklabels={0,0.5,0.6,$f_\mathrm{s1}/2$},
         ]
-        \fill[dv-2] (0.5,5) rectangle (0.6,-100);
+        \fill[q4] (0.5,5) rectangle (0.6,-100);
         \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableTBWA;
     \end{axis}
     \begin{axis}[
             title={Filter for Rate Change $R=4$, Coefficient Count $N=60$},
-            at = {(0,-70mm)},
+            at = {(0,-65mm)},
             xtick={0,0.25,0.3,1},
             xticklabels={0,0.25,0.30,$f_\mathrm{s1}/2$},
         ]
-        \fill[dv-2] (0.25,5) rectangle (0.3,-100);
+        \fill[q4] (0.25,5) rectangle (0.3,-100);
         \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableTBWB;
     \end{axis}
     \begin{axis}[
             title={Cascade of Filters with $N=30$ Per Filter for Rate Change $R=4$},
-            at = {(0,-140mm)},
+            at = {(0,-130mm)},
             xtick={
                 0,
                 0.25,
@@ -61,7 +65,7 @@
                 $f_\mathrm{s1}/2$
             },
         ]
-        \fill[dv-2] (0.25,5) rectangle (0.3,-100);
+        \fill[q4] (0.25,5) rectangle (0.3,-100);
         \fill[gray!20!white] (0.50,5) rectangle (0.6,-100);
         \addplot[thin,gray,dashed,-] table[x=W, y=abs(H)] \freqzTableTBWA;
         \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableTBWC;

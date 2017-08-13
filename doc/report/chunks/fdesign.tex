@@ -217,16 +217,15 @@ FPGA  toolchain  might  make  optimizations   which  are  hard  to  take  into
 account   when  performing   estimates  by   hand.   The   results  of   these
 measurements are  available in  Appendix~\ref{sec:fir_filter_resouce_usage} on
 page~\pageref{sec:fir_filter_resouce_usage}. Based on those  numbers, a filter
-size  of around  \num{200}  is  determined to  be  a  reasonable boundary  for
-\code{5steep}; a filter of that size uses about
-TODO
-DSP slices. This leaves
-TODO
-number  of  slices   for  the  remaining  filters   (per  channel). Of  these,
-\code{5flat} is the most critical, because it  must also be able to run at the
-full incoming sampling frequency. \code{2steep}  runs at a much lower sampling
-rate  and can therefore be of significant size without a notable penalty in
-resource usage.
+size  of around  \num{250}  is  determined to  be  a  reasonable boundary  for
+\code{5steep}; a filter  of that size uses about \num{25}  DSP slices, leaving
+\num{15}  slices for  other  filters per  channel. number  of  slices for  the
+remaining filters (per channel). Of these,  \code{5flat} is the most critical,
+because it must also  be able to run at the  full incoming sampling frequency.
+\code{2steep}  runs at  a much  lower sampling  rate and  can therefore  be of
+significant  size without  a notable  penalty  in resource  usage.  The  final
+implementation of \code{5steep} is actually  smaller, at a length of \num{204}
+coefficients and a DSP slice count of \num{22} per channel.
 
 Based  on  these  findings  and   the  measurements  of  the  STEMlab's  stock
 configuration from  Section~\ref{subsec:stl125:ds_default}, it is  possible to
@@ -306,7 +305,7 @@ filters. They  are  compiled   in  Table~\ref{tab:filter_specs}.   Translating
 the   specifications    from   Table~\ref{tab:filter_specs}    into   absolute
 frequencies  results  in   the  values  from  Table~\label{tab:tb_widths}. The
 frequency    responses    of   all    filters    and    filter   chains    are
-depicted   in   Appendix~\ref{sec:filter_frequency_responses},   starting   on
+listed    in   Appendix~\ref{sec:filter_frequency_responses},    starting   on
 page~\pageref{sec:filter_frequency_responses}.
 
 \begin{table}

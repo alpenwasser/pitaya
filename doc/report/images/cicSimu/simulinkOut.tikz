@@ -1,12 +1,17 @@
+\tikzsetnextfilename{cicSimuResults}
 \newcommand*\freqzFileIntA{images/cicSimu/simulinkYout.csv}
 \newcommand*\freqzFileIntB{images/cicSimu/simulinkYoutCompr.csv}
 \newcommand*\freqzFileIntC{images/cicSimu/simulinkYoutInt.csv}
 \pgfplotstableread[col sep=comma]{\freqzFileIntA}\freqzTableIntA
 \pgfplotstableread[col sep=comma]{\freqzFileIntB}\freqzTableIntB
 \pgfplotstableread[col sep=comma]{\freqzFileIntC}\freqzTableIntC
-\begin{tikzpicture}
+\begin{tikzpicture}[
+    trim axis left,
+    trim axis right,
+]
+
     \pgfplotsset{every axis/.style={
-            height=50mm,
+            height=45mm,
             width=\textwidth,
             grid=none,
             xmin=-1,
@@ -23,26 +28,26 @@
             ymin=-5,
             ymax=4,
         ]
-        \addplot[ycomb,mark=*,dv+5,-] table[x=t,y=y] \freqzTableIntC;
+        \addplot[ycomb,thick,mark=*,q1,-] table[x=t,y=y] \freqzTableIntC;
         \draw[gray] (-1,0) -- (15,0);
     \end{axis}
 
     \begin{axis}[
             title=Compressor Output (Comb Input),
-            at = {(0,-55mm)},
+            at = {(0,-65mm)},
             ymin=-4,
             ymax=4,
         ]
-        \addplot[ycomb,mark=*,dv+5,-] table[x=t,y=y] \freqzTableIntB;
+        \addplot[ycomb,thick,mark=*,q1,-] table[x=t,y=y] \freqzTableIntB;
         \draw[gray] (rel axis cs:0,0.5) -- (rel axis cs:1,0.5);
     \end{axis}
 
     \begin{axis}[
             title=Filter Output,
-            at = {(0,-110mm)},
+            at = {(0,-130mm)},
             ytick={0,1,2},
             ymin=0,
         ]
-        \addplot[ycomb,mark=*,dv+5,-] table[x=t,y=y] \freqzTableIntA;
+        \addplot[ycomb,thick,mark=*,q1,-] table[x=t,y=y] \freqzTableIntA;
     \end{axis}
 \end{tikzpicture}

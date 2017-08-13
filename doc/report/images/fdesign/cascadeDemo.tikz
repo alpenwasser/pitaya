@@ -1,3 +1,4 @@
+\tikzsetnextfilename{cascadeTBOverlap}
 \newcommand*\freqzFileCascA{images/fdesign/cascadeDemoHBGoodCascade.csv}
 \newcommand*\freqzFileCascB{images/fdesign/cascadeDemoHBGoodStage1.csv}
 \newcommand*\freqzFileCascC{images/fdesign/cascadeDemoHBGoodStage2.csv}
@@ -10,9 +11,12 @@
 \pgfplotstableread[col sep=comma]{\freqzFileCascD}\freqzTableCascD
 \pgfplotstableread[col sep=comma]{\freqzFileCascE}\freqzTableCascE
 \pgfplotstableread[col sep=comma]{\freqzFileCascF}\freqzTableCascF
-\begin{tikzpicture}
+\begin{tikzpicture}[
+    trim left=(plot1.north west).
+    trim right=(plot6.south east).
+]
      \pgfplotsset{every axis/.style={
-            height=45mm,
+            height=30mm,
             width=\textwidth,
             grid=none,
             y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
@@ -36,6 +40,7 @@
     }
     \begin{axis}[
             title={Cascade Without Peak in Stopband},
+            name=plot1,
             at = {(0,0)},
             xtick={
                 0,
@@ -74,13 +79,13 @@
                 $f_{s1}/2$
             },
         ]
-        \addplot[thick,q3,-] table[x=W, y=abs(H)] \freqzTableCascD;
+        \addplot[thick,q5,-] table[x=W, y=abs(H)] \freqzTableCascD;
         \addplot[thin,gray,dashed,-] table[x=W, y=abs(H)] \freqzTableCascE;
         \addplot[thin,gray,dashed,-] table[x=W, y=abs(H)] \freqzTableCascF;
     \end{axis}
     \begin{axis}[
             title=Stage 1 (No Peak),
-            width=0.53\textwidth,
+            width=0.47\textwidth,
             at = {(0,-100mm)},
             xtick={
                 0,
@@ -101,8 +106,8 @@
     \end{axis}
     \begin{axis}[
             title=Stage 1 (Peak),
-            width=0.53\textwidth,
-            at = {(0.47\textwidth,-100mm)},
+            width=0.47\textwidth,
+            at = {(0.53\textwidth,-100mm)},
             xtick={
                 0,
                 0.2,
@@ -122,11 +127,11 @@
             yticklabel pos=right,
             yticklabel style={font=\footnotesize},
         ]
-        \addplot[thick,q3,-] table[x=W, y=abs(H)] \freqzTableCascE;
+        \addplot[thick,q5,-] table[x=W, y=abs(H)] \freqzTableCascE;
     \end{axis}
     \begin{axis}[
             title=Stage 2 (No Peak),
-            width=0.53\textwidth,
+            width=0.47\textwidth,
             at = {(0,-150mm)},
             xtick={
                 0,
@@ -151,8 +156,9 @@
     \end{axis}
     \begin{axis}[
             title=Stage 2 (Peak),
-            width=0.53\textwidth,
-            at = {(0.47\textwidth,-150mm)},
+            name=plot6,
+            width=0.47\textwidth,
+            at = {(0.53\textwidth,-150mm)},
             xtick={
                 0,
                 0.1,
@@ -176,6 +182,6 @@
             yticklabel pos=right,
             yticklabel style={font=\footnotesize},
         ]
-        \addplot[thick,q3,-] table[x=W, y=abs(H)] \freqzTableCascF;
+        \addplot[thick,q5,-] table[x=W, y=abs(H)] \freqzTableCascF;
     \end{axis}
 \end{tikzpicture}

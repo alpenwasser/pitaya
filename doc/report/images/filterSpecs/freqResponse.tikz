@@ -1,8 +1,12 @@
+\tikzsetnextfilename{FIRDesignSpecsExample}
 \newcommand*\freqzFile{images/filterSpecs/freqResponse.csv}
 \pgfplotstableread[col sep=comma]{\freqzFile}\freqzTable
-\begin{tikzpicture}
+\begin{tikzpicture}[
+    trim axis left,
+    trim axis right,
+]
      \pgfplotsset{every axis/.style={
-            height=80mm,
+            height=45mm,
             width=\textwidth,
             grid=none,
             y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
@@ -17,9 +21,11 @@
     \begin{axis}[
             xmin=0,
             xmax=1,
+            ymax=5,
+            ymin=-100,
             xtick={0,0.3,0.4,1},
-            ytick={0,-60,-120},
-            xticklabels={0,$F_P$,$F_{St}$,$f_s/2$},
+            ytick={0,-60,-100},
+            xticklabels={0,$f_P$,$f_{St}$,$f_s/2$},
         ]
         \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTable;
 
@@ -27,7 +33,7 @@
         \draw[gray,dashed] (rel axis cs:0.3,0) -- (rel axis cs:0.3,1);
         \draw[gray,dashed] (rel axis cs:0.4,0) -- (rel axis cs:0.4,1);
         \draw[latex-latex,gray,dashed] (rel axis cs:0.3,0.1) -- (rel axis cs:0.4,0.1);
-        \node at (rel axis cs:0.35,0.15) {$F_{Tb}$};
+        \node at (rel axis cs:0.35,0.15) {$f_{Tb}$};
 
         % Stop band attenuation
         \draw[gray,dashed] (0,-60) -- (1,-60);

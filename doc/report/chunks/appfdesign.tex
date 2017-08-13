@@ -15,11 +15,11 @@ process.
     \caption[Decimation Chain Variants for Rate of 625]{%
         Semilog  (top)  and   linear  plot  (middle)  for   two  variants  for
         implementing  a  decimation   chain  for  a  rate   change  factor  of
-        $R=625$. As is  evident, both  choices show  almost the  same behavior
-        with regards to magnitude. The bottom plot shows the phase response of
-        the two filters; here, too, the behavior is very similar. \emph{Note:}
-        These plots show the frequency  responses of the entire filter cascade
-        for the two respective variants.%
+        $R=625$. Both choices  show almost the  same behavior with  regards to
+        magnitude. The  bottom  plot  shows  the phase  response  of  the  two
+        filters; here, too, the behavior  is very similar. \emph{Note:}  These
+        plots show  the frequency responses  of the entire filter  cascade for
+        the two respective variants.%
     }
     \label{fig:dec625_variants}
 \end{figure}
@@ -32,10 +32,56 @@ process.
 
 This   section   contains  the   experimental   results   of  how   many   DSP
 slices  a  given   FIR  filter  needs  when  implemented   with  Xilinx's  FIR
-Compiler. These  figures were  used  to determine  reasonable  bounds for  the
-FIR  filter  \code{5steep}  (see  Figure~  \ref{fig:fdesign:chain_concept}  on
-page~\pageref{fig:fdesign:chain_concept}).
-TODO: source
+Compiler. These  figures form  the basis  to determine  reasonable bounds  for
+the  FIR  filter  \code{5steep} (see  Figure~  \ref{fig:fdesign:chain_concept}
+on    page~\pageref{fig:fdesign:chain_concept}). Figure~\ref{fig:usage_report}
+depicts      the       results      of      the       measurements,      while
+Table~\ref{tab:usage_report:config}  contains   the  configuration  parameters
+which were used for the FIR compiler core.
+
+As can be  seen in the plot,  DSP slice usage rises roughly  linearly at these
+high sampling  rates. When using  only a  single filter,  a filter  of roughly
+\num{760} coefficients is  the maximum possible size. Because  the STEMlab has
+two channels, and  because other filters are required as  well, an upper limit
+for \code{5steep} of  \num{250} coefficients is set based  on these results. A
+smaller  filter  is  also  acceptable  as long  as  it  fulfills  the  general
+requirements.
+
+TODO: source FIR compiler documentation
+
+\begin{table}
+    \centering
+    \caption[FIR Compiler Parameters]{%
+        The parameters used  to configure the FIR compiler core  for the usage
+        measurements from Figure~\ref{fig:usage_report}%
+    }
+    \label{tab:usage_report:config}
+    \begin{tabular}{lr}
+        \toprule
+        Parameter                   & Value          \\
+        \midrule
+        Clock Frequency             & \SI{125}{\MHz} \\
+        Decimation Rate             & \num{5}        \\
+        Input Data Width            & \SI{24}{\bit}  \\
+        Input Fractional Bits       & \num{7}        \\
+        Output Data Width           & \SI{32}{\bit}  \\
+        Coefficient Fractional Bits & \num{17}       \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}
+    \centering
+    \input{images/fdesign/usageReport.tikz}
+    \caption[Usage Report FIR Compiler]{%
+        Usage  report figures  for DSP  slices using  the Xilinx  FIR compiler
+        block. The  configuration  of  the  filter in  terms  of  bith  widths
+        is  identical   to  the  actual   configuration  used  in   the  final
+        implementation. Unlike  the  implementation,  however, only  a  single
+        channel was configured.%
+    }
+    \label{fig:usage_report}
+\end{figure}
 
 %>>>
 
@@ -61,7 +107,26 @@ as specified in Section~\ref{ch:filter_design}.
 \subsection{\code{5flat}} % <<< ---------------------------------------------- %
 \label{sec:filter_frequency_responses:5flat}
 % ---------------------------------------------------------------------------- %
-\input{images/fdesign/5flat.tikz}
+
+\begin{tabular}{lS}
+    \toprule
+    \multicolumn{2}{c}{\sffamily\scshape\bfseries Filter Characteristics} \\
+    \midrule
+    Filter Length                   &   62       \\
+    Passband Edge                   &    0.2     \\
+    \SI{3}{\dB} Point               &    0.23491 \\
+    \SI{6}{\dB} Point               &    0.24708 \\
+    Stopband Edge                   &    0.3     \\
+    Passband Ripple (\si{\dB})      &  0.047745  \\
+    Stopband Attenuation (\si{\dB}) & 60.1991    \\
+    Transition Width                &    0.1     \\
+    Number of DSP Slices            &   22       \\
+    \bottomrule
+\end{tabular}
+
+\vspace{1em}
+
+\noindent\input{images/fdesign/5flat.tikz}
 %>>>
 \subsection{\code{2steep}} % <<< --------------------------------------------- %
 \label{sec:filter_frequency_responses:2steep}
@@ -93,22 +158,22 @@ as specified in Section~\ref{ch:filter_design}.
 % ---------------------------------------------------------------------------- %
 \input{images/fdesign/chain25.tikz}
 %>>>
-\subsection{Chain for R=125} % <<< -------------------------------------------- %
+\subsection{Chain for R=125} % <<< ------------------------------------------- %
 \label{sec:filter_frequency_responses:chain125}
 % ---------------------------------------------------------------------------- %
 \input{images/fdesign/chain125.tikz}
 %>>>
-\subsection{Chain for R=625} % <<< -------------------------------------------- %
+\subsection{Chain for R=625} % <<< ------------------------------------------- %
 \label{sec:filter_frequency_responses:chain625}
 % ---------------------------------------------------------------------------- %
 \input{images/fdesign/chain625.tikz}
 %>>>
-\subsection{Chain for R=1250} % <<< -------------------------------------------- %
+\subsection{Chain for R=1250} % <<< ------------------------------------------ %
 \label{sec:filter_frequency_responses:chain1250}
 % ---------------------------------------------------------------------------- %
 \input{images/fdesign/chain1250.tikz}
 %>>>
-\subsection{Chain for R=2500} % <<< -------------------------------------------- %
+\subsection{Chain for R=2500} % <<< ------------------------------------------ %
 \label{sec:filter_frequency_responses:chain2500}
 % ---------------------------------------------------------------------------- %
 \input{images/fdesign/chain2500.tikz}
