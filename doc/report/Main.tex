@@ -13,6 +13,7 @@
 \tcbset{shield externalize}
 \usepgfplotslibrary{fillbetween}
 \usepgfplotslibrary{units}
+\usepgfplotslibrary{groupplots}
 \usepackage{pgfplotstable}
 \DeclareSIUnit\sample{sample}
 \DeclareSIUnit\channel{channel}
@@ -22,13 +23,20 @@
 \usepackage{algorithm}
 \pgfplotsset{
     %title style={font=\bfseries\sffamily\mathversion{boldsf}},
-    title style={font=\sffamily\mathversion{sf}},
+    every axis title/.style={
+        font=\sffamily\mathversion{sf},
+        at={(0.5,1)},above,yshift=1pt
+    },
     xlabel near ticks=true,
     ylabel near ticks=true,
     xticklabel style={font=\footnotesize},
     yticklabel style={font=\footnotesize},
     xlabel style={font=\footnotesize},
     ylabel style={font=\footnotesize},
+    scale only axis,
+    every axis legend/.append style={
+        font=\footnotesize,
+    },
 }
 \makeindex
 %\includeonly{chunks/introduction,chunks/theory}
@@ -78,7 +86,7 @@
 \part{Project Report}
 \label{part:project_report}
 % ---------------------------------------------------------------------------- %
-
+%
 % <<< ----------------------------------------------------------------- THEORY %
 \include{chunks/theory}
 % ------------------------------------------------------------------------->>> %
@@ -90,9 +98,9 @@
 % ------------------------------------------------------------------------->>> %
 % <<< ------------------------------------------------------------------- FPGA %
 \include{chunks/fpga}
+% ------------------------------------------------------------------------->>> %
 % <<< ----------------------------------------------------------------- SERVER %
 \include{chunks/server}
-% ------------------------------------------------------------------------->>> %
 % ------------------------------------------------------------------------->>> %
 % <<< -------------------------------------------------------------------- GUI %
 \include{chunks/gui}
@@ -103,7 +111,7 @@
 % <<< ------------------------------------------------------------- CONCLUSION %
 \include{chunks/conclusion}
 % ------------------------------------------------------------------------->>> %
-
+%
 % >>>
 
 % <<< -------------------------------------------------- PART: DEVELOPER GUIDE %
@@ -115,6 +123,7 @@ improve upon it?
 
 Make sure  to distinguish  between \emph{Implementation} and  this part. Lines
 seem a bit blurry to me (R.F.) at the moment (\today).
+\include{chunks/devguide}
 % >>>
 
 % <<< ------------------------------------------------------- PART: USER GUIDE %
@@ -124,6 +133,7 @@ seem a bit blurry to me (R.F.) at the moment (\today).
 Documentation  for the  end user. Primarily  concerned with  the \index{scope}
 front-end.
 
+\include{chunks/userguide}
 % >>>
 
 \cleardoublepage % <<< ---------------------------------------------APPENDICES %
