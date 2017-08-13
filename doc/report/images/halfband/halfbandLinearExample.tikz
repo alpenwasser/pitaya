@@ -1,0 +1,43 @@
+\tikzsetnextfilename{halfbandLinearExample}
+\newcommand*\freqzFileHBA{images/halfband/halfbandZerophase.csv}
+\newcommand*\coefFile{images/halfband/coefs.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileHBA}\freqzTableHBA
+\pgfplotstableread[col sep=comma]{\coefFile}\coefTable
+\begin{tikzpicture}[
+    trim axis left,
+    trim axis right,
+]
+     \pgfplotsset{every axis/.style={
+            height=45mm,
+            width=\textwidth,
+            grid=none,
+            xlabel=Normalized Frequency,
+            ylabel=Magnitude,
+            x unit=\times\,\pi\,\si{\radian}/\si{\sample},
+        },
+    }
+    \begin{axis}[
+            at = {(0,0)},
+            title = {Half-band Filter Frequency Response},
+            xmin=0,
+            xmax=1,
+            xtick={0,0.5,1},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            %y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+        ]
+        \addplot[thick,q1,-] table[x=w, y=abs(H)] \freqzTableHBA;
+    \end{axis}
+    \begin{axis}[
+        at = {(0,-65mm)},
+        title = {Half-band Filter Coefficients},
+        xmin=-14,
+        xmax=14,
+        xtick={-10,-5,0,5,10},
+        ylabel=$y$,
+        xlabel=$n$,
+        x unit = {},
+    ]
+        \draw[gray] (-14,0) -- (14,0);
+        \addplot[thick,ycomb,mark=*,q1] table[x=x,y=y,col sep=comma] \coefTable;
+    \end{axis}
+\end{tikzpicture}

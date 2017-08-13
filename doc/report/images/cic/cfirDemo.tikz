@@ -1,0 +1,61 @@
+\tikzsetnextfilename{cfirDemo}
+\newcommand*\freqzFileCFIRA{images/cic/cfirDemoCascade.csv}
+\newcommand*\freqzFileCFIRB{images/cic/cfirDemoCICAlone.csv}
+\newcommand*\freqzFileCFIRC{images/cic/cfirDemoCFIRAlone.csv}
+\newcommand*\freqzFileCFIRD{images/cic/cfirDemoCascadePBDetail.csv}
+\newcommand*\freqzFileCFIRE{images/cic/cfirDemoCICAlonePBDetail.csv}
+\newcommand*\freqzFileCFIRF{images/cic/cfirDemoCFIRAlonePBDetail.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileCFIRA}\freqzTableCFIRA
+\pgfplotstableread[col sep=comma]{\freqzFileCFIRB}\freqzTableCFIRB
+\pgfplotstableread[col sep=comma]{\freqzFileCFIRC}\freqzTableCFIRC
+\pgfplotstableread[col sep=comma]{\freqzFileCFIRD}\freqzTableCFIRD
+\pgfplotstableread[col sep=comma]{\freqzFileCFIRE}\freqzTableCFIRE
+\pgfplotstableread[col sep=comma]{\freqzFileCFIRF}\freqzTableCFIRF
+\begin{tikzpicture}[
+    trim axis left,
+    trim axis right,
+]
+     \pgfplotsset{every axis/.style={
+            height=45mm,
+            width=\textwidth,
+            grid=none,
+            y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+            xlabel=Normalized Frequency,
+            ylabel=Magnitude,
+            x unit=\times\,\pi\,\si{\radian}/\si{\sample},
+            y unit=\si{\dB},
+            legend columns=3,
+            unbounded coords = jump,
+        },
+    }
+    \begin{axis}[
+            at = {(0,0)},
+            title = {CIC Compensation Overview},
+            xmin=0,
+            xmax=1,
+            ymin=-100,
+            ymax=115,
+            xtick={0,0.06667,0.25,0.5,0.75,1},
+        ]
+        \addplot[thick,q5,-] table[x=w, y=abs(H)] \freqzTableCFIRB;
+        \addplot[thick,ct4,-] table[x=w, y=abs(H)] \freqzTableCFIRC;
+        \addplot[thick,q1,-] table[x=w, y=abs(H)] \freqzTableCFIRA;
+        \legend{CIC Filter, Compensator, Cascade};
+    \end{axis}
+    \begin{axis}[
+            at = {(0,-65mm)},
+            title = {Passband Detail (Gain Normalized)},
+            legend pos=south west,
+            xmin=0,
+            xmax=0.078,
+            ymax=10,
+            ymin=-20,
+            xtick={0,0.025,0.05,0.075},
+        ]
+        \addplot[thick,q5,-] table[x=w, y=abs(H)] \freqzTableCFIRE;
+        \addplot[thick,ct4,-] table[x=w, y=abs(H)] \freqzTableCFIRC;
+        \addplot[thick,q1,-] table[x=w, y=abs(H)] \freqzTableCFIRD;
+        \legend{CIC Filter, Compensator, Cascade};
+    \end{axis}
+\end{tikzpicture}

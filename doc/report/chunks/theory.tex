@@ -458,7 +458,6 @@ algorithms.
     \label{fig:filter_specs:coefs}
 \end{figure}
 
-
 Figure~\ref{fig:filtertopologies:fir}   shows   one  possible   topology   for
 implementing a  FIR filter,  the so-called  direct form. As  can be  seen, the
 basic building  blocks of  a FIR  filter are  delay elements,  multipliers and
@@ -470,6 +469,29 @@ adders, same as for IIR filters.
     \caption[FIR Filter Topology Example]
         {One possible topology for a FIR filter (direct form)}
     \label{fig:filtertopologies:fir}
+\end{figure}
+
+One   particular  form   of  a   FIR   filter  is   the  so-called   half-band
+filter. Half-band  filters   are  used   for  downsampling   by  a   ratio  of
+$R=2$.   They  are  characterized  by  a  point-symmetric  frequency  response
+across  the $(f_s/4,0.5)$  point. Their advantage  lies in  the efficiency  of
+their  coefficient structure: Each  second coefficient  is zero,  and all  the
+non-zero  coefficient  are  symmetrical  around  the  center  of  the  impulse
+response. For  higher  downsampling  rates,  multiple  half-band  filters  can
+be cascaded. Figure~\ref{fig:fir:halfband_linear_example}  shows the amplitude
+frequency response and the coefficient set of an example filter.
+
+\begin{figure}
+    \centering
+    \input{images/halfband/halfbandLinearExample.tikz}
+    \caption[Half-band Filter Frequency Response]{%
+        The  frequency response  and coefficient  set of  a half-band  filter.
+        The  frequency response  is the  amplitude plotted  linearly, not  the
+        magnitude plotted logarithmically, in order to emphasize the symmetry.
+        The coefficient  set is  symmetrical around its  midpoint. Also, every
+        second coefficient outside the central peak is zero.%
+    }
+    \label{fig:fir:halfband_linear_example}
 \end{figure}
 
 %>>>
@@ -763,7 +785,46 @@ portrayed in Figure~\ref{fig:cic:freq_responses:var}. Some things of note are:
         \label{fig:cic:freq_responses:passband:aliasing}
 \end{figure}
 
-TODO: passband droop table, aliasing attenuation, 
+\subsubsection{Compensators}
+\label{subsubsec:cic:compensators}
+
+In     order      to     achieve     a     flat      passband,     the     CIC
+filter's    attenuation     in    the    frequency    range     observed    in
+Figure~\ref{fig:cic:freq_responses:passband:attenuation}  can  be  compensated
+with a filter  whose frequency response has the opposite  shape. Operated in a
+cascade  (see Section~\ref{sec:multi_stage_filter_designs}),  the two  filters
+create a  frequency response with a  flat passband and a  sharop drop-off into
+the  stopband. Figure~\ref{fig:cic:cfir} shows  an example  of such  a system,
+with frequency responses  of a CIC filter, its compensator,  and the resulting
+cascade.
+
+The compensation filter not only serves to compensate for the passband, but is
+also responsible  for the transition band  width of the cascade. Due  to their
+flexibility, FIR filters are generally employed for this purpose. As mentioned
+in  the previous  section,  the  sharpness of  their  transition  band can  be
+controlled  by  adjusting  their  kernel size. If  the  compensator  has  more
+filters  coming after  it in  the overall  filter chain,  its transition  band
+need  not be  very narrow. A  filter  with a  few dozen  coefficients in  size
+is  often  sufficient in  such  cases  (the filter  used  for  the example  in
+Figure~\ref{fig:cic:cfir} has \num{50} coefficients).
+
+The design of CIC compensators is  usually left up to software algorithms, for
+example with Matlab. For a more detailled introduction to the topic, including
+example  code  and  more  thorough  explanations,  Altera's  Application  Note
+from~\cite{altera:an455} is warmly recommended.
+
+\begin{figure}
+    \centering
+    \input{images/cic/cfirDemo.tikz}
+    \caption[CIC Compensator]{%
+        Frequency behavior of  a CIC filter, its compensator,  and the cascade
+        of the  two. Note the  spectral copies of  the compensator  around the
+        nulls of the  CIC filter, i.e. the multiples of  its outgoing sampling
+        rate.%
+    }
+    \label{fig:cic:cfir}
+\end{figure}
+
 
 \subsubsection{Register Growth}
 \label{subsubsec:cic:register_growth}

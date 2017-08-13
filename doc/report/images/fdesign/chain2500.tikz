@@ -25,7 +25,7 @@
             xmin=0,
             xmax=1,
             ymax=180,
-            ymin=-100,
+            ymin=-140,
         ]
         \addplot[thin,q1,-] table[x=W, y=abs(H)] \freqzTableDECQ;
     \end{axis}
