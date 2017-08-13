@@ -7,6 +7,7 @@ classdef WebSocket < WebSocketClient
         SamplingRate
         FrameSize
         TimeOut
+        Done = false
     end
     
     methods
@@ -62,6 +63,7 @@ classdef WebSocket < WebSocketClient
         function onClose(obj,message)
             % This function simply displays the message received
             fprintf('%s\n',message);
+            obj.Done = true;
         end
         
         

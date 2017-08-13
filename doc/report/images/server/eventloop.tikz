@@ -1,3 +1,4 @@
+tikzsetnextfilename{server-eventloop}
 \begin{tikzpicture}[%
         align=center,
         text=q1,
@@ -50,61 +51,77 @@
             inner sep=2mm,
         } % database tables
     ]
-        \node (newUART) [
+        \node (open) [
             dec,
             align=center,
             diamond,
             minimum width=33mm,
             minimum height=33mm,
-        ] at (0,0) {neuer\\UART\\Request?};
-        \node (init) [
+        ] at (0,0) {open};
+        \node (event) [
             proc,
-            above=of newUART,
+            above=of open,
             align=center,
-        ] {Hardware\\initialisieren};
-        \node (forMe) [
+        ] {New event};
+        \node (message) [
             dec,
             align=center,
             diamond,
-            right=of newUART,
+            below=of open,
             minimum width=33mm,
             minimum height=33mm,
-        ] {F\"ur mich?};
-        \node (package) [
-            proc,
-            right=of forMe,
+        ] {message};
+        \node (close) [
+            dec,
             align=center,
-        ] {Datenpaket mit\\Moving Average\\ und Addresse\\erstellen};
-        \node (crc) [
+            diamond,
+            below=of message,
+            minimum width=33mm,
+            minimum height=33mm,
+        ] {close};
+        \node (parse) [
             proc,
-            below=of package,
+            right=of message,
             align=center,
-        ] {CRC brechnen\\und zu Daten\\hinzuf\"ugen};
-        \node (send) [
+        ] {parse};
+        \node (state) [
             proc,
-            left=of crc,
+            right=of parse,
             align=center,
-        ] {Datenpaket\\senden};
-        \node (getADC) [
-            proc,
-            below=of send,
+        ] {state};
+        \node (startRecording) [
+            dec,
             align=center,
-        ] {ADC-Messung\\ausf\"uhren};
-        \node (movAvg) [
-            proc,
-            below right=of getADC,
-            align=center,
-        ] {Moving\\Average\\berechnen};
-        \node (LED) [
-            proc,
-            below left=of movAvg,
-            align=center,
-        ] {LED\\blinken\\lassen};
-        \node (systick) [
-            proc,
-            above left=of LED,
-            align=center,
-        ] {auf n\"achsten\\\texttt{systick} warten};
+            diamond,
+            right=of parse,
+            minimum width=33mm,
+            minimum height=33mm,
+        ] {Start a new recording};
+        % \node (send) [
+        %     proc,
+        %     left=of crc,
+        %     align=center,
+        % ] {Datenpaket\\senden};
+        % \node (getADC) [
+        %     proc,
+        %     below=of send,
+        %     align=center,
+        % ] {ADC-Messung\\ausf\"uhren};
+        % \node (movAvg) [
+        %     proc,
+        %     below right=of getADC,
+        %     align=center,
+        % ] {Moving\\Average\\berechnen};
+        % \node (LED) [
+        %     proc,
+        %     below left=of movAvg,
+        %     align=center,
+        % ] {LED\\blinken\\lassen};
+        % \node (systick) [
+        %     proc,
+        %     above left=of LED,
+        %     align=center,
+        % ] {auf n\"achsten\\\texttt{systick} warten};
     \end{scope}
 
     \begin{scope}[
@@ -112,19 +129,19 @@
             every path/.append style={draw=q1,},
             >=latex',
     ]
-        \draw[-latex] (init) -- (newUART);
-        \draw[-latex] (newUART) -- node[midway,anchor=south] {ja} (forMe);
-        \draw[-latex] (forMe) -- node[midway,anchor=south] {ja} (package);
-        \draw[-latex] (package) -- (crc);
-        \draw[-latex] (crc) -- (send);
-        \draw[-latex] (forMe) edge[bend left] node[midway,anchor=north] {nein} (newUART);
-        \draw[-latex] (send) edge[bend left] (newUART);
-        \draw (newUART) edge[loop below]  node {nein} (newUART);
+        % \draw[-latex] (init) -- (newUART);
+        % \draw[-latex] (newUART) -- node[midway,anchor=south] {ja} (forMe);
+        % \draw[-latex] (forMe) -- node[midway,anchor=south] {ja} (package);
+        % \draw[-latex] (package) -- (crc);
+        % \draw[-latex] (crc) -- (send);
+        % \draw[-latex] (forMe) edge[bend left] node[midway,anchor=north] {nein} (newUART);
+        % \draw[-latex] (send) edge[bend left] (newUART);
+        % \draw (newUART) edge[loop below]  node {nein} (newUART);
 
-        \draw[-latex] (getADC) edge[bend left] (movAvg);
-        \draw[-latex] (movAvg) edge[bend left] (LED);
-        \draw[-latex] (LED) edge[bend left] (systick);
-        \draw[-latex] (systick) edge[bend left] (getADC);
+        % \draw[-latex] (getADC) edge[bend left] (movAvg);
+        % \draw[-latex] (movAvg) edge[bend left] (LED);
+        % \draw[-latex] (LED) edge[bend left] (systick);
+        % \draw[-latex] (systick) edge[bend left] (getADC);
 
     \end{scope}
 
