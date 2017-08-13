@@ -28,6 +28,8 @@
             fill=sq5,
             draw=q1,
             text=q1,
+            minimum width=24mm,
+            minimum height=24mm
         }, % circuitry
         proc/.style={
             inner sep=2mm,
@@ -42,7 +44,9 @@
             text=q1,
         },       % decision/activity
         stor/.style={
-            fill=cyan!30
+            fill=cyan!30,
+            minimum width=24mm,
+            minimum height=24mm
         },         % storage
         dbtable/.style={
             text=sq5,
@@ -141,11 +145,6 @@
             right=of recordingRequest,
             align=center,
         ] {Start a new\\recording with\\the kernel module};
-        \node (kernelmodule) [
-            circ,
-            right=of recording,
-            align=center,
-        ] {Kernel Module};
         \node (read) [
             proc,
             right=of readRequest,
@@ -166,11 +165,6 @@
             below=of configureRequest,
             align=center,
         ] {Discard request};
-        \node (network) [
-            circ,
-            above=of kernelmodule,
-            align=center,
-        ] {Network};
 
         % --------------- T I M E R ------------------- %
 
@@ -205,6 +199,18 @@
             right=of timerDescision,
             align=center,
         ] {Send data to network};
+
+        \node (kernelmodule) [
+            circ,
+            above right=of timer,
+            align=center,
+        ] {Kernel Module};
+
+        \node (network) [
+            circ,
+            above=of kernelmodule,
+            align=center,
+        ] {Network};
     \end{scope}
 
     \begin{scope}[
@@ -231,7 +237,7 @@
         \draw[-latex] (configureRequest) -- node[midway,anchor=south] {yes} (configure);
         \draw[-latex] (configureRequest) -- node[midway,anchor=west] {no} (discard);
 
-        \draw[-latex] (recording) -- (kernelmodule);
+        \draw[-latex] (recording) edge[bend left] (kernelmodule);
         \draw[-latex] (open) -- (prevSock);
         \draw[-latex] (state) -- (recording);
         \draw[-latex] (read) -- (state);

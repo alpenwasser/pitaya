@@ -1,3 +1,4 @@
+\tikzsetnextfilename{gui-eventloop}
 \begin{tikzpicture}[%
         align=center,
         text=q1,
@@ -27,6 +28,8 @@
             fill=sq5,
             draw=q1,
             text=q1,
+            minimum width=24mm,
+            minimum height=24mm
         }, % circuitry
         proc/.style={
             inner sep=2mm,
@@ -39,9 +42,13 @@
             rounded corners=1mm,
             fill=sq5,
             text=q1,
+            minimum width=33mm,
+            minimum height=33mm,
         },       % decision/activity
         stor/.style={
-            fill=cyan!30
+            fill=cyan!30,
+            minimum width=24mm,
+            minimum height=24mm
         },         % storage
         dbtable/.style={
             text=sq5,
@@ -50,61 +57,136 @@
             inner sep=2mm,
         } % database tables
     ]
-        \node (newUART) [
+        \node (newMessage) [
+            dec,
+            diamond,
+            align=center,
+        ] at (0,0) {New\\message\\received?};
+
+        \node (openEvent) [
             dec,
             align=center,
             diamond,
+            above=of newMessage,
             minimum width=33mm,
             minimum height=33mm,
-        ] at (0,0) {neuer\\UART\\Request?};
-        \node (init) [
+        ] {open\\event\\happened\\?};
+
+        \node (event) [
             proc,
-            above=of newUART,
+            above=of openEvent,
             align=center,
-        ] {Hardware\\initialisieren};
-        \node (forMe) [
+        ] {New event};
+
+        \node (eventLoop) [
+            circ,
+            left=of event,
+            align=center,
+        ] {Event Loop};
+
+        \node (closeEvent) [
             dec,
             align=center,
             diamond,
-            right=of newUART,
+            below=of newMessage,
             minimum width=33mm,
             minimum height=33mm,
-        ] {F\"ur mich?};
-        \node (package) [
+        ] {close\\event\\happened\\?};
+
+        \node (close) [
             proc,
-            right=of forMe,
+            left=of closeEvent,
             align=center,
-        ] {Datenpaket mit\\Moving Average\\ und Addresse\\erstellen};
-        \node (crc) [
+        ] {Close\\the socket};
+
+        \node (newBinary) [
+            dec,
+            diamond,
+            right=of newMessage,
+            align=center,
+        ] {New\\binary blob\\received?};
+
+        \node (normal) [
+            dec,
+            align=center,
+            diamond,
+            above=of newBinary,
+            minimum width=33mm,
+            minimum height=33mm,
+        ] {Operating in\\normal mode?};
+
+        \node (requestNew) [
             proc,
-            below=of package,
+            right=of normal,
             align=center,
-        ] {CRC brechnen\\und zu Daten\\hinzuf\"ugen};
-        \node (send) [
+        ] {Request a\\new frame};
+
+        \node (logText) [
             proc,
-            left=of crc,
+            below=of newBinary,
             align=center,
-        ] {Datenpaket\\senden};
-        \node (getADC) [
+        ] {Log the\\text message};
+
+        \node (traceCalc) [
             proc,
-            below=of send,
+            right=of newBinary,
             align=center,
-        ] {ADC-Messung\\ausf\"uhren};
-        \node (movAvg) [
+        ] {Calculate metrics\\of the signal};
+
+        \node (traceState) [
+            stor,
+            right=of traceCalc,
+            align=center,
+        ] {TraceState};
+
+        \node (traceDraw) [
             proc,
-            below right=of getADC,
+            above=of traceState,
             align=center,
-        ] {Moving\\Average\\berechnen};
-        \node (LED) [
+        ] {Draw\\the trace};
+
+        \node (scopeDraw) [
             proc,
-            below left=of movAvg,
+            above=of traceDraw,
             align=center,
-        ] {LED\\blinken\\lassen};
-        \node (systick) [
+        ] {Draw\\the scope};
+
+        \node (scopeState) [
+            stor,
+            above=of scopeDraw,
+            align=center,
+        ] {ScopeState};
+
+        \node (network) [
+            circ,
+            left=of scopeState,
+            align=center,
+        ] {Network};
+
+        \node (sourceState) [
+            stor,
+            left=2cm of network,
+            align=center,
+        ] {Source State};
+
+        \node (prefPane) [
+            circ,
+            right=of traceState,
+            align=center,
+        ] {PrefPane};
+
+        \node (userInput) [
+            sign,
+            above=of prefPane,
+            align=center,
+        ] {User Input};
+
+        \node (translateInput) [
             proc,
-            above left=of LED,
+            above=5cm of userInput,
             align=center,
-        ] {auf n\"achsten\\\texttt{systick} warten};
+        ] {translate};
+        
     \end{scope}
 
     \begin{scope}[
@@ -112,19 +194,48 @@
             every path/.append style={draw=q1,},
             >=latex',
     ]
-        \draw[-latex] (init) -- (newUART);
-        \draw[-latex] (newUART) -- node[midway,anchor=south] {ja} (forMe);
-        \draw[-latex] (forMe) -- node[midway,anchor=south] {ja} (package);
-        \draw[-latex] (package) -- (crc);
-        \draw[-latex] (crc) -- (send);
-        \draw[-latex] (forMe) edge[bend left] node[midway,anchor=north] {nein} (newUART);
-        \draw[-latex] (send) edge[bend left] (newUART);
-        \draw (newUART) edge[loop below]  node {nein} (newUART);
+        \draw[-latex] (eventLoop) -- (event);
+        \draw[-latex] (event) -- (openEvent);
+        \draw[-latex] (openEvent) -- node[midway,anchor=south] {yes} (sourceState);
+        \draw[-latex] (openEvent) -- node[midway,anchor=west] {no} (newMessage);
+        \draw[-latex] (newMessage) -- node[midway,anchor=west] {no} (closeEvent);
+        \draw[-latex] (closeEvent) -- node[midway,anchor=south] {yes} (close);
+        \draw[-latex] (closeEvent) edge[bend left] node[midway,anchor=east] {no} (eventLoop);
 
-        \draw[-latex] (getADC) edge[bend left] (movAvg);
-        \draw[-latex] (movAvg) edge[bend left] (LED);
-        \draw[-latex] (LED) edge[bend left] (systick);
-        \draw[-latex] (systick) edge[bend left] (getADC);
+        \draw[-latex] (scopeDraw) edge[loop left] (scopeDraw);
+        \draw[-latex] (scopeDraw) -- (traceDraw);
+
+        \draw[-latex] (newMessage) -- node[midway,anchor=south] {yes} (newBinary);
+        \draw[-latex] (newBinary) -- node[midway,anchor=west] {no} (logText);
+
+        \draw[-latex] (newBinary) -- node[midway,anchor=south] {yes} (traceCalc);
+        \draw[-latex] (newBinary) -- node[midway,anchor=west] {yes} (normal);
+        \draw[-latex] (normal) -- node[midway,anchor=south] {yes} (requestNew);
+
+        \draw[-latex] (requestNew) edge[bend right] node[midway,anchor=south] {yes} (network);
+        
+        \draw[-latex] (traceState) -- (traceCalc);
+        \draw[-latex] (traceCalc) -- (traceState);
+
+        \draw[-latex] (traceState) -- (traceDraw);
+        \draw[-latex] (traceDraw) -- (traceState);
+
+        \draw[-latex] (traceState) -- (prefPane);
+        \draw[-latex] (prefPane) -- (traceState);
+
+        \draw[-latex] (userInput) -- (prefPane);
+
+        \draw[-latex] (translateInput) edge[bend right] (scopeState);
+        \draw[-latex] (translateInput) edge[bend right] (sourceState);
+        \draw[-latex] (userInput) -- (translateInput);
+
+        \draw[-latex] (scopeState) -- (scopeDraw);
+        \draw[-latex] (scopeDraw) -- (scopeState);
+
+        \draw[-latex] (network) edge[bend right] (event);
+
+        \draw[-latex] (sourceState) -- (normal);
+        \draw[-latex] (sourceState) -- (network);
 
     \end{scope}
 
