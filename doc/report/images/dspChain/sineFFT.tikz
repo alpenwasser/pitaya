@@ -1,3 +1,4 @@
+\tikzsetnextfilename{dspChainSineFFT}
 \begin{tikzpicture}
      \pgfplotsset{
          scale only axis,

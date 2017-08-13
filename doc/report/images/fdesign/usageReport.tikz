@@ -1,8 +1,12 @@
+\tikzsetnextfilename{DSPSlicesUsageReport}
 \newcommand*\usageReportFile{images/fdesign/usageReport.csv}
 \pgfplotstableread[col sep=comma]{\usageReportFile}\usageReportTable
-\begin{tikzpicture}
+\begin{tikzpicture}[
+    trim axis left,
+    trim axis right,
+]
      \pgfplotsset{every axis/.style={
-            height=60mm,
+            height=45mm,
             width=\textwidth,
             grid=none,
             %x unit=\times\,\pi\,\si{\radian}/\si{\sample},

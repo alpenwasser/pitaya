@@ -1,3 +1,4 @@
+\tikzsetnextfilename{twosComplementCircle}
 \begin{tikzpicture}
     \node (b1) at   (0:2.5) {\texttt{010}};
     \node (b2) at  (45:2.5) {\texttt{001}};
@@ -17,25 +18,25 @@
     \node (d7) at (270:3.5) {\footnotesize$-4$};
     \node (d8) at (315:3.5) {\footnotesize$3$};
 
-    \draw[thick,dv-5,-latex]
+    \draw[thick,q5,-latex]
         (b6)
         edge[out=315,in=180]
         node[midway,anchor=north east] {\texttt{-1}}
         (b7);
-    \draw[thick,dv-5,-latex]
+    \draw[thick,q5,-latex]
         (b7)
         edge[out=  0,in=225]
         node[midway,anchor=north] {\texttt{-1}}
         (b8);
-    \draw[thick,dv-5,-latex]
+    \draw[thick,q5,-latex]
         (b8)
         edge[out= 45,in=270]
         node[midway,anchor=north west] {\texttt{-1}}
         (b1);
 
-    \draw[thick,dv-5,-latex] (0:1.5) arc[start angle= 0, end angle= 240, radius=1.5cm];
-    \draw[thick,ct3,-latex] (60:1.0) arc[start angle=60, end angle=-180, radius=1.0cm];
+    \draw[thick,q5,-latex] (0:1.5) arc[start angle= 0, end angle= 240, radius=1.5cm];
+    \draw[thick,q1,-latex] (60:1.0) arc[start angle=60, end angle=-180, radius=1.0cm];
 
-    \node at (120:1.25) {\color{dv-5}$-$};
-    \node at (-60:0.75) {\color{ct3}$+$};
+    \node at (120:1.25) {\color{q5}$-$};
+    \node at (-60:0.75) {\color{q1}$+$};
 \end{tikzpicture}

@@ -1,3 +1,4 @@
+\tikzsetnextfilename{dspChainFreqDomain}
 \begin{tikzpicture}
      \pgfplotsset{every axis/.style={
             height=25mm,

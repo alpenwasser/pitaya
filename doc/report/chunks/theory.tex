@@ -13,6 +13,7 @@ TODO: references to more comprehensive literature.
 
 \section{The Digital Signal Processing Chain}% <<< --------------------------- %
 \label{sec:dsp_chain}
+% ---------------------------------------------------------------------------- %
 
 Digitally acquiring a signal generally requires at least the following steps:
 \begin{itemize}\tightlist
@@ -30,12 +31,11 @@ Figure~\ref{fig:dspChain:blocks}.
     \centering
     \input{images/dspChain/dspChain.tikz}
     \caption[The DSP Chain]{%
-        The basic  building blocks of the  DSP chain from its  analog input to
-        its digitally processed output.\protect\newline
-        From  left  to  right: The  analog low-pass  filter  (\emph{LP}),  the
-        analog-to-digital  converter (\emph{ADC}),  and  an arbitrary  digital
-        signal processing  system for further  processing of the  ADC's output
-        (\emph{DSP}).%
+        The  basic  building   blocks  of  the  DSP  chain   from  its  analog
+        input  to its  digitally processed  output.  From  left to  right: The
+        analog  low-pass filter  (\emph{LP}), the  analog-to-digital converter
+        (\emph{ADC}), and  an arbitrary  digital signal processing  system for
+        further processing of the ADC's output (\emph{DSP}).%
     }
     \label{fig:dspChain:blocks}
 \end{figure}
@@ -47,19 +47,18 @@ Figure~\ref{fig:dspChain:blocks}.
     \caption[Signals Passing Through the DSP Chain (Simplified)]{%
         Simplified  time-domain  (top)   and  frequency-domain  (bottom)  view
         of  the  signal  at  different  stages on  its  way  through  the  DSP
-        chain. The circled  numbers correspond  to the  stages as  outlined in
-        Figure~\ref{fig:dspChain:blocks}.\protect\newline
-        Stage  1 is  the  signal  before passing  through  the input  low-pass
-        filter,  with  a  significant   amount  of  high-frequency  noise. The
-        low-pass filter removes any  frequency components above ${f_s}/{2}$ in
-        an ideal scenario  (in reality, it merely attenuates them,  as we will
-        see later), resulting in the signal at stage 2.\protect\newline
-        After having been filtered, the  ADC samples and quantizes the signal,
-        yielding  a sequence  of  values, as  schematically  portrayed in  the
-        rightmost picture for stage 3.\protect\newline
-        Note that  due to the sampling  process, the spectrum of  the filtered
-        signal is  repeated at intervals of  $f_s$. This is the source  of the
-        issue of \emph{aliasing}.%
+        chain. The  circled  numbers  correspond  to the  stages  as  outlined
+        in  Figure~\ref{fig:dspChain:blocks}.  Stage  1 is  the signal  before
+        passing through the  input low-pass filter, with  a significant amount
+        of  high-frequency noise. The  low-pass filter  removes any  frequency
+        components  above ${f_s}/{2}$  in an  ideal scenario  (in reality,  it
+        merely attenuates them, as we will see later), resulting in the signal
+        at  stage  2.\protect\newline  After  having been  filtered,  the  ADC
+        samples and  quantizes the signal,  yielding a sequence of  values, as
+        schematically portrayed  in the rightmost  picture for stage  3.  Note
+        that due to the sampling process,  the spectrum of the filtered signal
+        is repeated at intervals of $f_s$. This  is the source of the issue of
+        \emph{aliasing}.%
     }
     \label{fig:dspChain:signals}
 \end{figure}
@@ -140,11 +139,10 @@ This overlap results in two primary problems:
     \centering
     \input{images/aliasing/dirac.tikz}
     \caption[Aliasing With Harmonic Signals]{%
-        Example  of  two harmonic  signals  being  sampled. In the  top  plot,
-        the  signal's  frequency is  below  half  the sampling  frequency  and
-        there  is  no  aliasing. The   signal  can  be  reconstructed  without
-        error.\protect\newline
-        In the bottom plot, the signal's  frequency is above half the sampling
+        Example of  two harmonic signals  being sampled. In the top  plot, the
+        signal's frequency is  below half the sampling frequency  and there is
+        no aliasing. The  signal can be  reconstructed without error.   In the
+        bottom  plot,  the  signal's  frequency is  above  half  the  sampling
         frequency. Consequently, the copies of the signal's frequency spectrum
         centered around  the sampling  frequency and  its negative  alias back
         into  the  band  between  $-f_s/2$  and  $f_s/2$. If  this  signal  is
@@ -233,15 +231,11 @@ where the term \emph{folding back} originates.
     \caption[Folding Back of Stopband Components Into Passband]{%
         The phenomenon  of folding back  when downsampling, illustrated  for a
         lowpass IIR filter with with a  cutoff frequency of $0.2\cdot f_s$ for
-        a  downsampling  ratio  of $R=5$.\protect\newline
-        The  downsampling process  produces copies  of the  filter's frequency
-        response at intervals of the  lower sampling frequency, visible in the
-        top  plot.   The stopbands  of  these  copies  then overlap  with  the
-        intended passband.\protect\newline
-        The bottom plot  shows an uncluttered version with  the copies removed
-        and the aliasing components retained.\protect\newline
-        As can be seen, the folding back within the filter's edge results in
-        an aliasing component with potentially significant magnitude.%
+        a  downsampling ratio  of  $R=5$.  The  downsampling process  produces
+        copies of  the filter's frequency  response at intervals of  the lower
+        sampling frequency, visible  in the top plot.  The  stopbands of these
+        copies then overlap with the intended passband.  The bottom plot shows
+        a close-up view with the spectral copies for clarity.%
     }
     \label{fig:aliasing:iirCopies}
 \end{figure}
@@ -456,11 +450,10 @@ algorithms.
         Impulse    response    (coefficients)     for    the    filter    from
         Figure~\ref{fig:filter_specs:freqResponse}    with   the    parameters
         as     given     by     Equations~\ref{eq:filter_specs:ap}     through
-        \ref{eq:filter_specs:fst}    passed   to    one   of    Matlab's   FIR
-        filter   design   algorithms,  resulting   in   a   set  of   \num{39}
-        coefficients.\protect\newline
-        Note that the  coefficients to the left and right  of these values are
-        zero, hence \emph{finite} impulse response filters.%
+        \ref{eq:filter_specs:fst} passed to one  of Matlab's FIR filter design
+        algorithms, resulting  in a set  of \num{39} coefficients.   Note that
+        the coefficients to the left and right of these values are zero, hence
+        \emph{finite} impulse response filters.%
     }
     \label{fig:filter_specs:coefs}
 \end{figure}
@@ -716,11 +709,10 @@ portrayed in Figure~\ref{fig:cic:freq_responses:var}. Some things of note are:
         \caption[Frequency Responses for Integrators, Combs and CIC Filters]{%
             Frequency responses  for integrators, combs and  their combination
             into a three-stage CIC filter with a rate change factor of \num{9}
-            and a differential delay of \num{1}.\protect\newline
-            Note that \num{4.5}  lobes fit into the plot for  the comb filter,
-            due to $R\cdot M = 9$ (the order of the comb filter).
-            The enlarged  box shows  a close-up of  the CIC  filter's passband
-            droop.%
+            and a  differential delay of  \num{1}.  Note that  \num{4.5} lobes
+            fit into the plot for the comb  filter, due to $R\cdot M = 9$ (the
+            order of the  comb filter).  The enlarged box shows  a close-up of
+            the CIC filter's passband droop.%
         }
         \label{fig:cic:freq_responses}
 \end{figure}
@@ -730,12 +722,11 @@ portrayed in Figure~\ref{fig:cic:freq_responses:var}. Some things of note are:
         \input{images/cic/cicFreqResponsesVar.tikz}
         \caption[Influence of Design Parameters on Frequency Response]{%
             The influence  of the design paramters  $R$, $M$ and $N$  on a CIC
-            filter' frequency response.\protect\newline
-            Inreaseing $R$ and $M$, respectively, leads to an increased number
-            of nulls, as visible in the top  two plots, as well as an increase
-            in the DC gain.\protect\newline
-            Adding more stages does not change  the location of the nulls, but
-            does add significant DC gain.%
+            filter' frequency response.  Inreaseing $R$ and $M$, respectively,
+            leads to an  increased number of nulls, as visible  in the top two
+            plots,  as well  as  an  increase in  the  DC  gain.  Adding  more
+            stages does  not change the  location of  the nulls, but  does add
+            significant DC gain.%
         }
         \label{fig:cic:freq_responses:var}
 \end{figure}
@@ -744,12 +735,12 @@ portrayed in Figure~\ref{fig:cic:freq_responses:var}. Some things of note are:
     \centering
         \input{images/cic/cicPassbandAttenuation.tikz}
         \caption[CIC Filter: Passband and Aliasing Attenuation]{%
-            Passband  attenation for  two CIC  filters with  $R=9$, $N=4$  and
-            $M=1$ and  $M=2$, respectively. The  attenuation is  identical for
-            the bandwidth-differential delay product,  which is $1/8$ for both
-            of these configurations.\protect\newline
-            The   attenuation   is   \SI{-3.65}{\dB}  in   both   cases;   the
-            value  can  be   found  in  Table~\ref{tab:cic:pb_attenuation}  on
+            Passband   attenation   for   two    CIC   filters   with   $R=9$,
+            $N=4$   and  $M=1$   and   $M=2$,  respectively. The   attenuation
+            is  identical   for  the  bandwidth-differential   delay  product,
+            which   is  $1/8$   for   both  of   these  configurations.    The
+            attenuation   is  \SI{-3.65}{\dB}   in  both   cases;  the   value
+            can    be   found    in   Table~\ref{tab:cic:pb_attenuation}    on
             page~\pageref{tab:cic:pb_attenuation}.%
         }
         \label{fig:cic:freq_responses:passband:attenuation}
@@ -761,18 +752,13 @@ portrayed in Figure~\ref{fig:cic:freq_responses:var}. Some things of note are:
         \caption[CIC Filter: Passband and Aliasing Attenuation]{%
             Passband aliasing for  a CIC filter with $R =  9$, $N=4$ and $M=1$
             and a  cutoff frequency of $f_c  = 0.25$, referenced to  the lower
-            sampling frequency $f_\mathrm{s,low}$.\protect\newline
-            The  region of  width  $f_c$  around every  $M$th  null is  folded
-            back  into the  passband. The regions  beyond that  are of  course
-            folded  back  as   well,  but  since  we   choose  to  arbitrarily
-            limit  the  passband,  those  regions   are  not  of  interest  to
-            us.\protect\newline
-            The  resulting passband  aliasing  attenuation is  \SI{41.8}{\dB},
-            as     indicated     in     Table~\ref{tab:cic:pb_aliasing}     on
-            page~\pageref{tab:cic:pb_aliasing}.\protect\newline
-            It  is  also  evident   that  the  aliasing  attenuation  improves
-            significantly as  the cutoff frequency decreases  and the passband
-            comes closer to \num{0}.%
+            sampling frequency $f_\mathrm{s,low}$.  The  region of width $f_c$
+            around  every $M$th  null is  folded back  into the  passband. The
+            regions beyond that  are of course folded back as  well, but since
+            we choose to arbitrarily limit the passband, those regions are not
+            of interest to us.  The resulting passband aliasing attenuation is
+            \SI{41.8}{\dB}, as indicated in Table~\ref{tab:cic:pb_aliasing} on
+            page~\pageref{tab:cic:pb_aliasing}.%
         }
         \label{fig:cic:freq_responses:passband:aliasing}
 \end{figure}
@@ -1052,7 +1038,7 @@ condition being broken or fulfilled.
         sufficient  distance   between  the  start  of   its  stopband  ($0.65
         \cdot  f_\mathrm{s1}$)  and  the  start  of  the  transition  band  of
         the  second stage's  first copy  around $f_\mathrm{s2}$  ($0.675 \cdot
-        f_\mathrm{s1}$). The  second  cascade  (violet)  has a  preak  in  its
+        f_\mathrm{s1}$). The  second  cascade  (orange)  has a  preak  in  its
         stopband because the transition band  of its first stage overlaps with
         the  copy of  the second  stage ($0.8  \cdot f_\mathrm{s1}$  vs.  $0.6
         \cdot f_\mathrm{s1}$). \emph{Note:} All  frequencies are referenced to

@@ -1,8 +1,12 @@
+\tikzsetnextfilename{5flatFreqResponse}
 \newcommand*\freqzFileDECB{images/fdesign/r-005--fp-200--fst-300--ap-050--ast-60.csv}
 \pgfplotstableread[col sep=comma]{\freqzFileDECB}\freqzTableDECB
-\begin{tikzpicture}
+\begin{tikzpicture}[
+    trim axis left,
+    trim axis right,
+]
      \pgfplotsset{every axis/.style={
-            height=60mm,
+            height=45mm,
             width=\textwidth,
             grid=none,
             x unit=\times\,\pi\,\si{\radian}/\si{\sample},
@@ -12,12 +16,8 @@
             xmin=0,
             xmax=1,
             ymax=5,
-            ymin=-100,
-            every axis legend/.append style={
-                at={(1,-0.30)},  % if attached to bottom plot
-                anchor=north east,
-                cells={anchor=west},
-            },
+            ymin=-90,
+            ytick={0,-20,-40,-60,-80},
             y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
             x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
         },

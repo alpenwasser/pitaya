@@ -1,7 +1,8 @@
+\tikzsetnextfilename{aliasingBandExample}
 \begin{tikzpicture}
      \pgfplotsset{every axis/.style={
-            height=40mm,
-            width=120mm,
+            height=30mm,
+            width=\textwidth,
             grid=none,
             axis x line=bottom,
             axis y line=middle,
@@ -22,24 +23,17 @@
                 anchor=east,
             },
             ymin=0,
-            ymax=1,
+            ymax=1.33,
+            xmin=-800,
+            xmax=+800,
         }
     }
     \begin{axis}[
-        at = {(0mm,35mm)},
-            xmin=-800,
-            xmax=800,
-            ymin=0,
-            ymax=1.1,
+        at = {(0,0)},
     ]
-        \addplot[smooth,-] table[x=f,y=Y,col sep=comma] {images/aliasing/bandNoAliasing.csv};
-        \addplot[ycomb,mark=none,gray,style={dotted,thick}] coordinates {
-            (-400,1.1)
-            (-200,1.1)
-            ( 200,1.1)
-            ( 400,1.1)
-        };
-        \addplot[ycomb,mark=none,gray,style={dotted,thick}] coordinates {
+        \addplot[thick,q1,smooth,-]
+            table[x=f,y=Y,col sep=comma] {images/aliasing/bandNoAliasing.csv};
+        \addplot[ycomb,mark=none,gray,style={dashed,thick}] coordinates {
             (-400,1.1)
             (-200,1.1)
             ( 200,1.1)
@@ -48,30 +42,31 @@
     \end{axis}
 
     \begin{axis}[
-        at = {(0mm,0mm)},
-        xmin=-800,
-        xmax=+800,
-        ymin=0,
-        ymax=1.1,
+        at = {(0mm,-43mm)},
     ]
         \addplot[name path=zero,black,very thin] coordinates {
             (-800,0) 
              (800,0)
         };
 
-        \addplot[smooth,       -] table[x=f,y=Y,col sep=comma] {images/aliasing/bandAliased1.csv};
-        \addplot[smooth,name path=uno,-] table[x=f,y=Y,col sep=comma] {images/aliasing/bandOverlap1.csv};
-        \addplot[smooth,       -] table[x=f,y=Y,col sep=comma] {images/aliasing/bandAliased2.csv};
-        \addplot[smooth,name path=due,-] table[x=f,y=Y,col sep=comma] {images/aliasing/bandOverlap2.csv};
-        \addplot[smooth,       -]            table[x=f,y=Y,col sep=comma] {images/aliasing/bandAliased3.csv};
+        \addplot[thick,q1,smooth,-] 
+            table[x=f,y=Y,col sep=comma] {images/aliasing/bandAliased1.csv};
+        \addplot[thick,q1,smooth,name path=uno,-]
+            table[x=f,y=Y,col sep=comma] {images/aliasing/bandOverlap1.csv};
+        \addplot[thick,q1,smooth,-]
+            table[x=f,y=Y,col sep=comma] {images/aliasing/bandAliased2.csv};
+        \addplot[thick,q1,smooth,name path=due,-]
+            table[x=f,y=Y,col sep=comma] {images/aliasing/bandOverlap2.csv};
+        \addplot[thick,q1,smooth,-] 
+            table[x=f,y=Y,col sep=comma] {images/aliasing/bandAliased3.csv};
 
-        \addplot[q2] fill between[
+        \addplot[q4] fill between[
             of = uno and zero,
         ];
-        \addplot[q2] fill between[
+        \addplot[q4] fill between[
             of = due and zero,
         ];
-        \addplot[ycomb,mark=none,gray,style={dotted,thick}] coordinates {
+        \addplot[ycomb,mark=none,gray,style={dashed,thick}] coordinates {
             (-400,1.1)
             (-200,1.1)
             ( 200,1.1)

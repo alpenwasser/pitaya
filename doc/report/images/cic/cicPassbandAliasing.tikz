@@ -1,3 +1,4 @@
+\tikzsetnextfilename{cicPassbandAliasing}
 \newcommand*\freqzFileCICA{images/cic/pbAliasing914Complete.csv}
 \newcommand*\freqzFileCICB{images/cic/pbAliasing914Null1Left.csv}
 \newcommand*\freqzFileCICC{images/cic/pbAliasing914Null1Right.csv}
@@ -16,9 +17,13 @@
 \pgfplotstableread[col sep=comma]{\freqzFileCICG}\freqzTableCICG
 \pgfplotstableread[col sep=comma]{\freqzFileCICH}\freqzTableCICH
 \pgfplotstableread[col sep=comma]{\freqzFileCICI}\freqzTableCICI
-\begin{tikzpicture}
-     \pgfplotsset{every axis/.style={
-            height=140mm,
+\begin{tikzpicture}[
+    trim axis left,
+    trim axis right,
+]
+     \pgfplotsset{
+         every axis/.style={
+            height=110mm,
             width=\textwidth,
             grid=none,
             y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
@@ -28,10 +33,12 @@
             y unit=\si{dB},
             xlabel=Normalized Frequency,
             ylabel=Magnitude,
+            %transpose legend,
+            legend columns=2,
         },
         every axis legend/.append style={
-            at={(1,-0.15)},
-            anchor=north east,
+            at={(0.5, 1.05)},
+            anchor=south,
             cells={anchor=west},
         },
     }
@@ -39,8 +46,8 @@
             at = {(0,0)},
             xmin=0.001,
             xmax=1,
-            ymin=-250,
-            ymax=100,
+            ymin=-100,
+            ymax=80,
             xtick={
                 0,
                 0.222222,
@@ -58,37 +65,37 @@
                 $f_\mathrm{s,high}/2$%
             },
         ]
-        \fill[q0,opacity=0.20] ($(0.2222*0.75,100)$)        rectangle ($(0.2222*1.00,-250)$);
-        \fill[q1,opacity=0.20] ($(0.2222*1.00,100)$)        rectangle ($(0.2222*1.25,-250)$);
-        \fill[q2,opacity=0.20] ($(0.4444-0.2222*0.25,100)$) rectangle ($(0.4444+0.2222*0.00,-250)$);
-        \fill[q3,opacity=0.20] ($(0.4444-0.2222*0.00,100)$) rectangle ($(0.4444+0.2222*0.25,-250)$);
-        \fill[q4,opacity=0.20] ($(0.6666-0.2222*0.25,100)$) rectangle ($(0.6666+0.2222*0.00,-250)$);
-        \fill[q5,opacity=0.20] ($(0.6666-0.2222*0.00,100)$) rectangle ($(0.6666+0.2222*0.25,-250)$);
-        \fill[q6,opacity=0.20] ($(0.8888-0.2222*0.25,100)$) rectangle ($(0.8888+0.2222*0.00,-250)$);
-        \fill[q7,opacity=0.20] ($(0.8888-0.2222*0.00,100)$) rectangle ($(0.8888+0.2222*0.25,-250)$);
+        \fill[q2!20!white] ($(0.2222*0.75,100)$)        rectangle ($(0.2222*1.00,-250)$);
+        \fill[q6!20!white] ($(0.2222*1.00,100)$)        rectangle ($(0.2222*1.25,-250)$);
+        \fill[q3!20!white] ($(0.4444-0.2222*0.25,100)$) rectangle ($(0.4444+0.2222*0.00,-250)$);
+        \fill[q7!20!white] ($(0.4444-0.2222*0.00,100)$) rectangle ($(0.4444+0.2222*0.25,-250)$);
+        \fill[q4!20!white] ($(0.6666-0.2222*0.25,100)$) rectangle ($(0.6666+0.2222*0.00,-250)$);
+        \fill[q0!20!white] ($(0.6666-0.2222*0.00,100)$) rectangle ($(0.6666+0.2222*0.25,-250)$);
+        \fill[q5!20!white] ($(0.8888-0.2222*0.25,100)$) rectangle ($(0.8888+0.2222*0.00,-250)$);
+        \fill[ct6!20!white] ($(0.8888-0.2222*0.00,100)$) rectangle ($(0.8888+0.2222*0.25,-250)$);
 
         \fill[br0,opacity=0.50] (0,100) rectangle ($(0.2222*0.25,-250)$);
-        \node[rotate=90,anchor=east] at ($(0.2222*0.25*0.5,-100)$) {%
+        \node[rotate=90,anchor=east] at ($(0.2222*0.25*0.75,-44)$) {%
             \footnotesize
             Passband: $f_c = 0.25 \cdot f_\mathrm{s,low}$
         };
 
-        \draw[thick,da1] ($(0,76.31416-41.8)$) -- ($(0.2222*0.425,76.31416-41.8)$);
-        \draw[thick,da1] (0,76.31416) -- ($(0.2222*0.425,76.31416)$);
-        \draw[thick,da1,-latex] ($(0.2222*0.375,76.31416+5)$) -- ($(0.2222*0.375,76.31416)$);
-        \draw[thick,da1] ($(0.2222*0.375,76.31416)$) -- ($(0.2222*0.375,76.31416-41.8)$);
-        \draw[thick,da1,-latex] ($(0.2222*0.375,-50)$) -- ($(0.2222*0.375,76.31416-41.8)$);
-        \node[thick,da1,rotate=90,anchor=north west] at ($(0.2222*0.375,-50)$) {\footnotesize\SI{41.8}{\dB}};
+        \draw                                 ($(0,76.31416-41.8)$)         -- ($(0.2222*0.425,76.31416-41.8)$);
+        \draw                                 (0,76.31416)                  -- ($(0.2222*0.425,76.31416)$);
+        \draw[-latex]                         ($(0.2222*0.375,76.31416+5)$) -- ($(0.2222*0.375,76.31416)$);
+        \draw                                 ($(0.2222*0.375,76.31416)$)   -- ($(0.2222*0.375,76.31416-41.8)$);
+        \draw[-latex]                         ($(0.2222*0.375,15)$)         -- ($(0.2222*0.375,76.31416-41.8)$);
+        \node[rotate=90,anchor=north west] at ($(0.2222*0.375,15)$) {\footnotesize\SI{41.8}{\dB}};
 
-        \addplot[very thick,da1,-] table[x=w, y=abs(H)] \freqzTableCICA;
-        \addplot[line cap=round,very thick,q0,-] table[x=w, y=abs(H)] \freqzTableCICB;
-        \addplot[line cap=round,very thick,q1,-] table[x=w, y=abs(H)] \freqzTableCICC;
-        \addplot[line cap=round,very thick,q2,-] table[x=w, y=abs(H)] \freqzTableCICD;
-        \addplot[line cap=round,very thick,q3,-] table[x=w, y=abs(H)] \freqzTableCICE;
+        \addplot[line cap=round,very thick,q2,-] table[x=w, y=abs(H)] \freqzTableCICB;
+        \addplot[line cap=round,very thick,q6,-] table[x=w, y=abs(H)] \freqzTableCICC;
+        \addplot[line cap=round,very thick,q3,-] table[x=w, y=abs(H)] \freqzTableCICD;
+        \addplot[line cap=round,very thick,q7,-] table[x=w, y=abs(H)] \freqzTableCICE;
         \addplot[line cap=round,very thick,q4,-] table[x=w, y=abs(H)] \freqzTableCICF;
-        \addplot[line cap=round,very thick,q5,-] table[x=w, y=abs(H)] \freqzTableCICG;
-        \addplot[line cap=round,very thick,q6,-] table[x=w, y=abs(H)] \freqzTableCICH;
-        \addplot[line cap=round,very thick,q7,-] table[x=w, y=abs(H)] \freqzTableCICI;
+        \addplot[line cap=round,very thick,q0,-] table[x=w, y=abs(H)] \freqzTableCICG;
+        \addplot[line cap=round,very thick,q5,-] table[x=w, y=abs(H)] \freqzTableCICH;
+        \addplot[line cap=round,very thick,ct6,-] table[x=w, y=abs(H)] \freqzTableCICI;
+        \addplot[very thick,q1,-] table[x=w, y=abs(H)] \freqzTableCICA;
 
         \legend{%
             {},
@@ -101,5 +108,9 @@
             Left side of fourth null (flipped),
             Right side of fourth null (not flipped),
         };
+        
+        % The rectangles have partically drawn over the axis lines.
+        \draw (0,80) -- (1,80);
+        \draw (0,-100) -- (1,-100);
     \end{axis}
 \end{tikzpicture}

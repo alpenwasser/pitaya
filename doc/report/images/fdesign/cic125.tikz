@@ -1,8 +1,12 @@
+\tikzsetnextfilename{cic125FreqResponse}
 \newcommand*\freqzFileDECE{images/fdesign/r-125--fp-002--ast-060--dl-1.csv}
 \pgfplotstableread[col sep=comma]{\freqzFileDECE}\freqzTableDECE
-\begin{tikzpicture}
+\begin{tikzpicture}[
+    trim axis left,
+    trim axis right,
+]
      \pgfplotsset{every axis/.style={
-            height=60mm,
+            height=45mm,
             width=\textwidth,
             grid=none,
             x unit=\times\,\pi\,\si{\radian}/\si{\sample},

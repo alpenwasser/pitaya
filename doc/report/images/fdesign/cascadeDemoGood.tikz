@@ -1,3 +1,4 @@
+\tikzsetnextfilename{cascadeDemoGood}
 \newcommand*\freqzFileCascA{images/fdesign/cascadeDemoHBGoodCascade.csv}
 \newcommand*\freqzFileCascB{images/fdesign/cascadeDemoHBGoodStage1.csv}
 \newcommand*\freqzFileCascC{images/fdesign/cascadeDemoHBGoodStage2.csv}

@@ -1,3 +1,4 @@
+\tikzsetnextfilename{cascadeVsSingleStage}
 \newcommand*\freqzFileTBWA{images/fdesign/tbw-fs-wide.csv}
 \newcommand*\freqzFileTBWB{images/fdesign/tbw-fs-narrow.csv}
 \newcommand*\freqzFileTBWC{images/fdesign/cascade-of-wide.csv}

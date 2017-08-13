@@ -1,10 +1,12 @@
+\tikzsetnextfilename{cicSimuFreqResponse}
 \newcommand*\freqzFileInt{images/cicSimu/cic1.csv}
 \pgfplotstableread[col sep=comma]{\freqzFileInt}\freqzTableInt
 \begin{tikzpicture}[
-        spy using outlines={magnification=4, connect spies}
-    ]
+    trim axis left,
+    trim axis right,
+]
      \pgfplotsset{every axis/.style={
-            height=60mm,
+            height=45mm,
             width=\textwidth,
             grid=none,
             y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
@@ -22,7 +24,6 @@
         },
     }
     \begin{axis}[
-            title=Integrator Frequency Responses,
             at = {(0,0)},
             xmin=0,
             xmax=1,

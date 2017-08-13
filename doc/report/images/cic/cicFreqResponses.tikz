@@ -1,3 +1,4 @@
+\tikzsetnextfilename{cicFreqResponsesStages}
 \newcommand*\freqzFileIntB{images/cic/integrator3.csv}
 \newcommand*\freqzFileCombB{images/cic/comb913.csv}
 \newcommand*\freqzFileCICB{images/cic/cic913.csv}
@@ -5,10 +6,12 @@
 \pgfplotstableread[col sep=comma]{\freqzFileCombB}\freqzTableCombB
 \pgfplotstableread[col sep=comma]{\freqzFileCICB}\freqzTableCICB
 \begin{tikzpicture}[
-        spy using outlines={magnification=4, connect spies}
+        %spy using outlines={magnification=4, connect spies}
+        trim axis left,
+        trim axis right,
     ]
      \pgfplotsset{every axis/.style={
-            height=60mm,
+            height=45mm,
             width=\textwidth,
             grid=none,
             y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
@@ -29,8 +32,10 @@
             at = {(0,0)},
             xmin=0,
             xmax=1,
+            ymin=-30,
+            ymax=140,
             xtick={0,0.5,1},
-            ytick={120,80,40,0},
+            ytick={120,100,80,60,40,20,0,-20},
             xticklabels={0,$f_s/4$,$f_s/2$},
         ]
         \addplot[thick,q1,-] table[x=w, y=abs(H)] \freqzTableIntB;
@@ -38,11 +43,13 @@
 
     \begin{axis}[
             title=Comb Filter,
-            at = {(0,-70mm)},
+            at = {(0,-65mm)},
             xmin=0,
             xmax=1,
+            ymin=-80,
+            ymax=30,
             xtick={0,0.5,1},
-            ytick={0,-60,-120},
+            ytick={20,0,-20,-40,-60},
             xticklabels={0,$f_s/4$,$f_s/2$},
         ]
         \addplot[thick,q1,-] table[x=w, y=abs(H)] \freqzTableCombB;
@@ -50,21 +57,22 @@
 
     \begin{axis}[
             title=CIC Filter,
-            at = {(0,-140mm)},
+            at = {(0,-130mm)},
             xmin=0,
             xmax=1,
+            ymin=-80,
+            ymax=65,
             xtick={0,0.5,1},
-            ytick={60,0,-60,-120},
+            ytick={60,40,20,0,-20,-40,-60},
             xticklabels={0,$f_s/4$,$f_s/2$},
         ]
         \addplot[thick,q1,-] table[x=w, y=abs(H)] \freqzTableCICB;
 
-        \coordinate (spypoint)     at (0.033,58);
-        \coordinate (magnifyglass) at (rel axis cs:0.123,-0.40);
+        %\coordinate (spypoint)     at (0.033,58);
+        %\coordinate (magnifyglass) at (rel axis cs:0.123,-0.40);
     \end{axis}
 
-    \spy [black, width=3cm,height=1cm] 
-        on (spypoint) in node[fill=white] at (magnifyglass);
-
-    \node[anchor=west,xshift=20mm] at (magnifyglass) {Passband Droop};
+    %\spy [black, width=3cm,height=1cm] 
+    %    on (spypoint) in node[fill=white] at (magnifyglass);
+    %\node[anchor=west,xshift=20mm] at (magnifyglass) {Passband Droop};
 \end{tikzpicture}

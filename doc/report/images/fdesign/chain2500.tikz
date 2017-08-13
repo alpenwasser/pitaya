@@ -1,10 +1,14 @@
+\tikzsetnextfilename{chain2500FreqResponse}
 \newcommand*\freqzFileDECP{images/fdesign/chain2500detail.csv}
 \newcommand*\freqzFileDECQ{images/fdesign/r-1250--fp-00080--fst-00160--ap-450--ast-60--dl-1--stages-4.csv}
 \pgfplotstableread[col sep=comma]{\freqzFileDECP}\freqzTableDECP
 \pgfplotstableread[col sep=comma]{\freqzFileDECQ}\freqzTableDECQ
-\begin{tikzpicture}
+\begin{tikzpicture}[
+    trim axis left,
+    trim axis right,
+]
      \pgfplotsset{every axis/.style={
-            height=60mm,
+            height=45mm,
             width=\textwidth,
             grid=none,
             x unit=\times\,\pi\,\si{\radian}/\si{\sample},
@@ -23,11 +27,11 @@
             ymax=180,
             ymin=-100,
         ]
-        \addplot[thick,q1,-] table[x=W, y=abs(H)] \freqzTableDECQ;
+        \addplot[thin,q1,-] table[x=W, y=abs(H)] \freqzTableDECQ;
     \end{axis}
     \begin{axis}[
             title={Passband Detail},
-            at = {(0,-70mm)},
+            at = {(0,-65mm)},
             xmin=0,
             xmax=8e-4,
             ymax=180,

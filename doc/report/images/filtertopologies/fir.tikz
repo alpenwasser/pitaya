@@ -1,3 +1,4 @@
+\tikzsetnextfilename{firTopology}
 % https://tex.stackexchange.com/a/183092/131649
 \begin{tikzpicture}[
     triangle/.style = {draw,regular polygon, regular polygon sides=3 },

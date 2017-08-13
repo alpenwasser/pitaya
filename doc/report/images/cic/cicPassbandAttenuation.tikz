@@ -1,12 +1,14 @@
+\tikzsetnextfilename{cicPassbandAttunation}
 \newcommand*\freqzFileCICA{images/cic/pbattenuation914.csv}
 \newcommand*\freqzFileCICB{images/cic/pbattenuation924.csv}
 \pgfplotstableread[col sep=comma]{\freqzFileCICA}\freqzTableCICA
 \pgfplotstableread[col sep=comma]{\freqzFileCICB}\freqzTableCICB
 \begin{tikzpicture}[
-        spy using outlines={magnification=4, connect spies}
-    ]
+    trim axis left,
+    trim axis right,
+]
      \pgfplotsset{every axis/.style={
-            height=60mm,
+            height=45mm,
             width=\textwidth,
             grid=none,
             y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
@@ -43,15 +45,15 @@
             ymin=-15,
             ymax=1,
         ]
-        \draw[da0,thick] (0      ,-3.65) -- (0.058   ,-3.65);
-        \draw[da0,thick] (0.02777,-3)    -- (0.02777,-15);
-        \draw[da0,thick] (0.05555,-3)    -- (0.05555,-15);
-
         \addplot[thick,q1,-] table[x=w, y=abs(H)] \freqzTableCICA;
-        \addplot[thick,q3,-] table[x=w, y=abs(H)] \freqzTableCICB;
+        \addplot[thick,q5,-] table[x=w, y=abs(H)] \freqzTableCICB;
         \legend{%
             $M=1${,} $f_c = \frac{f_\mathrm{s,low}}{4}$,
             $M=2${,} $f_c = \frac{f_\mathrm{s,low}}{8}$
         };
+
+        \draw (0      ,-3.65) -- (0.058   ,-3.65);
+        \draw (0.02777,-3)    -- (0.02777,-15);
+        \draw (0.05555,-3)    -- (0.05555,-15);
     \end{axis}
 \end{tikzpicture}

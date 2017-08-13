@@ -1,3 +1,4 @@
+\tikzsetnextfilename{cicFreqResponsesAlt}
 \newcommand*\freqzFileIntA{images/cic/integrator1.csv}
 \newcommand*\freqzFileIntB{images/cic/integrator3.csv}
 \newcommand*\freqzFileCombA{images/cic/comb1.csv}

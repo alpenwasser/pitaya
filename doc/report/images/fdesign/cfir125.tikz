@@ -1,8 +1,12 @@
+\tikzsetnextfilename{cfir125FreqResponse}
 \newcommand*\freqzFileDECG{images/fdesign/r-125--fp-0016--fst-0024--ap-050--ast-60--dl-1.csv}
 \pgfplotstableread[col sep=comma]{\freqzFileDECG}\freqzTableDECG
-\begin{tikzpicture}
+\begin{tikzpicture}[
+    trim axis left,
+    trim axis right,
+]
      \pgfplotsset{every axis/.style={
-            height=60mm,
+            height=45mm,
             width=\textwidth,
             grid=none,
             x unit=\times\,\pi\,\si{\radian}/\si{\sample},
@@ -12,7 +16,8 @@
             xmin=0,
             xmax=1,
             ymax=5,
-            ymin=-80,
+            ymin=-90,
+            ytick={0,-20,-40,-60,-80},
             y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
             x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
         },

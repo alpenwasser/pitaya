@@ -1,3 +1,4 @@
+\tikzsetnextfilename{dspChainNoisySine}
 \begin{tikzpicture}
      \pgfplotsset{
          scale only axis,

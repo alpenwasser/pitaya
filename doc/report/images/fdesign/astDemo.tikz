@@ -1,3 +1,4 @@
+\tikzsetnextfilename{cascadeAstMismatch}
 \newcommand*\freqzFileAstA{images/fdesign/ast-60.csv}
 \newcommand*\freqzFileAstB{images/fdesign/ast-40.csv}
 \newcommand*\freqzFileAstC{images/fdesign/ast-40-60.csv}
@@ -10,9 +11,12 @@
 \pgfplotstableread[col sep=comma]{\freqzFileAstD}\freqzTableAstD
 \pgfplotstableread[col sep=comma]{\freqzFileAstE}\freqzTableAstE
 \pgfplotstableread[col sep=comma]{\freqzFileAstF}\freqzTableAstF
-\begin{tikzpicture}
+\begin{tikzpicture}[
+    trim left=(plot1.north west).
+    trim right=(plot4.south east).
+]
      \pgfplotsset{every axis/.style={
-            height=60mm,
+            height=45mm,
             width=\textwidth,
             grid=none,
             ylabel=Magnitude,
@@ -31,7 +35,8 @@
     }
     % 40 -> 60
     \begin{axis}[
-            title={Stage 1: \SI{40}{\dB}, Stage 2: \SI{60}{\dB}},
+            name=plot1,
+            title={Stage 1: \SI[detect-all,mode=text]{40}{\dB}, Stage 2: \SI[detect-all,mode=text]{60}{\dB}},
             at = {(0,0)},
             ytick={0,-40,-60},
             %xtick={0,0.5,0.6,1},
@@ -43,7 +48,7 @@
     \end{axis}
      60 -> 40
     \begin{axis}[
-            title={Stage 1: \SI{60}{\dB}, Stage 2: \SI{40}{\dB}},
+            title={Stage 1: \SI[detect-all,mode=text]{60}{\dB}, Stage 2: \SI[detect-all,mode=text]{40}{\dB}},
             at = {(0,-65mm)},
             ytick={0,-40,-60},
             %xtick={0,0.5,0.6,1},
@@ -55,8 +60,8 @@
     \end{axis}
     % 60 dB
     \begin{axis}[
-            title={\SI{60}{\dB} Stopband Attenuation},
-            width=0.53\textwidth,
+            title={\SI[detect-all,mode=text]{60}{\dB} Stopband Attenuation},
+            width=0.47\textwidth,
             at = {(0,-130mm)},
             ytick={0,-60},
             %xtick={0,0.5,0.6,1},
@@ -66,9 +71,10 @@
     \end{axis}
     % 40 dB
     \begin{axis}[
-            title={\SI{40}{\dB} Stopband Attenuation},
-            width=0.53\textwidth,
-            at = {(0.47\textwidth,-130mm)},
+            title={\SI[detect-all,mode=text]{40}{\dB} Stopband Attenuation},
+            name=plot4,
+            width=0.47\textwidth,
+            at = {(0.53\textwidth,-130mm)},
             ylabel={},
             y unit={},
             yticklabel pos=right,
