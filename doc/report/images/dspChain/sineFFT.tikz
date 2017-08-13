@@ -1,0 +1,31 @@
+\begin{tikzpicture}
+     \pgfplotsset{
+         scale only axis,
+         every axis/.style={
+            height=45mm,
+            width=130mm,
+            grid=none,
+        }
+    }
+    \begin{axis}[
+        at = {(0,0)},
+        xmin=0,
+        xmax=100,
+        xticklabels={},
+        ylabel={y},
+        xlabel=f,
+        ymin=0,
+        ymax=1,
+        ytick={},
+        yticklabels={},
+        xlabel style={font=\sffamily},
+        ylabel style={font=\sffamily},
+        xticklabel style={font=\sffamily\mathversion{sf}},
+        yticklabel style={font=\sffamily\mathversion{sf}},
+        %y filter/.code={\pgfmathparse{20*log10(\pgfmathresult + 10))}},
+        %x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+    ]
+        \draw[gray] (-22,0) -- (22,0);
+        \addplot[thick,ycomb,mark=*,mark options={scale=0.5},q1] table[x=f,y=y,col sep=comma] {sineFFT.csv};
+    \end{axis}
+\end{tikzpicture}

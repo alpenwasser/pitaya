@@ -1,7 +1,7 @@
 \begin{tikzpicture}
      \pgfplotsset{every axis/.style={
-            height=30mm,
-            width=40mm,
+            height=25mm,
+            width=30mm,
             grid=none,
             axis line style={draw=none},
             tick style={draw=none},
@@ -11,22 +11,25 @@
     \begin{axis}[
         at = {(0,0)},
     ]
-        \addplot[-] table[x=t,y=y,col sep=comma] {images/dspChain/spectrumFlat.csv};
+        \addplot[thick,q1,-]
+            table[x=t,y=y,col sep=comma] {images/dspChain/spectrumFlat.csv};
     \end{axis}
 
     \begin{axis}[
         at = {(40mm,0)},
     ]
-        \addplot[-,smooth] table[x=t,y=y,col sep=comma] {images/dspChain/spectrumLP.csv};
+        \addplot[thick,q1,-,smooth]
+            table[x=t,y=y,col sep=comma] {images/dspChain/spectrumLP.csv};
     \end{axis}
 
     \begin{axis}[
         at = {(80mm,0)},
     ]
-        \addplot[-,smooth] table[x=t,y=y,col sep=comma] {images/dspChain/spectrumSampled.csv};
+        \addplot[thick,q1,-,smooth]
+            table[x=t,y=y,col sep=comma] {images/dspChain/spectrumSampled.csv};
     \end{axis}
-    \draw[-latex] (2.5,0.75) -- (3.85,0.75);
-    \draw[-latex] (6.5,0.75) -- (7.85,0.75);
+    \draw[-latex] (2.9,1.25) -- (3.95,1.25);
+    \draw[-latex] (6.9,1.25) -- (7.95,1.25);
 
     %\node[draw,inner sep=0.3mm,circle] at (1.25,1.75) {\footnotesize 1};
     %\node[draw,inner sep=0.3mm,circle] at (5.25,1.75) {\footnotesize 2};

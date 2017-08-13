@@ -1,10 +1,24 @@
-\begin{tikzpicture}
+\begin{tikzpicture}[
+    dspBlock/.style={
+        draw=sqC,
+        rounded corners=1mm,
+        fill=sq3,
+        minimum height=3.5ex,
+        minimum width=4em,
+    },
+    signalPath/.style={
+        draw=q4,,
+        fill=q4!50!white,
+        circle,
+        inner sep=0.3mm,
+    }
+]
     \coordinate (in) at (-1.5,0);
     \coordinate (out) at (7.5,0);
 
-    \node[draw] (LP)  at (0,0) {LP};
-    \node[draw] (ADC) at (3,0) {ADC};
-    \node[draw] (DSP) at (6,0) {DSP};
+    \node[dspBlock] (LP)  at (0,0) {LP};
+    \node[dspBlock] (ADC) at (3,0) {ADC};
+    \node[dspBlock] (DSP) at (6,0) {DSP};
 
     \draw[-latex] (in)  -- (LP);
     \draw[-latex] (LP)  -- (ADC);
@@ -16,7 +30,7 @@
     \node[above right=1ex] (d1a) at (ADC.east) {D};
     \node[above      =1ex] (d2a) at (out)      {D};
 
-    \node[draw,circle,below=4ex,inner sep=0.30mm] (a1b) at (a1a) {\footnotesize 1};
-    \node[draw,circle,below=4ex,inner sep=0.30mm] (a2b) at (a2a) {\footnotesize 2};
-    \node[draw,circle,below=4ex,inner sep=0.30mm] (d1b) at (d1a) {\footnotesize 3};
+    \node[signalPath,below=4ex] (a1b) at (a1a) {\footnotesize 1};
+    \node[signalPath,below=4ex] (a2b) at (a2a) {\footnotesize 2};
+    \node[signalPath,below=4ex] (d1b) at (d1a) {\footnotesize 3};
 \end{tikzpicture}

@@ -1,0 +1,33 @@
+\begin{tikzpicture}
+     \pgfplotsset{
+         scale only axis,
+         every axis/.style={
+            height=45mm,
+            width=130mm,
+            xmin=0,
+            xmax=0.4,
+            xlabel={Time},
+            ylabel=Amplitude,
+            xlabel style={font=\sffamily},
+            ylabel style={font=\sffamily},
+            xticklabel style={font=\sffamily\mathversion{sf}},
+            yticklabel style={font=\sffamily\mathversion{sf}},
+            xtick={0,0.1,0.2,0.3,0.4},
+            xticklabels={},
+            ytick={-5,0,5},
+            yticklabels={},
+            %x unit={\si[detect-all,mode=text]{\second}},
+            %y unit={\si[detect-all,mode=text]{\dB}},
+            %grid=none,
+            %axis line style={draw=none},
+            %tick style={draw=none},
+            %ticks = none,
+        }
+    }
+    \begin{axis}[
+        at = {(0,0)},
+    ]
+        \addplot[thick,q1,-] 
+            table[x=t,y=y,col sep=comma] {noisySine.csv};
+    \end{axis}
+\end{tikzpicture}
