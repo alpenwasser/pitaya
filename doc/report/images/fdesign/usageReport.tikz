@@ -1,0 +1,26 @@
+\newcommand*\usageReportFile{images/fdesign/usageReport.csv}
+\pgfplotstableread[col sep=comma]{\usageReportFile}\usageReportTable
+\begin{tikzpicture}
+     \pgfplotsset{every axis/.style={
+            height=60mm,
+            width=\textwidth,
+            grid=none,
+            %x unit=\times\,\pi\,\si{\radian}/\si{\sample},
+            %y unit=\si{dB},
+            ylabel=DSP Slice Count,
+            xlabel=Filter Length,
+            %y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            %x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+        },
+    }
+    \begin{axis}[
+            at={(0,0)},
+            xmin=0,
+            xmax=1200,
+            %ymax=5,
+            %ymin=-150,
+        ]
+        \draw[dashed,gray] (0,80) -- (1200,80);
+        \addplot[only marks,mark=*,mark options={scale=0.5},q1,-] table[x=filterSize, y=DSPCount] \usageReportTable;
+    \end{axis}
+\end{tikzpicture}
