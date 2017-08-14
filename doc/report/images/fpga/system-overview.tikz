@@ -1,0 +1,93 @@
+\tikzsetnextfilename{system-overview}
+\begin{tikzpicture}[
+    rounded corners=1mm,
+    every node/.append style={
+        draw,
+        minimum height=12ex,
+    },
+    node distance=5mm,
+    fpgaComponent/.style={
+        minimum height=12ex,
+        fill=q4,
+    },
+    SoCComponent/.style={
+        minimum height=20ex,
+        fill=sq3,
+        draw=sqC,
+    },
+]
+    \small
+    \sffamily
+
+    \node[SoCComponent,anchor=north] (analogIn) at (0,0) {\rotatebox{90}{analog IN}};
+    \node[fpgaComponent,right=of analogIn] (ADC) {ADC};
+    \node[fpgaComponent,right=of ADC] (filters) {Filters};
+    \node[fpgaComponent,right=of filters] (logger) {Logger};
+
+    \node[SoCComponent,right=of logger] (RAM) {\rotatebox{90}{RAM}};
+    \node[SoCComponent,right=of RAM] (ARM) {\rotatebox{90}{ARM}};
+    \node[SoCComponent,right=of ARM] (network) {\rotatebox{90}{Network}};
+
+    \begin{scope}[on background layer]
+        \node[
+            fit=(ADC) (filters) (logger) (RAM) (ARM) (analogIn) (network),
+            inner sep=2mm,
+            align=left,
+            text height=27ex,
+            minimum height=36ex,
+            fill=br1,
+        ] (stemlab) {STEMlab};
+    \end{scope}
+
+    \begin{scope}[on background layer]
+        \node[
+            fit=(ADC) (filters) (logger) (RAM) (ARM),
+            inner sep=2mm,
+            align=left,
+            text height=23ex,
+            minimum height=28ex,
+            fill=dv-2,
+            draw=dv-7,
+        ] (SoC) {SoC};
+    \end{scope}
+
+    \begin{scope}[on background layer]
+        \node[
+            SoCComponent,
+            fit=(ADC) (filters) (logger),
+            align=left,
+            text height=15ex,
+        ] (FPGA) {FPGA};
+    \end{scope}
+
+    \node[
+        below right=10mm of stemlab,
+        minimum width=12ex,
+        minimum height=8ex,
+        fill=br2,
+    ] (pcmonitor) {PC};
+
+    \begin{scope}[on background layer]
+        \node[
+            fit=(pcmonitor),
+            minimum height=8ex,
+            fill=br1,
+        ] (pcmonitorframe) {};
+    \end{scope}
+
+    \fill[br2] ($(pcmonitorframe.south) + (-1ex,0)$) --+ (0,-1ex) --+ (2ex,-1ex) --+ (2ex,0) -- cycle;
+    \draw ($(pcmonitorframe.south) + (-1ex,0)$) --+ (0,-1ex);
+    \draw ($(pcmonitorframe.south) + (1ex,0)$)--+ (0,-1ex);
+    \draw ($(pcmonitorframe.south) + (1ex,0)$)--+ (0,-1ex);
+    \draw[fill=br2] ($(pcmonitorframe.south) + (-6ex,-1ex)$) rectangle
+          ($(pcmonitorframe.south) + (+6ex,-3ex)$);
+
+    \draw[-latex] (stemlab.east) -| (pcmonitorframe);
+    \draw[-latex] ($(stemlab.west) + (-4ex,0)$) -- (stemlab.west);
+    \draw[-latex] (analogIn) -- (ADC);
+    \draw[-latex] (ADC) -- (filters);
+    \draw[-latex] (filters) -- (logger);
+    \draw[-latex] (logger) -- (RAM);
+    \draw[-latex] (RAM) -- (ARM);
+    \draw[-latex] (ARM) -- (network);
+\end{tikzpicture}
