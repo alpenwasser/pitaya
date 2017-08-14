@@ -66,3 +66,36 @@ Figure~\ref{fig:fpga:bitflow} depics the flow through an example chain but repre
     \label{fig:fpga:bitflow}
 \end{figure}
 
+Of course it is important to not cut off any MSBs (or signs) because otherwise the sine will clip or even worse, overflow and wrap around. The same goes for the case where too few bits are cut off. If the bitcount is increased by one to guarantee no overflow inside the filter, but because of unity gain that bit will never be set at the output, that bit would effectively be lost as it will never be used.
+So in fact this would loose us \SI{6}{\dB} in the SNR which is highly undesirable.
+To make sure neither of those errors happens, it is important to have the highest possible filter gain at $G \leq 1$. And at the end of each chain never carry over the added bits, but rather take the initial 14 bits before the comma and take two additional bits from after the comma, resulting again in that better 16bit value. This ensures no ``empty" bits.
+The FIR compiler can avoid those empty bits by normalizing the coefficient such that the highest gain ever is at exactly 1.
+This is called maximizing the dynamic range. Figure~\ref{fig:fpga:dynamicrange} illustrates the issue of loosing one bit.
+
+One can observe that the sine in Case 1 uses the dynamic range to a perfect extent as the full scale sine has an amplitude of 127. The maximum value a 8 bit int can hold. Case 2 show a sine that was scaled to 130 and thus effectively requiring a additional bit. 
+
+But a 9 bit int can hold values up to 255 meaning that most of the time the MSB is not even used. This means that with 9 bit the highest $SNR_{max}$ possible would be
+
+\begin{equation}
+    ENOB = log_2(130)\\
+    SNR_{max} = \SI{1.76}{\dB} + ENOB \cdot \SI{6.02}{\dB} = 44.03
+\end{equation}
+
+In Case 3, the dynamic range is used well and the $SNR_{max}$ is at
+
+\begin{equation}
+    ENOB = log_2(126)\\
+    SNR_{max} = \SI{1.76}{\dB} + ENOB \cdot \SI{6.02}{\dB} = 43.76
+\end{equation}
+
+This yields a difference of only \SI{0.27}{\dB}. This example shows that it is well advised to scale the coefficient such that they dont ripple around 1 but rather that the maximum ripple is exacly 1 and not more.
+Because if it can be made sure that no additional MSB is used wich is empty most of the time, we can actually use an additional LSB which is always well used and effectively win a bit. So in most cases when the coefficients are designed to have a unity gain close to \SI{6.02}{\dB} can be won by rescaling the coefficients.
+
+\begin{figure}
+    \centering
+    \input{images/fpga/dynamicrange.tikz}
+    \caption{An illustration of good and bad use of dynamic range.}
+    \label{fig:fpga:dynamicrange}
+\end{figure}
+
+The exact configuration of the filter chains can be read from the Vivado block diagrams in the Appendix~\ref{TODO: ref to BD (necessary??!)}
