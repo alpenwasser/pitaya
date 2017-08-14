@@ -1,66 +1,66 @@
 \tikzsetnextfilename{server-eventloop}
 \begin{tikzpicture}[%
         align=center,
-        text=q1,
-        draw=sq5,
+        node distance=5mm,
+        %text=q1,
+        %draw=sq5,
     ]
-    \small
+    \scriptsize
     \sffamily
 
     \begin{scope}[
         every node/.style = draw,
-        terminal/.append style={
-            rounded rectangle,
-            fill=sq5,
-            text=q1,
-            inner sep=2mm,
-        }, % data packages
         sign/.style={
-            inner sep=2mm,
+            %inner sep=2mm,
             rounded corners=1mm,
-            fill=sq5,
-            text=q1,
+            %fill=sq5,
+            %text=q1,
         },         % custom signal style
         circ/.style={
-            inner sep=2mm,
+            fill=dv-2,
+            minimum width=20mm,
+            minimum height=15mm,
+            %inner sep=2mm,
             rounded corners=1mm,
             double,
-            fill=sq5,
-            draw=q1,
-            text=q1,
-            minimum width=24mm,
-            minimum height=24mm
+            %fill=sq5,
+            %draw=q1,
+            %text=q1,
+            %minimum width=24mm,
+            %minimum height=24mm
         }, % circuitry
         proc/.style={
-            inner sep=2mm,
             rounded corners=1mm,
-            fill=sq5,
-            text=q1,
+            fill=sq3,
+            %inner sep=2mm,
+            %rounded corners=1mm,
+            %fill=sq5,
+            %text=q1,
         },       % process/activity
         dec/.style={
-            inner sep=2mm,
             rounded corners=1mm,
-            fill=sq5,
-            text=q1,
+            fill=br1,
+            %inner sep=2mm,
+            %rounded corners=1mm,
+            %fill=sq5,
+            %text=q1,
         },       % decision/activity
         stor/.style={
-            fill=cyan!30,
-            minimum width=24mm,
-            minimum height=24mm
-        },         % storage
-        dbtable/.style={
-            text=sq5,
-            draw=q1,
+            fill=q4,
             rounded corners=1mm,
-            inner sep=2mm,
-        } % database tables
+            minimum width=20mm,
+            minimum height=15mm,
+            %fill=cyan!30,
+            %minimum width=24mm,
+            %minimum height=24mm
+        },         % storage
     ]
         \node (openEvent) [
             dec,
             align=center,
             diamond,
-            minimum width=33mm,
-            minimum height=33mm,
+            %minimum width=33mm,
+            %minimum height=33mm,
         ] at (0,0) {open\\event\\happened\\?};
         \node (event) [
             proc,
@@ -69,37 +69,38 @@
         ] {New event};
         \node (eventLoop) [
             circ,
-            left=of event,
+            above left=of event,
             align=center,
         ] {Event Loop};
+        \coordinate[left=of eventLoop] (eventLoopHelp);
         \node (messageEvent) [
             dec,
             align=center,
             diamond,
             below=of openEvent,
-            minimum width=33mm,
-            minimum height=33mm,
+            %minimum width=33mm,
+            %minimum height=33mm,
         ] {message\\event\\happened\\?};
         \node (closeEvent) [
             dec,
             align=center,
             diamond,
             below=of messageEvent,
-            minimum width=33mm,
-            minimum height=33mm,
+            %minimum width=33mm,
+            %minimum height=33mm,
         ] {close\\event\\happened\\?};
         \node (open) [
             proc,
-            right=of openEvent,
+            above right=of openEvent,
             align=center,
         ] {Open a new socket};
         \node (prevSock) [
             dec,
             align=center,
             diamond,
-            right=of open,
-            minimum width=33mm,
-            minimum height=33mm,
+            above right=of open,
+            %minimum width=33mm,
+            %minimum height=33mm,
         ] {Currently\\opened socket?};
         \node (close2) [
             proc,
@@ -108,43 +109,44 @@
         ] {Close\\the socket};
         \node (parse) [
             proc,
-            right=of messageEvent,
+            above right=of messageEvent,
             align=center,
         ] {Parse the request};
         \node (close) [
             proc,
-            right=of closeEvent,
+            below=of closeEvent,
             align=center,
         ] {Close\\the socket};
         \node (recordingRequest) [
             dec,
             align=center,
             diamond,
-            right=of parse,
-            minimum width=33mm,
-            minimum height=33mm,
+            above right=of parse,
+            %minimum width=33mm,
+            %minimum height=33mm,
         ] {A new\\recording is\\requested?};
         \node (readRequest) [
             dec,
             align=center,
             diamond,
             below=of recordingRequest,
-            minimum width=33mm,
-            minimum height=33mm,
+            %minimum width=33mm,
+            %minimum height=33mm,
         ] {A frame\\is requested?};
         \node (configureRequest) [
             dec,
             align=center,
             diamond,
             below=of readRequest,
-            minimum width=33mm,
-            minimum height=33mm,
+            %minimum width=33mm,
+            %minimum height=33mm,
         ] {A configuration\\is issued?};
         \node (recording) [
             proc,
             right=of recordingRequest,
             align=center,
         ] {Start a new\\recording with\\the kernel module};
+        \coordinate[below=10mm of recording] (stateRecordingHelp);
         \node (read) [
             proc,
             right=of readRequest,
@@ -160,6 +162,7 @@
             right=of configureRequest,
             align=center,
         ] {Add configuration to state};
+        \coordinate[above=10mm of configure] (configureStateHelp);
         \node (discard) [
             proc,
             below=of configureRequest,
@@ -168,19 +171,19 @@
 
         % --------------- T I M E R ------------------- %
 
+        \node (timer) [
+            circ,
+            align=center,
+            below=of configure,
+        ] {Timer};
         \node (timerPreDescision) [
             dec,
             align=center,
             diamond,
-            right=of state,
-            minimum width=33mm,
-            minimum height=33mm,
+            below=of timer,
+            %minimum width=33mm,
+            %minimum height=33mm,
         ] {A new frame\\was requested?};
-        \node (timer) [
-            circ,
-            above=of timerPreDescision,
-            align=center,
-        ] {Timer};
         \node (timerCheck) [
             proc,
             below=of timerPreDescision,
@@ -190,46 +193,52 @@
             dec,
             align=center,
             diamond,
-            right=of timerCheck,
-            minimum width=33mm,
-            minimum height=33mm,
+            left=of timerCheck,
+            %minimum width=33mm,
+            %minimum height=33mm,
         ] {Logger running?};
         \node (data) [
             proc,
-            right=of timerDescision,
+            left=of timerDescision,
             align=center,
         ] {Send data to network};
 
         \node (kernelmodule) [
             circ,
-            above right=of timer,
+            %below right=of recording,
+            below=of timerCheck,
             align=center,
+            yshift=-7mm,
+            %xshift=2mm,
         ] {Kernel Module};
 
         \node (network) [
             circ,
-            above=of kernelmodule,
+            left=of data,
             align=center,
+            %anchor=south,
+            %xshift=2mm,
         ] {Network};
     \end{scope}
 
     \begin{scope}[
-            rounded corners,
-            every path/.append style={draw=q1,},
+            rounded corners=1mm,
+            %every path/.append style={draw=q1,},
             >=latex',
     ]
-        \draw[-latex] (eventLoop) -- (event);
+        \draw[-latex] (eventLoop.east) -| (event.north);
         \draw[-latex] (event) -- (openEvent);
-        \draw[-latex] (openEvent) -- node[midway,anchor=south] {yes} (open);
+        \draw[-latex] (openEvent) -| node[midway,anchor=south east] {yes} (open);
         \draw[-latex] (openEvent) -- node[midway,anchor=west] {no} (messageEvent);
-        \draw[-latex] (messageEvent) -- node[midway,anchor=south] {yes} (parse);
+        \draw[-latex] (messageEvent) -| node[midway,anchor=south east] {yes} (parse);
         \draw[-latex] (messageEvent) -- node[midway,anchor=west] {no} (closeEvent);
-        \draw[-latex] (closeEvent) -- node[midway,anchor=south] {yes} (close);
-        \draw[-latex] (closeEvent) edge[bend left] node[midway,anchor=east] {no} (eventLoop);
+        \draw[-latex] (closeEvent) -- node[midway,anchor=west] {yes} (close);
+        %\draw[-latex] (closeEvent) edge[bend left] node[midway,anchor=east] {no} (eventLoop);
+        %\draw[-latex] (closeEvent) -| node[midway,anchor=south west] {no} (eventLoopHelp) -- (eventLoop.west);
+        \draw[-latex] (closeEvent) -| node[midway,anchor=south west] {no} (eventLoop.south);
 
-        \draw[-latex] (open) -- (prevSock);
         \draw[-latex] (prevSock) -- node[midway,anchor=south] {yes} (close2);
-        \draw[-latex] (parse) -- (recordingRequest);
+        \draw[-latex] (parse) |- (recordingRequest);
         \draw[-latex] (recordingRequest) -- node[midway,anchor=south] {yes} (recording);
         \draw[-latex] (recordingRequest) -- node[midway,anchor=west] {no} (readRequest);
         \draw[-latex] (readRequest) -- node[midway,anchor=south] {yes} (read);
@@ -237,21 +246,24 @@
         \draw[-latex] (configureRequest) -- node[midway,anchor=south] {yes} (configure);
         \draw[-latex] (configureRequest) -- node[midway,anchor=west] {no} (discard);
 
-        \draw[-latex] (recording) edge[bend left] (kernelmodule);
-        \draw[-latex] (open) -- (prevSock);
-        \draw[-latex] (state) -- (recording);
+        %\draw[-latex] (recording.east) -| ($(kernelmodule.north) + (-4mm,0)$);
+        \draw[-latex] (recording.east) -- ($(recording.east) + (26mm,0)$) |- (kernelmodule.east);
+        \draw[-latex] (open) |- (prevSock);
+        \draw[-latex] (state) |- (stateRecordingHelp) -- (recording);
         \draw[-latex] (read) -- (state);
-        \draw[-latex] (configure) -- (state);
+        \draw[-latex] (configure) -- (configureStateHelp) -| (state);
 
-        \draw[-latex] (state) -- (timerPreDescision);
+        \draw[-latex] (state.east) -- ($(state.east) + (3mm,0)$) |- (timerPreDescision.east);
         \draw[-latex] (timer) -- (timerPreDescision);
         \draw[-latex] (timerPreDescision) -- (timerCheck);
-        \draw[-latex] (kernelmodule) edge[bend left] (timerDescision);
+        %\draw[-latex] (kernelmodule) |- ($(timerDescision.south) + (0,-5mm)$) -- (timerDescision.south);
+        \draw[-latex] (kernelmodule) -| (timerDescision.south);
         \draw[-latex] (timerCheck) -- (timerDescision);
         \draw[-latex] (timerDescision) -- node[midway,anchor=south] {yes} (data);
-        \draw[-latex] (data) edge[bend right] (network);
-        \draw[-latex] (network) edge[bend right] (eventLoop);
+        %\draw[-latex] (data.south) -- ($(data.south) + (0,-17mm)$) -| (network.south);
+        \draw[-latex] (data) -- (network);
+        %\draw[-latex] (network) |- ($(eventLoop.north) + (0,5mm)$) -- (eventLoop.north) ;
+        \draw[-latex] (network) -| (eventLoopHelp) -- (eventLoop.west);
 
     \end{scope}
-
 \end{tikzpicture}

@@ -1,61 +1,58 @@
 \tikzsetnextfilename{gui-eventloop}
 \begin{tikzpicture}[%
         align=center,
-        text=q1,
-        draw=sq5,
+        node distance=5mm,
+        %text=q1,
+        %draw=sq5,
     ]
-    \small
+    \scriptsize
     \sffamily
 
     \begin{scope}[
         every node/.style = draw,
-        terminal/.append style={
-            rounded rectangle,
-            fill=sq5,
-            text=q1,
-            inner sep=2mm,
-        }, % data packages
         sign/.style={
             inner sep=2mm,
             rounded corners=1mm,
-            fill=sq5,
-            text=q1,
+            fill=q6,
+            minimum width=20mm,
+            minimum height=15mm,
+            %fill=sq5,
+            %text=q1,
         },         % custom signal style
         circ/.style={
-            inner sep=2mm,
+            %inner sep=2mm,
             rounded corners=1mm,
             double,
-            fill=sq5,
-            draw=q1,
-            text=q1,
-            minimum width=24mm,
-            minimum height=24mm
+            fill=dv-2,
+            %draw=q1,
+            %text=q1,
+            minimum width=20mm,
+            minimum height=15mm,
         }, % circuitry
         proc/.style={
-            inner sep=2mm,
+            %inner sep=2mm,
             rounded corners=1mm,
-            fill=sq5,
-            text=q1,
+            fill=sq3,
+            %fill=sq5,
+            %text=q1,
         },       % process/activity
         dec/.style={
-            inner sep=2mm,
+            %inner sep=2mm,
             rounded corners=1mm,
-            fill=sq5,
-            text=q1,
-            minimum width=33mm,
-            minimum height=33mm,
+            fill=br1,
+            %fill=sq5,
+            %text=q1,
+            %minimum width=33mm,
+            %minimum height=33mm,
         },       % decision/activity
         stor/.style={
-            fill=cyan!30,
-            minimum width=24mm,
-            minimum height=24mm
-        },         % storage
-        dbtable/.style={
-            text=sq5,
-            draw=q1,
+            fill=q4,
             rounded corners=1mm,
-            inner sep=2mm,
-        } % database tables
+            minimum width=20mm,
+            minimum height=15mm,
+            %minimum width=24mm,
+            %minimum height=24mm
+        },         % storage
     ]
         \node (newMessage) [
             dec,
@@ -68,8 +65,8 @@
             align=center,
             diamond,
             above=of newMessage,
-            minimum width=33mm,
-            minimum height=33mm,
+            %minimum width=33mm,
+            %minimum height=33mm,
         ] {open\\event\\happened\\?};
 
         \node (event) [
@@ -89,30 +86,27 @@
             align=center,
             diamond,
             below=of newMessage,
-            minimum width=33mm,
-            minimum height=33mm,
+            %minimum width=33mm,
+            %minimum height=33mm,
         ] {close\\event\\happened\\?};
 
-        \node (close) [
-            proc,
-            left=of closeEvent,
+        \node (sourceState) [
+            stor,
+            %left=of network,
+            right=of openEvent,
             align=center,
-        ] {Close\\the socket};
-
-        \node (newBinary) [
-            dec,
-            diamond,
-            right=of newMessage,
-            align=center,
-        ] {New\\binary blob\\received?};
+            xshift=-1.0mm,
+        ] {Source State};
 
         \node (normal) [
             dec,
             align=center,
             diamond,
-            above=of newBinary,
-            minimum width=33mm,
-            minimum height=33mm,
+            %above=of newBinary,
+            %minimum width=33mm,
+            %minimum height=33mm,
+            %below=of sourceState,
+            right=of newMessage,
         ] {Operating in\\normal mode?};
 
         \node (requestNew) [
@@ -120,6 +114,20 @@
             right=of normal,
             align=center,
         ] {Request a\\new frame};
+
+        \node (newBinary) [
+            dec,
+            diamond,
+            below=of normal,
+            align=center,
+        ] {New\\binary blob\\received?};
+
+        \node (close) [
+            proc,
+            %right=of closeEvent,
+            left=of closeEvent,
+            align=center,
+        ] {Close\\the socket};
 
         \node (logText) [
             proc,
@@ -159,31 +167,27 @@
 
         \node (network) [
             circ,
-            left=of scopeState,
+            %left=of scopeState,
+            above=of sourceState,
             align=center,
+            %xshift=-5mm,
         ] {Network};
-
-        \node (sourceState) [
-            stor,
-            left=2cm of network,
-            align=center,
-        ] {Source State};
 
         \node (prefPane) [
             circ,
-            right=of traceState,
+            below=of traceState,
             align=center,
         ] {PrefPane};
 
         \node (userInput) [
             sign,
-            above=of prefPane,
+            above=of scopeState,
             align=center,
         ] {User Input};
 
         \node (translateInput) [
             proc,
-            above=5cm of userInput,
+            left=of userInput,
             align=center,
         ] {translate};
         
@@ -191,7 +195,7 @@
 
     \begin{scope}[
             rounded corners,
-            every path/.append style={draw=q1,},
+            %every path/.append style={draw=q1,},
             >=latex',
     ]
         \draw[-latex] (eventLoop) -- (event);
@@ -200,19 +204,22 @@
         \draw[-latex] (openEvent) -- node[midway,anchor=west] {no} (newMessage);
         \draw[-latex] (newMessage) -- node[midway,anchor=west] {no} (closeEvent);
         \draw[-latex] (closeEvent) -- node[midway,anchor=south] {yes} (close);
-        \draw[-latex] (closeEvent) edge[bend left] node[midway,anchor=east] {no} (eventLoop);
+        \draw[-latex] (closeEvent.south) 
+            -- ($(closeEvent.south) + (0,-7mm)$)
+            -| node[midway,anchor=east] {no} ($(eventLoop.west) + (-5mm,0)$)
+            -- (eventLoop.west);
 
         \draw[-latex] (scopeDraw) edge[loop left] (scopeDraw);
         \draw[-latex] (scopeDraw) -- (traceDraw);
 
-        \draw[-latex] (newMessage) -- node[midway,anchor=south] {yes} (newBinary);
+        \draw[-latex] (newMessage) -- node[midway,anchor=south west] {yes} (newBinary);
         \draw[-latex] (newBinary) -- node[midway,anchor=west] {no} (logText);
 
         \draw[-latex] (newBinary) -- node[midway,anchor=south] {yes} (traceCalc);
         \draw[-latex] (newBinary) -- node[midway,anchor=west] {yes} (normal);
         \draw[-latex] (normal) -- node[midway,anchor=south] {yes} (requestNew);
 
-        \draw[-latex] (requestNew) edge[bend right] node[midway,anchor=south] {yes} (network);
+        \draw[-latex] (requestNew.north) |- node[midway,anchor=south] {yes} (network.east);
         
         \draw[-latex] (traceState) -- (traceCalc);
         \draw[-latex] (traceCalc) -- (traceState);
@@ -223,19 +230,21 @@
         \draw[-latex] (traceState) -- (prefPane);
         \draw[-latex] (prefPane) -- (traceState);
 
-        \draw[-latex] (userInput) -- (prefPane);
+        \draw[-latex] (userInput) -| ($(prefPane.east) + (5mm,0)$) -- (prefPane.east);
 
-        \draw[-latex] (translateInput) edge[bend right] (scopeState);
-        \draw[-latex] (translateInput) edge[bend right] (sourceState);
+        \draw[-latex] ($(translateInput.south) + (+1.5mm,0)$) |- (scopeState);
+        \draw[-latex] ($(translateInput.south) + (-1.5mm,0)$) |- (sourceState);
         \draw[-latex] (userInput) -- (translateInput);
 
         \draw[-latex] (scopeState) -- (scopeDraw);
         \draw[-latex] (scopeDraw) -- (scopeState);
 
-        \draw[-latex] (network) edge[bend right] (event);
+        \draw[-latex] ($(network.west) + (0,-1.40mm)$) -- (event);
 
-        \draw[-latex] (sourceState) -- (normal);
+        \draw[-latex] ($(sourceState.south) + (1.5mm,0)$) -- (normal);
         \draw[-latex] (sourceState) -- (network);
+
+        \draw[-latex] (close) |- ($(openEvent.south) + (0,-1.0mm)$) -| ($(sourceState.south) + (-1.5mm,0)$);
 
     \end{scope}
 
