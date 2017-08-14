@@ -1,2 +1,22 @@
 \chapter{FPGA}
 \label{ch:fpga}
+
+In this chapter the structure and functionality of the FPGA firmware, the bitstream, are explained.
+The FPGA part of the project contains the ADC control logic, a core that writes data to RAM and triggers on events such as a rising edge and most importantly the filter chains that connect the two.
+
+The logical structure of the FPGA code can be seen in Figure~\ref{fig:fpga:structure}.
+
+\begin{figure}
+    \caption{The structure of the FPGA code.}
+    \label{fig:fpga:structure}
+\end{figure}
+
+\subsection{The ADC core}
+\label{subsec:fpga:adc}
+
+The ADC core is a simple piece of logic that interfaces the pins of the FPGA that are connected to those of the STEMlab ADC. It reads the 14 bit unsigned values and converts them into 16 bit signed by adding an offset of $2^{13}$ and doing a 2 bit sign extension.
+It then provides the data over the AXI Stream bus interface which is also used by all the filters.
+This core is used from the git repository provided by Pavel Demin\cite{TODO:link}. It is a very simple piece of code and for more information is provided by the code itself.
+
+\subsection{The logger core}
+\label{subsec:fpga:logger}
