@@ -7,16 +7,62 @@ The FPGA part of the project contains the ADC control logic, a core that writes 
 The logical structure of the FPGA code can be seen in Figure~\ref{fig:fpga:structure}.
 
 \begin{figure}
+    \centering
+    \input{images/fpga/system-overview.tikz}
     \caption{The structure of the FPGA code.}
     \label{fig:fpga:structure}
 \end{figure}
 
-\subsection{The ADC core}
-\label{subsec:fpga:adc}
+The bitstream is compiled using Vivado, Xilinx's own IDE, a tool that can do everything around Xilinx FPGAs. It does the crucial parts right and can be interfaced using TCL. This is very convenient, as a project can be replicated indempotently\footnote{Idempotence [...] is the property of certain operations in mathematics and computer science, that can be applied multiple times without changing the result beyond the initial application.\cite{TODO:https://en.wikipedia.org/wiki/Idempotence}"} whenever a rebuild is needed.
+Whilst Vivado offers a GUI to build block designs it is sometimes wanky and oftentimes the interface does not recognize changes in externally referenced IP repositories resulting in a lot of grief. Thus we chose to use the TCL API to write scripts that create a new project and apply and connect all necessary blocks. This avoids a lot of errors as a freak of Vivado wont temper with the project. It also enables us to use versioning for the project as Vivado projects create a lot of files which oftentimes clash in very simple versioning operations.
+TCL also allows us to create subblocks, having some blocks grouped together and inserted multiple times without effort, a feature Vivado apparently does not offer.
+More on the TCL API and TCL itself can be found in \cite{TODO:vivado tcl},~\cite{TODO: vivado interface} and \cite{TODO:tcl}.
+As a last and very important thing the TCL API allows us to create the entire project and block design, do the synthesis and implementation, build a bitstream, the board support package and the first stage bootloader all in one go and pack them into an image from a single Makefile without doing any manual tasks.
+
+\section{The ADC core}
+\label{sec:fpga:adc}
 
 The ADC core is a simple piece of logic that interfaces the pins of the FPGA that are connected to those of the STEMlab ADC. It reads the 14 bit unsigned values and converts them into 16 bit signed by adding an offset of $2^{13}$ and doing a 2 bit sign extension.
 It then provides the data over the AXI Stream bus interface which is also used by all the filters.
-This core is used from the git repository provided by Pavel Demin\cite{TODO:link}. It is a very simple piece of code and for more information is provided by the code itself.
+This core is used from the git repository provided by Pavel Demin\cite{TODO:link}. More on Pavel Demin's repository can be read in Section~\ref{sec:concept:fpga_components}.
 
-\subsection{The logger core}
-\label{subsec:fpga:logger}
+\section{The logger core}
+\label{sec:fpga:logger}
+
+The logger core (logger in further text) is a piece of VHDL code that stores samples it gets from a source in a ringbuffer in RAM. It is packaged as a Vivado IP core an can be seemlessly integrated into the project.
+The logger originated from an earlier project \cite{TODO:}. Not only does it log data to RAM, it can also be programmed with various triggers. It reads instructions from a BRAM on the FPGA and iterates over them. Having reached the last one it issues an IRQ signal, signalizing the end of the transcription.
+
+The logger core originally featured 8 14bit channels that can be logged simultaneously with each two channels requiring a clock cycles to store a sample as the AXI4-Lite bus only features 32bit samples the lowest configuration.
+Since 14bit is a rather suboptimal number for bytetransfers the samples were zero padded and concatenated to a 32 bit sample.
+But the logger core only triggered on the 14bit value.
+
+As this project has filter chains that aim to win two bits at least by decimating the samples, this would not have been a good fit.
+As such, the logger trigger instructions have been adjusted to allow 16 bit values.
+This means we have one clock cycle more delay, as the adders and comperators did not match the timing requirement with two carries more, which does not matter as one clock cycle is only 8ns and not even recognizable for the lower frequency signals this project aims to optimize for.
+
+The logger core comes with a kernel module that provides a convenient interface from the ARM core. Such the logger does not have to be programmed manually. How a trigger can be programmed and the logger status can be polled is described in the dev guide in Section~\ref{TODO:}.
+
+\section{The filter chains}
+\label{sec:fpga:chains}
+
+The filter chains are the most curical part of the project and also the most tricky one as simple mistakes can cost several decibels of SNR and make the signal leaving the filter acutally worse than it came into the filter.
+The logical structure of the chains can be seen in Figure~\ref{fig:fdesign:chain_concept} and are explained in it's containing Section~\ref{sec:fdesign:filter_specifications}.
+Vivado features CIC and FIR compilers natively wich utilize the DSP slices to a maximum extent and make it very easy (at least in theory) to implement a Matlab-designed filter in hardware. Those IPs are described very well in the official documentation~\cite{TODO:}.
+The FIR filter compilers are configured using a set of coefficients in double format. The compiler quantizes the coefficients with maximum precision using a 16 bit fixed point number (this can be changed from the default but should be left to the compiler for best results). It does so by determining the index of the MSB required to represent the biggest coefficient in the set using 16 bits downwards.
+An example take the biggest coefficient as $c_{max} = 0.23$. The bit at index -2\footnote{The bit at index -n is the $2^{-n}$ valued bit.} becomes the sign as it's value (0.25) is not needed to display $c_{max}$. Thus the number is said to have 16 bits and 17 fractional bits. Which does not make any sense at first. It just means that the LSB is the one at index -17 and it has 16 bits meaning the sign is at the bit index -2.
+
+The compiler then also takes the specified input bit configuration and determines the required output configuration to guarantee no overflows and get maximum performance.
+What is important here is that the output bit with is the same that is needed to guarantee no overflows inside the filter. This means that the user has to be well aware of the maximum gain of the designed filter and determine on their own which bits are important at the output.
+For this application only 16 bit values are stored. But the filters generate way more bits. This means that many of them are cut off at the output.
+To make sure that no important bits are truncated, the chosen input format for the filters is 17.7 resulting in 24 bits. The MSB should always remain just a sign extend of the sign actually residing at bit 15. The 7 fractional bits will be cut off at the end of the filter chains but are still important for more precision so less rounding or truncation errors are introduced.
+As values can use up way more than 24 bits inside the filter due to bit growth, it has to be ensured that no overflows happen, resulting in greater bitwidths at the output of the filter.
+It is important that the location of the decimal point is always tracked and remains at it's right place.
+Figure~\ref{fig:fpga:bitflow} depics the flow through an example chain but represents the general case in out blockdesign.
+
+\begin{figure}
+    \centering
+    \input{images/fpga/bitflow.tikz}
+    \caption{The flow of the bits in a filter chain. The bits are shifted through horizontally. Every bit that does not fit in anymore will be cut off, starting with those farther away from the sign. At the sign extend the bit gets replicated 4 times and handed through to the next stage. The ZERO stage simply holds 7 '0' bits. Inside the Filter the bits can grow so those are not shifted and cut off but rather resized towards the output.}
+    \label{fig:fpga:bitflow}
+\end{figure}
+
