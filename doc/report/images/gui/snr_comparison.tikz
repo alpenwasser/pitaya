@@ -1,3 +1,4 @@
+\tikzsetnextfilename{gui-snr-comparison}
 \newcommand*\freqzFileSNRA{images/gui/snrComparison1.csv}
 \pgfplotstableread[col sep=comma]{\freqzFileSNRA}\freqzTableSNRA
 \newcommand*\freqzFileSNRB{images/gui/snrComparison2sliced.csv}
@@ -26,10 +27,11 @@
 \pgfplotstableread[col sep=comma]{\freqzFileSNRM}\freqzTableSNRM
 
 \begin{tikzpicture}[
-        spy using outlines={magnification=3}
-    ]
+    trim axis left,
+    trim axis right,
+]
      \pgfplotsset{every axis/.style={
-            height=50mm,
+            height=45mm,
             width=\textwidth,
             grid=none,
             % y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
@@ -38,47 +40,49 @@
             ylabel=Power,
             x unit=\si{\Hz},
             y unit=\si{\dB},
+            ytick={-80,-40,0,40},
         },
         every axis legend/.append style={
-            at={(1,-0.15)},
-            anchor=north east,
+            %at={(1,-0.15)},
+            %anchor=north east,
             cells={anchor=west},
         },
     }
     \begin{axis}[
-            title={The SNR calculation methods},
+            title={Static SNR Calculation},
             at = {(0,0)},
             xmin=0,
             xmax=25e3,
             %ymin=-120,
             %ymax=5,
         ]
-        \draw[black] (rel axis cs:0.03953147877013177,1) -- (rel axis cs:0.03953147877013177,0);
-        \draw[black] (rel axis cs:0.04050756466569058,1) -- (rel axis cs:0.04050756466569058,0);
-        \addplot[q1,-] table[x=f, y=P] \freqzTableSNRA;
+        \addplot[thick,q1,-,smooth] table[x=f, y=P] \freqzTableSNRA;
+        \draw[q5] (rel axis cs:0.03953147877013177,1) -- (rel axis cs:0.03953147877013177,0);
+        \draw[q5] (rel axis cs:0.04050756466569058,1) -- (rel axis cs:0.04050756466569058,0);
     \end{axis}
 
     \begin{axis}[
-            title={Comparison of the iterative and static SNR calculation methods},
-            at = {(0,-60mm)},
+            title={Iterative SNR Calculation},
+            at = {(0,-65mm)},
             xmin=0,
             xmax=25e3,
             %ymin=-120,
             %ymax=5,
         ]
-        \addplot[q1,-] table[x=f, y=P] \freqzTableSNRB;
-        \addplot[q5,-] table[x=f, y=P] \freqzTableSNRC;
-        \addplot[q3,-] table[x=f, y=P] \freqzTableSNRD;
-        \addplot[q3,-] table[x=f, y=P] \freqzTableSNRE;
-        \addplot[q3,-] table[x=f, y=P] \freqzTableSNRF;
-        \addplot[q3,-] table[x=f, y=P] \freqzTableSNRG;
-        \addplot[q3,-] table[x=f, y=P] \freqzTableSNRH;
-        \addplot[q3,-] table[x=f, y=P] \freqzTableSNRH;
-        \addplot[q3,-] table[x=f, y=P] \freqzTableSNRI;
-        \addplot[q3,-] table[x=f, y=P] \freqzTableSNRJ;
-        \addplot[q3,-] table[x=f, y=P] \freqzTableSNRK;
-        \addplot[q3,-] table[x=f, y=P] \freqzTableSNRL;
-        \addplot[q3,-] table[x=f, y=P] \freqzTableSNRM;
+        \addplot[semithick,q1,-,smooth] table[x=f, y=P] \freqzTableSNRB;
+        \addplot[line cap=round,thick,q5,-,smooth] table[x=f, y=P] \freqzTableSNRC;
+        \addplot[line cap=round,thick,q6,-,smooth] table[x=f, y=P] \freqzTableSNRD;
+        \addplot[line cap=round,thick,q6,-,smooth] table[x=f, y=P] \freqzTableSNRE;
+        \addplot[line cap=round,thick,q6,-,smooth] table[x=f, y=P] \freqzTableSNRF;
+        \addplot[line cap=round,thick,q6,-,smooth] table[x=f, y=P] \freqzTableSNRG;
+        \addplot[line cap=round,thick,q6,-,smooth] table[x=f, y=P] \freqzTableSNRH;
+        \addplot[line cap=round,thick,q6,-,smooth] table[x=f, y=P] \freqzTableSNRH;
+        \addplot[line cap=round,thick,q6,-,smooth] table[x=f, y=P] \freqzTableSNRI;
+        \addplot[line cap=round,thick,q6,-,smooth] table[x=f, y=P] \freqzTableSNRJ;
+        \addplot[line cap=round,thick,q6,-,smooth] table[x=f, y=P] \freqzTableSNRK;
+        \addplot[line cap=round,thick,q6,-,smooth] table[x=f, y=P] \freqzTableSNRL;
+        \addplot[line cap=round,thick,q6,-,smooth] table[x=f, y=P] \freqzTableSNRM;
+        \legend{Noise,Signal,Spurious Harmonics};
     \end{axis}
     
 \end{tikzpicture}

@@ -319,184 +319,68 @@ SNR. The structure of the application allows for easy extension with new trace
 types with  arbitrary math functions  (e.g. differential pair  subtraction for
 noise cancelling).
 
+\paragraph{One instance  of a \code{PrefPane}}  is created for each  trace.  A
+\code{PrefPane}  component  is  a  mithril  component  that  creates  a  vnode
+that  exposes  all the  necessary  controls  for  its corresponding  trace  in
+the  GUI.   It   is  also  responsible  for  displaying   processed  data  for
+a  trace   such  as  the  SNR   for  an  \code{FFTrace}.   There   is  also  a
+general  \code{PrefPane}  that  exposes  common  controls  such  as  switching
+modes,  the  trigger   trace  or  the  active   trace.   The  \code{PrefPanes}
+are   built   with  \code{mithril.js}. Appendix~\ref{sec:app:gui:mithril}   on
+page~\pageref{sec:app:gui:mithril}  provides   some  general   information  on
+\code{mithril.js} and example code relevant to our application.
+
 % ==============================================================================
 %
 %                              G R A P H I C S
 %
 % ==============================================================================
 
-\subsection{Graphisc} % <<< -------------------------------------------------- %
+\subsection{Graphics} % <<< -------------------------------------------------- %
 \label{subsec:gui:graphics}
 % ---------------------------------------------------------------------------- %
 
-The graphics portion of the scope application is the most important part for a
-nice to use  interface. Since the scope application should plot  data fast and
-conveniently  as  well  as  display  some  numbers  and  provide  controls  to
-manipulate the view, it is important to  have a good library, that enables the
-coder to do all  those things. It is absolutely key to  render the graphics on
-the  GPU. Since the  application should  be  cross platform  and open  source,
-libraries using OpenGL  is a good choice. Since JavaScript  exposes WebGL this
-is a perfect match.
+Having  a robust graphics  layer  is paramount  to  providing a  user-friendly
+interface. It  must process  data  quickly for  smooth visualization,  display
+signal  metrics,  and  offer  sensible  controls  for  the  user  to  interact
+with. Taking  advantage of  a GPU  in order  to speed  up data  processing and
+rendering is highly desirable. Due to  the open-source nature of this project,
+using a  technology based on OpenGL  makes sense; JavaScript offers  WebGL for
+this purpose.
 
-With the choice of JavaScript \& HTML  there comes a great wealth of libraries
-that enable the user to easily write GUI applications. Prototyping is fast and
-with CSS and a lot of different frameworks the GUI is also nice-looking.
+With JavaScript and  HTML there come a large variety  of libraries that enable
+the easy creation of graphical  applications, and CSS offers great flexibility
+for  styling the  resulting structure.  \code{mithril.js} has  been chosen  to
+build the controls of the scope. It  offers an exceptionally low footprint and
+high speed  when recalculating  the DOM. Thus,  the user  need not  download a
+heavy library into  their browser's cache, and the  interface updates smoothly
+and without lag.
 
-A  few frameworks  were evaluated  to build  the controls  of the  scope, with
-mithril.js finally  being chosen for it's  simplicity and flexibility. Mithril
-is a framework with an exceptionally low footprint and high DOM recalculation.
-Those two facts are key to a good  WebUI, since the User does not want to load
-lots of data and also does not  want to experience any lag when refreshing the
-UI.
-More on mithril.js in section \ref{subsec:gui:mithril}.
-
-To plot the  data some graphing libs could have  been used. Those would namely
-be plotly.js or chart.js. Whilst they bring in a lot of built in functionality
-like logarithmic  plots or  automatic axis  labeling, they  also have  a quite
-heavy overhead.
-Practical experience and tests have shown that  both of them are not meant and
-performant enough to plot high amounts of data in real time.
-Thus it was decided to use WebGL draw calls to draw onto a HTML canvas. A HTML
-canvas is  an environment that  is exposed directly from  the GPU to  the user
-such that they can use GPU rendering inside the browser.
-More on WebGL and it's functioning in the next Section~\ref{subsec:gui:webgl}
+For   data  plotting,   existing   libraries  such   as  \code{plotly.js}   or
+\code{chart.js}  could  be   used. While  they  provide  a   lot  of  built-in
+functionality like  logarithmic plots  or automated  axis labeling,  they also
+carry significant  overhead and  lack the  performance required  for real-time
+data plotting  at high data  rates. Therefore, our application  draws directly
+onto an HTML canvas via WebGL draw calls.  Some more general information about
+WebGL  and  its  usage  is  provided  in  Appendix~\ref{sec:app:gui:webgl}  on
+pages~\pageref{sec:app:gui:webgl}f.
+%>>>
 
 % ==============================================================================
 %
-%                                  W E B G L
+%                      P O W E R   C A L C U L A T I O N
 %
 % ==============================================================================
+\subsection{Power Calculation} % <<< ----------------------------------------- %
+\label{subsec:gui:power_calculation}
+% ---------------------------------------------------------------------------- %
 
-\subsubsection{WebGL}
-\label{subsec:gui:webgl}
-
-The application uses the canvas DOM  element which provides a direct interface
-to WebGL. The user can render vertices to the canvas and even apply shaders or
-in the case of  this application simple 2D geometry calls  suffice since it is
-essentially only necessary to draw lines.
-Via  the canvas  one  can retreive  a  2D Rendering  Context  on which  simple
-geometry can be drawn.
-In JavaScript this  can be done using the code  in \ref{lst:js2dcontext} which
-shows how a single red line can be drawn on the canvas.
-
-\begin{tcolorbox}[
-        title={
-            \refstepcounter{listing}
-            Listing \thelisting: Getting a 2D Rendering Context from a Canvas and Drawing on it in JavaScript
-            \label{lst:js2dcontext}
-            \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Drawing on Canvas in JavaScript}
-        }
-    ]
-    \inputminted[
-        linenos,
-        numbersep=4pt,
-        style=solarizedlight,
-    ]{javascript}{./code/2dcontext.js}
-\end{tcolorbox}
-
-There is also  the possibility to draw rectangles, circles  and much more. All
-of  those  elements  can  be  styled easily  via  properties  of  the  context
-environment. All  the  functionality  is  documented on  the  mozilla  network
-\cite{moz:2dcontext}.
-
-Now something can be drawn on a  canvas once. If this should be done to create
-an actually moving  image, those draws to  the canvas have to  happen over and
-over again. There is  various possibilities to do that in  JavaScript but only
-one  is actualy  performant and  recommended. Instead of  just drawing  to the
-canvas over  and over again, it  would be ideal to  only do that before  a new
-frame is  pulled from  the framebuffer by  the display. JavaScript  provides a
-interface  to  register a  callback  that  is called  before  a  new frame  is
-released. This callback will be called with  the same frequency as the display
-referesh rate, which nowadays usually is \SI{60}{\hertz}.
-To make  sure that callback  will always be executed  it has to  be registered
-again after  a callback was issued. The  sample \ref{lst:gui:glcallback} shows
-how this is done.
-
-\begin{tcolorbox}[
-        title={
-            \refstepcounter{listing}
-            Listing \thelisting: Usage of the requestAnimationFrame callback in JavaScript
-            \label{lst:gui:glcallback}
-            \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Usage of \code{requestAnimationFrame Callback}}
-        }
-    ]
-    \inputminted[
-        linenos,
-        numbersep=4pt,
-        style=solarizedlight,
-    ]{javascript}{./code/glcallback.js}
-\end{tcolorbox}
-
-This callback  will not affect the  rest of the DOM. Like  that the JavaScript
-runtime will  handle the redraws of  the dom performantly whilst  the callback
-will render a fluent graph of the data onto just one of the DOM elements.
-
-\subsubsection{PrefPanes}
-
-For each trace an instance of a PrefPane component corresponding to a trace is
-created. A PrefPane component is a mithril component that creates a vnode that
-exposes all the necessary controls for it's corresponding trace in the GUI.
-It is also responsible for displaying calculated  data for a trace such as the
-SNR for a FFTrace.
-There  is also  a  general  PrefPane that  exposes  general  controls such  as
-switching modes, the trigger trace or the active trace.
-The  PrefPanes are  built  with mithril.js  which is  introduced  in the  next
-section.
-
-\subsubsection{mithril.js}
-\label{subsec:gui:mithril}
-
-The official mithril webpage describes mithril.js the following way: ``Mithril
-is  a  modern  client-side  Javascript  framework  for  building  Single  Page
-Applications. It's  small (<  8kb gzip),  fast  and provides  routing and  XHR
-utilities out  of the box.\cite{mithril:home}''  Mithril, like a lot  of other
-frameworks such as React, Angular.js or  Vue.js uses a virtual DOM. This means
-that it does not modify the DOM the browser outlines but rather maintains it's
-own DOM. When a new render call is  issued, the virtual DOM calculates all the
-deltas that stem from new content and  applies them to the real DOM. Like this
-mithril.js performantly calculates  the DOM based on  a descriptive model. The
-developer does not have to manually modify an object's state but rather has to
-describe it.
-
-A redraw generally happens when an event is triggered by any input element but
-can also be issued manually.
-A virtual DOM  consists of many vnodes and  can be mounted on any  node of the
-browser's DOM as example \ref{lst:gui:mithrilmount} shows.
-
-\begin{tcolorbox}[
-        title={
-            \refstepcounter{listing}
-            Listing \thelisting: Basic creation and usage of mithril components in JavaScript
-            \label{lst:gui:mithrilmount}
-            \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Basic Usage of \code{mithril} Components}
-        }
-    ]
-    \inputminted[
-        linenos,
-        numbersep=4pt,
-        style=solarizedlight,
-    ]{javascript}{./code/mithrilmount.js}
-\end{tcolorbox}
-
-A component can be mounted on any DOM  node and becomes a vnode in the virtual
-DOM. The developer can create new Components by simply creating an object that
-holds at least a \textit{view()} function that instantiates new vnodes.
-The  new  Component   can  then  be  instantiated  via   the  \textit{m()}  or
-\textit{m.mount()} command.
-As this section should  only give a base overview on mithril  and is not meant
-to be  a manual,  further information  on mithrils features  and usage  can be
-obtained on it's webpage~\cite{mithril:home}.
-
-\subsection{Power Calculation}
-
-The scope application calculates the power in the spectrum.
-
-This is  done using the FFT  algorithm developped by Cooley  \& Tukey. The FFT
-code  that was  used  is provided  by  Kevin Kwok  \cite{kwok}. It  is a  very
-compact  and fast  version  written  in JavaScript  and  free of  charge. It's
-functionality has been  proven by matching it against Matlabs  own FFT as seen
-in Figure~\ref{fig:gui:fft_comparison}. There  is minor  numerical differences
-but that boils down to implementation choices and precision.
+Calculating  the spectral  power  of  a signal  is  accomplished  via the  FFT
+algorithm first presented by Cooley and Tukey in 1965~\cite{fft:cooley:tukey}.
+Kevin Kwok  has written a  compact and  fast implementation of  this algorithm
+in  JavaScript~\cite{kwok},  which  is  provided under  a  permissive  license
+\cite{kwok:license}  and  therefore  nicely  suits the  requirements  of  this
+project.
 
 \begin{figure}
     \centering
@@ -507,77 +391,111 @@ but that boils down to implementation choices and precision.
     \label{fig:gui:fft_comparison}
 \end{figure}
 
-For an input signal $x$ we obtain the spectrum with
-
+The following equations detail  the calculations. For an in-depth explanation,
+see~\cite{gui:hanspi}.   The two-sided  spectrum  of an  input  signal $x$  is
+obtained with
 \begin{equation}
-    Y[i] = \frac{1}{N}FFT\{x[i]w[i]\}
+    Y[i] = \frac{1}{N}FFT\{x[i]w[i]\}.
     \label{eq:gui:onesidedf}
 \end{equation}
-
-The one-sided power spectrum is not far away and we find it with
-
-\begin{equation}
-    P_{yy}[0] = \frac{Y[0]\cdot Y[0]^*}{NG} and P_{yy}[i] = 2\cdot\frac{Y[i]\cdot Y[i]^*}{NG} for 0 < i <= N / 2
+From that, the one-sided power spectrum can be calculated via
+\begin{align}
+    P_{yy}[0] &= \frac{Y[0]\cdot Y[0]^*}{NG} \nonumber\\
+    P_{yy}[i] &= 2\cdot\frac{Y[i]\cdot Y[i]^*}{NG} \quad \text{for} \quad 0 < i \leq N / 2.
     \label{eq:gui:onesidedp}
-\end{equation}
-
-The  power  between  two  frequency  can be  found  by  integrationg  all  the
-frequencies or in this case summing all the bins
-
+\end{align}
+Where $NG$ is the noise gain, and depends on the window being used. Values for
+common  cases are  listed  in  Table~\ref{tab:gui:corrfactors}.  Finally,  the
+power of a spectral region between two frequencies can be found by integrating
+over that range of frequencies, or in  the discrete case like here, by summing
+all the bins:
 \begin{equation}
     P_{1,2} = \int_{f1}^{f2} P'_{yy}(f)df \approx \sum_{i_1}^{i_2}P_{yy}[i]
     \label{eq:gui:power}
 \end{equation}
 
-The noise gain (NG) can be extracted from the Table~\ref{tbl:gui:corrfactors}.
-
 \begin{table}
     \centering
+    \caption[Window Correction Factors]{%
+        Correction factors  for the different  window types used in  the scope
+        application as seen in \cite{gui:hanspi}.%
+    }
+    \label{tab:gui:corrfactors}
     \begin{tabular}{lSS}
-    \toprule
-    Window & {CG} & {NG}\\
-    \midrule
-    Rectangular & 1 & 1\\
-    Hamming & 0.54 & 0.3974\\
-    Hanning & 0.5 & 0.375\\
-    Blackman-Harris & 0.3587 & 0.258\\
-    Flat Top & 0.2156 & 0.1752\\
-    \bottomrule
+        \toprule
+        Window          & {CG}   & {NG}\\
+        \midrule
+        Rectangular     & 1      & 1\\
+        Hamming         & 0.54   & 0.3974\\
+        Hanning         & 0.5    & 0.375\\
+        Blackman-Harris & 0.3587 & 0.258\\
+        Flat Top        & 0.2156 & 0.1752\\
+        \bottomrule
     \end{tabular}
-\caption{Correction factors for the different window types used in the scope application as seen in \cite{gui:hanspi}.}
-\label{tbl:gui:corrfactors}
 \end{table}
 
-The exact reasoning behind the math can be read in \ref{gui:hanspi}.
+% >>>
 
-\subsection{SNR Autodetection}
+\subsection{SNR Autodetection} % <<< ----------------------------------------- %
+\label{subsec:gui:snr_autodetection}
+% ---------------------------------------------------------------------------- %
 
-The  SNR   Autodetection  can  be   done  in   a  static  approach   based  on
-Section~4.4.3~of~\cite{gui:meyer} and especially  Table~4.3. The basic idea is
-to find  the peak  in the  spectrum which  normally is  the signal  and regard
-it  and the  $\frac{n}{2}$  spectral  lines before  and  after  as the  actual
-signal. The number $n$ is determined using Table~4.3~in~\cite{gui:meyer}.
-The rest  of the spectrum is  regarded as noise  except for the DC  offset and
-it's next $\frac{n}{2}$ spectral lines.
-
-The SNR can be calculated with
-
+Calculating  the signa-to-noise  ratio requires  defining which  components of
+captured data  are signal, and which  parts are noise. The power  contained in
+each frequency  range can  then be computed  with Equation~\ref{eq:gui:power},
+and the SNR calculated as the following ratio:
 \begin{equation}
-    SNR = 10log_{10}(\frac{P_s}{P_n})
-    \label{eq:gui:power}
+    SNR = 10\log_{10}(\frac{P_s}{P_n})
+    \label{eq:gui:snr}
 \end{equation}
 
-During  tests only  an  average SNR  of  \textasciitilde\SI{33}{\dB} could  be
-measured in the given signal with  the Matlab built in function \textit{snr()}
-consistently finding an SNR of 78dB and more for the same signal.
-Accounting for  the harmonics  cancellation the Matlab  function has,  our SNR
-would still only be \textasciitilde\SI{43}{\dB} with 10 harmonics cancelled.
+Automatically determining which parts of  a spectrum constitute the signal and
+which parts are  noise is the purpose of SNR  autodetection. This requires the
+detection of the actual signal components as well as additional spectral lines
+introduced  in  the  FFT  process. The phenomen  of  these  spurious  spectral
+components is commonly known as \emph{spectral leakage}. Additionally, one may
+wish to remove any spurious harmonics originating from the signal source (e.g.
+a function generator which does not generate a flawless sine wave).
 
-A second approach to auto-determining the  SNR, is to iteratively increase the
-number of lines beneath the peak that  are still considered signal and do this
-until the SNR does not change drastically anymore.
-In  our  implementation  the  change   is  considered  irrelevant  when  below
-\SI{0.05}{\dB} which leads us to the following algorithm:
+Depending  on how  the  signal is  windowed for  the  FFT, different  spectral
+lines will occur with varying magnitudes. Table~\ref{tab:fft_window_params} in
+Appendix~\ref{sec:app:gui:fft_params} contains the primary characteristics for
+some commonly used  windows. The \emph{Number of Lines per  Bundle} entry from
+that table can be used for a static approach to SNR autodetection:
+\begin{itemize}\tightlist
+    \item
+        Find the peak in the spectrum.
+    \item
+        Presume   that  peak   and   $\frac{n}{2}$  spectral   lines  to   its
+        left   and    right   to   be    the   actual   signal,    where   $n$
+        corresponds  to  the  \emph{Number  of Lines  per  Bundle}  column  in
+        Table~\ref{tab:fft_window_params}.
+    \item
+        Regard the  rest of the spectrum,  except any potential DC  offset and
+        the next $\frac{n}{2}$ spectral lines above it, as noise.
+    \item
+        Integrate the  power over the  defined frequency ranges  and calculate
+        SNR according to Equation~\ref{eq:gui:snr}.
+\end{itemize}
+However, this  method does  not give optimal  results. An example  data stream
+similar  to  the  one   in  Figure~\ref{fig:gui:snr_comparison}  processed  by
+Matlab's \code{snr()} function yields about \SI{78}{\dB}. Calculating SNR with
+the static  method as outlined  above results  in only about  \SI{33}{\dB} for
+such a signal.  Even accounting  for Matlab's harmonics cancellation, a result
+no better than \SI{43}{\dB} is achieved (\num{10} harmonics cancelled out).
+
+Improving  this  SNR  detection  method   can  be  accomplished  by  using  an
+iterative  algorithm. The   number  of  lines   below  the  peak   lobe  which
+are  still   considered  signal   is  increased  until   the  SNR   no  longer
+drastically  changes. In  our implementation,  this  is  defined as  a  change
+no  greater  than   \SI{0.05}{\dB}. Algorithm~\ref{alg:gui:snr}  depicts  this
+process  systematically.   It can  be  repeated  for  any number  of  spurious
+harmonics  to  cancel   them  out  as  well. The  two   methods  are  compared
+in  Figure~\ref{fig:gui:snr_comparison}. The  example also  shows  highlighted
+harmonics for eliminiation in the SNR calculations. The result is in line with
+Matlab's.
+
+%TODO: congruence with reference, matlab?
 
 \begin{algorithm}
     \centering
@@ -598,25 +516,27 @@ In  our  implementation  the  change   is  considered  irrelevant  when  below
     \EndWhile
     \State $SNR\gets SNR_p$
     \end{algorithmic}
-    \caption{An algorithm to iteratively determine the SNR of a spectrum.}
+    \caption[Iterative SNR Algorithm]{Algorithm to iteratively determine the SNR of a spectrum}
     \label{alg:gui:snr}
 \end{algorithm}
-
-The algorithm in \ref{alg:gui:snr} can be repeated for any number of harmonics
-to cancel them out.
 
 \begin{figure}
     \centering
     \input{images/gui/snr_comparison.tikz}
     \caption[SNR comparison]{%
-        The iterative and static SNR detection compared.%
+        Comparison of methods to determine lobe width for SNR calculation. The
+        top plot shows  the static method. As can be seen,  only a very narrow
+        section of the peak lobe is taken  to be the actual signal, while most
+        of the surface beneath it is considered noise.\protect\newline
+        In the bottom plot, the iterative method method to determine the width
+        of  the  lobe  components  considered  to be  signal  has  been  used.
+        As  is easily  visible,  the resulting  lobe  region is  significantly
+        wider. Additionally, spurious  harmonics from  the signal  source have
+        been highlighted with the same process, allowing for their elimination
+        in the SNR calculations.%
     }
     \label{fig:gui:snr_comparison}
 \end{figure}
-
-\subsection{THD Calculation}
-
-TODO: how do we calculate THD
 
 % >>>
 % >>>
