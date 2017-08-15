@@ -1,0 +1,74 @@
+% ==============================================================================
+%
+%                           O S C I L L O S C O P E
+%
+% ==============================================================================
+\chapter{Oscilloscope} % <<< ------------------------------------------------- %
+\label{ch:app:gui}
+% ---------------------------------------------------------------------------- %
+
+% ==============================================================================
+%
+%                             W E B S O C K E T S
+%
+% ==============================================================================
+\section{WebSockets} % <<< --------------------------------------------------- %
+\label{sec:app:gui:websockets}
+% ---------------------------------------------------------------------------- %
+
+WebSockets' final RFC 6455\cite{rfc:6455} was released in December 2011 and is
+thus still quite young. It is meant to  compensate the lack of raw UDP and TCP
+sockets in  JavaScript which is due  to security threats that  are not further
+elaborated here.
+WebSockets is located  in the Application Layer of  the OSI model\footnote{For
+those not familiar with the OSI model Wikipedia~\ref{wiki:osi} provides a good
+overview.}.
+Instead  of directly  opening  a  raw WebSocket,  the  handshake  is done  via
+HTTP(S). This brings  the benefit of  communicating through the same  ports as
+the  browser  (80 or  443)  which  enables the  protocol  to  go through  most
+firewalls. Furthermore it greatly simplifies the  handshake for the user (here
+being the programmer).
+The client sends an upgrade request to the server which then opens a WebSocket
+connection.
+This allows for a very conventient way to use TCP Sockets without any entirely
+new standards.
+The section ``1.5  Design Philosophy'' in RFC  6455\cite{rfc:6455} explains it
+very well:
+
+``Basically it is intended  to be as close to just exposing  raw TCP to script
+as possible given the constraints of the Web.
+
+The only  exception is that WebSockets  adds framing to make  it packet rather
+than stream based and to differentiate between binary and text data.
+This  differentiation is  very useful  for this  project. Instructions to  the
+server are issued  via the text channel  whilst data is sent  back through the
+binary  channel, allowing  for very  convenient interfacing  with close  to no
+effort.''
+
+So in  short: WebSockets are close-to-raw  TCP sockets whose handle  is shared
+through HTTP(S).
+JavaScript provides a  interface that makes it really easy  to shove data back
+and forth.
+As  nearly anything  in  JavaScript  this is  done  using callbacks. There  is
+callbacks that  handle connections, messages  and errors. The code  snippet in
+\ref{lst:gui:jsws}  gives  some  insight  how  WebSockets  in  JavaScript  are
+used. All the details can be read in the Mozilla documentation \cite{moz:ws}.
+
+\begin{tcolorbox}[
+        title={
+            \refstepcounter{listing}
+            Listing \thelisting: JavaScript ``Using WebSockets''
+            \label{lst:gui:jsws}
+            \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}}
+        }
+    ]
+    \inputminted[
+        linenos,
+        numbersep=4pt,
+        style=solarizedlight,
+    ]{javascript}{./code/websockets.js}
+\end{tcolorbox}
+%>>>
+
+%>>>
+%^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>

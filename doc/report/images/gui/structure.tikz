@@ -1,8 +1,12 @@
-\begin{tikzpicture}[show background grid]
-    \begin{class}{Oscilloscope}{0,0}
+\tikzsetnextfilename{gui-structure}
+\begin{tikzpicture}[%
+    %show background grid,
+    font=\small,
+]
+    \begin{class}[text width=4.5cm]{Oscilloscope}{0,0}
         \operation{draw(void)}
     \end{class}
-    \begin{class}{Source}{0,-2}
+    \begin{class}[text width=4.5cm]{Source}{0,-3}
         \operation{forceTrigger(void)}
         \operation{samplingRate(s: u32)}
         \operation{frameConfiguration(frameSize: u32, pre: u32, suf: u32)}
@@ -11,32 +15,42 @@
         \operation{normal(channel: u32)}
         \operation{auto(channel: u32, timeout: u32)}
     \end{class}
-    \begin{class}{WebSocketSource}{8,-3}
+    \begin{class}[text width=4.5cm]{WebSocketSource}{6,-4.15}
         \inherit{Source}
-
         \operation{sendJSON(string: String)}
         \operation{onOpen(void)}
         \operation{onMessage(e: Event)}
     \end{class}
-    \begin{class}{Trace}{0,-8}
+    \begin{class}[text width=4.5cm]{Trace}{0,-9}
         \operation{draw(canvas: Canvas)}
         \operation{calc(void)}
     \end{class}
-    \begin{class}{TimeTrace}{8,-6}
-        \inherit{Trace}
+    \begin{class}[text width=4.5cm]{TimeTrace}{6,-8.7}
+        %\inherit{Trace}
     \end{class}
-    \begin{class}{FFTrace}{8,-10}
-        \inherit{Trace}
+    \begin{class}[text width=4.5cm]{FFTrace}{6,-10.3}
+        %\inherit{Trace}
     \end{class}
-    \begin{class}{GeneralPrefPane}{16,0}
+    \begin{class}[text width=4.5cm]{GeneralPrefPane}{6,-0.3}
     \end{class}
-    \begin{class}{TimeTracePrefPane}{16,-6}
+    \begin{class}[text width=4.5cm]{TimeTracePrefPane}{6,-7.2}
     \end{class}
-    \begin{class}{FFTracePrefPane}{16,-10}
+    \begin{class}[text width=4.5cm]{FFTracePrefPane}{6,-11.8}
     \end{class}
-    \composition{Oscilloscope}{source}{1}{Source}
-    \composition{Source}{traces}{1..*}{Trace}
+    %\composition{Oscilloscope}{source}{1}{Source}
+    \composition{Oscilloscope}{}{}{Source}
+    \composition{Source}{}{}{Trace}
     \composition{Oscilloscope}{}{1}{GeneralPrefPane}
-    \composition{TimeTrace}{}{1}{TimeTracePrefPane}
-    \composition{FFTrace}{}{1}{FFTracePrefPane}
+    \composition{TimeTrace}{}{}{TimeTracePrefPane}
+    \composition{FFTrace}{}{}{FFTracePrefPane}
+
+    \node[text=black,anchor=west] at ($(Oscilloscope.south) - (0,2ex)$) {source};
+    \node[text=black,anchor=east] at ($(Source.north) + (0,1.5ex)$) {1};
+    \node[text=black,anchor=west] at ($(Source.south) - (0,2ex)$) {traces};
+    \node[text=black,anchor=east] at ($(Trace.north) + (0,1.5ex)$) {1..*};
+    \node[text=black,anchor=east] at ($(FFTracePrefPane.north) + (0,1.5ex)$) {1};
+    \node[text=black,anchor=east] at ($(TimeTracePrefPane.south) - (0,2ex)$) {1};
+
+    \draw [umlcd style inherit line] ($(Trace.east) + (0,1.5mm)$) -| (TimeTrace.south);
+    \draw [umlcd style inherit line] ($(Trace.east) - (0,1.5mm)$) -| (FFTrace.north);
 \end{tikzpicture}
