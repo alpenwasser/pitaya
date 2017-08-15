@@ -1,84 +1,116 @@
 % ==============================================================================
 %
-%                          R E Q U I R E M E N T S
+%                                 S E R V E R
 %
 % ==============================================================================
-
-\chapter{Server}
+\chapter{Server} % <<< ------------------------------------------------------- %
 \label{ch:server}
+% ---------------------------------------------------------------------------- %
 
-Once the FPGA has recorded data that data has to be transmitted over the network. Since implementing networking in hardware is not feasible in most cases this is done via the ARM Cortex A9 core that already has a PHY. To controll all the hardware of the SoC a Embedded Ubuntu Linux is running on the ARM core which can control all hardware units as known from normal Linuxes.
-An application is then needed that reads the necessary data from the RAM and sends it to the network. In this section the design choices and the internal structure of the server application are explained.
-
-\section{Requirements}
+Once the  FPGA has  recorded data, that  data has to  be transmitted  over the
+network. Since implementing  networking in  hardware is  not feasible  in most
+cases,  this  is  done  via  the  ARM  Cortex  A9  core  that  already  has  a
+PHY\footnote{
+    A chip implementing the physical layer of the OSI model%
+}.
+To  control all  the hardware  of  the SoC,  an embedded  Ubuntu GNU/Linux  is
+running on the  ARM core which can control all  hardware components, including
+the logger running on the FPGA.  An  application is then needed that reads the
+necessary data  from the  RAM and sends  it to the  network. This part  of the
+overall product is designated as  the \emph{server}. This section explains the
+design choices and internal structure of the server application.
+\section{Requirements} % <<< ------------------------------------------------- %
 \label{sec:server:requirements}
+% ---------------------------------------------------------------------------- %
 
-The functional requirements of the server application are:
-
-\begin{itemize}
-    \item Read the system status and transmit it over the network.
-    \item Receive commands over the network, translate them where needed and relay them to the FPGA IP.
-    \item Read data from the RAM and transmit it over the network.
+The basic functional requirements of the server application are:
+\begin{itemize}\tightlist
+    \item
+        Read the system status and transmit it over the network.
+    \item
+        Receive commands  over the  network, translate  them where  needed and
+        relay them to the FPGA IP.
+    \item
+        Read data from the RAM and transmit it over the network.
 \end{itemize}
 
-More requirements came in after choosing the client side model but are not part of the base requirements and will thus only be explained in the Section~\ref{sec:server:design_choices}.
-
+%>>>
 % ==============================================================================
 %
 %                         D E S I G N   C H O I C E S
 %
 % ==============================================================================
-
-\section{Design Choices}
+\section{Design Choices} % <<< ----------------------------------------------- %
 \label{sec:server:design_choices}
+% ---------------------------------------------------------------------------- %
 
-As the ZYNQ Logger comes with a kernel module that has to be interfaces via IOCTL calls it is recommended to write the application in C or C++. This is due to the nature of the Linux which still requires mostly C for interfacing. There is some IOCTL interfaces in Python and Rust for example but as those bear even more problems on ARM Linux as not all libraries and features are present.
+\paragraph{As  the ZYNQ  Logger} comes  with a  kernel module  that has  to be
+interfaced via \code{IOCTL} calls, it  is recommended to write the application
+in C or C++. This is due to the nature of Linux, which still requires mostly C
+for interfacing. There  are some \code{IOCTL}  interfaces in Python  and Rust,
+for example,  but those bring additional  problems on ARM Linux  since not all
+libraries and features are available.
 
-As the server application is rather on a high level in the complexity sense C++ would be a good choice as it eliminates quite some caveats C has. Furthermore all the C features can be used equally in C++.
+Since  the  server application  is  rather  complex,  C++  is a  good  choice,
+eliminating some of the caveats  which C has. Additionally, the entire feature
+set of  C can be used  in C++ as well,  so the choice carries  no penalties in
+terms of features.
 
-For this reason C++ was chosen as the environment to implement the server application.
+\paragraph{The  WebSockets  protocol}  is  mandatory, due  to  the  choice  of
+JavaScript on the client side.  This is  less of a design choice on the server
+side,  and  more of  an  inherited  requirement  from  the front-end  part  of
+the  project. For  this  purpose,  the  uWebSockets  (\emph{uWS})  library  is
+chosen.  It carries a very small footprint and offers good performance, though
+documentation is  somewhat lacking. Its performance  is high enough  to ensure
+that in any given scenario, the  server application will not be the bottleneck
+of the  overall data pipeline;  the network  connection will choke  before uWS
+reaches the limits of its capabilities.
 
-Because JavaScript was chosen for the client side, WebSockets became mandatory. This is not really a design choice but rather a inherited requirement. Before the final descision on JavaScript was made, existing WebSockets libraries were tested. With a uWebSockets~\cite{uws:github} a great, performant, but badly documented library was chosen. More on this in Section~\ref{subsec:server:uws}.
+uWS  is  based  on  epoll,  libuv  or  boost::asio  depending  on  the  user's
+choice. All  of  those are  asynchronous  (more  on  this  topic can  be  read
+in~\cite{uws:async}) libraries  which makes  networking very  conventient. uWS
+comes with  callbacks that  can be  registered for  each WebSocket  event (see
+Section~\ref{subsec:gui:websockets}). Furthermore the  user can hook  into the
+event loop and register other events such as a reocurring timeout (timer).
 
-As a data format for settings and stats, JSON is used. This is for the simple reason that JSON has by far the biggest usage of all the available formats, the specification is simple and JavaScript can parse it natively into a JavaScript object.
-Here again C++ is a better choice than C as it has a lot of high level libraries that can serialize and more importantly deserialize JSON objects.
+\paragraph{JSON} is used  as a data format for settings  and statistics. It is
+our format of  choice because it has by  far the largest user base  of all the
+available formats,  the specification  is simple and  JavaScript can  parse it
+natively into a JavaScript object. This also another point where the choice of
+C++ offers significant  benefits over C, since  it has a number  of high level
+(i.e.  easy-to-use)  libraries  that  can  serialize  and,  more  importantly,
+deserialize JSON objects.
 
+%>>>
 % ==============================================================================
 %
 %                         I M P L E M E N T A T I O N
 %
 % ==============================================================================
-
-\section{Implementation}
+\section{Implementation} % <<< ----------------------------------------------- %
 \label{sec:server:implementation}
+% ---------------------------------------------------------------------------- %
 
-% ==============================================================================
-%
-%                  A P P L I C A T I O N   S T R U C T U R E
-%
-% ==============================================================================
+While the server's  overall task is complex, its implementation  has been kept
+as simple  as possible. Indeed, the application  fits into a single  file (not
+counting the loaded libraries) of a  few hundred lines, and consists mainly of
+a single asynchronous event loop.
 
-\subsection{Application Structure}
-\label{subsec}
-
-The application is based on an asynchronous event loop. A struct holds the entire application state such that any event can access the entire data such as the socket handle, the current sample rate or the requested number of bytes.
-
-The event loop can be observed in Figure~\ref{fig:server:eventstructure}.
+The overall application state is stored  in a struct. This allows any event to
+access any information  it might need, such as the  socket handle, the current
+sampling rate,  or the requested number  of bytes.  Most of  the application's
+functionality  can  be  deduced  from  its  event  loop,  which  is  shown  in
+Figure~\ref{fig:server:eventstructure}.
 
 \begin{figure}
     \centering
     \input{images/server/eventloop.tikz}
-    \caption[Server event structure]{%
-        The servers event structure.%
+    \caption[Server Event Structure]{%
+        The server's event structure.%
     }
     \label{fig:server:eventstructure}
 \end{figure}
+%>>>
 
-\subsection{uWebSockets}
-\label{subsec:server:uws}
-
-To expose a WebSocket uWebSockets~\cite{uws:github} (uWS in further text) is used. It is a library with a tiny footprint that is very performant~\cite{uws:github}. Of course the server application will never reach the limits of uWS as the network will give up before but it is important that this is actually the case.
-
-uWS is based on epoll, libuv or boost::asio depending on the users choice. All of those are async (more on this topic can be read in~\cite{uws:async}) libraries which makes networking very conventient.
-
-uWS comes with callbacks that can be registered for each WebSocket event (see Section~\ref{subsec:gui:websockets}). Furthermore the user can hook into the event loop and register other events such as a reocurring timeout (timer).
+%>>>
+%^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>
