@@ -4,7 +4,8 @@ this.socket = new WebSocket('ws://localhost');
 // is interpreted as an ArrayBuffer
 // More on ArrayBuffers and Blobs in:
 // - https://developer.mozilla.org/en/docs/Web/API/Blob
-// - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer
+// - https://developer.mozilla.org/en-US/docs/Web/JavaScript/
+//           Reference/Global_Objects/ArrayBuffer
 this.socket.binaryType = 'arraybuffer';
 
 // Define all the callback handlers
