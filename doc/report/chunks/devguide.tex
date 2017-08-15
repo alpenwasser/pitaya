@@ -537,7 +537,45 @@ Hysteresis is configured for all triggers at once and makes sure there is no acc
 \chapter{Scope} % <<< -------------------------------------------------------- %
 \label{ch:devguide:scope}
 % ---------------------------------------------------------------------------- %
-what is where, yarn, \ldots
+
+\section{Build environment}
+
+To set up the scope project the build box is not needed, even tho the build box already has the necessary environment installed.
+But for development a local install is advised.
+
+To start off, install yarn and nodejs. Package managers for Unix systems already have packages, for Windows the official installers can be used. For the project nodejs 8.0 or higher is used.
+
+Once yarn is set up, the project dependencies can be installed using
+
+\begin{listing}
+    \begin{minted}[autogobble]{bash}
+        cd ~/repo/scope/
+        yarn install
+    \end{minted}
+\end{listing}
+
+The yarn project comes with two main build configuration. One for deployment and one for running a debugging webserver. Building is done with
+
+\begin{listing}
+    \begin{minted}[autogobble]{bash}
+        cd ~/repo/scope/
+        yarn build
+    \end{minted}
+\end{listing}
+
+This leaves all the builded files in \textit{~/repo/scope/build} and can be copied to any directory served by a webserver.
+
+Running the debugging webserver brings the benefit of autorebuild and autoreload in the browser when the build is complete. The webserver can be started using
+
+\begin{listing}
+    \begin{minted}[autogobble]{bash}
+        cd ~/repo/scope/
+        yarn watch
+    \end{minted}
+\end{listing}
+
+The webpage can now be reached on \textit{http://localhost:8080} and will be automatically reloaded yarn detecs a change and rebuilds the bundle.
+
 %>>>
 
 %^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>
