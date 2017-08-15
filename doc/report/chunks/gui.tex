@@ -1,3 +1,8 @@
+% ==============================================================================
+%
+%                          O S C I L L O S C O P E
+%
+% ==============================================================================
 \chapter{Oscilloscope} % <<< ------------------------------------------------- %
 \label{ch:graphical_front_end}
 % ---------------------------------------------------------------------------- %
@@ -16,7 +21,6 @@ implementation details, and presents the final product.
 %                          R E Q U I R E M E N T S
 %
 % ==============================================================================
-
 \section{Requirements} % <<< ------------------------------------------------- %
 \label{sec:gui:requirements}
 % ---------------------------------------------------------------------------- %
@@ -32,13 +36,11 @@ main requirements are:
     \item Calculate THD of the signal.
 \end{itemize}
 % >>>
-
 % ==============================================================================
 %
 %                         D E S I G N   C H O I C E S
 %
 % ==============================================================================
-
 \section{Design Choices} % <<< ----------------------------------------------- %
 \label{sec:gui:design_choices}
 % ---------------------------------------------------------------------------- %
@@ -54,7 +56,7 @@ in   table~\ref{tab:gui:language_choices}.  the   general  attributes   listed
 in  table~\ref{tab:gui:language_choices}  are   explained  in  the  subsequent
 paragraphs to enable the reader to  understand how they apply to our decision.
 Due to its  importance, there is an additional section  dedicated to the topic
-of networking (Section~\label{subsec:gui:networking}).
+of networking (Section~\ref{subsec:gui:networking}).
 
 \paragraph{Open  Standard:} Since this  is a  university project  meant, among
 other things, for educational purposes, it  is crucial to make all source code
@@ -149,13 +151,11 @@ is  rarely a  concern on  modern computers,  it is  not considered  a relevant
 factor for our decision.
 
 % >>>
-
 % ==============================================================================
 %
 %                          N E T W O R K I N G
 %
 % ==============================================================================
-
 \subsection{Networking} % <<< ------------------------------------------------ %
 \label{subsec:gui:networking}
 % ---------------------------------------------------------------------------- %
@@ -185,13 +185,11 @@ perfectly.    Some  additional   notes   on  WebSockets   can   be  found   in
 Appendix~\ref{sec:app:gui:websockets} on page~\ref{sec:app:gui:websockets}.
 
 %>>>
-
 % ==============================================================================
 %
 %                              P R O D U C T
 %
 % ==============================================================================
-
 \section{Product} % <<< ------------------------------------------------------ %
 \label{sec:gui:product}
 % ---------------------------------------------------------------------------- %
@@ -245,11 +243,13 @@ scope.
 
 
 The  entire   application  consists  of   a  single  state   tree. This  makes
-it  very   easy  to  import  and   export  settings  and  presents   a  better
-overview  of   the  application   state  than  scattering   state  information
-across   various   objects.   Listing~\ref{lst:gui:app_structure}   shows   an
-extract  of   the  tree   structure. Like  any  JavaScript   application,  the
-oscilloscope  runs   asynchronously. Its  eventloop  structure  is   shown  in
+it   very   easy   to   import    and   export   settings   and   presents   a
+better   overview   of   the   application   state   than   scattering   state
+information   across  various   objects.   Listing~\ref{lst:gui:app_structure}
+in              Appendix~\ref{sec:app:gui:state_tree_of_scope}              on
+page~\pageref{sec:app:gui:state_tree_of_scope}   shows  an   extract  of   the
+tree   structure. Like   any    JavaScript   application,   the   oscilloscope
+runs     asynchronously. Its    eventloop     structure     is    shown     in
 Figure~\ref{fig:gui:eventstructure}.
 
 \begin{figure}
@@ -260,23 +260,6 @@ Figure~\ref{fig:gui:eventstructure}.
     }
     \label{fig:gui:eventstructure}
 \end{figure}
-
-\begin{tcolorbox}[
-        title={
-            \refstepcounter{listing}
-            \textbf{Listing \thelisting:} The state tree of the scope application
-            \label{lst:gui:app_structure}
-            \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Scope State Tree}
-        },
-        breakable,
-        title after break={\textbf{Listing \thelisting (cont.):} The state tree of the scope application},
-    ]
-    \inputminted[
-        linenos,
-        numbersep=4pt,
-        style=solarizedlight,
-    ]{javascript}{./code/statetree.js}
-\end{tcolorbox}
 
 All of the values  that can be controlled through the GUI --  and many more --
 are  also controllable  directly through  the state  tree. Upon initialization
@@ -327,20 +310,24 @@ Once  the   \code{Source}  controller  receives   new  data,  it   starts  the
 \code{calc()} call for each  trace to trigger an update of  the trace with new
 data.
 
-\paragraph{The \code{Trace} prototype} is in charge of displaying the recorded
-and calculated  data in the  scope application.   The trace controller  can be
-managing an FFT or a normal time trace. This could be extended to general math
-traces, e.g. subtracting two differential pair traces for noise cancelling, in
-the future.  Each  derived trace prototype calculates some metrics  and a grid
-to quantize the signal.
+\paragraph{The \code{Trace} prototype} is in charge of drawing and calculating
+traces. It has  two derived  prototypes, \code{Timetrace}  and \code{FFTrace}.
+While the  \code{Timetrace} prototype just  returns untouched data  to display
+the  time domain  of a  signal, the  \code{FFTrace} prototype  calculates some
+signal metrics before displaying its  results, i.e. spectral power density and
+SNR. The structure of the application allows for easy extension with new trace
+types with  arbitrary math functions  (e.g. differential pair  subtraction for
+noise cancelling).
 
-Whilst  the  \code{Timetrace}  prototype  just  returns  untouched  data,  the
-\code{FFTrace} prototype calculates metrics. Namely those are:
-\begin{itemize}\tightlist
-    \item The spectral power density
-    \item The SNR
-    \item The THD TODO: !
-\end{itemize}
+% ==============================================================================
+%
+%                              G R A P H I C S
+%
+% ==============================================================================
+
+\subsection{Graphisc} % <<< -------------------------------------------------- %
+\label{subsec:gui:graphics}
+% ---------------------------------------------------------------------------- %
 
 The graphics portion of the scope application is the most important part for a
 nice to use  interface. Since the scope application should plot  data fast and
@@ -632,8 +619,5 @@ to cancel them out.
 TODO: how do we calculate THD
 
 % >>>
-
-
 % >>>
-
 %^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>

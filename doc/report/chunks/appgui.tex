@@ -69,6 +69,31 @@ used. All the details can be read in the Mozilla documentation \cite{moz:ws}.
     ]{javascript}{./code/websockets.js}
 \end{tcolorbox}
 %>>>
+% ==============================================================================
+%
+%                             S T A T E   T R E E
+%
+% ==============================================================================
+\section{State Tree of Oscilloscope} % <<< ----------------------------------- %
+\label{sec:app:gui:state_tree_of_scope}
+% ---------------------------------------------------------------------------- %
+\begin{tcolorbox}[
+        title={
+            \refstepcounter{listing}
+            \textbf{Listing \thelisting:} The state tree of the scope application
+            \label{lst:gui:app_structure}
+            \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Scope State Tree}
+        },
+        breakable,
+        title after break={\textbf{Listing \thelisting (cont.):} The state tree of the scope application},
+    ]
+    \inputminted[
+        linenos,
+        numbersep=4pt,
+        style=solarizedlight,
+    ]{javascript}{./code/statetree.js}
+\end{tcolorbox}
+%>>>
 
 %>>>
 %^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>
