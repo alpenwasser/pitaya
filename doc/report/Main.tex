@@ -27,6 +27,7 @@
 \usepackage{algorithmicx}
 \usepackage{algpseudocode}
 \usepackage{algorithm}
+\usepackage{dirtree}
 \pgfplotsset{
     %title style={font=\bfseries\sffamily\mathversion{boldsf}},
     every axis title/.style={
@@ -87,6 +88,12 @@
 %<<< ------------------------------------------------------------ FRONT MATTER %
 \frontmatter
 % https://en.wikipedia.org/wiki/Edition_notice
+\renewcommand*\contentsname{Short Contents}
+\setcounter{tocdepth}{0}
+\tableofcontents*
+\renewcommand*\contentsname{Contents}
+\setcounter{tocdepth}{3}
+\cleardoublepage
 \tableofcontents*
 \clearpage
 \listoffigures*
