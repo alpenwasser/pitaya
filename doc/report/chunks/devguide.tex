@@ -1,3 +1,8 @@
+% ==============================================================================
+%
+%                      P R O J E C T   S T R U C T U R E
+%
+% ==============================================================================
 \chapter{Project Structure} % <<< -------------------------------------------- %
 \label{ch:devguide:project_structure}
 % ---------------------------------------------------------------------------- %
@@ -7,15 +12,24 @@ repo structure: TLDs and what is contained in them.
 ``Where do I have to go if I want to do X?''
 
 %>>>
+% ==============================================================================
+%
+%                          S O C   T O O L C H A I N
+%
+% ==============================================================================
 \chapter{FPGA/SoC Toolchain} % <<< ----------------------------------------------- %
 \label{ch:devguide:fpga_toolchain}
 % ---------------------------------------------------------------------------- %
 
-Because the FPGA/SoC requires a lot of different utilities and environments it is advisable to have a fixed development environment as hardware tooling oft breaks at the slightest change.
-For this reason we provide a build box which contains a Ubuntu Linux. To set up the build box Vagrant and ansible are required.
+Because the FPGA/SoC requires a lot of different utilities and environments it
+is advisable to  have a fixed development environment as  hardware tooling oft
+breaks at the slightest change.
+For this reason we  provide a build box which contains  a Ubuntu Linux. To set
+up the build box Vagrant and ansible are required.
 The first one pulls the base linux box from a global repository at HashiCorp\footnote{The corporation behind Vagrant}. ansible is then used to provision the box to make it contain all the necessary tooling. Once that is set up, the user has to perform a graphical install of the Vivado Toolchain.
 
-To set up the build box, perform the steps explained in Section~\ref{sec:devguide:sec:devguide:fpga_toolchain:buildbox}
+To   set    up   the   build    box,   perform   the   steps    explained   in
+Section~\ref{sec:devguide:sec:devguide:fpga_toolchain:buildbox}
 
 \section{Setting up the buildbox}
 \label{sec:devguide:fpga_toolchain:buildbox}
@@ -30,7 +44,9 @@ Install
     \item VirtualBox
 \end{itemize}
 
-If you are on a Linux or OSX and use a package manager to install VirtualBox it is necessary to also install the Guest Additions packages. They are required in later stages during the setup of the box.
+If you are on  a Linux or OSX and use a package  manager to install VirtualBox
+it  is  necessary to  also  install  the  Guest Additions  packages. They  are
+required in later stages during the setup of the box.
 It is also advisible to perform a
 
 \begin{listing}
@@ -40,7 +56,9 @@ It is also advisible to perform a
 \end{listing}
 
 Otherwise a reboot of the host system might be necessary.
-After all the tools on the host have been installed, we move to the root of the project repository. For all the further steps we assume that we operate from the root.
+After all the  tools on the host have  been installed, we move to  the root of
+the project  repository. For all the further  steps we assume that  we operate
+from the root.
 
 To do an initial setup of the box, do
 
@@ -51,7 +69,9 @@ To do an initial setup of the box, do
     \end{minted}
 \end{listing}
 
-This will boot the box and provision it using ansible. This step requires a stable internet connection. If anything fails during the initial setup (red messages in the shell), you can run and retry the provisioning with
+This will  boot the box and  provision it using ansible. This  step requires a
+stable internet  connection. If anything fails  during the initial  setup (red
+messages in the shell), you can run and retry the provisioning with
 
 \begin{listing}
     \begin{minted}[autogobble]{bash}
@@ -59,7 +79,9 @@ This will boot the box and provision it using ansible. This step requires a stab
     \end{minted}
 \end{listing}
 
-Once the provisioning has finished, the build box should be rebootet because some changes (for example the installed desktop environment) require a reboot. Do this by running
+Once the provisioning  has finished, the build box should  be rebootet because
+some  changes  (for  example  the installed  desktop  environment)  require  a
+reboot. Do this by running
 
 \begin{listing}
     \begin{minted}[autogobble]{bash}
@@ -68,18 +90,25 @@ Once the provisioning has finished, the build box should be rebootet because som
     \end{minted}
 \end{listing}
 
-If you want to make changes to the default box setup, have a look at \textit{/env/roles/common/tasks/main.yml} and the official ansible\cite{TODO:} documentation.
+If  you want  to  make  changes to  the  default box  setup,  have  a look  at
+\textit{/env/roles/common/tasks/main.yml} and the official ansible\cite{TODO:}
+documentation.
 
-The fully configured build box should contain two shared folders \textit{/vagrant/} which points to the \textit{/env/} directory on the host and \textit{/repo/} which point to \textit{/} on the host.
+The   fully  configured   build  box   should  contain   two  shared   folders
+\textit{/vagrant/} which  points to the  \textit{/env/} directory on  the host
+and \textit{/repo/} which point to \textit{/} on the host.
 
-\textbf{IMPORTANT:} The password of the default vagrant user is \textbf{vagrant} and can use \textit{sudo}
+\textbf{IMPORTANT:} The   password   of   the    default   vagrant   user   is
+\textbf{vagrant} and can use \textit{sudo}
 
-Now it is time to set up Vivado which is explained in Section~\ref{sec:devguide:fpga_toolchain:vivado}.
+Now   it    is   time   to   set    up   Vivado   which   is    explained   in
+Section~\ref{sec:devguide:fpga_toolchain:vivado}.
 
 \section{Setting up Vivado}
 \label{sec:devguide:fpga_toolchain:vivado}
 
-For this Section we assume that we execute all commands on the VirtualBox (guest for the rest of this manual).
+For this  Section we  assume that  we execute all  commands on  the VirtualBox
+(guest for the rest of this manual).
 
 Enter
 
@@ -90,161 +119,24 @@ Enter
 \end{listing}
 
 into a shell to start the Vivado install.
-Figure~\ref{} through to Figure~\ref{} guide through the install.
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth,trim={0 8cm 0 8cm},clip]{images/devguide/vivado-install--1.png}
-    \caption[Vivado: Step 1]{%
-        Vivado: Step 1: It is very important to select "Continue"!
-    }
-    \label{fig:devguide:vivado1}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth]{images/devguide/vivado-install-00.png}
-    \caption[Vivado: Step 2]{%
-        Vivado: Step 2
-    }
-    \label{fig:devguide:vivado2}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth]{images/devguide/vivado-install-01.png}
-    \caption[Vivado: Step 3]{%
-        Vivado: Step 3
-    }
-    \label{fig:devguide:vivado3}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth,trim={0 5cm 0 0cm},clip]{images/devguide/vivado-install-02.png}
-    \caption[Vivado: Step 4]{%
-        Vivado: Step 4
-    }
-    \label{fig:devguide:vivado4}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth,trim={0 6cm 0 0cm},clip]{images/devguide/vivado-install-04.png}
-    \caption[Vivado: Step 5]{%
-        Vivado: Step 5
-    }
-    \label{fig:devguide:vivado5}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth]{images/devguide/vivado-install-05.png}
-    \caption[Vivado: Step 6]{%
-        Vivado: Step 6: Set the installation directory to \textit{/vagrant/Xilinx}
-    }
-    \label{fig:devguide:vivado6}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth,trim={0 8cm 0 3cm},clip]{images/devguide/vivado-install-10.png}
-    \caption[Vivado: Step 7]{%
-        Vivado: Step 7
-    }
-    \label{fig:devguide:vivado7}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth,trim={0 10cm 0 0cm},clip]{images/devguide/vivado-install-11.png}
-    \caption[Vivado: Step 8]{%
-        Vivado: Step 8
-    }
-    \label{fig:devguide:vivado8}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth]{images/devguide/vivado-install-12.png}
-    \caption[Vivado: Step 9]{%
-        Vivado: Step 9
-    }
-    \label{fig:devguide:vivado9}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth,trim={0 8cm 0 8cm},clip]{images/devguide/vivado-install-14.png}
-    \caption[Vivado: Step 10]{%
-        Vivado: Step 10
-    }
-    \label{fig:devguide:vivado10}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth,trim={0 8cm 0 0cm},clip]{images/devguide/vivado-install-16.png}
-    \caption[Vivado: Step 11]{%
-        Vivado: Step 11
-    }
-    \label{fig:devguide:vivado11}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth]{images/devguide/vivado-install-17.png}
-    \caption[Vivado: Step 12]{%
-        Vivado: Step 12
-    }
-    \label{fig:devguide:vivado}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth]{images/devguide/vivado-install-18.png}
-    \caption[Vivado: Step 13]{%
-        Vivado: Step 13
-    }
-    \label{fig:devguide:vivado}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth,trim={0 8cm 0 8cm},clip]{images/devguide/vivado-install-19.png}
-    \caption[Vivado: Step 14]{%
-    Vivado: Step 14
-    }
-    \label{fig:devguide:vivado}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth,trim={0 8cm 0 8cm},clip]{images/devguide/vivado-install-20.png}
-    \caption[Vivado: Step 15]{%
-    Vivado: Step 15
-    }
-    \label{fig:devguide:vivado}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth,trim={0 8cm 0 8cm},clip]{images/devguide/vivado-install-22.png}
-    \caption[Vivado: Step 16]{%
-        Vivado: Step 16
-    }
-    \label{fig:devguide:vivado}
-\end{figure}
+TODO: Install link.
 
 \section{Building a Linux}
 \label{sec:devguide:fpga_toolchain:linux}
 
-With the fully set up build box it is possible to build an image with only two commands.
-If new features are being added to the FPGA project or the server application is altered, of course the build steps can be performed, but an initial build is advisable.
+With the fully set up build box it is possible to build an image with only two
+commands.
+If new features are being added to  the FPGA project or the server application
+is altered, of course  the build steps can be performed,  but an initial build
+is advisable.
 
-First we copy the repo to a \textbf{non-shared} folder because uboot requires \textit{mmap()} which of course cannot handle shared folders.
-And then we build the image in one go. This includes building the linux, the bitstream, the required firststage bootloader and the board support package, the logger kernel module, the server application, the scope application.
-After that a bash script is used to create an image with all the components, mount it and provision the ubuntu environment.
+First we copy the repo to  a \textbf{non-shared} folder because uboot requires
+\textit{mmap()} which of course cannot handle shared folders.
+And then we build  the image in one go. This includes  building the linux, the
+bitstream, the required  firststage bootloader and the  board support package,
+the logger kernel module, the server application, the scope application.
+After that a bash  script is used to create an image  with all the components,
+mount it and provision the ubuntu environment.
 Do do all of this do
 
 \begin{listing}
@@ -264,29 +156,40 @@ After the build has finished the image can be created using
     \end{minted}
 \end{listing}
 
-Those scripts were initially created by the Red Pitaya corporation, altered by Pavel Demin\cite{TODO:} and altered by us to fit our needs.
+Those scripts were initially created by the Red Pitaya corporation, altered by
+Pavel Demin\cite{TODO:} and altered by us to fit our needs.
 
 TODO: references to vivado documentation
 %>>>
-
+% ==============================================================================
+%
+%                       F I L T E R   T O O L C H A I N
+%
+% ==============================================================================
 \chapter{Filter Toolchain} % <<< --------------------------------------------- %
 \label{ch:devguide:fpga_toolchain}
 % ---------------------------------------------------------------------------- %
 matlab stuff: What is where,  how do I specify a new filter,  how do I extract
 the filters into Vivado, where can plot data be found
 %>>>
-
+% ==============================================================================
+%
+%                                 S E R V E R
+%
+% ==============================================================================
 \chapter{Server} % <<< ------------------------------------------------------- %
 \label{ch:devguide:server}
 % ---------------------------------------------------------------------------- %
 
-The server application runs on the ARM Linux and is in charge of shoving data from the FPGA to the network and vice versa.
+The server application runs on the ARM  Linux and is in charge of shoving data
+from the FPGA to the network and vice versa.
 How it can be built and extended is explained in this section.
 
 \section{Building the server}
 \label{sec:devguide:server:build}
 
-The server can only be built using the build environment explained in Chapter~\ref{ch:devguide:fpga_toolchain}.
+The  server  can only  be  built  using  the  build environment  explained  in
+Chapter~\ref{ch:devguide:fpga_toolchain}.
 A simple
 
 \begin{listing}
@@ -316,14 +219,20 @@ and the server application can be rebuilt after changes using
     \end{minted}
 \end{listing}
 
-The server application is a one file application and depends on libuWebSockets\cite{TODO:} and a headerfile called json.hpp\cite{TODO:} which contains the entire JSON library.
+The   server  application   is  a   one  file   application  and   depends  on
+libuWebSockets\cite{TODO:} and a  headerfile called json.hpp\cite{TODO:} which
+contains the entire JSON library.
 
-There is two important functions for extending the server application: onHttpRequest and onMessage.
+There  is  two  important  functions for  extending  the  server  application:
+onHttpRequest and onMessage.
 
 \subsection{onHttpRequest}
 
-This callback gets called when the user makes an HTTP request wich is not an \textit{UPGRADE} request. Currently it simply serves the files from the filesystem, but could easily be extended to outline data or the likes.
-Returning a correct HTTP Response has to be done manually and not well documented in the library itself.
+This callback gets called  when the user makes an HTTP request  wich is not an
+\textit{UPGRADE}  request. Currently  it  simply  serves the  files  from  the
+filesystem, but could easily be extended to outline data or the likes.
+Returning  a correct  HTTP  Response has  to  be done  manually  and not  well
+documented in the library itself.
 
 If the response should outline a \textit{200 OK} status,
 
@@ -333,9 +242,11 @@ If the response should outline a \textit{200 OK} status,
     \end{minted}
 \end{listing}
 
-can be used with a string and a size. The lib then detects that no header is attached to the response and attaches a proper textit{200 OK} header.
+can be used with  a string and a size. The lib then detects  that no header is
+attached to the response and attaches a proper textit{200 OK} header.
 
-If a custom header should be attached it first has to be attached and then the actual answer like so
+If a custom header should be attached it first has to be attached and then the
+actual answer like so
 
 \begin{listing}
     \begin{minted}[autogobble]{C++}
@@ -355,25 +266,34 @@ If a custom header should be attached it first has to be attached and then the a
     \end{minted}
 \end{listing}
 
-I am not entirely sure if better handling of this will follow in the future or if it is a performance thing, as the library itself is awesome in structure and tidyness. But docs sadly are very sparse
+I am not entirely sure if better handling of this will follow in the future or
+if it is  a performance thing, as  the library itself is  awesome in structure
+and tidyness. But docs sadly are very sparse
 
 \subsection{onMessage}
 
-This callback is triggered when a new message is received through the WebSocket.
-For now in our project this call only handles incomming text messages as those conatin the instructions.
-Binary messages are simply discarded but could be used at a later time to interface the DAC.
+This  callback  is triggered  when  a  new  message  is received  through  the
+WebSocket.
+For now in our project this call only handles incomming text messages as those
+conatin the instructions.
+Binary messages  are simply  discarded but could  be used at  a later  time to
+interface the DAC.
 
-To add any new functionality, the code should be inspected and extended in analogy.
+To add  any new functionality,  the code should  be inspected and  extended in
+analogy.
 
 \section{Instruction Set}
 \label{sec:devguide:server:instruction}
 
-The instruction set contains TODO: commands which are listed in the lististings \ref{TODO:} downto \ref{TODO:}.
+The  instruction  set  contains  TODO:   commands  which  are  listed  in  the
+lististings \ref{TODO:} downto \ref{TODO:}.
 
 \subsection{Forcing a new trigger event}
 
-This command forces the logger to finish it's current frame. It still repects the set pre and suf conditions.
-The server does not automatically send the recorded frame. It has to be requested separately.
+This command forces the logger to  finish it's current frame. It still repects
+the set pre and suf conditions.
+The  server does  not  automatically send  the recorded  frame. It  has to  be
+requested separately.
 The argument needs to be always set to "true"
 
 \begin{tcolorbox}[
@@ -393,7 +313,9 @@ The argument needs to be always set to "true"
 
 \subsection{Configuring the frame the server sends}
 
-This command tells the server how big the frame should be and how many samples have to be recorded before and after the trigger. All arguments have to be numbers in the JSON format, not strings.
+This command tells the server how big the frame should be and how many samples
+have to  be recorded before  and after the  trigger. All arguments have  to be
+numbers in the JSON format, not strings.
 
 \begin{tcolorbox}[
     title={
@@ -412,7 +334,9 @@ This command tells the server how big the frame should be and how many samples h
 
 \subsection{Setting the numbers of logged channels}
 
-This command tells the server how many channels are being logged. This should always be two as the STEMlab does not support more channels. The logger itself would support up to 8 channels.
+This command tells the server how  many channels are being logged. This should
+always be two as the STEMlab does not support more channels. The logger itself
+would support up to 8 channels.
 The argument has to be a number in the JSON format, not strings.
 
 \begin{tcolorbox}[
@@ -432,8 +356,11 @@ The argument has to be a number in the JSON format, not strings.
 
 \subsection{Reading the currently stored frame}
 
-This command forces the server to send the currently stored frame over the binary channel as soon as the current frame is finished. If the logger is not recording currently the frame will be sent immediately.
-The \textit{channel} argument has to be a number in the JSON format, not strings.
+This command  forces the server  to send the  currently stored frame  over the
+binary channel as soon as the current  frame is finished. If the logger is not
+recording currently the frame will be sent immediately.
+The  \textit{channel} argument  has to  be a  number in  the JSON  format, not
+strings.
 
 \begin{tcolorbox}[
     title={
@@ -451,8 +378,10 @@ The \textit{channel} argument has to be a number in the JSON format, not strings
 \end{tcolorbox}
 
 \subsection{Requesting a new frame and reading it when it is ready}
-This command forces the server to start a new frame and send it over the binary channel as soon as the frame is finished.
-The \textit{channel} argument has to be a number in the JSON format, not strings.
+This command  forces the  server to  start a new  frame and  send it  over the
+binary channel as soon as the frame is finished.
+The  \textit{channel} argument  has to  be a  number in  the JSON  format, not
+strings.
 
 \begin{tcolorbox}[
     title={
@@ -472,7 +401,8 @@ The \textit{channel} argument has to be a number in the JSON format, not strings
 \subsection{Setting the sampling rate}
 
 This command sets the sampling rate.
-The argument has to be a number in the JSON format and has to be the samplingrate in \si{\Hz}
+The  argument has  to  be a  number  in the  JSON  format and  has  to be  the
+samplingrate in \si{\Hz}
 
 \begin{tcolorbox}[
     title={
@@ -512,10 +442,15 @@ The response contains all the information the logger currently holds.
 \subsection{Configuring the trigger}
 
 This command configures the currently active trigger.
-For now, only rising edge triggers are supported on the server side. The logger would support way more trigger types (For more information read the logger code).
+For  now, only  rising edge  triggers are  supported on  the server  side. The
+logger would  support way more  trigger types  (For more information  read the
+logger code).
 Channel is the channel that should be triggered on.
-Level is the level on which the trigger should shoot and slope is the minimal slope the curve needs to have.
-Hysteresis is configured for all triggers at once and makes sure there is no accidential trigger. It is the variance the signal can have until a trigger gets armed.
+Level is the level on which the  trigger should shoot and slope is the minimal
+slope the curve needs to have.
+Hysteresis is configured for  all triggers at once and makes  sure there is no
+accidential trigger. It  is the variance the  signal can have until  a trigger
+gets armed.
 
 \begin{tcolorbox}[
     title={
@@ -533,17 +468,24 @@ Hysteresis is configured for all triggers at once and makes sure there is no acc
 \end{tcolorbox}
 
 %>>>
-
+% ==============================================================================
+%
+%                                  S C O P E
+%
+% ==============================================================================
 \chapter{Scope} % <<< -------------------------------------------------------- %
 \label{ch:devguide:scope}
 % ---------------------------------------------------------------------------- %
 
 \section{Build environment}
 
-To set up the scope project the build box is not needed, even tho the build box already has the necessary environment installed.
+To set up  the scope project the build  box is not needed, even  tho the build
+box already has the necessary environment installed.
 But for development a local install is advised.
 
-To start off, install yarn and nodejs. Package managers for Unix systems already have packages, for Windows the official installers can be used. For the project nodejs 8.0 or higher is used.
+To  start off,  install yarn  and  nodejs. Package managers  for Unix  systems
+already have  packages, for Windows  the official installers can  be used. For
+the project nodejs 8.0 or higher is used.
 
 Once yarn is set up, the project dependencies can be installed using
 
@@ -554,7 +496,8 @@ Once yarn is set up, the project dependencies can be installed using
     \end{minted}
 \end{listing}
 
-The yarn project comes with two main build configuration. One for deployment and one for running a debugging webserver. Building is done with
+The yarn project  comes with two main build  configuration. One for deployment
+and one for running a debugging webserver. Building is done with
 
 \begin{listing}
     \begin{minted}[autogobble]{bash}
@@ -563,9 +506,12 @@ The yarn project comes with two main build configuration. One for deployment and
     \end{minted}
 \end{listing}
 
-This leaves all the builded files in \textit{~/repo/scope/build} and can be copied to any directory served by a webserver.
+This leaves  all the builded  files in \textit{~/repo/scope/build} and  can be
+copied to any directory served by a webserver.
 
-Running the debugging webserver brings the benefit of autorebuild and autoreload in the browser when the build is complete. The webserver can be started using
+Running  the  debugging  webserver  brings  the  benefit  of  autorebuild  and
+autoreload in  the browser when  the build  is complete. The webserver  can be
+started using
 
 \begin{listing}
     \begin{minted}[autogobble]{bash}
@@ -574,7 +520,8 @@ Running the debugging webserver brings the benefit of autorebuild and autoreload
     \end{minted}
 \end{listing}
 
-The webpage can now be reached on \textit{http://localhost:8080} and will be automatically reloaded yarn detecs a change and rebuilds the bundle.
+The webpage can  now be reached on \textit{http://localhost:8080}  and will be
+automatically reloaded yarn detecs a change and rebuilds the bundle.
 
 %>>>
 
