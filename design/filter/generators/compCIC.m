@@ -159,7 +159,7 @@ for l = 0:L-1
                         end
 
                         % Save Compensation Filter Plot Data
-                        [H,W] = freqz(Hd{q,3}, 1e3);
+                        [H,W] = freqz(Hd{q,3}, 1e4);
                         fh = fopen(plotFile, 'w');
                         if fh ~= -1
                             fprintf(fh, '%s,%s,%s\n', 'abs(H)', 'angle(H)', 'W');
@@ -174,7 +174,7 @@ for l = 0:L-1
                         );
 
                         % Save Cascade Plot Data
-                        [H,W] = freqz(Hd{q,1}, 1e3);
+                        [H,W] = freqz(Hd{q,1}, 1e4);
                         fh = fopen(cascFile, 'w');
                         if fh ~= -1
                             fprintf(fh, '%s,%s,%s\n', 'abs(H)', 'angle(H)', 'W');

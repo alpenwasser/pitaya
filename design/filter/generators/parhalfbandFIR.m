@@ -111,7 +111,7 @@ parfor n = 1:N
     end
 
     % Save Filter Plot Data
-    [H,W] = freqz(Hpar{n,1}, 1e3);
+    [H,W] = freqz(Hpar{n,1}, 1e4);
     fh = fopen(plotFile, 'w');
     if fh ~= -1
         fprintf(fh, '%s,%s,%s\n', 'abs(H)', 'angle(H)', 'W');

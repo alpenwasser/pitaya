@@ -1468,6 +1468,35 @@ switch filtertype
             'delimiter', ',',...
             'newline', 'unix'...
         );
+    case 'DEV_EXAMPLE'
+        % Example for Developer Guide
+
+        % Cleanup if the script is called multiple times from the same Matlab instance.
+        clear all;close all;
+        filtertype='DEV_EXAMPLE';
+        genDir = 'generators';
+        coefDir = 'coefData';
+        plotDir = 'plotData';
+
+        R1     = 5;
+        Fp     = 0.2;
+        Fst    = [0.21 0.225];
+        Ast    = 60;
+        Ap     = 0.25;
+        HdFIR  = decFIR(R1, Fp, Fst, Ap, Ast, coefDir, plotDir);
+
+        R2     = 32;
+        RCIC   = 8;
+        AstCIC = 60;
+        FpCIC  = 1/R2;
+        DL     = 1;
+        HdCIC  =    decCIC(RCIC,  FpCIC, AstCIC, DL, plotDir);
+        RComp   = 4;
+        FpComp  = 1/R2;
+        FstComp = 1/R2 * 1.1;
+        ApComp  = 0.25;
+        AstComp = 60;
+        HdComp  =  compCIC(RComp, FpComp, FstComp, ApComp, AstComp, DL, HdCIC, coefDir, plotDir);
     case 'FIR_UTIL'
         % Cleanup if the script is called multiple times from the same Matlab instance.
         clear all;close all;
