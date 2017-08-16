@@ -3,7 +3,7 @@
 %                                   F P G A
 %
 % ==============================================================================
-\chapter{FPGA} % <<< --------------------------------------------------------- %
+\chapter{FPGA} % ------------------------------------------------------------- %
 \label{ch:fpga}
 % ---------------------------------------------------------------------------- %
 % ==============================================================================
@@ -278,26 +278,36 @@ is  at  exactly   \num{1}.   This  is  called   \emph{maximizing  the  dynamic
 range}. Figure~\ref{fig:fpga:dynamicrange}  illustrates the  issue of  loosing
 one bit.
 
-One can observe that  the sine in Case \num{1} (bottom  plot) uses the dynamic
-range  to  a  perfect extent  as  the  full-scale  sine  has an  amplitude  of
-\num{127}, the maximum value an \SI{8}{\bit} \code{int} can hold. Case \num{2}
-(middle  plot)  show  a sine  that  has  been  scaled  to \num{130}  and  thus
-effectively requires an additional bit.  But because a \SI{9}{\bit} \code{int}
-can hold values up  to \num{255} meaning that most of the time  the MSB is not
-used. This  means that  with \SI{9}{\bit}  bit the  highest $SNR_\mathrm{max}$
-possible would be
+One can  observe that  the sine in  Case \num{1} (top  plot) uses  the dynamic
+range to a perfect extent as the full-scale sine has an amplitude of \num{31},
+the maximum  value an \SI{6}{\bit}  \code{int} can hold. Case  \num{2} (middle
+plot) shows  a sine  that has  been scaled  to \num{34}  and thus  requires an
+additional bit.  But  because a \SI{7}{\bit} \code{int} can hold  values up to
+\num{63}, most of the time the MSB  ends up not being used. with \SI{7}{\bit},
+the highest $SNR_\mathrm{max}$ possible would be
 \begin{align}
-    ENOB             &= \log_2(130) \nonumber\\
-    SNR_\mathrm{max} &= \SI{1.76}{\dB} + ENOB \cdot \SI{6.02}{\dB} = 44.03
+    %\mathrm{ENOB}             &= \log_2(130) \nonumber\\
+    %\mathrm{SNR}_\mathrm{max} &= \SI{1.76}{\dB} + \mathrm{ENOB} \cdot \SI{6.02}{\dB} = 44.03
+    \mathrm{ENOB}             &= \log_2(34) = 5.09 \nonumber \\
+    \mathrm{SNR}_\mathrm{max} &= \SI{1.76}{\dB} + \mathrm{ENOB} \cdot \SI{6.02}{\dB} = 32.39
 \end{align}
-In Case \num{3}, the dynamic range  is used well and the $SNR_\mathrm{max}$ is
+In   Case    \num{3},   the   dynamic    range   is   used   well    and   the
+$\mathrm{SNR}_\mathrm{max}$ with a \SI{6}{\bit} \code{int} is
 \begin{align}
-    ENOB             &= \log_2(126) \nonumber\\
-    SNR_\mathrm{max} &= \SI{1.76}{\dB} + ENOB \cdot \SI{6.02}{\dB} = 43.76
+    %\mathrm{ENOB}             &= \log_2(126) \nonumber\\
+    %\mathrm{SNR}_\mathrm{max} &= \SI{1.76}{\dB} + ENOB \cdot \SI{6.02}{\dB} = 43.76
+    \mathrm{ENOB}             &= \log_2(30)  = 4.91 \nonumber\\
+    \mathrm{SNR}_\mathrm{max} &= \SI{1.76}{\dB} + \mathrm{ENOB} \cdot \SI{6.02}{\dB} = 31.30
 \end{align}
-This yields a difference of only \SI{0.27}{\dB}. This example shows that it is
-well  advised to  scale  the coefficient  such that  they  dont ripple  around
-\num{1}, but rather that the maximum ripple is exacly \num{1} and not more.
+%This yields a difference of only \SI{0.27}{\dB}. This example shows that it is
+This yields a difference of only \SI{1.09}{\dB}\footnote{%
+    While \SI{1.09}{\dB} might still seem rather large, keep in mind that with
+    the  wider numbers  running in  the actual  filter chains,  the result  is
+    significantly better than in this illustrative example.%
+}.
+This example shows that it is well  advised to scale the coefficient such that
+they dont ripple around \num{1}, but  rather that the maximum ripple is exacly
+\num{1} and not more.
 
 Because if it can be ensured that no additional MSB is used wich is empty most
 of the time,  it is possible use  an additional LSB which is  always well used
@@ -329,13 +339,14 @@ TODO  bits  at   its  output. According  to  the  calculations   laid  out  in
 Section~\ref{subsubsec:cic:register_growth},  this  yields  a mean  error  and
 variance of:
 \begin{align}
-    \mu      &= 0.5 \label{eq:fpga:cic:mu} \\
-    \sigma^2 &= \label{eq:fpga:cic:sigmasq}
+    \mu_\mathrm{CIC25}       &= 0.5 \label{eq:fpga:cic:mu:cic25}  \\
+    \sigma^2_\mathrm{CIC25}  &= \label{eq:fpga:cic:sigmasq:cic25} \\
+    \mu_\mathrm{CIC125}      &= 0.5 \label{eq:fpga:cic:mu:cic125} \\
+    \sigma^2_\mathrm{CIC125} &= \label{eq:fpga:cic:sigmasq:cic125}
 \end{align}
-The calculations are performed by a Matlab script and are therefore omitted at
-this point.
+for  the two  CIC filters  used in  our configuration.   The calculations  are
+performed by a Matlab script and are therefore omitted at this point.
 
-%>>>
 %>>>
 %>>>
 %^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>
