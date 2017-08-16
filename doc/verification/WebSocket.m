@@ -8,15 +8,19 @@ classdef WebSocket < WebSocketClient
         FrameSize
         TimeOut
         Done = false
+        Path
+        Freq
     end
     
     methods
         function obj = WebSocket(varargin)
             %Constructor
-            obj@WebSocketClient(varargin{1}, varargin{5:end});
+            obj@WebSocketClient(varargin{1}, varargin{7:end});
             obj.Callback = varargin{2};
             obj.SamplingRate = varargin{3};
             obj.FrameSize = varargin{4};
+            obj.Path = varargin{5};
+            obj.Freq = varargin{6};
         end
         function stop(obj)
             obj.send('{ "forceTrigger": "true" }');
@@ -35,7 +39,7 @@ classdef WebSocket < WebSocketClient
             pause(1);
             obj.send('{ "requestFrame": true, "channel": 1}');
             obj.TimeOut = timer('TimerFcn', {@(o,e,s)(s.stop()),obj},... 
-                 'StartDelay',1);
+                 'StartDelay',2);
             start(obj.TimeOut)
         end
         
@@ -49,7 +53,7 @@ classdef WebSocket < WebSocketClient
             fprintf('Binary message received:\n');
             x = typecast(bytearray, 'uint16');
             x = cast(cast(x, 'int32') - 2^15, 'double');
-            obj.Callback(x, obj.SamplingRate);
+            obj.Callback(x, obj.SamplingRate, obj.Path, obj.Freq);
             stop(obj.TimeOut);
             delete(obj.TimeOut);
             obj.close();

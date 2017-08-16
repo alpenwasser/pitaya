@@ -56,6 +56,68 @@
         %{Assignee}
         %{Description}
 
+\section{General Prerequisite Tasks}
+\label{sec:general}
+
+Conatins task to get an overview of the previous project's current state left behind by the predecessors and define the further steps and requirements to this project.
+
+\subsection{Read Literature about the Existing Project}
+\label{subsec:general:read}
+
+\wpac
+    {}
+    {}
+    {}
+    {None}
+    {}
+    {Raphael Frey, Noah Hüsser}
+    {%
+        Read the predecessor documentation and general information to the STEMlab board to get familiar with the project and it's general state.
+        Fromon here the specifications will be determined and the project requirements will be revised.
+    }
+
+\subsection{Tutorial to IIR Filters}
+\label{subsec:general:iir}
+
+\wpac
+    {}
+    {}
+    {}
+    {None}
+    {}
+    {Raphael Frey, Noah Hüsser}
+    {%
+        Complete the lab course about IIR filters and their bitgrowth problems and fixes provided by Mr. Pichler.
+    }
+
+\subsection{Assess Results of the Predecessor Project}
+\label{subsec:general:assess}
+
+\wpac
+    {}
+    {}
+    {}
+    {Read Literature about the Existing Project}
+    {}
+    {Raphael Frey, Noah Hüsser}
+    {%
+        Define what the current project status is and where we can connect to the predecessor project.
+    }
+
+\subsection{Outline the Project}
+\label{subsec:general:outline}
+
+\wpac
+    {}
+    {}
+    {}
+    {\ref{subsec:general:assess}}
+    {}
+    {Raphael Frey, Noah Hüsser}
+    {%
+        Define what the requirements for the project are and which of those are a must and which a nice to have.
+    }
+
 \section{Filter Design}
 \label{sec:filters}
 
@@ -66,90 +128,105 @@ implementation in the FPGA tool chain.
 \label{subsec:filter:research}
 
 \wpac
-     {}
-     {}
-     {}
-     {None}
-     {}
-     {Raphael Frey}
-     {%
-         Research the digital filter technologies which will be needed for this
-         project. In particular, this includes FIR and CIC filters, since Xilinx
-         provide predefined blocks for these filters in their toolchain.
+    {}
+    {}
+    {}
+    {\ref{subsec:general:outline}}
+    {}
+    {Raphael Frey}
+    {%
+        Research the digital filter technologies which will be needed for this
+        project. In particular, this includes FIR and CIC filters, since Xilinx
+        provide predefined blocks for these filters in their toolchain.
 
-         Besides the general knowledge on digital filters, the Xilinx toolchain
-         must be researched in order to understand the FIR and CIC filter blocks
-         and allow their usage.
-     }
+        Besides the general knowledge on digital filters, the Xilinx toolchain
+        must be researched in order to understand the FIR and CIC filter blocks
+        and allow their usage.
+    }
+
+\subsection{Determine Filter Specifications}
+\label{subsec:filter:specification}
+
+\wpac
+    {}
+    {}
+    {}
+    {\ref{subsec:filter:research}, \ref{subsec:general:outline}}
+    {}
+    {Raphael Frey}
+    {%
+        Specify the minimum and nice to have requirements for filters.
+        Document this well.
+    }
 
 \subsection{Matlab Scripts for Filter Design}
 \label{subsec:filter:matlab}
 
 \wpac
-     {}
-     {}
-     {}
-     {None}
-     {}
-     {Raphael Frey}
-     {%
-         Matlab scripts which design various filter chains. These consist of one
-         or several dispatcher scripts where the filter chains are specified in
-         terms of their frequency band properties, and scripts which actually
-         design the filters according to these specifications.
+    {}
+    {}
+    {}
+    {\ref{subsec:filter:specification}}
+    {}
+    {Raphael Frey}
+    {%
+        Matlab scripts which design various filter chains. These consist of one
+        or several dispatcher scripts where the filter chains are specified in
+        terms of their frequency band properties, and scripts which actually
+        design the filters according to these specifications.
 
-         Specifically, scripts for generating CIC filters and their compensation
-         filters, as well as FIR filters are needed. For FIR filters, the resulting
-         coefficients are to be saved in files so that they can be loaded by the
-         Xilinx tool chain.
+        Specifically, scripts for generating CIC filters and their compensation
+        filters, as well as FIR filters are needed. For FIR filters, the resulting
+        coefficients are to be saved in files so that they can be loaded by the
+        Xilinx tool chain.
 
-         If possible Matlab's parallelism should be exploited to reduce filter
-         design times.
-     }
+        If possible Matlab's parallelism should be exploited to reduce filter
+        design times.
+    }
 
 \subsection{TCL Scripts for Filter Evaluation}
 \label{subsec:filter:tcl}
 
 \wpac
-     {}
-     {}
-     {}
-     {None}
-     {}
-     {Raphael Frey}
-     {%
-        In order to assess the resource usage of the filter chains which are
-        designed by Matlab, the respective filter blocks (CIC, FIR) need to be
-        implemented in Vivado and a bitstream must be compiled.
+    {}
+    {}
+    {}
+    {\ref{subsec:filter:matlab}}
+    {}
+    {Raphael Frey}
+    {%
+    In order to assess the resource usage of the filter chains which are
+    designed by Matlab, the respective filter blocks (CIC, FIR) need to be
+    implemented in Vivado and a bitstream must be compiled.
 
-        Since the number of filters generated by package~\ref{subsec:filter:matlab}
-        can be very large (dozens or even hundreds of filters), this process must be automated
-        to be of any use. For this, TCL scripts are used.
+    Since the number of filters generated by package~\ref{subsec:filter:matlab}
+    can be very large (dozens or even hundreds of filters), this process must be automated
+    to be of any use. For this, TCL scripts are used.
 
-        For FIR filters, the scripts load the coefficient files which have been
-        generated by Matlab.
+    For FIR filters, the scripts load the coefficient files which have been
+    generated by Matlab.
 
-        Vivado will  generate usage  reports which  can then  be automatically
-        post-processed.
-     }
+    Vivado will  generate usage  reports which  can then  be automatically
+    post-processed.
+    }
 
 
-\subsection{Documentation}
+\subsection{Document Filter Design and Implementation}
 \label{subsec:filter:doc}
 
 \wpac
-     {}
-     {}
-     {}
-     {None}
-     {}
-     {Raphael Frey}
-     {%
-         Documentation  for the  filter design  tool chain. The  documentation
-         should be sufficiently detailed so that the tool chain can be used by
-         a  person  who wishes  to  compile  a  new bitstream  with  different
-         filters.
-     }
+    {}
+    {}
+    {}
+    {\ref{subsec:filter:tcl}}
+    {}
+    {Raphael Frey}
+    {%
+        Documentation  for the  filter design  tool chain. The  documentation
+        should be sufficiently detailed so that the tool chain can be used by
+        a  person  who wishes  to  compile  a  new bitstream  with  different
+        filters.
+    }
 
 
 \section{Documentation}
@@ -157,27 +234,28 @@ implementation in the FPGA tool chain.
 
 \subsection{Disposition}
 \wpac
-     {}
-     {}
-     {}
-     {None}
-     {}
-     {Noah H\"usser}
-     {%
-        A general outline of the thesis document.%
-     }
+    {}
+    {}
+    {}
+    {None}
+    {}
+    {Noah H\"usser}
+    {%
+    Create a general outline of the thesis document.%
+    }
 
 \subsection{Report}
 \wpac
-     {}
-     {}
-     {}
-     {None}
-     {}
-     {Raphael Frey, Noah H\"usser}
-     {%
-        The actual thesis document.%
-     }
+    {}
+    {}
+    {}
+    {None}
+    {}
+    {Raphael Frey, Noah H\"usser}
+    {%
+    Continuously check, restructure and update the report to current new insights.
+    Compile and round up the actual thesis document after all the different parts have been written.%
+    }
 
 
 \section{Firmware}
@@ -187,65 +265,78 @@ implementation in the FPGA tool chain.
 \label{subsec:fw:linux}
 
 \wpac
-     {}
-     {}
-     {}
-     {None}
-     {}
-     {Noah H\"usser}
-     {%
-        Boot an Ubuntu Linux onto the Red Pitaya.%
-        The target here is to have a ARM Linux distribution which boots fine on the RedPitaya.
-        The official sources from the RedPitaya project should be used as they contain a lot of patches for the RedPitaya hardware.
-        A standalone toolchain has to be developped as the compiled versions do not contain the right device tree (DT) and board support package (BSP).
-        Compiling in the right DT and BSP is not part of this task.
-     }
+    {}
+    {}
+    {}
+    {None}
+    {}
+    {Noah H\"usser}
+    {%
+    Boot an Ubuntu Linux onto the Red Pitaya.%
+    The target here is to have a ARM Linux distribution which boots fine on the RedPitaya.
+    The official sources from the RedPitaya project should be used as they contain a lot of patches for the RedPitaya hardware.
+    A standalone toolchain has to be developped as the compiled versions do not contain the right device tree (DT) and board support package (BSP).
+    Compiling in the right DT and BSP is not part of this task.
+    }
 
 \subsection{Server Application}
 \label{subsec:fw:server}
 
-\subsubsection{Design Decisions}
+\subsubsection{Server Design Choices}
 \label{subsubsec:fw:server:design-decisions}
 \wpac
-     {}
-     {}
-     {}
-     {None}
-     {}
-     {Noah H\"usser}
-     {%
-         It has to be determined what technology should be used to provide the server side of the data transmission.
-         The server needs to be able to perform IOCTL calls and to serve data with the chosen protocol over the network. It has to run on the arm linux and shouldn't have too many dependencies.
-         A C-like language will most likely serve best since it's close to the kernel.
-     }
+    {}
+    {}
+    {}
+    {None}
+    {}
+    {Noah H\"usser}
+    {%
+        It has to be determined what technology should be used to provide the server side of the data transmission.
+        The server needs to be able to perform IOCTL calls and to serve data with the chosen protocol over the network. It has to run on the arm linux and shouldn't have too many dependencies.
+        A C-like language will most likely serve best since it's close to the kernel.
+    }
 
-\subsubsection{Server Application}
+\subsubsection{Build External Libraries and Test Them}
+\label{subsubsec:fw:server:external}
+\wpac
+    {}
+    {}
+    {}
+    {\ref{subsubsec:fw:server:design-decisions}}
+    {}
+    {Noah H\"usser}
+    {%
+        A library for networking and another for JSON are needed. The requirements will be decided by the specifications of the scope application.
+    }
+
+\subsubsection{Write the Server Application}
 \label{subsubsec:fw:server:server}
 \wpac
-     {}
-     {}
-     {}
-     {None}
-     {}
-     {Noah H\"usser}
-     {%
-         A server application has to be written that reads data from the Logger and transmits it over the network.
-         It needs to be able to configure the logger via RPCs that are mapped to IOCTLs.
-         It should read data from /dev/logger which is presented by the kernel module.
-     }
+    {}
+    {}
+    {}
+    {\ref{subsubsec:fw:server:external}}
+    {}
+    {Noah H\"usser}
+    {%
+        A server application has to be written that reads data from the Logger and transmits it over the network.
+        It needs to be able to configure the logger via RPCs that are mapped to IOCTLs.
+        It should read data from /dev/logger which is presented by the kernel module.
+    }
 
-\subsubsection{Documentation}
+\subsubsection{Document the Server Application}
 \label{subsubsec:fw:server:docs}
 \wpac
-     {}
-     {}
-     {}
-     {None}
-     {}
-     {Raphael Frey, Noah H\"usser}
-     {%
-         Documentation for the server application build process.
-     }
+    {}
+    {}
+    {}
+    {\ref{subsubsec:fw:server:external}}
+    {}
+    {Raphael Frey, Noah H\"usser}
+    {%
+        Write documentation for the server application build process.
+    }
 
 \subsection{FPGA}
 \label{subsec:fw:fpga}
@@ -253,256 +344,338 @@ implementation in the FPGA tool chain.
 \subsubsection{Minimal Working Example}
 \label{subsubsec:fw:fpga:mwe}
 \wpac
-     {}
-     {}
-     {}
-     {None}
-     {}
-     {Noah H\"usser}
-     {%
-         Get a minimal working example project running on the Red Pitaya.
+    {}
+    {}
+    {}
+    {None}
+    {}
+    {Noah H\"usser}
+    {%
+        Get a minimal working example project running on the Red Pitaya.
 
-         This requires importing the cores from Pavel Denim's project as
-         well as compiling the Linux for the Red Pitaya.
+        This requires importing the cores from Pavel Denim's project as
+        well as compiling the Linux for the Red Pitaya.
 
-         Correct functionality of the Red Pitaya hardware, particularly the
-         ADC, is to be verified via Anton Potochnik's frequency counter.
-     }
+        Correct functionality of the Red Pitaya hardware, particularly the
+        ADC, is to be verified via Anton Potochnik's frequency counter.
+    }
 
-\subsubsection{Port Zynq Logger}
+\subsubsection{Set up a Sane Toolchain for the FPGA}
+\label{subsubsec:fw:fpga:sane}
+
+\wpac
+    {}
+    {}
+    {}
+    {\ref{subsec:general:assess},\ref{subsubsec:fw:fpga:mwe}}
+    {}
+    {Raphael Frey}
+    {%
+        Depending on the previous project's results, ane entirely new Toolchain is required or not. Either way, Vivado can be very bitchy and we need to have a sane toolchain for the entire FPGA build process so we can work cleanly.
+    }
+
+\subsubsection{Port the ZYNQ Logger}
 \label{subsubsec:fw:fpga:logger}
 \wpac
-     {}
-     {}
-     {}
-     {None}
-     {}
-     {Noah H\"usser}
-     {%
-         Port the Zynq Logger to the Red Pitaya. The main challenges will be
-         the porting of its interface (for which a block \code{axis2datalanes}
-         is developed), as well as understanding and properly implementing the
-         device tree and the kernel module which is needed for the Linux OS
-         to interface with the logger hardware.
-     }
+    {}
+    {}
+    {}
+    {\ref{subsubsec:fw:fpga:sane}}
+    {}
+    {Noah H\"usser}
+    {%
+        Port the Zynq Logger to the Red Pitaya. The main challenges will be
+        the porting of its interface (for which a block \code{axis2datalanes}
+        is developed), as well as understanding and properly implementing the
+        device tree and the kernel module which is needed for the Linux OS
+        to interface with the logger hardware.
+    }
 
-\subsubsection{Filter Chains}
+\subsubsection{Implement the Filter Chains}
 \label{subsubsec:fw:fpga:filters}
 \wpac
-     {}
-     {}
-     {}
-     {None}
-     {}
-     {Raphael Frey}
-     {%
-         Implement the filter chains as designed in Matlab on the FPGA.
+    {}
+    {}
+    {}
+    {\ref{subsubsec:fw:fpga:logger}}
+    {}
+    {Raphael Frey}
+    {%
+        Implement the filter chains as designed in Matlab on the FPGA.
 
-         This requires correct functionality of the FIR and CIC filter
-         blocks.
-     }
+        This requires correct functionality of the FIR and CIC filter
+        blocks.
+    }
 
+\subsubsection{Verification by Simulation}
+\label{subsubsec:fw:fpga:sim}
+\wpac
+    {}
+    {}
+    {}
+    {\ref{subsubsec:fw:fpga:filters}}
+    {}
+    {Raphael Frey}
+    {%
+        Simulate all the FPGA blocks.
+        Simulate the filters with a sine to make sure the filter work as expected.
+    }
+
+\subsubsection{Document FPGA Toolchain and Filter Structure}
+\label{subsubsec:fw:fpga:doc}
+\wpac
+    {}
+    {}
+    {}
+    {\ref{subsubsec:fw:fpga:sim}}
+    {}
+    {Raphael Frey}
+    {%
+        Implement the filter chains as designed in Matlab on the FPGA.
+
+        This requires correct functionality of the FIR and CIC filter
+        blocks.
+    }
 
 \section{Validation}
 \label{sec:validation}
 
-\subsection{Build Process}
+\subsection{Validate the Build Process}
 \label{subsec:validation:build}
 \wpac
-     {}
-     {}
-     {}
-     {None}
-     {}
-     {Raphael Frey}
-     {%
-         Build the entire project (Linux, bitstream), flash
-         result onto the Red Pitaya and verify correct functionality.
-     }
+    {}
+    {}
+    {}
+    {\ref{subsubsec:fw:fpga:sim}, \ref{subsubsec:fw:server:server}, \ref{subsubsec:subsec:fw:linux}}
+    {}
+    {Raphael Frey}
+    {%
+        Build the entire project (Linux, bitstream), flash
+        result onto the Red Pitaya and verify correct functionality.
+    }
+
+\subsection{Validate the Filter Implementation}
+\label{subsec:validation:impl}
+\wpac
+    {}
+    {}
+    {}
+    {\ref{subsubsec:fw:fpga:sim}}
+    {}
+    {Noah Hüsser}
+    {%
+        Validate the specified frequency response of the filters and the attenuation in the passband.
+    }
 
 \section{Frontend}
 \label{sec:frontend}
 
 \subsection{Techology Research}
-\label{subsec:frontend:}
+\label{subsec:frontend:research}
 \wpac
-     {}
-     {}
-     {}
-     {None}
-     {}
-     {Noah Hüsser}
-     {%
-         Research the possibilities to design and implement a nice frontend for the RedPitaya recording system.
-         The RedPitaya Project has a built-in webinterface which allows the display of signals and rudimentary calculations.
-         Furthermore Prof. Gut has implemented a spectrum analyzer in Java which interfaces with the RedPitaya.
-         Both approaches are feasible and should be evaluated properly.
-         Furthermore it has to be evaluated how the data should be transferred to the frontend.
-         This descision correlates a lot with the selection of a programming language since e.g. web technologies do not support UDP.
-         Finally, existing libraries have to examined very carefully. There is a lot of libraries around data transmission and GUI design, but not all of them are feasible.
-     }
+    {}
+    {}
+    {}
+    {None}
+    {}
+    {Noah Hüsser}
+    {%
+        Research the possibilities to design and implement a nice frontend for the RedPitaya recording system.
+        The RedPitaya Project has a built-in webinterface which allows the display of signals and rudimentary calculations.
+        Furthermore Prof. Gut has implemented a spectrum analyzer in Java which interfaces with the RedPitaya.
+        Both approaches are feasible and should be evaluated properly.
+        Furthermore it has to be evaluated how the data should be transferred to the frontend.
+        This descision correlates a lot with the selection of a programming language since e.g. web technologies do not support UDP.
+        Finally, existing libraries have to examined very carefully. There is a lot of libraries around data transmission and GUI design, but not all of them are feasible.
+    }
 
-\subsection{Implementation of a basic Plotter}
-\label{subsec:frontend:}
+\subsection{Scope Specifications}
+\label{subsec:frontend:specify}
 \wpac
-     {}
-     {}
-     {}
-     {Techology Research}
-     {}
-     {Noah Hüsser}
-     {%
-         At first a simple plotter will be implemented. It should not do more than plot a given vector of data points on a canvas.
-         The plotting should be done performantly at 60 frames per second not being dependant on the size of the data vector.
-         Of course more data will slow down the plotting, but it should perform so well that the size of vectors up to 64 kilosamples do plot nicely.
-         For this task it is recommended to use existing libraries which make use of the GPU such as OpenGL.
-     }
+    {}
+    {}
+    {}
+    {\ref{subsec:frontend:research}}
+    {}
+    {Noah Hüsser}
+    {%
+        Specify the scopes requirements and nice-to-haves.
+    }
 
-\subsection{Implementation of a basic Receiver}
-\label{subsec:frontend:}
+\subsection{Implementation of a Basic Plotter}
+\label{subsec:frontend:plotter}
 \wpac
-     {}
-     {}
-     {}
-     {Techology Research, TODO: server}
-     {}
-     {Noah Hüsser}
-     {%
-         A simple receiver which receives recorded samples over the network should be created.
-         For this task a simple emmitter which emmits test samples without actually recording anything should be implemented.
-         In further tasks it can be used conveniently without the need of a running RedPitaya board.
-         The receiver should simply receive samples as packets with lengths of powers of two over the network.
-         Again, a good, performant and publicly accepted library should be used to reduce workload and ensure reliability.
-     }
+    {}
+    {}
+    {}
+    {\ref{subsec:frontend:research}}
+    {}
+    {Noah Hüsser}
+    {%
+        At first a simple plotter will be implemented. It should not do more than plot a given vector of data points on a canvas.
+        The plotting should be done performantly at 60 frames per second not being dependant on the size of the data vector.
+        Of course more data will slow down the plotting, but it should perform so well that the size of vectors up to 64 kilosamples do plot nicely.
+        For this task it is recommended to use existing libraries which make use of the GPU such as OpenGL.
+    }
+
+\subsection{Implementation of a Basic Receiver}
+\label{subsec:frontend:receiver}
+\wpac
+    {}
+    {}
+    {}
+    {\ref{subsec:frontend:research}\ref{subsubsec:fw:server:server}}
+    {}
+    {Noah Hüsser}
+    {%
+        A simple receiver which receives recorded samples over the network should be created.
+        For this task a simple emmitter which emmits test samples without actually recording anything should be implemented.
+        In further tasks it can be used conveniently without the need of a running RedPitaya board.
+        The receiver should simply receive samples as packets with lengths of powers of two over the network.
+        Again, a good, performant and publicly accepted library should be used to reduce workload and ensure reliability.
+    }
 
 \subsection{Combining the Plotter and the Receiver}
-\label{subsec:frontend:}
+\label{subsec:frontend:combining}
 \wpac
-     {}
-     {}
-     {}
-     {Implementation of a basic Plotter, Implementation of a basic Receiver}
-     {}
-     {Noah Hüsser}
-     {%
-         The plotter and the receiver should be combined to display vecors received over the network.
-         This should happen fluently without any delays.
-     }
+    {}
+    {}
+    {}
+    {\ref{subsec:frontend:plotter}, \ref{subsec:frontend:receiver}}
+    {}
+    {Noah Hüsser}
+    {%
+        The plotter and the receiver should be combined to display vecors received over the network.
+        This should happen fluently without any delays.
+    }
 
 \subsection{Setting a Trigger on the Logger Core}
-\label{subsec:frontend:}
+\label{subsec:frontend:trig}
 \wpac
-     {}
-     {}
-     {}
-     {Combining the Plotter and the Receiver}
-     {}
-     {Noah Hüsser}
-     {%
-         The application should have a possibility to set a trigger type for any channel with the possibility to do this using a GUI.
-     }
+    {}
+    {}
+    {}
+    {\ref{subsec:frontend:combining}}
+    {}
+    {Noah Hüsser}
+    {%
+        The application should have a possibility to set a trigger type for any channel with the possibility to do this using a GUI.
+    }
 
 \subsection{Implement Proper Scaling}
-\label{subsec:frontend:}
+\label{subsec:frontend:scaling}
 \wpac
-     {}
-     {}
-     {}
-     {Setting a Trigger on the Logger Core}
-     {}
-     {Noah Hüsser}
-     {%
-         The GUI should not only plot a qualitatively correct signal but also show it's quantities.
-         A grid should be programmed into the GUI which can be used to read metrics of a signal. A panel on the GUI should display the current grid size.
-         It should be possible to scale signals using the mouse or the GUI. Grids should adjust with the current scale.
-     }
+    {}
+    {}
+    {}
+    {\ref{subsec:frontend:trig}}
+    {}
+    {Noah Hüsser}
+    {%
+        The GUI should not only plot a qualitatively correct signal but also show it's quantities.
+        A grid should be programmed into the GUI which can be used to read metrics of a signal. A panel on the GUI should display the current grid size.
+        It should be possible to scale signals using the mouse or the GUI. Grids should adjust with the current scale.
+    }
 
 \subsection{Implement Trigger Modes}
-\label{subsec:frontend:}
+\label{subsec:frontend:modes}
 \wpac
-     {}
-     {}
-     {}
-     {Combining the Plotter and the Receiver}
-     {}
-     {Noah Hüsser}
-     {%
-         It should be possible to use the scope application in \textit{normal}, \textit{auto}, and \textit{single} mode. Those modes should behave as follows:
-         \begin{tabular}{l l}
-            \textit{normal} & the server sends a packet when a trigger was fired and repeats this procedure \\
-            \textit{auto} & the server sends a packet when a trigger was fired or a timeout has been hit and repeats this procedure \\
-            \textit{single} & the server sends a packet after a first trigger and does not repeat this procedure
-         \end{tabular}
-     }
+    {}
+    {}
+    {}
+    {\ref{subsec:frontend:trig}}
+    {}
+    {Noah Hüsser}
+    {%
+        It should be possible to use the scope application in \textit{normal}, \textit{auto}, and \textit{single} mode. Those modes should behave as follows:
+        \begin{tabular}{l l}
+        \textit{normal} & the server sends a packet when a trigger was fired and repeats this procedure \\
+        \textit{auto} & the server sends a packet when a trigger was fired or a timeout has been hit and repeats this procedure \\
+        \textit{single} & the server sends a packet after a first trigger and does not repeat this procedure
+        \end{tabular}
+    }
 
 \subsection{Implement an FFT}
-\label{subsec:frontend:}
+\label{subsec:frontend:fft}
 \wpac
-     {}
-     {}
-     {}
-     {None}
-     {}
-     {Noah Hüsser}
-     {%
-         An FFT should be calculated and displayed live.
-     }
+    {}
+    {}
+    {}
+    {\ref{subsec:frontend:specify}}
+    {}
+    {Noah Hüsser}
+    {%
+        An FFT should be calculated and displayed live.
+    }
 
 \subsection{Implement Power Measuremenets}
 \label{subsec:frontend:}
 \wpac
-     {}
-     {}
-     {}
-     {None}
-     {}
-     {Noah Hüsser}
-     {%
-         Calculate the power in the signal.
-         It has to be possible to calculate the power between two markers to limit the calulation on a certain part of the signal.
-     }
+    {}
+    {}
+    {}
+    {\ref{subsec:frontend:specify}}
+    {}
+    {Noah Hüsser}
+    {%
+        Calculate the power in the signal.
+        It has to be possible to calculate the power between two markers to limit the calulation on a certain part of the signal.
+    }
 
 \subsection{Implement SNR Calculation}
 \label{subsec:frontend:}
 \wpac
-     {}
-     {}
-     {}
-     {None}
-     {}
-     {Noah Hüsser}
-     {%
-         The SNR of the signal between two markers has to be calculated automatically.
-         As a reference use the Java applicaion of Prof. Gut.
-     }
+    {}
+    {}
+    {}
+    {\ref{subsec:frontend:specify}}
+    {}
+    {Noah Hüsser}
+    {%
+        The SNR of the signal between two markers has to be calculated automatically.
+        As a reference use the Java applicaion of Prof. Gut.
+    }
 
 \subsection{Implement THD Calculation}
 \label{subsec:frontend:}
 \wpac
-     {}
-     {}
-     {}
-     {None}
-     {}
-     {Noah Hüsser}
-     {%
-         The THD of the signal spectrum has to be calculated automatically.
-         As a reference use the Java application of Prof. Gut.
-     }
+    {}
+    {}
+    {}
+    {\ref{subsec:frontend:specify}}
+    {}
+    {Noah Hüsser}
+    {%
+        The THD of the signal spectrum has to be calculated automatically.
+        As a reference use the Java application of Prof. Gut.
+    }
 
 \subsection{Implement Dual Channel Possibilities}
 \label{subsec:frontend:}
 \wpac
-     {}
-     {}
-     {}
-     {None}
-     {}
-     {Noah Hüsser}
-     {%
-         The entire transmission and plotting of all the signals should be implemented for dual channel capabilities.
-         The FPGA code supports up to eight channels whilst only supplying two to the server since the RedPitaya board only supports two physical channels.
-     }
+    {}
+    {}
+    {}
+    {\ref{subsec:frontend:specify}}
+    {}
+    {Noah Hüsser}
+    {%
+        The entire transmission and plotting of all the signals should be implemented for dual channel capabilities.
+        The FPGA code supports up to eight channels whilst only supplying two to the server since the RedPitaya board only supports two physical channels.
+    }
+
+\subsection{Document the Scope}
+\label{subsec:frontend:}
+\wpac
+    {}
+    {}
+    {}
+    {\ref{subsec:frontend:specify}}
+    {}
+    {Noah Hüsser}
+    {%
+        Document the entire scoping application and how to use it.
+    }
 
 % >>>
 
