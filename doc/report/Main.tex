@@ -1,5 +1,10 @@
 \RequirePackage{snapshot}
 \documentclass[a4paper,oneside]{alpenthesis/alpenthesis}
+% ==============================================================================
+%
+%                               P R E A M B L E
+%
+% ==============================================================================
 % <<< ----------------------------------------------------------------PREAMBLE %
 \hexfalse
 %\aiiistock % Compile twice for A4, then once for A3, with hextrue
@@ -22,6 +27,7 @@
 \usepackage{algorithmicx}
 \usepackage{algpseudocode}
 \usepackage{algorithm}
+\usepackage{dirtree}
 \pgfplotsset{
     %title style={font=\bfseries\sffamily\mathversion{boldsf}},
     every axis title/.style={
@@ -49,6 +55,11 @@
 %\includeonly{chunks/introduction,chunks/theory}
 % >>>
 \begin{document}
+% ==============================================================================
+%
+%                            T I T L I N G P A G E
+%
+% ==============================================================================
 % <<< ------------------------------------------------------------ TITLINGPAGE %
 \begin{titlingpage}
     \fullhexpage{q1}{q0}
@@ -59,7 +70,7 @@
     \Large\mdseries{Thesis}\\[3ex]
 
     \normalsize\mdseries
-    
+
     \vfill
     Raphael Frey\\
     Noah H\"usser\\[3ex]
@@ -69,10 +80,20 @@
     \today\\
     Version 0.0.1
 \end{titlingpage} % >>>
-
+% ==============================================================================
+%
+%                            F R O N T M A T T E R
+%
+% ==============================================================================
 %<<< ------------------------------------------------------------ FRONT MATTER %
 \frontmatter
 % https://en.wikipedia.org/wiki/Edition_notice
+\renewcommand*\contentsname{Short Contents}
+\setcounter{tocdepth}{0}
+\tableofcontents*
+\renewcommand*\contentsname{Contents}
+\setcounter{tocdepth}{3}
+\cleardoublepage
 \tableofcontents*
 \clearpage
 \listoffigures*
@@ -82,13 +103,25 @@
 \listoflistings
 \clearpage
 % >>>
-
+% ==============================================================================
+%
+%                             M A I N M A T T E R
+%
+% ==============================================================================
 \mainmatter
-
+% ==============================================================================
+%
+%                           I N T R O D U C T I O N
+%
+% ==============================================================================
 % <<< ----------------------------------------------------------- INTRODUCTION %
 \include{chunks/introduction}
 % ------------------------------------------------------------------------->>> %
-
+% ==============================================================================
+%
+%                         P R O J E C T   R E P O R T
+%
+% ==============================================================================
 % <<< --------------------------------------------------- PART: PROJECT REPORT %
 \part{Project Report}
 \label{part:project_report}
@@ -120,37 +153,47 @@
 % ------------------------------------------------------------------------->>> %
 
 % >>>
-
+% ==============================================================================
+%
+%                        D E V E L O P E R   G U I D E
+%
+% ==============================================================================
 % <<< -------------------------------------------------- PART: DEVELOPER GUIDE %
 \part{Developer Guide}
 \label{part:Developer_Guide}
 % ---------------------------------------------------------------------------- %
-
 \include{chunks/devguide}
-
 % >>>
-
+% ==============================================================================
+%
+%                             U S E R   G U I D E
+%
+% ==============================================================================
 % <<< ------------------------------------------------------- PART: USER GUIDE %
-\part{User Guide} 
+\part{User Guide}
 \label{part:User_Guide}
 % ---------------------------------------------------------------------------- %
-
 \include{chunks/userguide}
-
 % >>>
-
+% ==============================================================================
+%
+%                             A P P E N D I C E S
+%
+% ==============================================================================
 \cleardoublepage % <<< ---------------------------------------------APPENDICES %
+%                                                                        SETUP %
 \begin{titlingpage*}
     \fullhexpage{da2}{ct4}
     \begin{vplace}
         \flushright\Huge\bfseries\sffamily\appendixpagename
     \end{vplace}
+    \addcontentsline{toc}{part}{\partnumberline{Appendices}}{}
 \end{titlingpage*}
 \appendix
 \chapterstyle{alpenappendix}
 % ---------------------------------------------------------------------------- %
-
-\include{chunks/binary}
+%                                                                       CHUNKS %
+\include{chunks/apptheory}
 \include{chunks/appfdesign}
 \include{chunks/appgui}
 \include{chunks/licenses}
@@ -159,7 +202,11 @@
 % Minted: Uses the listing counter
 
 % >>>
-
+% ==============================================================================
+%
+%                             B A C K M A T T E R
+%
+% ==============================================================================
 \cleardoublepage % <<< -------------------------------------------- BACKMATTER %
 \backmatter
 \bibliographystyle{IEEEtran}

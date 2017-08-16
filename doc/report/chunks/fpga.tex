@@ -1,10 +1,26 @@
-\chapter{FPGA}
+% ==============================================================================
+%
+%                                   F P G A
+%
+% ==============================================================================
+\chapter{FPGA} % ------------------------------------------------------------- %
 \label{ch:fpga}
-
-In this chapter the structure and functionality of the FPGA firmware, the bitstream, are explained.
-The FPGA part of the project contains the ADC control logic, a core that writes data to RAM and triggers on events such as a rising edge and most importantly the filter chains that connect the two.
-
-The logical structure of the FPGA code can be seen in Figure~\ref{fig:fpga:structure}.
+% ---------------------------------------------------------------------------- %
+% ==============================================================================
+%
+%                               O V E R V I E W
+%
+% ==============================================================================
+%<<<
+Broadly speaking,  the FPGA  firmware (the bitstream)  consists of  three main
+components:  The ADC control logic, a  data acquisition core which writes data
+to  RAM  and  is  responsible  for  triggering,  and,  most  importantly,  the
+filter chains  that connect the two.   Figure~\ref{fig:fpga:structure} shows a
+schematic of  how these components fit  together, and how they  are related to
+the overall STEMlab system. This chapter first presents a rough outline of the
+FPGA toolchain,  and then provides  more specific  information on each  of the
+three  FPGA subsystems  in Sections~\ref{sec:fpga:adc},  \ref{sec:fpga:logger}
+and~\ref{sec:fpga:chains}, respectively.
 
 \begin{figure}
     \centering
@@ -12,84 +28,292 @@ The logical structure of the FPGA code can be seen in Figure~\ref{fig:fpga:struc
     \caption{The structure of the FPGA code.}
     \label{fig:fpga:structure}
 \end{figure}
+%>>>
+% ==============================================================================
+%
+%                              T O O L C H A I N
+%
+% ==============================================================================
+\section{The Xilinx Toolchain} % <<< ----------------------------------------- %
+\label{sec:fpga:toolchain}
+% ---------------------------------------------------------------------------- %
 
-The bitstream is compiled using Vivado, Xilinx's own IDE, a tool that can do everything around Xilinx FPGAs. It does the crucial parts right and can be interfaced using TCL. This is very convenient, as a project can be replicated indempotently\footnote{Idempotence [...] is the property of certain operations in mathematics and computer science, that can be applied multiple times without changing the result beyond the initial application.\cite{TODO:https://en.wikipedia.org/wiki/Idempotence}"} whenever a rebuild is needed.
-Whilst Vivado offers a GUI to build block designs it is sometimes wanky and oftentimes the interface does not recognize changes in externally referenced IP repositories resulting in a lot of grief. Thus we chose to use the TCL API to write scripts that create a new project and apply and connect all necessary blocks. This avoids a lot of errors as a freak of Vivado wont temper with the project. It also enables us to use versioning for the project as Vivado projects create a lot of files which oftentimes clash in very simple versioning operations.
-TCL also allows us to create subblocks, having some blocks grouped together and inserted multiple times without effort, a feature Vivado apparently does not offer.
-More on the TCL API and TCL itself can be found in \cite{TODO:vivado tcl},~\cite{TODO: vivado interface} and \cite{TODO:tcl}.
-As a last and very important thing the TCL API allows us to create the entire project and block design, do the synthesis and implementation, build a bitstream, the board support package and the first stage bootloader all in one go and pack them into an image from a single Makefile without doing any manual tasks.
+The bitstream is compiled  using Vivado, Xilinx's own IDE, a  tool that can do
+everything around  Xilinx FPGAs. It does  the crucial  parts right and  can be
+interfaced  with using  Tcl. This  is very  convenient, as  a  project can  be
+replicated indempotently\footnote{%
+    Idempotence [\ldots] is the property  of certain operations in mathematics
+    and computer science, that can  be applied multiple times without changing
+    the result beyond the initial application~\cite{wiki:idempotence}.%
+}%
+whenever a rebuild is needed.
 
-\section{The ADC core}
+Whilst Vivado offers  a GUI to build  block designs, this process can be a bit
+frustrating to the user due to various ``excentricities'' of the application.
+Therefore, we choose to use its Tcl API
+to write scripts that create a new project and apply and connect all necessary
+blocks. This avoids a lot of errors as  a bug in Vivado's user interface won't tamper
+with the project.
+It  also enables  us  to use  version control tools for  the  project as  Vivado
+projects  create  a  lot  of  files which  oftentimes  clash  in  very  simple
+versioning operations. Using Tcl scripts which create and configure the project,
+and leaving everything else out of the repository, avoids this hassle.
+Tcl also allows  the creation of subblocks: One can group  blocks together and
+insert  them multiple  times  with  little effort;  a  feature which  Vivado's
+graphical front-end apparently does not offer.
+More    on    the    Tcl    API     and    Tcl    itself    can    be    found
+in~\cite{xilinx:vivado-tcl-command-reference-guide},
+\cite{xilinx:vivado-design-suit-user-guide:using-tcl-scripting},
+and~\cite{tcl-exchange}.
+
+The final advantage of the Tcl API to  be mentioned here is that it allows the
+creation of  the entire project, the  block design, perform the  synthesis and
+implementation, build  a bitstream, as well  as the board support  apckage and
+first stage  bootloader, all in a  single sequence of automated  tasks without
+the need  for manual  intervention. Since this  tends to take  quite a  lot of
+time, that is a significant advantage.
+
+%>>>
+% ==============================================================================
+%
+%                               A D C   C O R E
+%
+% ==============================================================================
+\section{The ADC Core} % <<< ------------------------------------------------- %
 \label{sec:fpga:adc}
+% ---------------------------------------------------------------------------- %
 
-The ADC core is a simple piece of logic that interfaces the pins of the FPGA that are connected to those of the STEMlab ADC. It reads the 14 bit unsigned values and converts them into 16 bit signed by adding an offset of $2^{13}$ and doing a 2 bit sign extension.
-It then provides the data over the AXI Stream bus interface which is also used by all the filters.
-This core is used from the git repository provided by Pavel Demin\cite{TODO:link}. More on Pavel Demin's repository can be read in Section~\ref{sec:concept:fpga_components}.
+The ADC  core is a simple  piece of logic  that interfaces with the  FPGA pins
+which  are  connected  to  the  STEMlab's ADC. It  reads  the  ADC's  unsigned
+\SI{14}{\bit}  values and  converts  them to  \SI{16}{\bit}  signed format  by
+adding an offset of $2^{13}$ and performing a \SI{2}{\bit} sign extension. The
+resulting numbers are then provided over an AXI Stream bus interface, which is
+also  used by  all the  filters.  The  core is  used from  the git  repository
+provided by Pavel Demin~\cite{pita:github:pitaya-notes} More on his repository
+and project can be read in Section~\ref{subsec:concept:fpga_components}.
 
-\section{The logger core}
+%>>>
+% ==============================================================================
+%
+%                            L O G G E R   C O R E
+%
+% ==============================================================================
+\section{The Logger Core} % <<< ---------------------------------------------- %
 \label{sec:fpga:logger}
+% ---------------------------------------------------------------------------- %
 
-The logger core (logger in further text) is a piece of VHDL code that stores samples it gets from a source in a ringbuffer in RAM. It is packaged as a Vivado IP core an can be seemlessly integrated into the project.
-The logger originated from an earlier project \cite{TODO:}. Not only does it log data to RAM, it can also be programmed with various triggers. It reads instructions from a BRAM on the FPGA and iterates over them. Having reached the last one it issues an IRQ signal, signalizing the end of the transcription.
+The logger core (logger  in further text) is a piece of  VHDL code that stores
+samples it  gets from a  source in  a ringbuffer in  RAM. It is packaged  as a
+Vivado IP core an can be seemlessly integrated into the project.
+The logger originated  from an earlier project.%TODO: \cite{TODO:}. 
+In addition  to logging data  to RAM, it can  also be programmed  with various
+triggers. It reads  instructions from  a BRAM  on the  FPGA and  iterates over
+them. Having reached  the last one, it  issues an IRQ signal,  signalizing the
+end of the transcription.
 
-The logger core originally featured 8 14bit channels that can be logged simultaneously with each two channels requiring a clock cycles to store a sample as the AXI4-Lite bus only features 32bit samples the lowest configuration.
-Since 14bit is a rather suboptimal number for bytetransfers the samples were zero padded and concatenated to a 32 bit sample.
-But the logger core only triggered on the 14bit value.
+The logger's original  implementation features eight channels with  a width of
+\SI{14}{\bit}, padded to \SI{16}{\bit} in  order to simplify data transmission
+in \si{\byte}-sized chunks. Each two channels require one clock cycle to store
+a sample.
 
-As this project has filter chains that aim to win two bits at least by decimating the samples, this would not have been a good fit.
-As such, the logger trigger instructions have been adjusted to allow 16 bit values.
-This means we have one clock cycle more delay, as the adders and comperators did not match the timing requirement with two carries more, which does not matter as one clock cycle is only 8ns and not even recognizable for the lower frequency signals this project aims to optimize for.
+In order to take advantage of the  fact that additional bits can be ``won'' by
+oversampling a signal, this projects implements a new configuration, which can
+process full \SI{16}{\bit}  values, a gain in two bits  over the ADC's output.
+The penalty for this is one additional  clock cycle of delay, since the adders
+and  comparators cannot  match  the timing  requirements  with two  additional
+carries.  Since this project aims to optimize for lower-frequency signals, the
+resulting additional delay of \SI{8}{\nano\second}  is acceptable and will not
+be an issue in practice.
 
-The logger core comes with a kernel module that provides a convenient interface from the ARM core. Such the logger does not have to be programmed manually. How a trigger can be programmed and the logger status can be polled is described in the dev guide in Section~\ref{TODO:}.
+The  logger  core comes  with  a  kernel  module  that provides  a  convenient
+interface from the ARM core. This avoids having to manually program the logger
+core. The  programming of  a trigger  and polling  of the  logger's status  is
+explained in the Developer's Guide in Section~TODO.
 
-\section{The filter chains}
+%>>>
+% ==============================================================================
+%
+%                          F I L T E R   C H A I N S
+%
+% ==============================================================================
+\section{The Filter Chains} % <<< -------------------------------------------- %
 \label{sec:fpga:chains}
+% ---------------------------------------------------------------------------- %
+% ==============================================================================
+%
+%                               O V E R V I E W
+%
+% ==============================================================================
+%<<<
+The filter chains are  the most crucial part of the project  and also the most
+delicate  one  as  simple  mistakes  can cost  several  decibels  of  SNR  and
+make  the signal  leaving  the filter  worse  than it  came  into the  filter,
+intead  of improving  it.  The  logical structure  of the  chains can  be seen
+in  Figure~\ref{fig:fdesign:chain_concept}  and  the rationale  behind  it  is
+explained  in the  respective Section~\ref{sec:fdesign:filter_specifications}.
+For the  detailled implementation,  it is  advised to look  at the  project in
+Vivado  itself, as  the block  design is  impractically large  to be  put onto
+paper, thus it is omitted in this report.
 
-The filter chains are the most curical part of the project and also the most tricky one as simple mistakes can cost several decibels of SNR and make the signal leaving the filter acutally worse than it came into the filter.
-The logical structure of the chains can be seen in Figure~\ref{fig:fdesign:chain_concept} and are explained in it's containing Section~\ref{sec:fdesign:filter_specifications}.
-Vivado features CIC and FIR compilers natively wich utilize the DSP slices to a maximum extent and make it very easy (at least in theory) to implement a Matlab-designed filter in hardware. Those IPs are described very well in the official documentation~\cite{TODO:}.
-The FIR filter compilers are configured using a set of coefficients in double format. The compiler quantizes the coefficients with maximum precision using a 16 bit fixed point number (this can be changed from the default but should be left to the compiler for best results). It does so by determining the index of the MSB required to represent the biggest coefficient in the set using 16 bits downwards.
-An example take the biggest coefficient as $c_{max} = 0.23$. The bit at index -2\footnote{The bit at index -n is the $2^{-n}$ valued bit.} becomes the sign as it's value (0.25) is not needed to display $c_{max}$. Thus the number is said to have 16 bits and 17 fractional bits. Which does not make any sense at first. It just means that the LSB is the one at index -17 and it has 16 bits meaning the sign is at the bit index -2.
+This section first gives a few notes on the two most important building blocks
+in the FPGA design: The CIC and FIR  compilers by Xilinx.  After that, two key
+points which are particularly challenging  when implementing filter chains are
+elaborated  upon: Propagating  the  correct  bits  through  the  cascade,  and
+adjusting  the gain  correctly  in order  to exploit  the  available bits  for
+maximum dynamic range.
 
-The compiler then also takes the specified input bit configuration and determines the required output configuration to guarantee no overflows and get maximum performance.
-What is important here is that the output bit with is the same that is needed to guarantee no overflows inside the filter. This means that the user has to be well aware of the maximum gain of the designed filter and determine on their own which bits are important at the output.
-For this application only 16 bit values are stored. But the filters generate way more bits. This means that many of them are cut off at the output.
-To make sure that no important bits are truncated, the chosen input format for the filters is 17.7 resulting in 24 bits. The MSB should always remain just a sign extend of the sign actually residing at bit 15. The 7 fractional bits will be cut off at the end of the filter chains but are still important for more precision so less rounding or truncation errors are introduced.
-As values can use up way more than 24 bits inside the filter due to bit growth, it has to be ensured that no overflows happen, resulting in greater bitwidths at the output of the filter.
-It is important that the location of the decimal point is always tracked and remains at it's right place.
-Figure~\ref{fig:fpga:bitflow} depics the flow through an example chain but represents the general case in out blockdesign.
+%>>>
+% ==============================================================================
+%
+%                       F I L T E R   C O M P I L E R S
+%
+% ==============================================================================
+\subsection{Filter Compilers} % <<< ------------------------------------------ %
+\label{subsec:fpga:filter_compilers}
+% ---------------------------------------------------------------------------- %
+
+The  basic building  blocks of  the  filter chains  are FIR  and CIC  filters,
+which  are  based on  ready-to-use  blocks  by  Xilinx. Vivado's CIC  and  FIR
+compilers natively  utilize the  DSP slices  to a maximum  extent and  make it
+very  easy  (at  least  in  theory)  to  implement  a  Matlab-designed  filter
+in  hardware. Those  IPs  are  described   very  thoroughly  in  the  official
+documentation~\cite{xilinx:fir-compiler},~\cite{xilinx:cic-compiler}.
+
+The  FIR filter  compilers  are  configured using  a  set  of coefficients  in
+\code{double} format (exported from Matlab, or any other filter design tool of
+choice). The compiler quantizes the  coefficients with maximum precision using
+a \SI{16}{\bit} fixed  point number (this can be changed  from the default but
+should be  left to the compiler  for best results). It does  so by determining
+the index of the MSB required to  represent the biggest coefficient in the set
+using \num{16}\,bits downwards.
+
+As an example, take the biggest coefficient to be $c_\mathrm{max} = 0.23$. The
+bit at  index \num{-2}\footnote{The bit at  index $-n$ is the  $2^{-n}$ valued
+bit.} becomes  the sign  as its  value (\num{0.25}) is  not needed  to display
+$c_\mathrm{max}$. Thus the  number is  said to have  \num{16}\si{bits} overall
+and \num{17} fractional bits. While this  might seem a bit counterintuitive at
+first, it simply means  that the LSB is the one at index  \num{-17} and it has
+\num{16}\,bits, meaning the sign is at the bit index \num{-2}.
+
+The  compiler  then also  takes  the  specified  input bit  configuration  and
+determines the  required output  configuration to  guarantee no  overflows and
+achieve maximum  performance.  What is important  here is that the  output bit
+width  is  the same  that  is  needed to  guarantee  no  overflows inside  the
+filter. This means that  the user has to  be aware of the maximum  gain of the
+designed filter  and determine on  their own which  bits are important  at the
+output.
+
+%>>>
+% ==============================================================================
+%
+%                       B I T   P R O P A G A T I O N
+%
+% ==============================================================================
+\subsection{Bit Propagation Through the Filter Chains} % <<< ----------------- %
+\label{subsec:fpga:bit_propagation}
+% ---------------------------------------------------------------------------- %
+
+For  this  application, only  \SI{16}{\bit}  values  are stored. However,  the
+filters generate far wider numbers at  their outputs.  This means that many of
+them are  discarded at the  output.  To make sure  that no important  bits are
+truncated, the chosen  input format for the filters  is \code{17.7}, resulting
+in \num{24} total bits. The MSB should always remain just a sign extend of the
+sign actually  residing at bit  \num{15}. The \num{7} fractional bits  are cut
+off at the end of the filter chains but are still important for more precision
+so less  rounding and/or  truncation errors are  introduced inside  the filter
+chain.
+
+As values can use up significantly  more than \num{24}\,bits inside the filter
+due to bit growth, it has to be ensured that no overflows happen, resulting in
+greater  bitwidths at  the output  of the  filter.  It  is important  that the
+location  of the  decimal point  is always  tracked and  remains in  its right
+place.  Figure~\ref{fig:fpga:bitflow} depics the flow through an example chain
+but represents the general case in out blockdesign.
 
 \begin{figure}
     \centering
     \input{images/fpga/bitflow.tikz}
-    \caption{The flow of the bits in a filter chain. The bits are shifted through horizontally. Every bit that does not fit in anymore will be cut off, starting with those farther away from the sign. At the sign extend the bit gets replicated 4 times and handed through to the next stage. The ZERO stage simply holds 7 '0' bits. Inside the Filter the bits can grow so those are not shifted and cut off but rather resized towards the output.}
+    \caption[Bit Flow in Filter Chain]{%
+        The flow of  the bits in a filter chain. The  bits are shifted through
+        horizontally. Every bit which does not fit into the numerical width of
+        the next stage will be cut off, starting with those furthest away from
+        the sign. At the  sign extend the bit is replicated  \num{4} times and
+        handed through to the next  stage. The ZERO stage simply holds \num{7}
+        \code{'0'} bits to pad the number coming from the ADC on its lower end
+        before it goes  into the first filter. Inside the filter  the bits can
+        grow, so those are not shifted  and cut off but rather resized towards
+        the output.%
+    }
     \label{fig:fpga:bitflow}
 \end{figure}
 
-Of course it is important to not cut off any MSBs (or signs) because otherwise the sine will clip or even worse, overflow and wrap around. The same goes for the case where too few bits are cut off. If the bitcount is increased by one to guarantee no overflow inside the filter, but because of unity gain that bit will never be set at the output, that bit would effectively be lost as it will never be used.
-So in fact this would loose us \SI{6}{\dB} in the SNR which is highly undesirable.
-To make sure neither of those errors happens, it is important to have the highest possible filter gain at $G \leq 1$. And at the end of each chain never carry over the added bits, but rather take the initial 14 bits before the comma and take two additional bits from after the comma, resulting again in that better 16bit value. This ensures no ``empty" bits.
-The FIR compiler can avoid those empty bits by normalizing the coefficient such that the highest gain ever is at exactly 1.
-This is called maximizing the dynamic range. Figure~\ref{fig:fpga:dynamicrange} illustrates the issue of loosing one bit.
+%>>>
+% ==============================================================================
+%
+%                 M A X I M I Z E   D Y N A M I C   R A N G E
+%
+% ==============================================================================
+\subsection{Ensuring Maximum Dynamic Range} % <<< ---------------------------- %
+\label{subsec:fpga:maximize_dynamic_range}
+% ---------------------------------------------------------------------------- %
 
-One can observe that the sine in Case 1 uses the dynamic range to a perfect extent as the full scale sine has an amplitude of 127. The maximum value a 8 bit int can hold. Case 2 show a sine that was scaled to 130 and thus effectively requiring a additional bit. 
+Of course it is important not to discard any MSBs (or signs) because otherwise
+the signal (a sine wave in our example) will clip or, even worse, overflow and
+wrap around. The same applies  to the case where too few  bits are cut off. If
+the bit count is increased by one  to guarantee no overflow inside the filter,
+but that bit is  not set at the output due to unity  gain, it will effectively
+be lost as it  will never be used.  This reduces SNR  by \SI{6}{\dB}, which is
+obviously highly undesirable.
 
-But a 9 bit int can hold values up to 255 meaning that most of the time the MSB is not even used. This means that with 9 bit the highest $SNR_{max}$ possible would be
+To make  sure neither  of these faults  happens, it is  important to  have the
+highest possible  filter gain at $G  \leq 1$. Furthermore, at the  end of each
+filter chain,  the additional bits  must not be  carried over, but  rather the
+initial \num{14}\,bits  before the  decimal point,  along with  two fractional
+bits after the decimal point. This  yields the desired \SI{16}{\bit} value and
+ensure no ``empty'' bits.
 
-\begin{equation}
-    ENOB = log_2(130)\\
-    SNR_{max} = \SI{1.76}{\dB} + ENOB \cdot \SI{6.02}{\dB} = 44.03
-\end{equation}
+The FIR  compiler can avoid  those empty  bits by normalizing  the coefficient
+such  that the  highest  gain (i.e.  the  top peaks  of  its passband  ripple)
+is  at  exactly   \num{1}.   This  is  called   \emph{maximizing  the  dynamic
+range}. Figure~\ref{fig:fpga:dynamicrange}  illustrates the  issue of  loosing
+one bit.
 
-In Case 3, the dynamic range is used well and the $SNR_{max}$ is at
+One can  observe that  the sine in  Case \num{1} (top  plot) uses  the dynamic
+range to a perfect extent as the full-scale sine has an amplitude of \num{31},
+the maximum  value an \SI{6}{\bit}  \code{int} can hold. Case  \num{2} (middle
+plot) shows  a sine  that has  been scaled  to \num{34}  and thus  requires an
+additional bit.  But  because a \SI{7}{\bit} \code{int} can hold  values up to
+\num{63}, most of the time the MSB  ends up not being used. with \SI{7}{\bit},
+the highest $SNR_\mathrm{max}$ possible would be
+\begin{align}
+    %\mathrm{ENOB}             &= \log_2(130) \nonumber\\
+    %\mathrm{SNR}_\mathrm{max} &= \SI{1.76}{\dB} + \mathrm{ENOB} \cdot \SI{6.02}{\dB} = 44.03
+    \mathrm{ENOB}             &= \log_2(34) = 5.09 \nonumber \\
+    \mathrm{SNR}_\mathrm{max} &= \SI{1.76}{\dB} + \mathrm{ENOB} \cdot \SI{6.02}{\dB} = 32.39
+\end{align}
+In   Case    \num{3},   the   dynamic    range   is   used   well    and   the
+$\mathrm{SNR}_\mathrm{max}$ with a \SI{6}{\bit} \code{int} is
+\begin{align}
+    %\mathrm{ENOB}             &= \log_2(126) \nonumber\\
+    %\mathrm{SNR}_\mathrm{max} &= \SI{1.76}{\dB} + ENOB \cdot \SI{6.02}{\dB} = 43.76
+    \mathrm{ENOB}             &= \log_2(30)  = 4.91 \nonumber\\
+    \mathrm{SNR}_\mathrm{max} &= \SI{1.76}{\dB} + \mathrm{ENOB} \cdot \SI{6.02}{\dB} = 31.30
+\end{align}
+%This yields a difference of only \SI{0.27}{\dB}. This example shows that it is
+This yields a difference of only \SI{1.09}{\dB}\footnote{%
+    While \SI{1.09}{\dB} might still seem rather large, keep in mind that with
+    the  wider numbers  running in  the actual  filter chains,  the result  is
+    significantly better than in this illustrative example.%
+}.
+This example shows that it is well  advised to scale the coefficient such that
+they dont ripple around \num{1}, but  rather that the maximum ripple is exacly
+\num{1} and not more.
 
-\begin{equation}
-    ENOB = log_2(126)\\
-    SNR_{max} = \SI{1.76}{\dB} + ENOB \cdot \SI{6.02}{\dB} = 43.76
-\end{equation}
-
-This yields a difference of only \SI{0.27}{\dB}. This example shows that it is well advised to scale the coefficient such that they dont ripple around 1 but rather that the maximum ripple is exacly 1 and not more.
-Because if it can be made sure that no additional MSB is used wich is empty most of the time, we can actually use an additional LSB which is always well used and effectively win a bit. So in most cases when the coefficients are designed to have a unity gain close to \SI{6.02}{\dB} can be won by rescaling the coefficients.
+Because if it can be ensured that no additional MSB is used wich is empty most
+of the time,  it is possible use  an additional LSB which is  always well used
+and  to effectively  win a  bit. So in  most cases  when the  coefficients are
+designed to have a unity gain, close to \SI{6.02}{\dB} can be won by rescaling
+the coefficients.
 
 \begin{figure}
     \centering
@@ -98,4 +322,31 @@ Because if it can be made sure that no additional MSB is used wich is empty most
     \label{fig:fpga:dynamicrange}
 \end{figure}
 
-The exact configuration of the filter chains can be read from the Vivado block diagrams in the Appendix~\ref{TODO: ref to BD (necessary??!)}
+%>>>
+% ==============================================================================
+%
+%  M E A N   E R R O R   A N D   V A R I A N C E   I N   C I C   F I L T E R
+%
+% ==============================================================================
+\subsection{Errors Due to Truncation in the CIC Filter} % <<< ---------------- %
+\label{subsec:fpga:errors_in_cic_filter}
+% ---------------------------------------------------------------------------- %
+
+As detailled in Section~\ref{subsubsec:cic:register_growth},  the high gain of
+CIC  filters generally  requires discarding  bits at  the filter's  output. In
+our  implementation,  we  discard  TODO   bits  at  the  filter's  input,  and
+TODO  bits  at   its  output. According  to  the  calculations   laid  out  in
+Section~\ref{subsubsec:cic:register_growth},  this  yields  a mean  error  and
+variance of:
+\begin{align}
+    \mu_\mathrm{CIC25}       &= 0.5 \label{eq:fpga:cic:mu:cic25}  \\
+    \sigma^2_\mathrm{CIC25}  &= \label{eq:fpga:cic:sigmasq:cic25} \\
+    \mu_\mathrm{CIC125}      &= 0.5 \label{eq:fpga:cic:mu:cic125} \\
+    \sigma^2_\mathrm{CIC125} &= \label{eq:fpga:cic:sigmasq:cic125}
+\end{align}
+for  the two  CIC filters  used in  our configuration.   The calculations  are
+performed by a Matlab script and are therefore omitted at this point.
+
+%>>>
+%>>>
+%^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>

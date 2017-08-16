@@ -1,28 +1,35 @@
+\tikzsetnextfilename{gui-fft-comparison}
 \newcommand*\freqzFile{images/gui/fft_comparison.csv}
 \pgfplotstableread[col sep=comma]{\freqzFile}\freqzTable
-\begin{tikzpicture}
+\begin{tikzpicture}[
+    trim axis left,
+    trim axis right,
+]
      \pgfplotsset{every axis/.style={
-            height=60mm,
+            height=45mm,
             width=\textwidth,
             grid=none,
-        },
-        set layers,
-    }
-    \begin{axis}[
+            x unit=\times\,\pi\,\si{\radian}/\si{\sample},
+            y unit=\si{dB},
+            xlabel=Normalized Frequency,
+            ylabel=Magnitude,
             y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
             x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
-            ylabel=$\left|H\right| (dB)$,
-            % TODO: Fix unit for xlabel
-            %xlabel=$f$,
+        },
+        every axis legend/.append style={
+            cells={anchor=west},
+        },
+    }
+    \begin{axis}[
             xmin=0,
             xmax=1,
-            xtick={1},
-            ytick={0},
-            xticklabels={$f_s/2$}
+            xtick={0,0.25,0.5,0.75,1},
+            ytick={-40,0,40,80},
+            xticklabels={0,$f_s/8$,$f_s/4$,$3f_s/8$,$f_s/2$}
         ]
-        \addplot[red,-] table[x=w, y=abs(js)] \freqzTable;
-        \addlegendentry{JS FFT};
-        \addplot[blue,-] table[x=w, y=abs(ml)] \freqzTable;
+        \addplot[very thin,q1,-,smooth] table[x=w, y=abs(ml)] \freqzTable;
         \addlegendentry{Matlab FFT};
+        \addplot[very thin,q5,-,smooth] table[x=w, y=abs(js)] \freqzTable;
+        \addlegendentry{JS FFT};
     \end{axis}
 \end{tikzpicture}

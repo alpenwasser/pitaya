@@ -1,3 +1,8 @@
+% ==============================================================================
+%
+%                      P R O J E C T   S T R U C T U R E
+%
+% ==============================================================================
 \chapter{Project Structure} % <<< -------------------------------------------- %
 \label{ch:devguide:project_structure}
 % ---------------------------------------------------------------------------- %
@@ -7,337 +12,515 @@ repo structure: TLDs and what is contained in them.
 ``Where do I have to go if I want to do X?''
 
 %>>>
-\chapter{FPGA/SoC Toolchain} % <<< ----------------------------------------------- %
+% ==============================================================================
+%
+%                          S O C   T O O L C H A I N
+%
+% ==============================================================================
+\chapter{FPGA/SoC Toolchain} % <<< ------------------------------------------- %
 \label{ch:devguide:fpga_toolchain}
 % ---------------------------------------------------------------------------- %
 
-Because the FPGA/SoC requires a lot of different utilities and environments it is advisable to have a fixed development environment as hardware tooling oft breaks at the slightest change.
-For this reason we provide a build box which contains a Ubuntu Linux. To set up the build box Vagrant and ansible are required.
-The first one pulls the base linux box from a global repository at HashiCorp\footnote{The corporation behind Vagrant}. ansible is then used to provision the box to make it contain all the necessary tooling. Once that is set up, the user has to perform a graphical install of the Vivado Toolchain.
+Because the FPGA/SoC requires a lot of different utilities and environments, it
+is advisable to  have a fixed development environment as  hardware tooling often
+breaks at the slightest change.
+For this reason we  provide a build box\footnote{%
+    A virtual machine image for the purposes of development.
+}
+which contains  an Ubuntu Linux. To set  up the build box, Vagrant  and ansible
+are required.  The former pulls the base Linux box from a global repository at
+HashiCorp\footnote{The corporation  behind Vagrant}.  ansible is then  used to
+provision the box  to install all the necessary tooling. Once  that is set up,
+the user has to perform a graphical install of the Vivado toolchain.
 
-To set up the build box, perform the steps explained in Section~\ref{sec:devguide:sec:devguide:fpga_toolchain:buildbox}
+This chapter  describes how to  set up  the build box  and Vivado, and  how to
+generate a Linux image which can be  flashed onto the STEMlab's SD card to get
+the device up and running.
 
-\section{Setting up the buildbox}
+\emph{Note:} The following indicates a code snippet which has to be entered on
+the command line:
+\begin{commandshell}
+    enter commands here
+\end{commandshell}
+
+\section{Setting Up the Build Box} % ----------------------------------------- %
 \label{sec:devguide:fpga_toolchain:buildbox}
+% ---------------------------------------------------------------------------- %
 
-\subsection*{Prerequisites}
-
-Install
-
-\begin{itemize}
+\paragraph{The following  prerequisites} need  to be  installed onto  the host
+machine first:
+\begin{itemize}\tightlist
     \item Vagrant
     \item ansible
     \item VirtualBox
 \end{itemize}
+If you are on a Linux or OSX  and use a package manager to install VirtualBox.
+It is also necessary to install the Virtualbox Guest Additions packages.  They
+are  required in  later  stages during  the  setup  of the  box.   It is  also
+advisible to perform a
+\begin{commandshell}
+    sudo vboxreload
+\end{commandshell}
+\noindent Otherwise a reboot of the host system might be necessary.
 
-If you are on a Linux or OSX and use a package manager to install VirtualBox it is necessary to also install the Guest Additions packages. They are required in later stages during the setup of the box.
-It is also advisible to perform a
+After all the  tools on the host have  been installed, we move to  the root of
+the project  repository. For all the further  steps we assume that  we operate
+from that root directory.
 
-\begin{listing}
-    \begin{minted}[autogobble]{bash}
-        sudo vboxreload
-    \end{minted}
-\end{listing}
+To do an initial setup of the box, enter
+\begin{commandshell}
+    cd env
+    vagrant up
+\end{commandshell}
+\noindent This  will boot the  box and  provision it using  ansible. This step
+requires a  stable internet connection. If  anything fails during  the initial
+setup (red messages in the shell), you can run and retry the provisioning with
+\begin{commandshell}
+    vagrant provision
+\end{commandshell}
 
-Otherwise a reboot of the host system might be necessary.
-After all the tools on the host have been installed, we move to the root of the project repository. For all the further steps we assume that we operate from the root.
+Once the provisioning  has finished, the build box should  be rebootet because
+some  changes  (for  example  the installed  desktop  environment)  require  a
+reboot. Do this by running
+\begin{commandshell}
+    vagrant halt
+    vagrant up
+\end{commandshell}
+\noindent If you  want to make changes  to the default box setup,  have a look
+at  the  file \newline\mbox{\code{/env/roles/common/tasks/main.yml}}  and  the
+official ansible documentation~\cite{ansible-docs}.
 
-To do an initial setup of the box, do
+The  fully   configured  build   box  should   contain  two   shared  folders:
+\code{/vagrant/}  points  to  the  \code{/env/} directory  on  the  host,  and
+\code{/repo/} points to \code{/} on the host.
 
-\begin{listing}
-    \begin{minted}[autogobble]{bash}
-        cd env
-        vagrant up
-    \end{minted}
-\end{listing}
+\paragraph{IMPORTANT:} The   password  of   the   default   vagrant  user   is
+\textbf{\code{vagrant}} and has \code{sudo} privileges.
 
-This will boot the box and provision it using ansible. This step requires a stable internet connection. If anything fails during the initial setup (red messages in the shell), you can run and retry the provisioning with
 
-\begin{listing}
-    \begin{minted}[autogobble]{bash}
-        vagrant provision
-    \end{minted}
-\end{listing}
-
-Once the provisioning has finished, the build box should be rebootet because some changes (for example the installed desktop environment) require a reboot. Do this by running
-
-\begin{listing}
-    \begin{minted}[autogobble]{bash}
-        vagrant halt
-        vagrant up
-    \end{minted}
-\end{listing}
-
-If you want to make changes to the default box setup, have a look at \textit{/env/roles/common/tasks/main.yml} and the official ansible\cite{TODO:} documentation.
-
-The fully configured build box should contain two shared folders \textit{/vagrant/} which points to the \textit{/env/} directory on the host and \textit{/repo/} which point to \textit{/} on the host.
-
-\textbf{IMPORTANT:} The password of the default vagrant user is \textbf{vagrant} and can use \textit{sudo}
-
-Now it is time to set up Vivado which is explained in Section~\ref{sec:devguide:fpga_toolchain:vivado}.
-
-\section{Setting up Vivado}
+\section{Setting up Vivado} % ------------------------------------------------ %
 \label{sec:devguide:fpga_toolchain:vivado}
+% ---------------------------------------------------------------------------- %
 
-For this Section we assume that we execute all commands on the VirtualBox (guest for the rest of this manual).
-
-Enter
-
-\begin{listing}
-    \begin{minted}[autogobble]{bash}
+After having  completed the basic  build box  setup as outlined  above, Vivado
+needs to  be installed.   For this  Section, we assume  that all  commands are
+executed on the VirtualBox (\emph{guest} for the rest of this manual).  Enter
+\begin{commandshell}
     /repo/Xilinx/Downloads/Xilinx_Vivado_SDK_2016.2_0605_1_Lin64.bin
-    \end{minted}
-\end{listing}
+\end{commandshell}
+\noindent into a  shell to start the Vivado install.   The graphical installer
+will guide through the process. A complete  pictorial guide for this is beyond
+the scope of this document, but  an illustrated guide with screenshots for all
+steps  is available  under~\cite{vivado-install-guide}.  For  documentation on
+Vivado  itself,  it  is  recommended  to have  a  look  at  the  documentation
+portal from  Xilinx~\cite{xilinx:documentation-portal}; it  contains extensive
+documentation on many topics.
 
-into a shell to start the Vivado install.
-Figure~\ref{} through to Figure~\ref{} guide through the install.
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth,trim={0 8cm 0 8cm},clip]{images/devguide/vivado-install--1.png}
-    \caption[Vivado: Step 1]{%
-        Vivado: Step 1: It is very important to select "Continue"!
-    }
-    \label{fig:devguide:vivado1}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth]{images/devguide/vivado-install-00.png}
-    \caption[Vivado: Step 2]{%
-        Vivado: Step 2
-    }
-    \label{fig:devguide:vivado2}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth]{images/devguide/vivado-install-01.png}
-    \caption[Vivado: Step 3]{%
-        Vivado: Step 3
-    }
-    \label{fig:devguide:vivado3}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth,trim={0 5cm 0 0cm},clip]{images/devguide/vivado-install-02.png}
-    \caption[Vivado: Step 4]{%
-        Vivado: Step 4
-    }
-    \label{fig:devguide:vivado4}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth,trim={0 6cm 0 0cm},clip]{images/devguide/vivado-install-04.png}
-    \caption[Vivado: Step 5]{%
-        Vivado: Step 5
-    }
-    \label{fig:devguide:vivado5}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth]{images/devguide/vivado-install-05.png}
-    \caption[Vivado: Step 6]{%
-        Vivado: Step 6: Set the installation directory to \textit{/vagrant/Xilinx}
-    }
-    \label{fig:devguide:vivado6}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth,trim={0 8cm 0 3cm},clip]{images/devguide/vivado-install-10.png}
-    \caption[Vivado: Step 7]{%
-        Vivado: Step 7
-    }
-    \label{fig:devguide:vivado7}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth,trim={0 10cm 0 0cm},clip]{images/devguide/vivado-install-11.png}
-    \caption[Vivado: Step 8]{%
-        Vivado: Step 8
-    }
-    \label{fig:devguide:vivado8}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth]{images/devguide/vivado-install-12.png}
-    \caption[Vivado: Step 9]{%
-        Vivado: Step 9
-    }
-    \label{fig:devguide:vivado9}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth,trim={0 8cm 0 8cm},clip]{images/devguide/vivado-install-14.png}
-    \caption[Vivado: Step 10]{%
-        Vivado: Step 10
-    }
-    \label{fig:devguide:vivado10}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth,trim={0 8cm 0 0cm},clip]{images/devguide/vivado-install-16.png}
-    \caption[Vivado: Step 11]{%
-        Vivado: Step 11
-    }
-    \label{fig:devguide:vivado11}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth]{images/devguide/vivado-install-17.png}
-    \caption[Vivado: Step 12]{%
-        Vivado: Step 12
-    }
-    \label{fig:devguide:vivado}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth]{images/devguide/vivado-install-18.png}
-    \caption[Vivado: Step 13]{%
-        Vivado: Step 13
-    }
-    \label{fig:devguide:vivado}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth,trim={0 8cm 0 8cm},clip]{images/devguide/vivado-install-19.png}
-    \caption[Vivado: Step 14]{%
-    Vivado: Step 14
-    }
-    \label{fig:devguide:vivado}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth,trim={0 8cm 0 8cm},clip]{images/devguide/vivado-install-20.png}
-    \caption[Vivado: Step 15]{%
-    Vivado: Step 15
-    }
-    \label{fig:devguide:vivado}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth,trim={0 8cm 0 8cm},clip]{images/devguide/vivado-install-22.png}
-    \caption[Vivado: Step 16]{%
-        Vivado: Step 16
-    }
-    \label{fig:devguide:vivado}
-\end{figure}
-
-\section{Building a Linux}
+\section{Building a Linux} % ------------------------------------------------- %
 \label{sec:devguide:fpga_toolchain:linux}
+% ---------------------------------------------------------------------------- %
 
-With the fully set up build box it is possible to build an image with only two commands.
-If new features are being added to the FPGA project or the server application is altered, of course the build steps can be performed, but an initial build is advisable.
+With the fully set up build box it is possible to build an image with only two
+commands. While it  is possible to only  perform the build steps  once changes
+have been made to the FPGA project  or the server application, it is advisable
+to perform  an initial  build. This allows  to check if  everything is  set up
+correctly and works as intended.
 
-First we copy the repo to a \textbf{non-shared} folder because uboot requires \textit{mmap()} which of course cannot handle shared folders.
-And then we build the image in one go. This includes building the linux, the bitstream, the required firststage bootloader and the board support package, the logger kernel module, the server application, the scope application.
-After that a bash script is used to create an image with all the components, mount it and provision the ubuntu environment.
-Do do all of this do
-
-\begin{listing}
-    \begin{minted}[autogobble]{bash}
+First  we  copy  the  repo  to  a  \textbf{non-shared}  folder  on  the  guest
+machine,  because uboot  requires  \code{mmap()}, which  cannot handle  shared
+folders. After  that,  building the  image  is  a single-step  process.   This
+includes building the Linux, the bitstream, the required firststage bootloader
+and  the  board  support  package,   the  logger  kernel  module,  the  server
+application, and the scope application.  After  that, a bash script is used to
+create an  image with all  the components, mount  it and provision  the ubuntu
+environment which is to be run on the STEMlab. To start this process, enter
+\begin{commandshell}
         cp -r /repo ~/local_folder
         cd ~/local_folder
         make init
-    \end{minted}
-\end{listing}
+\end{commandshell}
 
-After the build has finished the image can be created using
-
-\begin{listing}
-    \begin{minted}[autogobble]{bash}
+After the build process has finished, the image can be created using
+\begin{commandshell}
         cd ~/local_folder/firmware/arm
         sudo sh scripts/image.sh scripts/ubuntu.sh red-pitaya-ubuntu.img 1024
-    \end{minted}
-\end{listing}
-
-Those scripts were initially created by the Red Pitaya corporation, altered by Pavel Demin\cite{TODO:} and altered by us to fit our needs.
-
-TODO: references to vivado documentation
+\end{commandshell}
+\noindent These scripts were initially  created by the Red Pitaya corporation,
+altered by  Pavel Demin~\cite{pita:github:pitaya-notes},  and have  again been
+adapted to the requirements of this project.
 %>>>
-
+% ==============================================================================
+%
+%                       F I L T E R   T O O L C H A I N
+%
+% ==============================================================================
 \chapter{Filter Toolchain} % <<< --------------------------------------------- %
-\label{ch:devguide:fpga_toolchain}
+\label{ch:devguide:filter_toolchain}
 % ---------------------------------------------------------------------------- %
-matlab stuff: What is where,  how do I specify a new filter,  how do I extract
-the filters into Vivado, where can plot data be found
-%>>>
 
+Designing   the  filters   according  to   the  desired   specifications  (see
+Chapter~\ref{ch:filter_design})  is   performed  through   a  set   of  Matlab
+scripts. This chapter describes the overall  structure of the script suite and
+gives a basic usage example. All  functions have a \code{help} available which
+describes their usage, particularly their respective interfaces. 
+
+\section{Toolchain Structure} % ---------------------------------------------- %
+\label{sec:devguide:filter_toolchain:structure}
+% ---------------------------------------------------------------------------- %
+
+This  section explains  which files  constitute the  toolchain and  what their
+purpose is. The  entire toolchain can  be used either from  Matlab's graphical
+front-end, or  from its commandline  mode. The following files are  present in
+the filter design directory\footnote{%
+    relative to global project root%
+}:
+\vspace{2ex}
+\noindent\dirtree{%
+    .1 design/filter/.
+    .2 cliDispatcher.m.
+    .2 guiWrapper.m.
+    .2 generators/.
+    .3 decCIC.m.
+    .3 decFIR.m.
+    .3 halfbandFIR.m.
+    .3 compCIC.m.
+    .3 cascador.m.
+    .3 parcascador.m.
+    .3 pardecFIR.m.
+    .3 parhalfbandFIR.m.
+    .2 plotData.
+    .2 coefData.
+    .2 Makefile.
+    .2 README.md.
+}
+
+\paragraph{\code{cliDispatcher.m}} is  the main  script from where  the design
+functions are initiated.   If you wish to  design a new filter  chain, this is
+where its specifications are located, and from where the filter design scripts
+are then called with those paramters.
+
+\paragraph{\code{guiWrapper.m}} is  a convenience layer which  makes it easier
+to work with \code{cliDispatcher.m} from Matlab's graphical front-end. It sets
+some  of  the  configuration  parameters  for  calling  \code{cliDispatcher.m}
+which are  otherwise set  in Matlab's commandline  interface when  calling the
+dispatcher from there.
+
+\paragraph{\code{generators/}}  is  the  directory  where  the  filter  design
+scripts are located. These are split  into two primary groups: Functions which
+design filters, and functions which  combine them into cascades. Note that all
+generators support  generating multiple filters  at once for a  combination of
+various paramters and  will pass back a cell array  with the resulting filters
+and the paramters used in their specification.
+
+This  allows to  iteratively generate  a large  set of  filters in  an initial
+step  to assess  resource  usage or  other characteristics  for  a wide  range
+of  parameters. The parameters  for  FIR  filters are  the  ones  laid out  in
+Section~\ref{subsec:FIR_filters}. For half-band and CIC filters, they slightly
+differ.  The filter design functions are:
+\begin{description}\tightlist
+    \item[\code{decCIC.m}] designs a CIC filter.
+    \item[\code{decFIR.m}] designs a FIR filter.
+    \item[\code{halfbandFIR.m}] designs a halfband filter.
+    \item[\code{compCIC.m}] designs a compensator for a CIC filter.
+\end{description}
+Note that all of these have version which iterate in parallel over a given set
+of  specifications,  prefixed  with  \code{par}  (e.g.  \code{pardecFIR}). The
+interface for all parallel versions is identical. They can be used if Matlab's
+parallel processing toolbox is available. If only a small set of filters is to
+be designed,  it is  recommended to  use the  regular, serial  versions, since
+starting up  a parallel processing  pool in Matlab is  a slow process  and its
+overhead is  usually not  worth it in  those cases. In case  Matlab is  run in
+commandline  mode, make  sure \emph{not}  to start  it with  the \code{-nojvm}
+switch, since the parallel processing pool requires the Java Virtual Machine.
+
+The functions  \code{cascador.m} and  \code{parcascador.m} create  cascades of
+filter cell arrays  passed to them. Note that in order  to achieve the desired
+iteration  result,  some  manual  intervention in  re-structuring  the  filter
+objects  passed  to  the  cascade  functions  might  on  occasion  be  needed,
+particularly in the case of cascading  other filters with CIC filters. This is
+because the set of parameters used to design CIC filters is different from the
+set of coefficients used to design FIR filters, which means the objects passed
+back from the CIC and FIR filter functions might not always match as needed in
+their structure to cascade them in  all possible manners. This is not an issue
+when only cascading single CIC filters with other filters.
+
+\paragraph{\code{coefData} and \code{plotData}} are  two directories which are
+created  by the  functions  (if they  do  not yet  exist)  for storing  filter
+property  data.  \code{coefData} contains  the  filter  coefficients for  each
+filter which  has coefficients in a  Vivado-compliant \code{.coe} format. This
+allows a direct import of Matlab's results into Vivado's FIR compiler.
+
+\code{plotData} contains frequency  responses for each filter, as  well as any
+potential cascade, in \code{.csv} format,  as given by Matlab's \code{freqz()}
+function.  This  is used to  generate the  frequency response plots  from this
+report, for examlpe.
+
+\paragraph{The  \code{Makefile}} can  be used  to call  \code{cliDispatcher.m}
+from the command line. It has  various targets for designing different filters
+or filter  chains. Matlab will be called  in commandline mode, and  its output
+redirected  to  a  log file,  so  not  output  will  generally be  visible  on
+screen. This  is primarily  intended to  be used  when all  filters have  been
+specified and fixed, and  the needed files are to be generated  for use on the
+FPGA side.
+
+\paragraph{The  \code{README.md}}  contains  additional information  which  is
+beyond the scope  of this documentation. In general, it  is highly recommended
+to  consult  both  the  \code{README}  and the  \code{help}  of  the  provided
+functions  in  case  of questions,  as  well  as  the  code itself,  which  is
+extensively commented (particularly \code{cliDispatcher.m}).
+
+
+\section{Usage} % ------------------------------------------------------------ %
+\label{sec:devguide:filter_toolchain:usage}
+% ---------------------------------------------------------------------------- %
+
+Now that we know  the location and purpose of the main  components, it is time
+for a basic usage example. For this, it is useful to know how to use the basic
+FIR filter  design function (Listing~\ref{lst:devguide:fdesign:fir}),  the CIC
+design function  (Listing~\ref{lst:devguide:fdesign:cic}), and how  to cascade
+filters (Listing~\ref{lst:devguide:fdesign:casc}). All  of this code is  to be
+put  into  the \code{cliDispatcher.m}  file,  and  a \code{case}  created  for
+it. This is shown in Listing~\ref{lst:devguide:fdesign:cliDispatchter}.
+
+\begin{tcolorbox}[
+    title={
+        \refstepcounter{listing}
+        \textbf{Listing \thelisting:} Using \code{cliDispatcher.m}
+        \label{lst:devguide:fdesign:cliDispatchter}
+        \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Using \code{cliDispatcher.m}}
+    }
+]
+\inputminted[
+    linenos,
+    numbersep=4pt,
+    style=solarizedlight,
+]{matlab}{./code/fdesign/cliDispatcher.m}
+\end{tcolorbox}
+
+To execute \code{cliDispatcher.m}, Matlab's commandline interface can be used:
+\begin{tcolorbox}[
+    title={
+        \refstepcounter{listing}
+        \textbf{Listing \thelisting:} Calling \code{cliDispatcher.m} from Matlab's Commandline Interface
+        \label{lst:devguide:fdesign:fir_cell}
+        \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Calling \code{cliDispatcher.m} from Matlab's Commandline Interface}
+    }
+]
+\begin{minted}{matlab}
+>> filtertype='EXAMPLE_FILTER_AND_OR_FILTER_CHAIN';
+>> cliDispatcher
+\end{minted}
+\end{tcolorbox}
+\noindent Alternatively, one  may create an entry  in \code{guiWrapper.m} when
+using Matlab's graphical interface for added convenience. An entry can be created
+as show
+\begin{tcolorbox}[
+    title={
+        \refstepcounter{listing}
+        \textbf{Listing \thelisting:} Creating an Entry for \code{cliDispatcher.m} in \code{guiWrapper.m}
+        \label{lst:devguide:fdesign:fir_cell}
+        \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Creating an Entry for \code{cliDispatcher.m} in \code{guiWrapper.m}}
+    }
+]
+\begin{minted}{matlab}
+%% EXECUTE EXAMPLE_FILTER_AND_OR_FILTER_CHAIN
+clear all;close all;clc;
+filtertype = 'EXAMPLE_FILTER_AND_OR_FILTER_CHAIN';
+disp('Designing Chain for R = EXAMPLE')
+run cliDispatcher;
+\end{minted}
+\end{tcolorbox}
+
+Besides  knowing  how  to  initiate   the  filter  design  toolbox,  one  must
+obviously   also  know   how  to   actually  design   filtes.   The   code  in
+Listing~\ref{lst:devguide:fdesign:fir}  designs \emph{two}  FIR filters,  with
+two  different stopband  edge  frequencies (\code{Fst}).   The resulting  cell
+array  \code{Hd} from  Listing~\ref{lst:devguide:fdesign:fir_cell} has  in its
+first column the designed filter system  objects, and in the remaining columns
+the design parameters used to specify the filter.
+
+\begin{tcolorbox}[
+    title={
+        \refstepcounter{listing}
+        \textbf{Listing \thelisting:} Designing two FIR Filtes 
+        \label{lst:devguide:fdesign:fir}
+        \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Designing two FIR Filters}
+    }
+]
+\inputminted[
+    linenos,
+    numbersep=4pt,
+    style=solarizedlight,
+]{matlab}{./code/fdesign/fir.m}
+\end{tcolorbox}
+\begin{tcolorbox}[
+    title={
+        \refstepcounter{listing}
+        \textbf{Listing \thelisting:} Cell Array with Two FIR Filters
+        \label{lst:devguide:fdesign:fir_cell}
+        \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Cell Array with Two FIR Filters}
+    }
+]
+\begin{minted}{text}
+>> Hd
+
+Hd =
+
+  2×6 cell array
+
+    [1×1 dsp.FIRDecimator]    [0.2000]    [0.2500]    [0.2100]    [60]    [5]
+    [1×1 dsp.FIRDecimator]    [0.2000]    [0.2500]    [0.2250]    [60]    [5]
+\end{minted}
+\end{tcolorbox}
+
+Designing  a   CIC  filter   uses  slightly   different  parameters,   but  is
+otherwise  similar. One  point of  note  is  that the  compensator's  passband
+edge  is  specified relative  to  the  CIC  filter's incoming  sampling  rate,
+not  the  sampling rate  at  which  the compensator  runs,  as  is common  for
+FIR  filters  otherwise. Hence  \code{FpComp  =   1/R2}  on  line  \num{8}  of
+Listing~\ref{lst:devguide:fdesign:cic}.
+
+The \code{HdComp} cell array will look similar  to the cell array from the FIR
+design  function above. However,  it will  have both  the cascade  of the  CIC
+filter and its  compensator, as well as  each filter by itself,  in a separate
+column entry.
+
+\begin{tcolorbox}[
+    title={
+        \refstepcounter{listing}
+        \textbf{Listing \thelisting:} Designing a CIC Filter and Its Compensator
+        \label{lst:devguide:fdesign:cic}
+        \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Designing a CIC Filter and Its Compensator}
+    }
+]
+\inputminted[
+    linenos,
+    numbersep=4pt,
+    style=solarizedlight,
+]{matlab}{./code/fdesign/cic.m}
+\end{tcolorbox}
+
+Cascading two filters with the \code{cascador} or \code{parcascador} functions
+is  shown in  Listing~\ref{lst:devguide:fdesign:casc}. It accepts  filter cell
+arrays  as  returned  by  the  filter design  functions  (so,  \code{Hd}  from
+\mbox{Listing~\ref{lst:devguide:fdesign:fir}},  for example). However,  before
+being  given to  the \code{cascador}  function, the  filters which  are to  be
+cascaded must  be packaged into a  single cell array, called  \code{stages} in
+\mbox{Listing~\ref{lst:devguide:fdesign:casc}}. \code{Hd1}  and \code{Hd2} are
+presumed to be of the form of \code{Hd} from above.
+
+No special care  needs to be taken when handling  \code{HdComp} cell arrays to
+\code{cascador}\footnote{%
+    There is  a limitation  to the numbers  of filters Matlab  can chain  in a
+    single  cascade. This limitation  might  be relevant  when designing  long
+    filter chains. However,  multiple cascades can themselves  be cascaded, so
+    this limitation can be worked around if necessary.
+},
+despite  its first  column  being  a cascade  filter  object
+instead of  a single  filter. \code{cascador} will  notice the  difference and
+unpack the cascade\footnote{
+    Because cascade objects  can themselves be cascaded, this  is not strictly
+    necessary.   But for  the sake  of easier  understanding and  elegance, we
+    unpack cascades when possible.%
+}
+The other parameters  handed to \code{cascador}, such  as \code{R}, \code{Fst}
+etc. should correspond  to the overall properties of the  cascade, and not the
+individual stages. Since it is not possible to automatically determine some of
+these properties before actually cascading  the filter, the user must manually
+set these to the correct  values. Particularly when cascading cell arrays with
+multiple filters, some care must be taken  in order to ensure that all desired
+permutations are  produced. This is because the  \code{cascador} iterates over
+these paramters  when cascading the  filters. They are  also used to  name the
+resulting plot files for the cascade.
+
+\begin{tcolorbox}[
+    title={
+        \refstepcounter{listing}
+        \textbf{Listing \thelisting:} Cascading Two Filter Cell Arrays
+        \label{lst:devguide:fdesign:casc}
+        \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Cascading Two Filter Cell Arrays}
+    }
+]
+\inputminted[
+    linenos,
+    numbersep=4pt,
+    style=solarizedlight,
+]{matlab}{./code/fdesign/casc.m}
+\end{tcolorbox}
+
+While the above remarks cover the most essential information, they by no means
+constitute  a comprehensive  guide. When  designing filters,  it is  therefore
+highly  recommended to  consult  the \code{README}s,  the  \code{help} of  the
+functions,  the  code  and  its  comments, as  well  as  the  official  Matlab
+documentation.
+
+%>>>
+% ==============================================================================
+%
+%                                 S E R V E R
+%
+% ==============================================================================
 \chapter{Server} % <<< ------------------------------------------------------- %
 \label{ch:devguide:server}
 % ---------------------------------------------------------------------------- %
 
-The server application runs on the ARM Linux and is in charge of shoving data from the FPGA to the network and vice versa.
-How it can be built and extended is explained in this section.
+The server application runs on the ARM  Linux and is responsible for moving
+data from the FPGA to the network, and vice versa. This chapter explains how
+it is to be compiled and how to expand its functionality, if needed.
 
-\section{Building the server}
+\section{Building the Server} % ---------------------------------------------- %
 \label{sec:devguide:server:build}
+% ---------------------------------------------------------------------------- %
 
-The server can only be built using the build environment explained in Chapter~\ref{ch:devguide:fpga_toolchain}.
-A simple
+The  server can  only be  built using  the build  environment as  explained in
+Chapter~\ref{ch:devguide:fpga_toolchain}.  A simple
+\begin{commandshell}
+    cd /repo/firmware/arm/server
+    make
+\end{commandshell}
+\noindent should suffice to build all the external dependencies and the binary
+for the ARM core. These externals can be rebuilt using
+\begin{commandshell}
+    cd /repo/firmware/arm/server
+    make external
+\end{commandshell}
+\noindent The server  application can be rebuilt after changes  have been made
+by issuing
+\begin{commandshell}
+    cd /repo/firmware/arm/server
+    make arm
+\end{commandshell}
 
-\begin{listing}
-    \begin{minted}[autogobble]{bash}
-        cd /repo/firmware/arm/server
-        make
-    \end{minted}
-\end{listing}
+The   server  application   is   a  one-file   application   and  depends   on
+libuWebSockets~\cite{uws:github} and a  headerfile called \code{json.hpp} from
+Niels Lohmann's \emph{JSON for Modern C++} project \cite{lohmann:github:json},
+which contains the entire JSON library.   There is two important functions for
+extending the  server application: \code{onHttpRequest}  and \code{onMessage},
+which are explained in the following sections.
 
-should suffice to build all the external dependencies and the binary for the ARM core.
+\subsection{onHttpRequest} % ------------------------------------------------- %
+\label{subsec:devguide:server:onhttprequest}
+% ---------------------------------------------------------------------------- %
 
-The externals can be rebuilt using
+This callback  is executed  when the user  makes an HTTP  request wich  is not
+an  \code{UPGRADE} request. Currently  it  simply serves  the  files from  the
+filesystem, but  could easily be  extended to  outline data or  similar tasks.
+Returning a  correct HTTP  Response has to  be done manually  and is  not well
+documented in the library itself.
 
-\begin{listing}
-    \begin{minted}[autogobble]{bash}
-        cd /repo/firmware/arm/server
-        make external
-    \end{minted}
-\end{listing}
-
-and the server application can be rebuilt after changes using
-
-\begin{listing}
-    \begin{minted}[autogobble]{bash}
-        cd /repo/firmware/arm/server
-        make arm
-    \end{minted}
-\end{listing}
-
-The server application is a one file application and depends on libuWebSockets\cite{TODO:} and a headerfile called json.hpp\cite{TODO:} which contains the entire JSON library.
-
-There is two important functions for extending the server application: onHttpRequest and onMessage.
-
-\subsection{onHttpRequest}
-
-This callback gets called when the user makes an HTTP request wich is not an \textit{UPGRADE} request. Currently it simply serves the files from the filesystem, but could easily be extended to outline data or the likes.
-Returning a correct HTTP Response has to be done manually and not well documented in the library itself.
-
-If the response should outline a \textit{200 OK} status,
-
-\begin{listing}
+If the response should outline a \code{200 OK} status,
+\begin{tcolorbox}
     \begin{minted}[autogobble]{C++}
         res->end(const char*, size_t);
     \end{minted}
-\end{listing}
+\end{tcolorbox}
+\noindent can be used with a string  and a size. The library then detects that
+no header  is attached  to the  response and attaches  a proper  \code{200 OK}
+header.
 
-can be used with a string and a size. The lib then detects that no header is attached to the response and attaches a proper textit{200 OK} header.
-
-If a custom header should be attached it first has to be attached and then the actual answer like so
-
-\begin{listing}
+If a  custom header should be  attached, it first  has to be written  into the
+answer, after which the actual content can be written into it as well:
+\begin{tcolorbox}
     \begin{minted}[autogobble]{C++}
         std::string mime;
         char header[128];
@@ -353,35 +536,50 @@ If a custom header should be attached it first has to be attached and then the a
         res->write(header, header_length);
         res->end(str.c_str(), str.size());
     \end{minted}
-\end{listing}
+\end{tcolorbox}
 
-I am not entirely sure if better handling of this will follow in the future or if it is a performance thing, as the library itself is awesome in structure and tidyness. But docs sadly are very sparse
+%I am not entirely sure if better handling of this will follow in the future or
+%if it is  a performance thing, as  the library itself is  awesome in structure
+%and tidyness. But docs sadly are very sparse
 
-\subsection{onMessage}
 
-This callback is triggered when a new message is received through the WebSocket.
-For now in our project this call only handles incomming text messages as those conatin the instructions.
-Binary messages are simply discarded but could be used at a later time to interface the DAC.
+\subsection{onMessage} % ----------------------------------------------------- %
+\label{subsec:devguide:server:onmessage}
+% ---------------------------------------------------------------------------- %
 
-To add any new functionality, the code should be inspected and extended in analogy.
+This  callback  is triggered  when  a  new  message  is received  through  the
+WebSocket.  For  now, this  call only  handles incoming  text messages  in our
+project  as  those  contain  the instructions.   Binary  messages  are  simply
+discarded but could be used at a later time to interface with the DAC.
 
-\section{Instruction Set}
+TODO: weird
+To add  new functionality,  the code should  be inspected and  extended in
+analogy.
+
+\section{Instruction Set} % -------------------------------------------------- %
 \label{sec:devguide:server:instruction}
+% ---------------------------------------------------------------------------- %
 
-The instruction set contains TODO: commands which are listed in the lististings \ref{TODO:} downto \ref{TODO:}.
+The        instruction        set        contains        eight        commands
+which     are      listed     in     Listing~\ref{lst:devguide:server:instr:1}
+through~\ref{lst:devguide:server:instr:8}. The   following  sections   explain
+their basic purpose and functionality.
 
-\subsection{Forcing a new trigger event}
+\subsection{Forcing a New Trigger Event} % ----------------------------------- %
+\label{subsec:devguide:server:forcing_trigger}
+% ---------------------------------------------------------------------------- %
 
-This command forces the logger to finish it's current frame. It still repects the set pre and suf conditions.
-The server does not automatically send the recorded frame. It has to be requested separately.
-The argument needs to be always set to "true"
+This  command  forces  the  logger  to  finish  its  current  frame. It  still
+repects the  set \code{pre}  and \code{suf} conditions.   The server  does not
+automatically send the recorded frame. It has to be requested separately.  The
+argument \code{forceTrigger} always has to be set to \code{true}.
 
 \begin{tcolorbox}[
     title={
         \refstepcounter{listing}
-        Listing \thelisting: Forcing a new trigger event
+        \textbf{Listing \thelisting:} Forcing a New Trigger Event
         \label{lst:devguide:server:instr:1}
-        \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Forcing a new trigger event}
+        \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Forcing a New Trigger Event}
     }
 ]
 \inputminted[
@@ -391,16 +589,20 @@ The argument needs to be always set to "true"
 ]{javascript}{./code/serverinstructions/forceTrigger.js}
 \end{tcolorbox}
 
-\subsection{Configuring the frame the server sends}
+\subsection{Configuring the Frame Sent by the Server } % --------------------- %
+\label{subsec:devguide:server:config_frame}
+% ---------------------------------------------------------------------------- %
 
-This command tells the server how big the frame should be and how many samples have to be recorded before and after the trigger. All arguments have to be numbers in the JSON format, not strings.
+This command tells the server how big the frame should be and how many samples
+have to be recorded before and after  the trigger. All arguments have to be of
+the numerical type in the JSON format, not strings.
 
 \begin{tcolorbox}[
     title={
         \refstepcounter{listing}
-        Listing \thelisting: Configuring the frame the server sends
+        \textbf{Listing \thelisting:} Configuring the Frame Sent by the Server
         \label{lst:devguide:server:instr:2}
-        \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Configuring the frame the server sends}
+        \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Configuring the Frame Sent by the Server}
     }
 ]
 \inputminted[
@@ -410,17 +612,21 @@ This command tells the server how big the frame should be and how many samples h
 ]{javascript}{./code/serverinstructions/frameconfig.js}
 \end{tcolorbox}
 
-\subsection{Setting the numbers of logged channels}
+\subsection{Setting the Number of Logged Channels} % ------------------------- %
+\label{subsec:devguide:server:no_of_logged_channels}
+% ---------------------------------------------------------------------------- %
 
-This command tells the server how many channels are being logged. This should always be two as the STEMlab does not support more channels. The logger itself would support up to 8 channels.
-The argument has to be a number in the JSON format, not strings.
+This command tells the server how  many channels are being logged. This should
+always be two as the STEMlab does not support more channels. The logger itself
+would support up  to eight channels.  The  argument has to be a  number in the
+JSON format, not strings.
 
 \begin{tcolorbox}[
     title={
         \refstepcounter{listing}
-        Listing \thelisting: Setting the numbers of logged channels
+        \textbf{Listing \thelisting:} Setting the Number of Logged Channels
         \label{lst:devguide:server:instr:3}
-        \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Setting the numbers of logged channels}
+        \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Setting the Number of Logged Channels}
     }
 ]
 \inputminted[
@@ -430,17 +636,22 @@ The argument has to be a number in the JSON format, not strings.
 ]{javascript}{./code/serverinstructions/numberofchannels.js}
 \end{tcolorbox}
 
-\subsection{Reading the currently stored frame}
+\subsection{Reading the Currently Stored Frame} % ---------------------------- %
+\label{subsec:devguide:server:currently_stored_frame}
+% ---------------------------------------------------------------------------- %
 
-This command forces the server to send the currently stored frame over the binary channel as soon as the current frame is finished. If the logger is not recording currently the frame will be sent immediately.
-The \textit{channel} argument has to be a number in the JSON format, not strings.
+This command  forces the server  to send the  currently stored frame  over the
+binary channel as soon as the current  frame is finished. If the logger is not
+recording currently the frame will be sent immediately.
+The  \code{channel} argument  has to  be a  number in  the JSON  format, not
+strings.
 
 \begin{tcolorbox}[
     title={
         \refstepcounter{listing}
-        Listing \thelisting: Reading the currently stored frame
+        \code{Listing \thelisting:} Reading the Currently Stored Frame
         \label{lst:devguide:server:instr:4}
-        \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Reading the currently stored frame}
+        \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Reading the Currently Stored Frame}
     }
 ]
 \inputminted[
@@ -450,16 +661,20 @@ The \textit{channel} argument has to be a number in the JSON format, not strings
 ]{javascript}{./code/serverinstructions/readframe.js}
 \end{tcolorbox}
 
-\subsection{Requesting a new frame and reading it when it is ready}
-This command forces the server to start a new frame and send it over the binary channel as soon as the frame is finished.
-The \textit{channel} argument has to be a number in the JSON format, not strings.
+\subsection{Requesting a New Frame and Reading It When It Is Ready} % -------- %
+\label{subsec:devguide:server:request_new_frame}
+% ---------------------------------------------------------------------------- %
+
+This command  forces the  server to  start a new  frame and  send it  over the
+binary channel as soon as the  frame is finished.  The \code{channel} argument
+has to be a number in the JSON format, not strings.
 
 \begin{tcolorbox}[
     title={
         \refstepcounter{listing}
-        Listing \thelisting: Requesting a new frame and read it when it is ready
+        \textbf{Listing \thelisting:} Requesting a New Frame and Reading It When It Is Ready
         \label{lst:devguide:server:instr:5}
-        \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Requesting a new frame and read it when it is ready}
+        \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Requesting a New Frame and Read It When It Is Ready}
     }
 ]
 \inputminted[
@@ -469,17 +684,19 @@ The \textit{channel} argument has to be a number in the JSON format, not strings
 ]{javascript}{./code/serverinstructions/requestframe.js}
 \end{tcolorbox}
 
-\subsection{Setting the sampling rate}
+\subsection{Setting the Sampling Rate} % ------------------------------------- %
+\label{subsec:devguide:server:set_sampling_rate}
+% ---------------------------------------------------------------------------- %
 
-This command sets the sampling rate.
-The argument has to be a number in the JSON format and has to be the samplingrate in \si{\Hz}
+This command sets the  sampling rate.  The argument has to be  a number in the
+JSON format and has to be the samplingrate in \si{\Hz}
 
 \begin{tcolorbox}[
     title={
         \refstepcounter{listing}
-        Listing \thelisting: Setting the sampling rate
+        \textbf{Listing \thelisting:} Setting the Sampling Rate
         \label{lst:devguide:server:instr:6}
-        \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Setting the sampling rate}
+        \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Setting the sampling Rate}
     }
 ]
 \inputminted[
@@ -489,17 +706,19 @@ The argument has to be a number in the JSON format and has to be the samplingrat
 ]{javascript}{./code/serverinstructions/samplingrate.js}
 \end{tcolorbox}
 
-\subsection{Polling the status of the logger}
+\subsection{Polling the Status of the Logger} % ------------------------------ %
+\label{subsec:devguide:server:polling_logger}
+% ---------------------------------------------------------------------------- %
 
-This command requests the current logger status.
-The response contains all the information the logger currently holds.
+This command  requests the current  logger status.  The response  contains all
+the information the logger currently holds.
 
 \begin{tcolorbox}[
     title={
         \refstepcounter{listing}
-        Listing \thelisting: Polling the status of the logger
+        \textbf{Listing \thelisting:} Polling the Status of the Logger
         \label{lst:devguide:server:instr:7}
-        \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Polling the status of the logger}
+        \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Polling the Status of the Logger}
     }
 ]
 \inputminted[
@@ -509,20 +728,27 @@ The response contains all the information the logger currently holds.
 ]{javascript}{./code/serverinstructions/status.js}
 \end{tcolorbox}
 
-\subsection{Configuring the trigger}
+\subsection{Configuring the trigger} % --------------------------------------- %
+\label{subsec:devguide:server:configuring_trigger}
+% ---------------------------------------------------------------------------- %
 
-This command configures the currently active trigger.
-For now, only rising edge triggers are supported on the server side. The logger would support way more trigger types (For more information read the logger code).
-Channel is the channel that should be triggered on.
-Level is the level on which the trigger should shoot and slope is the minimal slope the curve needs to have.
-Hysteresis is configured for all triggers at once and makes sure there is no accidential trigger. It is the variance the signal can have until a trigger gets armed.
+This command  configures the currently  active trigger.  For now,  only rising
+edge triggers  are supported  on the server  side. The logger  itself supports
+more trigger types. For  more information on the logger's  capabilities, it is
+recommended to peruse its code at~\cite{pita:github:huesser:zynq-logger}.
+
+\code{channel} is the channel on which the trigger should be active. The level
+at which the trigger shot fire is set with \code{level}, while \code{slope} is
+the  minimum slope  the  curve needs  to have  to  trigger. The hysteresis  is
+configured for  all triggers at  once and makes  sure there is  no accidential
+trigger. It is the variance the signal can have until a trigger is armed.
 
 \begin{tcolorbox}[
     title={
         \refstepcounter{listing}
-        Listing \thelisting: Configuring the trigger
+        \textbf{Listing \thelisting:} Configuring the Trigger
         \label{lst:devguide:server:instr:8}
-        \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Configuring the trigger}
+        \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Configuring the Trigger}
     }
 ]
 \inputminted[
@@ -533,49 +759,50 @@ Hysteresis is configured for all triggers at once and makes sure there is no acc
 \end{tcolorbox}
 
 %>>>
-
+% ==============================================================================
+%
+%                                  S C O P E
+%
+% ==============================================================================
 \chapter{Scope} % <<< -------------------------------------------------------- %
 \label{ch:devguide:scope}
 % ---------------------------------------------------------------------------- %
 
-\section{Build environment}
+%\section{Build environment}
+%\label{sec:devguide:scope:build_environment}
 
-To set up the scope project the build box is not needed, even tho the build box already has the necessary environment installed.
-But for development a local install is advised.
+To set up the scope project, the build box is not needed. Still, the build box
+does  have the  necessary  tools installed,  should the  need  arise for  some
+reason.  For development, a local install is advised, however.
 
-To start off, install yarn and nodejs. Package managers for Unix systems already have packages, for Windows the official installers can be used. For the project nodejs 8.0 or higher is used.
-
+This  requires installing  yarn  and  nodejs version  8.0  or newer.   Package
+managers for  Unix systems usually  already have  packages for these  tools in
+their repositories. For  Windows, the  official installers  can be  used.  For
 Once yarn is set up, the project dependencies can be installed using
+\begin{commandshell}
+    cd ~/repo/scope/
+    yarn install
+\end{commandshell}
+\noindent The yarn  project comes with two main  build configurations; one for
+deployment and one for running a debugging webserver. Building is done with
+\begin{commandshell}
+    cd ~/repo/scope/
+    yarn build
+\end{commandshell}
 
-\begin{listing}
-    \begin{minted}[autogobble]{bash}
-        cd ~/repo/scope/
-        yarn install
-    \end{minted}
-\end{listing}
+This leaves all the built files in \code{~/repo/scope/build}. They can then be
+copied to any directory  served by a webserver, to be provided  to a client by
+said server.
 
-The yarn project comes with two main build configuration. One for deployment and one for running a debugging webserver. Building is done with
-
-\begin{listing}
-    \begin{minted}[autogobble]{bash}
-        cd ~/repo/scope/
-        yarn build
-    \end{minted}
-\end{listing}
-
-This leaves all the builded files in \textit{~/repo/scope/build} and can be copied to any directory served by a webserver.
-
-Running the debugging webserver brings the benefit of autorebuild and autoreload in the browser when the build is complete. The webserver can be started using
-
-\begin{listing}
-    \begin{minted}[autogobble]{bash}
-        cd ~/repo/scope/
-        yarn watch
-    \end{minted}
-\end{listing}
-
-The webpage can now be reached on \textit{http://localhost:8080} and will be automatically reloaded yarn detecs a change and rebuilds the bundle.
-
+Running the debugging webserver brings the benefit of automatic rebuilding and
+reloading in  the browser  after rebuilding. The webserver  can be  started in
+debugging mode with
+\begin{commandshell}
+    cd ~/repo/scope/
+    yarn watch
+\end{commandshell}
+The webpage  can now  be reached on  \code{http://localhost:8080} and  will be
+automatically reloaded when yarn detecs a change and rebuilds the bundle.
 %>>>
 
 %^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>
