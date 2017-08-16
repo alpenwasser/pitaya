@@ -7,9 +7,194 @@
 \label{ch:devguide:project_structure}
 % ---------------------------------------------------------------------------- %
 
-repo structure: TLDs and what is contained in them.
+This chapter contains answers the question of ``What do I find where if I want
+to  do $\langle  X  \rangle$?'' It guides  through  the top-level  directories
+of  the  repository  and  presents  some information  on  the  more  important
+subdirectories. It  is not  meant as  a  replacement to  reading the  READMEs,
+the  technical  documentation  for  the respective  components,  or  toolchain
+documentation  by third  parties. Rather, it  is indented  as a  guide to  get
+started and  point the developer in  the right direction.
 
-``Where do I have to go if I want to do X?''
+The  repository tree  with its  major  components is  shown on  the next  page
+in  Figure~\ref{fig:project_tree},  along   with  some  explanatory  remarks
+for  respective  nodes  of  the  tree.   Throughout  this  chapter,  the  root
+directory \code{/}  is understood  to be  the top-level  repository directory.
+\emph{NOTE:} Only  the  more important  parts  of  the project  structure  are
+mentioned here; less crucial components have been omitted.
+
+The rest  of the  developer guide explains  the setup and  usage of  the major
+components listed  in the above  directory trees. For the most  up-to-date and
+complete documentation, consulting the READMEs and source code is advised.
+
+%\vspace{6ex}
+%
+%\noindent\begin{minipage}[t]{0.33\textwidth}
+%    \noindent\dirtree{%
+%        .1 /.
+%        .2 design/.
+%        .3 /filter/.
+%        .3 /fpga/.
+%        .2 doc/.
+%        .3 report/.
+%        .3 verfication/.
+%        .3 vivado-install/\vspace{7.75ex}.
+%        .2 env/\vspace{6ex}.
+%        .2 (continued on next page).
+%    }
+%\end{minipage}
+%\hfill
+%\begin{minipage}[t]{0.64\textwidth}
+%    \begin{description}\tightlist
+%        \item[\code{design/}]       contains      the       filter      design
+%            toolchain     \code{filter/}     which     is     described     in
+%            Chapter~\ref{ch:devguide:filter_toolchain}. Additionally,  it  has
+%            a  subdirectory   for  running   FPGA  tests  with   the  designed
+%            filters, used  to create the  filter resource usage  analysis from
+%            Appendix~\ref{sec:fir_filter_resouce_usage}.
+%
+%        \item[\code{doc/}] is where the project documentation and associated
+%            tools      are      located.     \code{report/}      is      where
+%            the     directory      containing     this      document.      The
+%            \code{verification/}     directory     contains    the     scripts
+%            and    results   on    which   Chapter~\ref{ch:verification}    is
+%            based. A   pictorial   guide   to    the   Vivado   install   (see
+%            Section~\ref{sec:devguide:fpga_toolchain:vivado}) can  be found in
+%            \code{vivado-install/}.
+%
+%        \item[\code{env/}] has the  components which are needed to  set up the
+%            build  box. See  Section~\ref{sec:devguide:fpga_toolchain:buildbox}
+%            for the instructions on how to accomplish this.
+%    \end{description}
+%\end{minipage}
+%
+%\newpage
+%
+%\noindent\begin{minipage}[t]{0.33\textwidth}
+%    \noindent\dirtree{%
+%        .1 / (continued).
+%        .2 firmware/.
+%        .3 arm/.
+%        .4 patches/.
+%        .4 scripts/.
+%        .4 server/.
+%        .3 bin/.
+%        .3 fpga/\vspace{16ex}.
+%        .2 scope/\vspace{8ex}.
+%        .2 resources/.
+%    }
+%\end{minipage}
+%\hfill
+%\begin{minipage}[t]{0.64\textwidth}
+%    \vspace{1.33ex}
+%    \begin{description}\tightlist
+%        \item[\code{firmware/}]  comprises all  necessary components  to build
+%            the Linux image for the STEMlab and the bitstream. \code{patches/}
+%            is a  set of  patches which  are needed  to get  Ubuntu to  run on
+%            the  STEMlab,  \code{scripts/} are  some  helper  scripts to  ease
+%            development and deployment, and \code{server/} contains the server
+%            and its needed dependencies.
+%
+%            \code{bin/} is a collection of helper scripts and binary blobs
+%                related to the creation of the board firmware.
+%
+%            \code{fpga/} consists  of the  FPGA toolchain, which  is primarily
+%                the collection of  Tcl scripts and Makefiles  used to generate
+%                the Vivado projects, block designs, and the bitstream.
+%
+%            \item[\code{scope/}]   encompasses   the    scope   project   (see
+%                Chapter~\ref{ch:gui}). Note   that  this   is  located   in  a
+%                dedicated  Git repository  and is  included via  the mechanism
+%                offered by Git submodules.
+%
+%            \item[\code{resources/}]  are  documents   and  links  which  have
+%                accumulated through the  course of the project  and which have
+%                proven  more or  less  useful.  This  primarily includes  data
+%                sheets and user manuals from third parties.
+%    \end{description}
+%\end{minipage}
+%
+%\vspace{6ex}
+
+% Alternative: everything on a single page
+\newpage
+\vspace*{20ex}
+\noindent\begin{minipage}[t]{0.33\textwidth}
+    \noindent\dirtree{%
+        .1 /.
+        .2 design/.
+        .3 /filter/.
+        .3 /fpga/.
+        .2 doc/.
+        .3 report/.
+        .3 verfication/.
+        .3 vivado-install/\vspace{7.75ex}.
+        .2 env/\vspace{5.5ex}.
+        .2 firmware/.
+        .3 arm/.
+        .4 patches/.
+        .4 scripts/.
+        .4 server/\vspace{4.5ex}.
+        .3 bin/\vspace{2.5ex}.
+        .3 fpga/\vspace{8.5ex}.
+        .2 scope/\vspace{8ex}.
+        .2 resources/.
+    }
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.64\textwidth}
+    \begin{description}\tightlist
+        \item[\code{design/}]       contains      the       filter      design
+            toolchain     \code{filter/}     which     is     described     in
+            Chapter~\ref{ch:devguide:filter_toolchain}. Additionally,  it  has
+            a  subdirectory   for  running   FPGA  tests  with   the  designed
+            filters, used  to create the  filter resource usage  analysis from
+            Appendix~\ref{sec:fir_filter_resouce_usage}.
+
+        \item[\code{doc/}] is where the project documentation and associated
+            tools      are      located.     \code{report/}      is      where
+            the     directory      containing     this      document.      The
+            \code{verification/}     directory     contains    the     scripts
+            and    results   on    which   Chapter~\ref{ch:verification}    is
+            based. A   pictorial   guide   to    the   Vivado   install   (see
+            Section~\ref{sec:devguide:fpga_toolchain:vivado}) can  be found in
+            \code{vivado-install/}.
+
+        \item[\code{env/}] has the  components which are needed to  set up the
+            build  box. See  Section~\ref{sec:devguide:fpga_toolchain:buildbox}
+            for the instructions on how to accomplish this.
+
+        \item[\code{firmware/}]  comprises all  necessary components  to build
+            the Linux image for the STEMlab and the bitstream. \code{patches/}
+            is a  set of  patches which  are needed  to get  Ubuntu to  run on
+            the  STEMlab,  \code{scripts/} are  some  helper  scripts to  ease
+            development and deployment, and \code{server/} contains the server
+            and its needed dependencies.
+
+            \textbf{\code{bin/}} is a collection  of helper scripts and binary
+            blobs related to the creation of the board firmware.
+
+            \textbf{\code{fpga/}}  consists of  the FPGA  toolchain, which  is
+            primarily  the collection  of Tcl  scripts and  Makefiles used  to
+            generate the Vivado projects, block designs, and the bitstream.
+
+        \item[\code{scope/}]    encompasses    the    scope    project    (see
+            Chapter~\ref{ch:gui}). Note that  this is  located in  a dedicated
+            Git repository  and is included  via the mechanism offered  by Git
+            submodules.
+
+        \item[\code{resources/}]   are   documents   and  links   which   have
+            accumulated  through the  course  of the  project  and which  have
+            proven more or  less useful.  This primarily  includes data sheets
+            and user manuals from third parties.
+    \end{description}
+\end{minipage}
+\vspace*{2ex}
+\figcaption[Project Structure Tree]{%
+    Project structure with major directories and subdirectories%
+    \label{fig:project_tree}
+}
+
+
 
 %>>>
 % ==============================================================================
