@@ -15,6 +15,7 @@ end
 %%
 clc; clear;
 decArr = [2500, 1250, 625, 125, 25, 5];
+decArr = [2500, 1250];
 for dec = decArr
     files = dir(sprintf('measurements/r%d/*.csv',dec));
     set(0,'DefaultFigureWindowStyle','docked')
@@ -35,6 +36,10 @@ for dec = decArr
         xrms = [xrms rms(data)];
         xmean = [xmean mean(data)];
         xsnr = [xsnr snr(data, 125000000/dec, 12)];
+        if(201 == b || 202 == b || 203 == b || 300 == b)
+            figure;
+            snr(data, 125000000/dec, 12)
+        end
 %         display(file.name);
     end
     
@@ -42,6 +47,7 @@ for dec = decArr
     tmean = mean(xmean)
     tsnr = mean(xsnr)
 
+    figure;
     scatter(f, xsnr);
 
     plotFile = sprintf('measurements/results/calcs%d.csv', dec);

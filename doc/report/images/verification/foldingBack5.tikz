@@ -7,21 +7,22 @@
     trim axis left,
     trim axis right,
 ]
-     \pgfplotsset{every axis/.style={
+    \pgfplotsset{every axis/.style={
             height=45mm,
             width=\textwidth,
             grid=none,
             % y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
             % x filter/.code={\pgfmathparse{\pgfmathresult * 25e3}},
             xlabel=Frequency,
-            ylabel=$V_{RMS}$,
+            ylabel=$S_{xx}$,
             % x unit=\si{\Hz},
-            y unit=\si{\V},
+            y unit=\si{\dB},
+            x unit=\times\,\pi\,\si{\radian}/\si{\sample},
             % ytick={-80,-40,0,40},
         },
         every axis legend/.append style={
-            %at={(1,-0.15)},
-            %anchor=north east,
+            at={(0.96,0.07)},
+            anchor=south east,
             cells={anchor=west},
         },
     }
@@ -34,15 +35,15 @@
             %ymax=5,
             xtick={4096},
             xticklabels={$\frac{f_s}{2}$},
-            legend={%
-                $5\frac{f_s}{2}\cdot \frac{10}{200}$ (Passband),%
-                $5\frac{f_s}{2}\cdot \frac{41}{200}$ (Edge),%
-                $5\frac{f_s}{2}\cdot \frac{70}{200}$ (Stopband),%
-            },
         ]
         \addplot[thick,q1,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=s100] \freqzTableA;
-        \addplot[thick,q2,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=s410] \freqzTableA;
-        \addplot[thick,q3,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=s700] \freqzTableA;
+        \addplot[thick,ct4,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=s410] \freqzTableA;
+        \addplot[thick,q5,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=s700] \freqzTableA;
+        \legend{%
+            $f_{in}=5\frac{f_s}{2}\cdot \frac{10}{200}$ (Passband),%
+            $f_{in}=5\frac{f_s}{2}\cdot \frac{41}{200}$ (Edge),%
+            $f_{in}=5\frac{f_s}{2}\cdot \frac{70}{200}$ (Stopband),%
+        };
     \end{axis}
     
 \end{tikzpicture}

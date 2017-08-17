@@ -22,7 +22,7 @@
     trim axis left,
     trim axis right,
 ]
-     \pgfplotsset{every axis/.style={
+    \pgfplotsset{every axis/.style={
             height=45mm,
             width=\textwidth,
             grid=none,
@@ -49,21 +49,21 @@
             %ymax=5,
             xtick={400,2000},
             xticklabels={$\frac{f_s}{2}$,$5\frac{f_s}{2}$},
-            legend={%
-                R=5,%
-                R=25,%
-                R=125,%
-                R=625,%
-                R=1250,%
-                R=2500%
-            }
         ]
         \addplot[thick,q1,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xrms] \freqzTableA;
-        \addplot[thick,q2,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xrms] \freqzTableB;
+        \addplot[thick,ct4,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xrms] \freqzTableB;
         \addplot[thick,q3,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xrms] \freqzTableC;
         \addplot[thick,q4,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xrms] \freqzTableD;
         \addplot[thick,q5,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xrms] \freqzTableE;
         \addplot[thick,q6,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xrms] \freqzTableF;
+        \legend{%
+            R=5,%
+            R=25,%
+            R=125,%
+            R=625,%
+            R=1250,%
+            R=2500%
+        }
     \end{axis}
     
 \end{tikzpicture}

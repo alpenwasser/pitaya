@@ -504,9 +504,6 @@
     \begin{center}
         \vspace{1em}
         \begin{tabular}{lp{100mm}}
-            \textsf{\textsc{Start Date:}}  & #1 \\
-            \textsf{\textsc{End Date:}}    & #2 \\
-            \textsf{\textsc{Hours:}}       & #3 \\
             \textsf{\textsc{Ancestors:}}   & #4 \\
             \textsf{\textsc{Descendants:}} & #5 \\
             \textsf{\textsc{Assignee:}}    & #6 \\

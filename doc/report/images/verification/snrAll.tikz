@@ -22,16 +22,16 @@
     trim axis left,
     trim axis right,
 ]
-     \pgfplotsset{every axis/.style={
+    \pgfplotsset{every axis/.style={
             height=45mm,
             width=\textwidth,
             grid=none,
             % y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
             % x filter/.code={\pgfmathparse{\pgfmathresult * 25e3}},
             xlabel=Frequency,
-            ylabel=$V_{RMS}$,
+            ylabel=$SNR$,
             % x unit=\si{\Hz},
-            y unit=\si{\V},
+            y unit=\si{\dB},
             % ytick={-80,-40,0,40},
         },
         every axis legend/.append style={
@@ -49,21 +49,21 @@
             %ymax=5,
             xtick={400,2000},
             xticklabels={$\frac{f_s}{2}$,$5\frac{f_s}{2}$},
-            legend={%
-                R=5,%
-                R=25,%
-                R=125,%
-                R=625,%
-                R=1250,%
-                R=2500%
-            }
         ]
         \addplot[thick,q1,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xsnr] \freqzTableA;
-        \addplot[thick,q2,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xsnr] \freqzTableB;
+        \addplot[thick,ct4,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xsnr] \freqzTableB;
         \addplot[thick,q3,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xsnr] \freqzTableC;
         \addplot[thick,q4,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xsnr] \freqzTableD;
         \addplot[thick,q5,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xsnr] \freqzTableE;
         \addplot[thick,q6,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xsnr] \freqzTableF;
+        \legend{%
+            R=5,%
+            R=25,%
+            R=125,%
+            R=625,%
+            R=1250,%
+            R=2500%
+        }
     \end{axis}
     
 \end{tikzpicture}

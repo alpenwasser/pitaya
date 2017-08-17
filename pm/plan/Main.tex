@@ -741,9 +741,9 @@ implementation in the FPGA tool chain.
     {%
         It should be possible to use the scope application in \textit{normal}, \textit{auto}, and \textit{single} mode. Those modes should behave as follows:
         \begin{tabular}{l l}
-        \textit{normal} & the server sends a packet when a trigger was fired and repeats this procedure \\
-        \textit{auto} & the server sends a packet when a trigger was fired or a timeout has been hit and repeats this procedure \\
-        \textit{single} & the server sends a packet after a first trigger and does not repeat this procedure
+        \textit{normal} & send a packet when a trigger was fired and repeats this procedure \\
+        \textit{auto} & send a packet when a trigger was fired or a timeout ocurred and repeat \\
+        \textit{single} & send a packet after a first trigger and does not repeat this procedure
         \end{tabular}
     }
 

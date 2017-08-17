@@ -37,7 +37,7 @@
             % y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
             x filter/.code={\pgfmathparse{\pgfmathresult * 25e3}},
             xlabel=Frequency,
-            ylabel=Power,
+            ylabel=Power Density,
             x unit=\si{\Hz},
             y unit=\si{\dB},
             ytick={-80,-40,0,40},
