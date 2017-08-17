@@ -691,7 +691,10 @@ TODO: Raphi read!
 The image for the entire system is built such that it contains a Sys-V init script and the necessary entries to start on boot.
 The Sys-V init script then in turn calls the server startup script.
 
-This script loads the kernel module and sets the \textit{LD\_LIBRARY\_PATH} variable such that it can load the shared libraries required. The script can be executed with
+This  script loads  the kernel  module and  sets the  \code{LD\_LIBRARY\_PATH}
+variable such that  it can load the shared libraries  required. The script can
+be executed with
+
 \begin{commandshell}
     /opt/server/init_server.sh
 \end{commandshell}
@@ -702,7 +705,7 @@ If the Sys-V init daemon already started an instance, it can be stopped using
     service server stop
 \end{commandshell}
 
-For the exact commands, please have a look into the init\_server.sh script.
+For the exact commands, consult the code of the \code{init\_server.sh} script.
 
 \subsection{onHttpRequest} % ------------------------------------------------- %
 \label{subsec:devguide:server:onhttprequest}
