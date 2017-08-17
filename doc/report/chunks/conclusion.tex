@@ -1,2 +1,26 @@
 \chapter{Conclusions}
 \label{ch:conclusions}
+
+The Project was successful. We can present 6 filter chains with sampling rates from \SI{25}{\mega\Hz} to \SI{50}{\kilo\Hz}. The filter chains have a pretty linear passband and attenuate a minimum of \SI{60}{\dB}.
+
+A toolchain to design the filters has been developped and can calculate the desired filters from some key attributes as desired.
+To make the designed filters a reality, an indempotent FPGA toolchain that is independent of any Vivado project files has been created and makes it easy to create a bitstream.
+
+Linux toolchain has been set up to compile the kernel and put together a bootable Linux image. To complement the Linux image a server application was developped to read the recorded data from RAM and transmit it using the network.
+
+On the receiving end of the network a JavaScript application that runs in every modern browser has been developped and can be used to analyse the spectral components of the signal.
+
+To start measuring with the STEMlab only a PC is required and the application is provided by the webserver on the STEMlab.
+
+
+Some things were especially tricky during the realisation of the project.
+To start off we soon recognized that the project was not in the state we thought it to be. The official STEMlab codebase was not in a useable state and we decided to implement an entire solution for measuring instead of just the filter chains.
+A third really tricky point was when we discovered that the bitwidth problems were not gone yet and the problem was way bigger than we anticipated. This costed us an unexpectely huge amount of time.
+Last but not least, even tho the math behind calibrating the scoping application should not be too hard to understand, it took a while and a professor before everything worked properly.
+
+
+To continue the project we suggest additional measurements of the filters. There is some unexpected artifacts with the measured SNR values for certain frequencies which could be caused by the wavegenerator.
+Additionally only 85\% of the FPGA hardware is used with the current filters. By using the filter toolchain created filters could be tweaked a little more to use 100\% of the hardware.
+The scoping application can be extended with a heap of features very easily.
+
+In the end we simply did not have enough time to tweak everything to the end.
