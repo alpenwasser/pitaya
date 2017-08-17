@@ -1,6 +1,29 @@
 \chapter{Verification}
 \label{ch:verification}
 
+In theory the filter chains work very well and the simulations in Vivado looked okay too.
+But how the filters really perform can only be determined with a series of real measurement.
+How those were performed and why we chose certain ones is outlined in this chapter.
+
+For all the metrics we present in this chapter the same series of measurements was used.
+For each filter chain 2000 measurements of a time series sample of size 8192 were made.
+For each measurement the frequency at the input was incremented across the range from 0 to $5\frac{f_s}{2}$.
+The reasoning behind is to have a good portion of measured data for the passband the edge and the stopband.
+TODO: (raphi würum hemmer da scho wieder bis es 5-fachs gnoh? :S)
+
+All measurements are adjusted to have the right scaling with Equation~\ref{eqn:verification:transform} where $x_{unsigned}$ is the measured samples.
+
+\begin{align}
+    \label{eqn:verification:transform}
+    x_{i,signed} &= \frac{(x_{i,unsigned} - 2^{15})}{2^{15}}\\
+    x_{i,V} &= x_{i,signed} * \SI{1.1}{\V}
+\end{align}
+
+\section{RMS Frequency Response}
+\label{sec:verification:rms}
+
+To verify that the filter performs as expected, the RMS of all samples was calculated and plotted against their respective input frequency, as seen in Figure~\ref{fig:verification:rmsAll}.
+
 \begin{figure}
     \centering
     \input{images/verification/rmsAll.tikz}
@@ -9,6 +32,26 @@
     }
     \label{fig:verification:rmsAll}
 \end{figure}
+
+The RMS looks okay and the passband is pretty linear. Three things are not so nice:
+
+\begin{itemize}
+    \item The passband frequency response has a slight slope upwards. It is at no point higher than 20mV effectively having an error below 2\% in all of the filter chains except the R=5 chain.
+    \item The Passband has a slight ripple of ±0.5\% in all of the filter chains. TODO: is this within spec?
+    \item The R=5 chain looks not so promising. Something went horribly wrong. The previous statements do not apply for this case.
+\end{itemize}
+
+One thing that becomes apparent but is no big deal and was expected is the gain loss in the passband.
+If the optimum case of a 2-bit-win was present, all of the amplitudes would be at $\frac{1}{\sqrt{2}} = \SI{0.707}{\V}$.
+Since not all filter chains win the same amount of bits this sadly is not the case. In Table~\ref{tab:verification:results} the amount of bits won can be seen.
+
+All in all the responses look decent but not perfect.
+
+\section{Mean Frequency Response}
+\label{sec:verification:mean}
+
+Because it became apparent during tests that the device has an offset (even without filters!) the mean of each sample was calculated too such that at later stages the offset can be calibrated out in the scoping application.
+The results can be inspected in Figure~\ref{fig:verification:rmsAll}.
 
 \begin{figure}
     \centering
@@ -19,6 +62,12 @@
     \label{fig:verification:rmsAll}
 \end{figure}
 
+\section{SNR Frequency Response}
+\label{sec:verification:snr}
+
+Because it is very important that the SNR is good, the SNR was plotted against the input frequencies for each sample too.
+The results can be seen in Figure~\ref{sec:verification:snr}.
+
 \begin{figure}
     \centering
     \input{images/verification/snrAll.tikz}
@@ -27,6 +76,26 @@
     }
     \label{fig:verification:rmsAll}
 \end{figure}
+
+Generally the SNR looks very promising. Compared to the measured results from the previous project the filters have improved.
+What is really worrying is that the passband SNR response has dents in it.
+It is unclear where those stem from. It is suspected that it is caused by the harmonic distortion of the function generator used. This might not solely be the case and should surely be investigated. And measured with a spectrum analyzer too.
+
+\section{Stopband Attenuation}
+\label{sec:verification:snr}
+
+To show that the stopband attenuation grants the \SI{60}{\dB} as expected, the power density spectrum is plotted properly scaled and adjusted as seen in Equation\ref{eqn:verification:power}
+
+\begin{align}
+    \label{eqn:verification:power}
+    x_{i,corrected} &= x_{i,V} \cdot \sqrt{\frac{1}{2f_sN}}\\
+    X &= FFT(x_{i,corrected})\\
+    X_{i,one} &= X_i * 2, i < \frac{N}{2}+1\\
+    X_{i,abs} &= |X_{i,one}|\\
+    P_{dB} &= 10log_{10}(X_{i,abs}^2)\\
+\end{align}
+
+
 
 \begin{figure}
     \centering
@@ -43,7 +112,7 @@
     \caption[Attenuation in the Edge and Stopband in Contrast to the Passband for R=25]{%
     Attenuation in the Edge and Stopband in Contrast to the Passband for R=25%
     }
-    \label{fig:verification:fB5}
+    \label{fig:verification:fB25}
 \end{figure}
 
 \begin{figure}
@@ -52,7 +121,7 @@
     \caption[Attenuation in the Edge and Stopband in Contrast to the Passband for R=125]{%
     Attenuation in the Edge and Stopband in Contrast to the Passband for R=125%
     }
-    \label{fig:verification:fB5}
+    \label{fig:verification:fB125}
 \end{figure}
 
 \begin{figure}
@@ -61,7 +130,7 @@
     \caption[Attenuation in the Edge and Stopband in Contrast to the Passband for R=625]{%
     Attenuation in the Edge and Stopband in Contrast to the Passband for R=625%
     }
-    \label{fig:verification:fB5}
+    \label{fig:verification:fB625}
 \end{figure}
 
 \begin{figure}
@@ -81,3 +150,31 @@
     }
     \label{fig:verification:fB5}
 \end{figure}
+
+\section{Summary}
+\label{sec:verification:summary}
+
+In Table\ref{tab:verification:results} the result means are displayed against each other. ``SNR won'' values are just what the additional bit grant to the highest possible SNR and do not reflect actual SNR improvements as other factors play a role as well.
+
+\begin{table}
+    \centering
+    \caption{Mean metrics for all the filter chains.}
+    \label{tab:verification:results}
+    \begin{tabular}{rrrrrrr}
+        \toprule
+        \scshape Decimation & \scshape $V_{RMS}$[\si{V}] & \scshape $V_{Mean}$[\si{V}] & \scshape $V_{SNR}$[\si{dB}] & \scshape Correction[\si{1}] & \scshape Bits won[\si{1}] & \scshape SNR won[\si{dB}] \\
+        \midrule
+        5           & 0.6203   & -0.180    & 79.0054   & 1.1398   & 1.8113   & 10.9038\\
+        25          & 0.6329   & -0.169    & 76.9049   & 1.1171   & 1.8403   & 11.0784\\
+        125         & 0.5643   & -0.0159   & 73.6582   & 1.2529   & 1.6748   & 10.0820\\
+        625         & 0.5529   & -0.0155   & 71.8813   & 1.2787   & 1.6453   & 9.9048\\
+        1250        & 0.4576   & -0.0130   & 69.7006   & 1.5450   & 1.3724   & 8.2617\\
+        2500        & 0.4092   & -0.0127   & 63.5121   & 1.7278   & 1.2111   & 7.2908\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+
+To sum up, the filters do their job and they do it well. They meet the specification.
+What is rather unfortunate is the anomalies in their SNR values. The R=5 chain RMS frequency response is to worry about too.
+Surely more investigations are needed and the performance could be improved, for example the amount of bits won could be increased further for higher sampling rates.

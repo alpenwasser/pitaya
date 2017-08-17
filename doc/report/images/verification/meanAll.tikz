@@ -41,7 +41,7 @@
         },
     }
     \begin{axis}[
-            title={The RMS Frequency Response},
+            title={The Mean Frequency Response},
             at = {(0,0)},
             xmin=0,
             xmax=2000,
