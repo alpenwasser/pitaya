@@ -6,8 +6,11 @@
 %https://tex.stackexchange.com/a/210456/131649
 \renewcommand\partnumberlinebox[2]{#2\hspace{2em}}
 \usetikzlibrary{positioning}
+\usetikzlibrary{fit}
+\usetikzlibrary{backgrounds}
 \tcbuselibrary{breakable}
 \tcbset{shield externalize}
+\usepackage{alpenspecs/a3pages}
 \makeindex
 % >>>
 \begin{document}
@@ -42,6 +45,113 @@
 % >>>
 
 \mainmatter
+
+\chapter{Initial Situation} % <<< ------------------------------------------------ %
+\label{ch:initial}
+% ---------------------------------------------------------------------------- %
+
+To replace common lab tools which are usually expensive and big Red Pitaya produces a board called STEMlab which features a capable (125$\frac{MS}{s}$, 14bit) ADC and a ZYNQ SoC from Xilinx. The idea is to record data on the board and transmit it using the network infrastructure to a PC which does all the number crunching.
+
+To reduce data load, downsampling filter can be activated to decimate the signal. The filter is necessary such that the Nyquist theorem is fulfilled and no aliasing happens. Sadly the stock filters are not quite as capable as desired, as they do not attenuate the stopband well enough and have a frequency response not as flat as desired.
+
+A previous project implemented new filter chains which based on IIR filters. Whilst those designed filter chains worked well in theory they did not so much in practice.
+
+This project aims to anlyze the previous work with respect to design and implementation of those filter chains, reproduce and fix the problems that exist to date.
+
+The structure of the idea behind the STEMlab can be seen in Figure~\label{fig:system}
+
+TODO: Raphi pls fix :P
+% \begin{figure}
+%     \centering
+%     \input{../../doc/report/images/intro/system-overview.tikz}
+%     \caption{The structure of the entire system of the STEMlab.}
+%     \label{fig:system}
+% \end{figure}
+
+\chapter{Objectives} % <<< ------------------------------------------------ %
+\label{ch:objectives}
+% ---------------------------------------------------------------------------- %
+
+\section{Must Haves}
+    \begin{enumerate}
+        \item Analysis of the previous project
+        \begin{enumerate}
+            \item What was the exact strategy?
+            \item Why did it fail?
+            \item How can the mistakes made be fixed?
+            \item Is the project salvageable?
+        \end{enumerate}
+            \item Finding a solution to implement the desired filter chains
+        \begin{enumerate}    
+            \item Start over from the beginning
+            \item Continue working on the existing solution
+        \end{enumerate}
+            \item A complete specification for all the filter chains with respect to
+        \begin{enumerate}
+            \item Decimation Rates
+            \item Attenuation in Stopband
+            \item Maximum Ripple in Passband
+        \end{enumerate}
+        \item A complete matlab model to simulate the entire filter chains
+        \item Filter implementation on the FPGA
+        \item Verify the performance of the implemented filters
+    \end{enumerate}
+\section{Must Haves (revised)}
+\begin{enumerate}
+    \item Develop our own STEMlab toolchain including
+    \begin{enumerate}
+        \item Build-system
+        \item Good Documentation
+        \item Vivado TCl scripts
+    \end{enumerate}
+    \item Develop our own Scoping Application
+    \begin{enumerate}
+        \item A server on the FPGA
+        \item A scope application in JavaScript
+    \end{enumerate}
+\end{enumerate}
+
+\section{Nice To Haves}
+\begin{enumerate}
+    \item Additional scoping application features
+    \begin{enumerate}
+        \item Automatic SNR calculation
+        \item Automatic THD calculation
+        \item Multiple source
+        \item Different triggers
+    \end{enumerate}
+\end{enumerate}
+
+\section{Do Not Implement (revised)}
+\begin{enumerate}
+    \item IIR filter chains
+\end{enumerate}
+
+\chapter{Objects of delivery} % <<< ------------------------------------------------ %
+\label{ch:objectives}
+% ---------------------------------------------------------------------------- %
+
+\begin{itemize}
+    \item Specifications (periodically, 18.08.2017)
+    \item Working Implementation of the Filter Chains (18.08.2017)
+    \item Working Implementation of the JavaScript Scoping Application (18.08.2017)
+    \item Factsheet (31.08.2017)
+    \item Technical Report (18.08.2017)
+    \item Working Repository (containing README's, Toolchain, VM, Calculations, Simulations, Measurements, etc.)(18.08.2017)
+    \item Presentation (15.09.2017)
+\end{itemize}
+
+\chapter{Project Timeline} % <<< ------------------------------------------------ %
+\label{ch:initial}
+% ---------------------------------------------------------------------------- %
+
+\begin{a3pages} % The opening brace is needed (see also a3pages.tex)
+    \begin{figure}
+        \centering
+        \input{../../doc/report/images/pm/timetable.pgf}
+        \caption{The timetables of the project. The planned and effective timespans are visible.}
+    \end{figure}
+\end{a3pages}
 
 \chapter{Work Packages} % <<< ------------------------------------------------ %
 \label{ch:wpac}
