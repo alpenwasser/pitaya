@@ -47,8 +47,7 @@ cp ../fpga/zynq_logger/build/kernel_module/zynq_logger_main.ko $root_dir/opt/log
 mkdir $root_dir/opt/server
 cp server/build/server $root_dir/opt/server
 cp server/external/build/uWS/lib/libuWS.so $root_dir/opt/server
-#TODO: check if this is right
-cp /vagrant/Xilinx/SDK/2016.2/gnu/arm/lin/arm-xilinx-linux-gnueabi/libc/usr/lib/libstdc++.so.6 $root_dir/opt/server
+cp /vagrant/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/lib/libstdc++.so.6 $root_dir/opt/server
 
 # Copy webapp
 cp -R ../../scope/build/ $root_dir/opt/server/webapp
@@ -59,6 +58,10 @@ rm $root_dir/opt/server/webapp/js/bundle.mjs
 # ATTENTION: Adding the server service is in the chroot section!
 cp server/init_server.sh $root_dir/opt/server
 cp server/service.sh $root_dir/etc/init.d/server
+
+# Fix permissions
+chmod +x $root_dir/opt/server/server
+chmod +x $root_dir/opt/server/init_server.sh
 
 # Add missing configuration files and packages
 
