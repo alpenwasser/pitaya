@@ -1,59 +1,140 @@
-\chapter*{Introduction} % <<< ------------------------------------------------ %
+% ==============================================================================
+%
+%                           I N T R O D U C T I O N
+%
+% ==============================================================================
+\chapter*{Introduction} % ---------------------------------------------------- %
 \label{ch:intro}
 \addcontentsline{toc}{chapter}{\nameref{ch:intro}}
 % ---------------------------------------------------------------------------- %
 
-%\begin{itemize}\firmlist
-%    \item Rationale (Why?)
-%    \item What is the general approach to solve this problem?
-%    \item What has been done so far?
-%    \item Results of previous work
-%    \item What are we going to do?
-%    \item What are the contents of this report?
-%\end{itemize}
+Electronic measuring equipment has historically tended to be very pricey, with
+specialized appliances  sometimes costing  as much as  a middle-class  car, or
+even more. While high-performance  solutions are unlikely to  be replaced with
+something radically  different in  the foreseeable future,  modern, affordable
+FPGAs  are  a  viable  alternative  in many  use  cases  nowadays. By  keeping
+performance requirements within reasonable bounds and pairing the FPGA with an
+appropriate  front-end, sufficient  performance for  many applications  can be
+achieved  at a  very competitive  price point.   Additionally, an  FPGA offers
+vastly  superior flexibility  over the  fixed silicon  of conventional  signal
+processing chips,  since its hardware  capabilities can be altered  even after
+deployment.
 
-Measuring  equipments  has ever  been  very  expensive. If one  wants  precise
-devices it can  go up to hundreds or thousands  of Francs. Modern, cheap FPGAs
-can  often,  if combined  with  a  proper  frontend, replace  those  expensive
-dedicated  devices.  The  frontend consists  of  dedicated ADCs  and DACs  and
-oftentimes some analog filters. Those chips also  have become a lot cheaper in
-recent  years aand  are  thus  way more  accessible.   Extreme equipment,  for
-example  with high  sampling  rates, in  contrary can  still  not be  replaced
-easily.  This project aims at arming an FPGA board with logic that can record,
+A suitable front-end for an FPGA usually comprises dedicated ADCs and DACs and
+frequently also analog filters. Along with FPGA chips themselves, such ADC and
+DAC chips  have become much  more economical in  recent years, resulting  in a
+product which may cost  as little as a few hundred Swiss  Francs and which can
+replace an apparatus several times as expensive.
+
+\makeatletter
+\renewcommand{\thefigure}{\@arabic\c@figure}
+\makeatother
+\begin{figure}[ht]
+    \centering
+    \input{images/intro/system-overview.tikz}
+    \caption[System Overview]{%
+        An overview of the main system components.  An analog signal (left) is
+        measured, the data  goes into the server, and is  then transmitted via
+        network to a computer running the scope.%
+    }
+    \label{fig:intro:system_overview}
+\end{figure}
+\makeatletter
+\renewcommand{\thefigure}{\thechapter.\@arabic\c@figure}
+\makeatother
+
+This  project aims  to arm  such an  FPGA board  with logic  that can  record,
 filter  and store  electrical signals  with  adjustable sampling  rates up  to
-\SI{125}{\mega\hertz}. To complement the hardware part a software that runs on
-an embedded Linux  on the integrated ARM  core will be coded such  that it can
-transmit the  recorded samples over  the network.   To read and  visualize the
-samples at  the other end  of the network, another  piece of software  will be
-crafted,  that will  run on  the users  computer.  The  primary focus  lies on
-enabling students to  analyze audio signals. Since audio  signals contain very
-low  frequencyies only  up to  tens of  thousands of  \si{\hertz} they  can be
-sampled with rather low frequencies and thus making FPGAs an excellent choice.
-An FPGA  not only  shines in  price competitiveness  but also  in flexibility.
-This means that  the logic is not  fixed in silicon and can  be adjusted after
-the product has already been delivered.
+\SI{125}{\mega\hertz}.   To  complement  the hardware  subsystem,  a  software
+component is provided, consisting of two applications: One runs on an embedded
+GNU/Linux on the board itself, while  the other runs on a user's computer. The
+application on the  board (the \emph{server}) is  responsible for transmitting
+the recorded data over a network connection, while the software running on the
+user's  computer  (the oscilloscope,  or  \emph{scope}  for short)  serves  to
+visualize and  process the  measurement results. This  concept is  depicted in
+Figure~\ref{fig:intro:system_overview}.
 
-For this project  a RedPitaya board is  used. It is ideal since  it features a
-fast (\SI{125}{\mega\hertz})  14-bit ADC. This  poses a  huge amount  of data,
-that is not even required for audio signals. Furthermore it is not realisticly
-possible to transmit this huge amount of data over the network.
+The  objective  of  this  project  is   to  provide  a  device  which  enables
+students and hobbyists  to analyze signals encompassing the  region from audio
+frequencies  to the  low megahertz  range. Compared to  the frequencies  which
+modern hardware  can handle  (dozens to hundreds  of megahertz),  the sampling
+rates required to process such signals  can be kept within the limits suitable
+for an FPGA.
 
-Thus  the first  primary target  of this  thesis is  to decimate  the recorded
-signals. To  avoid aliasing  effects  that emmerge  when  decimating a  signal
-appropriate  filters have  to  be designed  and impemented  that  are able  to
-attenuate unwanted signal frequencies.
+A RedPitaya  STEMlab 125-14 board  is used as  the basis for  the hardware. It
+easily offers  sufficient performance  to process the  signals in  the desired
+range, having an  ADC which provides a \SI{14}{\bit}  signal at \SI{125}{\MHz}
+on two channels.   Indeed, downsampling this signal is  \emph{necessary} if it
+is  to be  transmitted over  a  network connection,  since its  data rate  far
+exceeds the available bandwidth.
 
-The second primary  target of this thesis is the  design and implementation of
-a  software-based  oscilloscope. This  is  a  graphical  user  interface  that
-communicates  with the  RedPitaya board  and visualizes  the recored  samples.
-Traditional measuring equipment always has  a built in display that visualizes
-the data on the  device itself. This uses up a lot of  space and provides very
-low flexibility.  Since it can be assumed that every engineur is equipped with
-a computer, said device should be used to display the signals. This keeps cost
-and required space  down.  The data is then transmitted  via the network which
-will be interfaced by both the users computer and the RedPitaya board.°
+Thus, two primary objectives can be defined:
+\begin{enumerate}\tightlist
+    \item
+        The signal coming out of the ADC must be decimated.
+    \item
+        The resulting data stream must be visualized for the end user.
+\end{enumerate}
 
-\cite{1163535}
+Downsampling the  data provided by the  ADC is performed on  the FPGA. Because
+downsampling introduces  unwanted frequencies  into the signal's  spectrum, it
+needs  to be  processed  by filters  which  attenuate those  components. While
+the  STEMlab  offers  some  limited  capability in  this  area  in  its  stock
+configuration,  this was  deemed insufficient  and has  been improved  in this
+project. Several  filter  chains are  implemented  to  allow decimation  rates
+between \num{5}  and \num{2500},  corresponding to output  frequencies between
+\SI{25}{\MHz}  and \SI{50}{\kHz},  respectively. The  server application  then
+transmits the filtered data stream over Ethernet to a client.
 
-% >>>
+The filter chains offer a  mean signal-to-noise ratio between \SI{63}{\dB} and
+\SI{79}{\dB}, depending  on the chosen chain. Additionally,  the \SI{14}{\bit}
+signal from  the ADC  is improved by  \SI{1.2}{\bit} to  \SI{1.8}{\bit}, again
+depending on the chain.
+
+Cost-effective FPGA  boards like the  STEMlab usually come without  a physical
+user interface  with displays and  buttons. This keeps the device  compact and
+its cost  low.  Since fast  personal computers  are ubiquitous these  days, it
+seems obvious  to exploit that and  run an oscilloscope application  on such a
+device. Due to  the fragmentation of  the modern computing world  into various
+ecosystems (Windows, GNU/Linux, macOS, Android, \ldots), web technologies form
+the foundation of  the scope; the application can be  accessed from any modern
+browser. This makes life easier both for the developers and for the end users.
+
+\paragraph{This        document        is        split        into        four
+main        parts:} Part~\ref{part:project_report},         starting        on
+page~\pageref{part:project_report},     contains    the     primary    project
+report. Part~\ref{part:Developer_Guide}  is the  developer  guide, and  begins
+on  page~\pageref{part:Developer_Guide}. A short  user  guide  is provided  in
+Part~\ref{part:User_Guide}  from  page~\pageref{part:User_Guide}  onwards. The
+appendices are located on page~\pageref{ch:app:fdesign} and following.
+
+The   project  report   covers  information   relevant  to   the  design   and
+implementation   of   the  final   product. Its   first   chapter  starts   on
+page~\ref{ch:theory}  and presents  some  relevant  theoretical background  on
+digital signal processing, with an emphasis on digital filtes, and CIC filters
+in particular. The  next chapter outlines  the process leading to  the concept
+for our product, and compares a  few alternative choices against it, beginning
+on page~\pageref{ch:mission}.
+
+The       design      and       implementation       of      the       product
+is     detailled     in     Chapters~\ref{ch:filter_design},     \ref{ch:fpga}
+and~\ref{ch:graphical_front_end}. Chapter~\ref{ch:filter_design} documents the
+filter  design;  both  requirements   and  specifications  are  documented. An
+overview  of  the  FPGA  implementation  is  given  in  Chapter~\ref{ch:fpga},
+highlighting    some   key    points   which    proved   challenging    during
+development. Finally,   the   concepts   and   design   choices   underpinning
+the   scope   are   explained   in   Chapter~\ref{ch:graphical_front_end}. The
+chapters   begin    on   pages~\pageref{ch:filter_design},   \pageref{ch:fpga}
+and~\pageref{ch:graphical_front_end}, respectively.
+
+The  product's  performance  is assessed  in  \emph{\nameref{ch:verification}}
+from page~\pageref{ch:verification}  onwards, and Chapter~\ref{ch:conclusions}
+contains some  concluding remarks  on the overall  result and  possible future
+steps.
+
+The Developer and  User Guides are mostly  self-contained. The Developer Guide
+is  intended for  people who  wish to  use  our product,  or parts  of it,  to
+implement a system of their own. The  User Guide is intended for end-users who
+wish to perform measurements with our product.
+
 %^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>
