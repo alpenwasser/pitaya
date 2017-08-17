@@ -1,0 +1,85 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{a3pages}
+\@ifclassloaded{memoir}{%
+    \newenvironment{a3pages}
+        {%
+            \begingroup%
+            \clearpage%
+            \setlength{\pdfpagewidth}{2\pdfpagewidth}%
+            \setlength{\hsize}{\pdfpagewidth}%
+            \addtolength{\hsize}{-\spinemargin}%
+            \addtolength{\hsize}{-\foremargin}%
+            \setlength{\textwidth}{\hsize}%
+            \setlength{\stockwidth}{2\stockwidth}%
+            \setlength{\paperwidth}{2\paperwidth}%
+            \checkandfixthelayout%
+        }
+        {%
+            \clearpage\endgroup\relax%
+        }}{}
+\@ifclassloaded{alpenthesis}{%
+    \newenvironment{a3pages}
+        {%
+            \begingroup%
+            \clearpage%
+            \setlength{\pdfpagewidth}{2\pdfpagewidth}%
+            \setlength{\hsize}{\pdfpagewidth}%
+            \addtolength{\hsize}{-\spinemargin}%
+            \addtolength{\hsize}{-\foremargin}%
+            \setlength{\textwidth}{\hsize}%
+            \setlength{\stockwidth}{2\stockwidth}%
+            \setlength{\paperwidth}{2\paperwidth}%
+            \checkandfixthelayout%
+        }
+        {%
+            \clearpage\endgroup\relax%
+        }}{}
+\@ifclassloaded{alpenspecs}{%
+    \newenvironment{a3pages}
+        {%
+            \begingroup%
+            \clearpage%
+            \setlength{\pdfpagewidth}{2\pdfpagewidth}%
+            \setlength{\hsize}{\pdfpagewidth}%
+            \addtolength{\hsize}{-\spinemargin}%
+            \addtolength{\hsize}{-\foremargin}%
+            \setlength{\textwidth}{\hsize}%
+            \setlength{\stockwidth}{2\stockwidth}%
+            \setlength{\paperwidth}{2\paperwidth}%
+            \checkandfixthelayout%
+        }
+        {%
+            \clearpage\endgroup\relax%
+        }}{}
+\@ifclassloaded{article}{%
+    \newenvironment{a3pages}
+        {%
+            \begingroup%
+            \clearpage%
+            \setlength{\pdfpagewidth}{2\pdfpagewidth}%
+            \setlength{\hsize}{\pdfpagewidth}%
+            \addtolength{\hsize}{-2\oddsidemargin}%
+            \addtolength{\hsize}{-2\marginparwidth}%
+            \addtolength{\hsize}{-2\marginparsep}%
+            \setlength{\textwidth}{\hsize}%
+            \setlength{\paperwidth}{2\paperwidth}%
+        }
+        {%
+            \clearpage\endgroup\relax%
+        }}{}
+\@ifclassloaded{fhnwreport}{%
+    \newenvironment{a3pages}
+        {%
+            \begingroup%
+            \clearpage%
+            \setlength{\pdfpagewidth}{2\pdfpagewidth}%
+            \setlength{\hsize}{\pdfpagewidth}%
+            \addtolength{\hsize}{-2\oddsidemargin}%
+            \addtolength{\hsize}{-2\marginparwidth}%
+            \addtolength{\hsize}{-2\marginparsep}%
+            \setlength{\textwidth}{\hsize}%
+            \setlength{\paperwidth}{2\paperwidth}%
+        }
+        {%
+            \clearpage\endgroup\relax%
+        }}{}
