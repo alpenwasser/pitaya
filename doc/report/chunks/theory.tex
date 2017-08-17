@@ -1,5 +1,10 @@
-\chapter{Theoretical Background} % <<< --------------------------------------- %
-\label{ch:analog-to-digital_data_aquisition}
+% ==============================================================================
+%
+%                 T H E O R E T I C A L   B A C K G R O U N D
+%
+% ==============================================================================
+\chapter{Theoretical Background} % ------------------------------------------- %
+\label{ch:theory}
 % ---------------------------------------------------------------------------- %
 
 This chapter  will present a  brief synopsis on  some aspects of  digital data
@@ -560,7 +565,7 @@ sampling rate  $f_s$) consisting of $N$  stages is deduced by  multiplying the
 transfer functions of the $N$ cascaded integrator and comb stages, yielding
 \begin{equation}
     \label{eq:cic:complete}
-    H_{CIC}(z) = H_I^N(z) \cdot H_C^N(z) = 
+    H_{CIC}(z) = H_I^N(z) \cdot H_C^N(z) =
     \frac{\left(1 - z^{-RM}\right)^N}{\left( 1 - z^{-1} \right)^N} =
     \left[\sum_{k = 0}^{RM-1} z^{-k}\right]^N
 \end{equation}
@@ -875,7 +880,7 @@ where
     \label{eq:cic:truncation_rounding:system_function}
     h_j[k] = \left\lbrace
         \begin{aligned}
-            \sum_{l=0}^{\lfloor k/(RM) \rfloor} (-1)^l 
+            \sum_{l=0}^{\lfloor k/(RM) \rfloor} (-1)^l
             {{N}\choose{l}}{{N-j+k-RMl}\choose{k = RMl}} &
             j                                            &
             = 1, 2, \cdots N                             \\
@@ -1071,7 +1076,7 @@ compensator  in Section~TODO:reference. A  drawback  of cascades  is that  the
 ripple in their  passband shows additive behavior, so the  stages in a cascade
 of filters  have more  stringent ripple  requirements in  the passband  then a
 single-stage. However, the cost  for this is usually offset  by the advantages
-of multi-stage designs. 
+of multi-stage designs.
 
 When designing multi-stage filters, it can  happen that the transition band of
 an earlier stage overlaps with the spectral copy of a later stage running at a
@@ -1148,5 +1153,4 @@ to have the same stopband attenuation, in general.
 
 %>>>
 
-%>>>
 %^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>
