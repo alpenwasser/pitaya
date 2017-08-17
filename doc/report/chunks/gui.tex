@@ -169,9 +169,9 @@ If data  integrity is vital, TCP  is generally the protocol  of choice. It has
 mechanisms  for  guaranteeing  both  the completeness  and  correct  order  of
 packages.  This comes at the cost  of some overhead, but in most applications,
 this is negligible and well worth the cost. Another key feature of TCP is that
-it can perform congestion control. TCP will  sent no more packages if previous
-packages  have  gone missing  (i.e. TODO:  if  their  reception has  not  been
-confirmed?).  Where UDP will happily flood the network with as much data as it
+it can perform congestion control. TCP will  send no more packages if previous
+packages  have  gone missing  (i.e. if  their  reception has  not  been
+confirmed).  Where UDP will happily flood the network with as much data as it
 is fed,  TCP ensures that  the network is not  flooded. The result is  that in
 case of a  bad or slow network  connection, the amount of  transmitted data is
 automatically adapted  to the network,  and only as much  data is sent  as the
@@ -218,8 +218,6 @@ current implementation:
     \item 
         Calculate the SNR both automatically detecting the signal and manually
         being told where the signal is.
-    \item 
-        Calculate the THD for a given base harmonic. TODO: !
     \item 
         Export data to an array-string.
     \item 

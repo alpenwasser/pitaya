@@ -108,7 +108,7 @@ and project can be read in Section~\ref{subsec:concept:fpga_components}.
 The logger core (logger  in further text) is a piece of  VHDL code that stores
 samples it  gets from a  source in  a ringbuffer in  RAM. It is packaged  as a
 Vivado IP core an can be seemlessly integrated into the project.
-The logger originated  from an earlier project.%TODO: \cite{TODO:}. 
+The logger originated  from an earlier project\cite{huess-schnid}. 
 In addition  to logging data  to RAM, it can  also be programmed  with various
 triggers. It reads  instructions from  a BRAM  on the  FPGA and  iterates over
 them. Having reached  the last one, it  issues an IRQ signal,  signalizing the
