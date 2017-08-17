@@ -33,17 +33,19 @@ To verify that the filter performs as expected, the RMS of all samples was calcu
     \label{fig:verification:rmsAll}
 \end{figure}
 
-The RMS looks okay and the passband is pretty linear. Three things are not so nice:
+The RMS looks okay and the passband is pretty linear. Two things are not so nice:
 
 \begin{itemize}
-    \item The passband frequency response has a slight slope upwards. It is at no point higher than 20mV effectively having an error below 2\% in all of the filter chains except the R=5 chain.
-    \item The Passband has a slight ripple of ±0.5\% in all of the filter chains. TODO: is this within spec?
+    \item The passband frequency response has a slight slope upwards. It is at no point higher than 20mV effectively having an error below 2\% in all of the filter chains except the R=5 chain. This is also the case withing the filter specification. What is kind of irritating is that the slope is not one hundred percent matching the one of the specification. But not that it would be breaking.
     \item The R=5 chain looks not so promising. Something went horribly wrong. The previous statements do not apply for this case.
 \end{itemize}
 
-One thing that becomes apparent but is no big deal and was expected is the gain loss in the passband.
-If the optimum case of a 2-bit-win was present, all of the amplitudes would be at $\frac{1}{\sqrt{2}} = \SI{0.707}{\V}$.
-Since not all filter chains win the same amount of bits this sadly is not the case. In Table~\ref{tab:verification:results} the amount of bits won can be seen.
+Two things that came as expected
+\begin{itemize}
+    \item The Passband has a slight ripple of ±0.5\% in all of the filter chains. This is well within the filter design specification in theory.
+    \item The passband shows a gain loss. If the optimum case of a 2-bit-win was present, all of the amplitudes would be at $\frac{1}{\sqrt{2}} = \SI{0.707}{\V}$.
+    Since not all filter chains win the same amount of bits this sadly is not the case. In Table~\ref{tab:verification:results} the amount of bits won can be seen.
+\end{itemize}
 
 All in all the responses look decent but not perfect.
 
