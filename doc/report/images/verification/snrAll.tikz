@@ -1,0 +1,69 @@
+\tikzsetnextfilename{snrAll}
+\newcommand*\freqzFileA{images/verification/results/calcs5.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileA}\freqzTableA
+
+\newcommand*\freqzFileB{images/verification/results/calcs25.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileB}\freqzTableB
+
+\newcommand*\freqzFileC{images/verification/results/calcs125.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileC}\freqzTableC
+
+\newcommand*\freqzFileD{images/verification/results/calcs625.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileD}\freqzTableD
+
+\newcommand*\freqzFileE{images/verification/results/calcs1250.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileE}\freqzTableE
+
+\newcommand*\freqzFileF{images/verification/results/calcs2500.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileF}\freqzTableF
+
+
+\begin{tikzpicture}[
+    trim axis left,
+    trim axis right,
+]
+     \pgfplotsset{every axis/.style={
+            height=45mm,
+            width=\textwidth,
+            grid=none,
+            % y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            % x filter/.code={\pgfmathparse{\pgfmathresult * 25e3}},
+            xlabel=Frequency,
+            ylabel=$V_{RMS}$,
+            % x unit=\si{\Hz},
+            y unit=\si{\V},
+            % ytick={-80,-40,0,40},
+        },
+        every axis legend/.append style={
+            %at={(1,-0.15)},
+            %anchor=north east,
+            cells={anchor=west},
+        },
+    }
+    \begin{axis}[
+            title={The RMS Frequency Response},
+            at = {(0,0)},
+            xmin=0,
+            xmax=2000,
+            %ymin=-120,
+            %ymax=5,
+            xtick={400,2000},
+            xticklabels={$\frac{f_s}{2}$,$5\frac{f_s}{2}$},
+            legend={%
+                R=5,%
+                R=25,%
+                R=125,%
+                R=625,%
+                R=1250,%
+                R=2500%
+            }
+        ]
+        \addplot[thick,q1,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xsnr] \freqzTableA;
+        \addplot[thick,q2,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xsnr] \freqzTableB;
+        \addplot[thick,q3,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xsnr] \freqzTableC;
+        \addplot[thick,q4,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xsnr] \freqzTableD;
+        \addplot[thick,q5,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xsnr] \freqzTableE;
+        \addplot[thick,q6,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xsnr] \freqzTableF;
+    \end{axis}
+    
+\end{tikzpicture}

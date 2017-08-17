@@ -1,0 +1,48 @@
+\tikzsetnextfilename{foldingBack2500}
+\newcommand*\freqzFileA{images/verification/results/attenuation2500.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileA}\freqzTableA
+
+
+\begin{tikzpicture}[
+    trim axis left,
+    trim axis right,
+]
+     \pgfplotsset{every axis/.style={
+            height=45mm,
+            width=\textwidth,
+            grid=none,
+            % y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            % x filter/.code={\pgfmathparse{\pgfmathresult * 25e3}},
+            xlabel=Frequency,
+            ylabel=$V_{RMS}$,
+            % x unit=\si{\Hz},
+            y unit=\si{\V},
+            % ytick={-80,-40,0,40},
+        },
+        every axis legend/.append style={
+            %at={(1,-0.15)},
+            %anchor=north east,
+            cells={anchor=west},
+        },
+    }
+    \begin{axis}[
+            title={Attenuation in the Edge and Stopband in Contrast to the Passband for R=2500},
+            at = {(0,0)},
+            xmin=0,
+            xmax=4096,
+            %ymin=-120,
+            %ymax=5,
+            xtick={4096},
+            xticklabels={$\frac{f_s}{2}$},
+            legend={%
+                $5\frac{f_s}{2}\cdot \frac{10}{200}$ (Passband),%
+                $5\frac{f_s}{2}\cdot \frac{41}{200}$ (Edge),%
+                $5\frac{f_s}{2}\cdot \frac{70}{200}$ (Stopband),%
+            },
+        ]
+        \addplot[thick,q1,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=s100] \freqzTableA;
+        \addplot[thick,q2,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=s410] \freqzTableA;
+        \addplot[thick,q3,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=s700] \freqzTableA;
+    \end{axis}
+    
+\end{tikzpicture}

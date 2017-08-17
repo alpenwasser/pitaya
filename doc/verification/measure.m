@@ -9,7 +9,7 @@ set(sock,'InputBufferSize',buffSize);
 set(sock,'OutputBufferSize',buffSize);
 
 fopen(sock);
-path = 'measurements';
+path = 'measurements2';
 fsArr = [100000, 50000];
 for fs = fsArr
     datestr(now)

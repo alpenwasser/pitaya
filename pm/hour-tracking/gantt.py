@@ -14,10 +14,10 @@ def draw_gantt_project_plan(tasks, assignees):
     y = np.arange(len(tasks['description'])*4+0.5,0.5,-4)
     # Draw projected timeline
     bars = plt.barh(
-        y,
+        y + 0.7,
         np.subtract(list(map(parse_date, tasks['stop_planned'])),list(map(parse_date, tasks['start_planned']))),
         left=list(map(parse_date, tasks['start_planned'])),
-        height=0.3,
+        height=1,
         align='center',
         color='#cb4b16',
         alpha = 0.8,
@@ -34,11 +34,11 @@ def draw_gantt_project_plan(tasks, assignees):
 
     # Draw real projected timeline
     bars = plt.barh(
-        y - 0.6,
+        y - 0.7,
         #%np.subtract(list(map(parse_date, tasks['stop_real'])),list(map(parse_date, tasks['start_real']))),
         np.subtract(stop_real_ts,start_real_ts),
         left=list(map(parse_date, tasks['start_real'])),
-        height=0.3,
+        height=1,
         align='center',
         color='#268bd2',
         alpha = 0.8
