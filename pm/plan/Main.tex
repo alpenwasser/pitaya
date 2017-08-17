@@ -31,7 +31,7 @@
     \vspace{5em}
 
     \today\\
-    Version 0.0.1
+    Version 1.2
 \end{titlingpage} % >>>
 
 \frontmatter % <<<
@@ -141,7 +141,49 @@ TODO: Raphi pls fix :P
     \item Presentation (15.09.2017)
 \end{itemize}
 
-\chapter{Project Timeline} % <<< ------------------------------------------------ %
+\chapter{Concept (revised)} % <<< ------------------------------------------------ %
+\label{ch:concept}
+% ---------------------------------------------------------------------------- %
+
+\section{Toolbox (revised)}
+
+Since it became apparent that the STEMlab project base led by Red Pitaya is going through a major overhaul and it is rather undeterministic wether this will change in the future, we will develop our own toolbox.
+
+We will implement a toolchain that can build a ARM Linux image with all necessary components. This will be done based on the original Red Pitaya patches to make the Linux run on the ZYNQ and some scripts of Open Source Projects which we will adapt to our needs and a more general toolchain.
+
+We will use Linux as a Platform and Matlab and Vivado for filter design and implementation respectively.
+
+For the JavaScript Application we will use node.js, yarn, rollup and mithril.js for the implementation.
+
+\section{Realisation (revised)}
+
+In the preceding project implemented filter chains using IIR filters as at preliminary chain stages and FIR filters at the final stages. This was to reduce the needed hardware ressources as IIR filters need way less resources than FIR filter but are less optimal in other aspects.
+Sadly this measure was not enough and the resources available did not suffice.
+Thus it was decided to implement chains using a CIC filter.
+Since a CIC filter alone is not enough a first CIC filter will be used to reduce the rate drastically (R=25, R=125). Afterwards steep FIR filters will filter the signal at a final stage and decimate it again (R=5, R=2).
+
+As it was decided to develop an entirely self-dependent solution of the project, general components on the FPGA such as an ADC controller or a data logger are required. For the ADC part an IP from Pavel Demin will be utilized. For the logger part an IP core that Mr. Hüsser developed in a previous project will be used.
+
+For the ARM Core a Linux will be set up that can talk to the logger core via a kernel module. A server application will be developped which will run on the Linux to send the data written to the RAM by the logger to the network. This will be done using WebSockets.
+
+The scoping webapp will be implemented using JavaScript. WebSockets are thus used to transmit and receive data to and from the network.
+As build systems yarn and rollup will be used. To implement the GUI side of the application, mithril.js will be used.
+
+\section{Testing}
+
+To test the performance of the filters, a series of tests will be performed.
+
+The following metrics will be calculated from the measured data.
+
+\begin{itemize}
+    \item The RMS frequency response
+    \item The SNR frequency response
+    \item The attenuation in the stopband
+\end{itemize}
+
+Optional testing would involve a comparison to the reference implementation and to a commercial spectrum analyzer.
+
+\chapter{Project Timeline (revised)} % <<< ------------------------------------------------ %
 \label{ch:initial}
 % ---------------------------------------------------------------------------- %
 
@@ -153,7 +195,7 @@ TODO: Raphi pls fix :P
     \end{figure}
 \end{a3pages}
 
-\chapter{Work Packages} % <<< ------------------------------------------------ %
+\chapter{Work Packages (revised)} % <<< ------------------------------------------------ %
 \label{ch:wpac}
 % ---------------------------------------------------------------------------- %
 
