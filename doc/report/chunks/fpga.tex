@@ -106,8 +106,8 @@ and project can be read in Section~\ref{subsec:concept:fpga_components}.
 % ---------------------------------------------------------------------------- %
 
 The logger core (logger  in further text) is a piece of  VHDL code that stores
-samples it  gets from a  source in  a ringbuffer in  RAM. It is packaged  as a
-Vivado IP core an can be seemlessly integrated into the project.
+samples it  gets from a  source in  a ringbuffer in  the RAM. It is packaged  as a
+Vivado IP core and can be seemlessly integrated into the project.
 The logger originated  from an earlier project\cite{huess-schnid}. 
 In addition  to logging data  to RAM, it can  also be programmed  with various
 triggers. It reads  instructions from  a BRAM  on the  FPGA and  iterates over
@@ -116,7 +116,7 @@ end of the transcription.
 
 The logger's original  implementation features eight channels with  a width of
 \SI{14}{\bit}, padded to \SI{16}{\bit} in  order to simplify data transmission
-in \si{\byte}-sized chunks. Each two channels require one clock cycle to store
+in byte-sized chunks. Each two channels require one clock cycle to store
 a sample.
 
 In order to take advantage of the  fact that additional bits can be ``won'' by
@@ -130,8 +130,7 @@ be an issue in practice.
 
 The  logger  core comes  with  a  kernel  module  that provides  a  convenient
 interface from the ARM core. This avoids having to manually program the logger
-core. The  programming of  a trigger  and polling  of the  logger's status  is
-explained in the Developer's Guide in Section~TODO.
+core.
 
 %>>>
 % ==============================================================================
@@ -154,7 +153,7 @@ make  the signal  leaving  the filter  worse  than it  came  into the  filter,
 intead  of improving  it.  The  logical structure  of the  chains can  be seen
 in  Figure~\ref{fig:fdesign:chain_concept}  and  the rationale  behind  it  is
 explained  in the  respective Section~\ref{sec:fdesign:filter_specifications}.
-For the  detailled implementation,  it is  advised to look  at the  project in
+For the  detailed implementation,  it is  advised to look  at the  project in
 Vivado  itself, as  the block  design is  impractically large  to be  put onto
 paper, thus it is omitted in this report.
 
@@ -238,9 +237,9 @@ but represents the general case in out blockdesign.
     \input{images/fpga/bitflow.tikz}
     \caption[Bit Flow in Filter Chain]{%
         The flow of  the bits in a filter chain. The  bits are shifted through
-        horizontally. Every bit which does not fit into the numerical width of
+        horizontally. Every bit that does not fit into the numerical width of
         the next stage will be cut off, starting with those furthest away from
-        the sign. At the  sign extend the bit is replicated  \num{4} times and
+        the sign. At the  sign extend, the bit is replicated  \num{4} times and
         handed through to the next  stage. The ZERO stage simply holds \num{7}
         \code{'0'} bits to pad the number coming from the ADC on its lower end
         before it goes  into the first filter. Inside the filter  the bits can
@@ -265,7 +264,7 @@ the signal (a sine wave in our example) will clip or, even worse, overflow and
 wrap around. The same applies  to the case where too few  bits are cut off. If
 the bit count is increased by one  to guarantee no overflow inside the filter,
 but that bit is  not set at the output due to unity  gain, it will effectively
-be lost as it  will never be used.  This reduces SNR  by \SI{6}{\dB}, which is
+be lost as it  will never be used.  This reduces the maximum theoretically achieveable SNR  by \SI{6}{\dB}, which is
 obviously highly undesirable.
 
 To make  sure neither  of these faults  happens, it is  important to  have the
@@ -283,7 +282,7 @@ one bit.
 
 One can  observe that  the sine in  Case \num{1} (top  plot) uses  the dynamic
 range to a perfect extent as the full-scale sine has an amplitude of \num{31},
-the maximum  value an \SI{6}{\bit}  \code{int} can hold. Case  \num{2} (middle
+the maximum  value a \SI{6}{\bit}  \code{int} can hold. Case  \num{2} (middle
 plot) shows  a sine  that has  been scaled  to \num{34}  and thus  requires an
 additional bit.  But  because a \SI{7}{\bit} \code{int} can hold  values up to
 \num{63}, most of the time the MSB  ends up not being used. with \SI{7}{\bit},

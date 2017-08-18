@@ -103,6 +103,43 @@ the Developer's Guide explains how one can be acquired or built.
 \label{ch:userguide:operation}
 % ---------------------------------------------------------------------------- %
 
+The UI to operate the measuring device is presented as seen in Figure~\ref{fig:userguide:screenshot}.
+
+\section*{Zooming and Paning}
+
+To zoom use the vertical and horizontal scrolling function of the mouse or trackpad.
+To pan, click and drag the signal. If you are dragging a timetrace it will automatically move the trigger location.
+
+The two arrow buttons in the general pref pane resize the signal to the visible are.
+
+\section*{Triggering}
+
+To set the trigger level, move the drawn trigger level by clicking and dragging it or enter the level in numbers on the pref pane of the triggering time trace.
+
+\section*{Markers}
+
+There is four markers by default. Two mark the start and stop of the area over which power is integrated and two mark the ara that contain the signal for the automatic SNR calculation.
+Markers can be dragged and moved by click and drag. The number at the bottom of each marker shows the frequency it is at.
+
+The plus button in the general pref pane adds a new marker which can be used to mark certain frequencies.
+
+To move the SNR markers, the SNR mode has to be set from auto to manual mode in the corresponding fft trace pref pane.
+
+\section*{Sampling Rate}
+To configure the sampling rate, use the select at the top of the general pref pane.
+
+\section*{Line Width}
+To improve readability, some people will like a thicker line width. To set the linewidth use the input at the top of the general pref pane.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\textwidth]{images/gui/scope}
+    \caption[The scope application]{%
+        The scope application in it's current state, displaying time and FFT data.%
+    }
+    \label{fig:usegruide:screenshot}
+\end{figure}
+
 %>>>
 
 %^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>
