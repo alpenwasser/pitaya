@@ -1,9 +1,9 @@
 %% Impulse response coefficients
-clear all;close all;clc;
+clear all;close all;%clc;
 
 N = 4;
 M = 1;
-R = 25;
+R = 125;
 
 kmax1 = (R*M-1) * N + 1 - 1;
 kmax2 = (R*M-1) * N + 2 - 1;
@@ -82,7 +82,7 @@ Bmax = ceil(N*log2(R*M)+Bin - 1);
 % NOTE: 2N+1 stages, since output is counted as a stage as well.
 
 % Number of bits discarded at each stage
-B = [0 0 0 4 0 0 0 0 20];
+B = [0 0 0 0 0 0 0 0 26];
 % Width of probability distribution for errors
 E = [0 0 0 0 0 0 0 0 2^B(9)];
 
@@ -120,9 +120,9 @@ sigmaSqT7 = sigmaSq(7) * sum(h7.^2);
 sigmaSqT8 = sigmaSq(8) * sum(h8.^2);
 sigmaSqT9 = sigmaSq(9) * 1;
 
-sigmaSqT = [sigmaSqT1 sigmaSqT2 sigmaSqT3 sigmaSqT4 sigmaSqT5 sigmaSqT6 sigmaSqT7 sigmaSqT8 sigmaSqT9];
+sigmaSqT     = [sigmaSqT1 sigmaSqT2 sigmaSqT3 sigmaSqT4 sigmaSqT5 sigmaSqT6 sigmaSqT7 sigmaSqT8 sigmaSqT9];
 sigmaSqTotal = sum(sigmaSqT);
 
 % Assuming a binary point to the right of the LSB of the output register
-mean = muTotal/2^B(9)
+mean  = muTotal/2^B(9)
 sigma = sqrt(sigmaSqTotal)/2^B(9)

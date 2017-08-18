@@ -23,6 +23,8 @@
 \usepackage{pgfplotstable}
 \DeclareSIUnit\sample{sample}
 \DeclareSIUnit\channel{channel}
+\DeclareSIUnit[number-unit-product = {}]\partspermillion{ppm}
+\DeclareSIUnit[number-unit-product = {}]\permille{\perthousand}
 \usepackage[simplified]{pgf-umlcd}
 \usepackage{algorithmicx}
 \usepackage{algpseudocode}
@@ -122,12 +124,10 @@
 %                         P R O J E C T   R E P O R T
 %
 % ==============================================================================
-%
 % <<< --------------------------------------------------- PART: PROJECT REPORT %
 \part{Project Report}
 \label{part:project_report}
 % ---------------------------------------------------------------------------- %
-%
 % <<< ----------------------------------------------------------------- THEORY %
 \include{chunks/theory}
 % ------------------------------------------------------------------------->>> %
@@ -152,7 +152,10 @@
 % <<< ------------------------------------------------------------- CONCLUSION %
 \include{chunks/conclusion}
 % ------------------------------------------------------------------------->>> %
-
+% <<< ----------------------------------------------------------- BIBLIOGRAPHY %
+\bibliographystyle{IEEEtran}
+\bibliography{chunks/references}
+% ------------------------------------------------------------------------->>> %
 % >>>
 % ==============================================================================
 %
@@ -198,7 +201,9 @@
 \include{chunks/appfdesign}
 \include{chunks/appgui}
 \include{chunks/licenses}
-\include{chunks/media}
+\ifpaper
+    \include{chunks/media}
+\fi
 
 % Matlab-prettifier: Uses the lstlisting counter
 % Minted: Uses the listing counter
@@ -211,11 +216,8 @@
 % ==============================================================================
 \cleardoublepage % <<< -------------------------------------------- BACKMATTER %
 \backmatter
-\bibliographystyle{IEEEtran}
-\bibliography{chunks/references}
 % Indexing: memman.pdf, pp. 302ff.
 \printindex
 %>>>
-
 \end{document}
 %^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>
