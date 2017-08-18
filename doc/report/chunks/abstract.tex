@@ -17,47 +17,56 @@ analysis.
 
 To  allow transmission  over  an  Ethernet connection  and  to improve  signal
 quality, the high-rate data stream coming from the STEMlab's analog-to-digital
-converter is decimated  to a lower-rate signal using  the integrated FPGA. The
-decimated signal is then sent to a client over a network connection and can be
-observed with a newly  developed oscilloscope application.  During decimation,
-the  signal is  filtered  through  one of  six  filter  cascades to  attenuate
-aliasing effects.
+converter  is   decimated  to  a   lower-rate  signal  using   the  integrated
+FPGA. During decimation, the signal passes through one of six filter chains to
+attenuate aliasing  effects. 
 
-The cascades  run on the STETMlab's  FPGA. They are based on  a combination of
+The chains  run on  the STETMlab's  FPGA. They are based  on a  combination of
 FIR  and CIC  filters,  and  decimate the  incoming  \SI{125}{\MHz} signal  to
 output frequencies  between \SI{50}{\kHz} and \SI{25}{\MHz},  depending on the
-chain. The chains achieve an aliasing  attenuation of \SI{60}{\dB} and exhibit
-negligible passband droop. A  signal-to-noise ratio of up  to \SI{85}{\dB} has
+chain. They  achieve  an  aliasing  attenuation of  \SI{60}{\dB}  and  exhibit
+negligible passband droop. A  signal-to-noise ratio of up  to \SI{84}{\dB} has
 been measured.
 
-The oscilloscope application  is based on web technologies,  allowing for easy
-deployment  across various  platforms. Lastly,  a  comprehensive toolchain  to
-extend and modify  the system is provided. All project  components created for
-this project are open source and available under the MIT license.
+The decimated signal is then passed on  to an embedded GNU/Linux and sent to a
+client over  a network connection. A newly  developed oscilloscope application
+allows observation  of the signal  from a  client device.  The  application is
+based on JavaScript,  allowing for easy deployment across any  platform with a
+modern browser available.
 
-
-
-%%%
-%This involves the  development of
-%appropriate filters for attenuating aliasing effects, a communication back end
-%to transmit  data via Ethernet,  and an oscilloscope application  to visualize
-%and analyze the results.
-%
-%Six  filter  chains  are  implemented  on  the  STEMlab's  FPGA,  allowing  to
-%downsample   the  \SI{125}{\MHz}   source   signal   to  frequencies   between
-%\SI{50}{\kHz} and \SI{25}{\MHz}.  Using a  combination of CIC and FIR filters,
-%a stopband  attenuation of  \SI{60}{\dB} is achieved. RMS  in the  passband is
-%linear  to within  \SI{2}{\percent}  except at  \SI{25}{\MHz},  and ripple  is
-%kept  to  approximately \SI{1}{\percent}. SNR  in  the  passband lies  between
-%\SI{70}{\dB} and \SI{80}{\dB} as calculated by Matlab's SNR algorithms.
-%
-%The oscilloscope application  is based on web technologies,  allowing for easy
-%deployment  across various  platforms. Lastly,  a  comprehensive toolchain  to
-%extend and modify  the system is provided. All project  components created for
-%this project are open source and available under the MIT license.
+All components created for this project  are provided under the MIT license. A
+comprehensive toolchain covering filter design, FPGA tools, embedded GNU/Linux
+and front end  development, along with documentation, allows  anyone to extend
+and modify the system and to tailor it to their needs.
 
 \vfill
 
-\paragraph{Key Words:} Red Pitaya, STEMlab,  CIC, FIR, sampling, downsampling,
-attenuation   stopband,  passband,   aliasing,  open   source,  MIT   license,
-oscilloscope, spectrum analyzer, FFT, JavaScript, digital filters,
+%<<< KEYWORDS
+\paragraph{Key Words:} 
+Red Pitaya,
+STEMlab,
+Xilinx,
+FPGA,
+Oscilloscope,
+Spectrum Analyzer,
+DSP,
+digital signal processing,
+digital filters,
+FIR Filter,
+CIC Filter,
+lowpass,
+sampling,
+downsampling,
+decimation,
+aliasing,
+attenuation,
+FFT
+JavaScript,
+web application,
+VHDL,
+C,
+C++,
+open source,
+MIT license.
+%>>> KEYWORDS
+%^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>
