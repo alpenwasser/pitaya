@@ -6,16 +6,24 @@
 \chapter{Theoretical Background} % ------------------------------------------- %
 \label{ch:theory}
 % ---------------------------------------------------------------------------- %
+% ==============================================================================
+%
+%                               O V E R V I E W
+%
+% ==============================================================================
 
-This chapter  will present a  brief synopsis on  some aspects of  digital data
+This  chapter presents  a  brief  synopsis on  some  aspects  of digital  data
 acquisition from  an analog source  and the processing  of that data,  and how
 those issues pertain to our project. It  is not intended to be a comprehensive
 treatise on the subject but shall serve  as a short refresher. At its end, the
 reader should  have sufficient insight  to understand the basic  motivation of
 our project from a theoretical point of view.
 
-TODO: references to more comprehensive literature.
-
+% ==============================================================================
+%
+%                              D S P   C H A I N
+%
+% ==============================================================================
 \section{The Digital Signal Processing Chain}% <<< --------------------------- %
 \label{sec:dsp_chain}
 % ---------------------------------------------------------------------------- %
@@ -73,12 +81,9 @@ quantization process converts a  value-continuous signal into a value-discreet
 one,  with its  resolution being  a specification  of the  ADC which  is being
 used. As an example, the ADC in our system has a resolution of \num{14}\,bits,
 meaning it can divite its valid  input range into \num{16384} values. Given an
-input range of \SI{2}{\volt} $V_{PP}$, that equates to a resolution of roughly
+input range of \SI{2}{\volt} $V_{PP}$, this equates to a resolution of roughly
 \SI{122}{\micro\volt} (in theory). This quantization  process is the source of
-what is generally  known as \emph{quantization noise}. For more  on the topic,
-see \code{TODO}.
-
-TODO: Check numbers. Give references for further reading.
+what is generally  known as \emph{quantization noise}.
 
 Besides the quantization,  the other step happening in the  ADC is sampling; a
 time-continuous signal is converted into a series of time-discreet values. The
@@ -181,9 +186,7 @@ off the device in  real time, and the device itself  does not offer sufficient
 storage for capturing a meaningful amount of data which can then be moved onto
 another device for  further processing at a later  point. Therefore the amount
 of data must  be reduced before it can  be moved off the device  to a computer
-for viewing or further processing.
-
-TODO: Amount of data being generated on the PITA.
+for viewing or further processing (see Section~\ref{sec:requirements}).
 
 Because downsampling a signal is in  essence nothing more than the sampling of
 a signal which has already been sampled, a lot of the considerations which are
@@ -191,9 +194,9 @@ valid for the  step from an analog  to a digital signal as  outlined above are
 either very  similar or even identical. Specifically,  the same considerations
 for  aliasing still  apply: If  the  signal which  is  to  be downsampled  has
 frequency components  above $f_{s,  downsampled}/2$, aliasing  will occur. And
-since the  signal coming out of  the ADC has the  original signal's (filtered)
-spectrum recurring at intervals of its  sampling frequency, this is always the
-case.\code{TODO: Correct?}
+since  the signal  coming out  of  the ADC  has the  analog signal's  spectrum
+(filtered by the analog lowpass before  the ADC) recurring at intervals of the
+ADC's sampling frequency, this is always the case.
 
 Therefore,  the sampled  signal must  be  filtered through  a low-pass  filter
 before  being downsampled,  just as  the original  analog signal  was low-pass
@@ -246,7 +249,11 @@ where the term \emph{folding back} originates.
 \end{figure}
 
 %>>>
-
+% ==============================================================================
+%
+%                        D I G I T A L   F I L T E R S
+%
+% ==============================================================================
 \section{Digital Filters}% <<< ----------------------------------------------- %
 \label{sec:digital_filters}
 % ---------------------------------------------------------------------------- %
@@ -260,7 +267,11 @@ filters,  however, in  the strictest  sense they  are a  special class  of FIR
 filters rather than an entirely new  type of LTI system \cite{1163535}.  While
 our system uses FIR and CIC filters,  a brief overview of IIR filters is still
 presented here, for the sake of completeness.
-
+% ==============================================================================
+%
+%                        I I R   F I L T E R S
+%
+% ==============================================================================
 \subsection{IIR Filters} %<<< ------------------------------------------------ %
 \label{subsec:iir_filters}
 % ---------------------------------------------------------------------------- %
@@ -281,8 +292,6 @@ elements, multipliers and adders.
             1 + \sum_{i=0}^M a_i \cdot z^{-i}}
 \end{equation}
 
-TODO: Move sum limits above and below sigma sign.
-
 IIR filters generally require a lower order (and therefore fewer resources) to
 approximate a  certain frequency  response specification  than FIR  filters do
 (particularly the constraint of a narrow transition band), but this comes at a
@@ -298,7 +307,6 @@ BIBO stable due to their feedback paths.
 \end{figure}
 
 Some of the generally used types of IIR filters are:
-
 \begin{itemize}\tightlist
     \item
         Butterworth  filter: Named after  the British  engineer and  physicist
@@ -321,13 +329,14 @@ Some of the generally used types of IIR filters are:
         equiripple in the  bassband and stopband and a  very narrow transition
         band compared to other filters of the same order.
 \end{itemize}
-
-TODO: Check correct dashes for years.
-
 Digital IIR filters are often designed by way of the bilinear transform.
 
 %>>>
-
+% ==============================================================================
+%
+%                            F I R   F I L T E R S
+%
+% ==============================================================================
 \subsection{FIR Filters} %<<< ------------------------------------------------ %
 \label{subsec:FIR_filters}
 % ---------------------------------------------------------------------------- %
@@ -357,7 +366,6 @@ FIR filters have several advantages:
     \item
         Implemenation is usually rather straightforward.
 \end{itemize}
-TODO: Correct?
 
 Their  main  disadvantage   is  that  due  to  the  lack   of  feedback,  they
 generally require comparatively high filter  orders for narrow transition band
@@ -385,8 +393,7 @@ This     process     is     illustrated      in     simplified     form     in
 Figure~\ref{fig:brick_wall_vs_FIR}.
 
 The  FIR filter's  transition band  width  is particularly  important for  our
-application in order to reduce aliasing effects, as will be shown later {TODO:
-actually show later}.
+application in order to reduce aliasing effects, as will be shown later.
 
 \begin{figure}
     \centering
@@ -397,8 +404,6 @@ actually show later}.
     }
     \label{fig:brick_wall_vs_FIR}
 \end{figure}
-
-TODO: Equation for order estimation.
 
 Designing    FIR    filters    is     usually    performed    by    specifying
 certain     desired    characteristics     of    the     filter's    frequency
@@ -498,9 +503,12 @@ frequency response and the coefficient set of an example filter.
     }
     \label{fig:fir:halfband_linear_example}
 \end{figure}
-
 %>>>
-
+% ==============================================================================
+%
+%                            C I C   F I L T E R S
+%
+% ==============================================================================
 \subsection{CIC Filters} %<<< ------------------------------------------------ %
 \label{subsec:CIC_filters}
 % ---------------------------------------------------------------------------- %
@@ -610,8 +618,9 @@ primary factors (see also \cite{1163535}):
 However, CIC filters do suffer from some drawbacks. The two primary ones are:
 \begin{itemize}\tightlist
     \item
-        For large rate  change factors $R$, the register growth  of the filter
-        can become very large. TODO: see section blabla
+        For    large     rate    change    factors    $R$,     the    register
+        growth    of     the    filter    can    become     very    large. See
+        Section~\ref{subsubsec:cic:register_growth}.
     \item
         A   CIC  filter   has   only  three   design  parameters   determining
         its   frequency  response: Rate   change   factor  $R$,   differential
@@ -620,11 +629,6 @@ However, CIC filters do suffer from some drawbacks. The two primary ones are:
         frequency   response  is   therefore   extremely   limited  (more   in
         Section~\ref{subsubsec:cic:frequency_characteristics}).
 \end{itemize}
-
-% TODO:  why  is  register  growth  an   isssue  if  it  is  not  actually  an
-% issue? Clarify:   overflow   is   no   issue  for   calculating   the   comb
-% stages. However, the registers must still  be able to represent the expected
-% output.
 
 As  can  be  seen in  Equation~\ref{eq:cic:integrator_stage},  the  integrator
 stages have  unity feedback coefficients. In  the case of CIC  decimators, the
@@ -644,9 +648,14 @@ A numerical  example to demonstrate this  effect and better explain  the inner
 workings  of a  CIC filter  can be  found in  Appendix~\ref{sec:app:cic_simu},
 starting on page~\pageref{sec:app:cic_simu}.
 
-
-\subsubsection{Frequency Characteristics}
+% ==============================================================================
+%
+%              F R E Q U E N C Y   C H A R A C T E R I S T I C S
+%
+% ==============================================================================
+\subsubsection{Frequency Characteristics} % ---------------------------------- %
 \label{subsubsec:cic:frequency_characteristics}
+% ---------------------------------------------------------------------------- %
 
 This section presents some of  the more important frequency characteristics of
 the  CIC  filter. We  will  start  with  some  considerations  about  how  the
@@ -692,22 +701,23 @@ filters,  where the  later stages  are FIR  filters. Due to  the CIC  filter's
 frugality  in terms  of resource  usage, it  is ideally  suited as  an initial
 stage, where the most samples per time need to be processed. The fact that FIR
 filters need  to perform many  more computations  (and more complex  ones) per
-sample is then no longer as much of  a problem, since those FIR filters run at
-lower sampling frequencies and have therefore many more clock cycles available
-to compute each  output. Also, because the frequency response of  a FIR filter
-can be very finely tuned to a  desired profile, they can be used to compensate
-for the  CIC filter's passband droop;  this is generally known  as a \emph{CIC
-compensation filter}.
-TODO: altera application note
+sample is  then no longer as  much of a  problem, since those FIR  filters run
+at  lower sampling  frequencies  and  have therefore  many  more clock  cycles
+available  to  compute  each  output. Also,  because  the  frequency  response
+of  a  FIR  filter can  be  very  finely  tuned  to a  desired  profile,  they
+can  be used  to  compensate for  the  CIC filter's  passband  droop; this  is
+generally  known as  a \emph{CIC  compensation filter}. More  on the  topic in
+Section~\label{subsubsec:cic:compensators}.
 
 Another  effect which  must be  taken  into consideration  when designing  CIC
-filters is  the amount  of aliasing  which occurs from  the stopband  into the
-passband. A  region  of  width  $f_c$  above and  below  each  $M$th  null  is
-folded  back  into  the  filter's  passband. This  effect  is  highlighted  in
-Figure~\ref{fig:cic:freq_responses:passband:aliasing}.   The  gravity of  this
-effect depends  on the  width of  the cutoff  frequency $f_c$  as well  as the
-differential delay $M$. Table  TODO in Appendix TODO contains  some values for
-common ranges for M and $f_c$.
+filters  is  the amount  of  aliasing  which  occurs  from the  stopband  into
+the  passband. A  region of  width  $f_c$  above  and  below each  $M$th  null
+is  folded  back  into  the  filter's  passband. This  effect  is  highlighted
+in  Figure~\ref{fig:cic:freq_responses:passband:aliasing}.    The  gravity  of
+this  effect  depends   on  the  width  of  the  cutoff   frequency  $f_c$  as
+well   as  the   differential  delay   $M$. Table~\ref{tab:cic:pb_attenuation}
+Appendix~\ref{sec:app:cic_filter_tables}  contains  some   values  for  common
+ranges for M and $f_c$.
 
 As  mentioned, the  CIC filter  has  only three  design paramterers: Its  rate
 change factor  $R$, the differential delay  $M$ and the number  of stages $N$.
@@ -789,9 +799,14 @@ portrayed in Figure~\ref{fig:cic:freq_responses:var}. Some things of note are:
         }
         \label{fig:cic:freq_responses:passband:aliasing}
 \end{figure}
-
-\subsubsection{Compensators}
+% ==============================================================================
+%
+%                           C O M P E N S A T O R S
+%
+% ==============================================================================
+\subsubsection{Compensators} % ----------------------------------------------- %
 \label{subsubsec:cic:compensators}
+% ---------------------------------------------------------------------------- %
 
 In     order      to     achieve     a     flat      passband,     the     CIC
 filter's    attenuation     in    the    frequency    range     observed    in
@@ -829,8 +844,11 @@ from~\cite{altera:an455} is warmly recommended.
     }
     \label{fig:cic:cfir}
 \end{figure}
-
-
+% ==============================================================================
+%
+%                        R E G I S T E R   G R O W T H
+%
+% ==============================================================================
 \subsubsection{Register Growth}
 \label{subsubsec:cic:register_growth}
 
@@ -851,7 +869,11 @@ change  factors, these  values can  become very  large.  A  filter with  three
 stages, a  differential delay of  \num{1}, a rate  change of \num{128}  and an
 input  width of  \num{16}\,bits  yields  \num{36}\,bits output  width at  full
 precision.
-
+% ==============================================================================
+%
+%         T R U N C A T I O N   A N D   R O U N D I N G   E R R O R S
+%
+% ==============================================================================
 \subsubsection{Errors Due to Truncation and Rounding}
 \label{subsubsec:cic:truncation_and_rounding}
 
@@ -969,13 +991,14 @@ We can now compute the global mean error and variance of the filter:
     \label{eq:cic:truncation_rounding:global:variance}
     \sigma_{T}^2 &= \sum_{j=1}^{2N+1} \sigma_{T_j}
 \end{align}
-
 These equations  are used  to calculate  the properties of  the CIC  filter as
-deployed in our design. TODO: see section blabla
+deployed in our design, see Section~\ref{subsec:fpga:errors_in_cic_filter}.
 
-\subsubsection{Compensators}
-\label{subsubsec:cic:compensators}
-
+% ==============================================================================
+%
+%                   C I C   F I L T E R S :   S U M M A R Y
+%
+% ==============================================================================
 \subsubsection{Summary}
 \label{subsubsec:cic:summary}
 
@@ -996,13 +1019,15 @@ In conclusion, the key properties of CIC filters are:
         The  presence of  passband  droop requires  a  compensation filter  to
         achieve a flat passband response.
 \end{itemize}
-
-Compensation Filter?
-
 %>>>
 
 %>>>
 
+% ==============================================================================
+%
+%             M U L T I - S T A G E   F I L T E R   D E S I G N S
+%
+% ==============================================================================
 \section{Multi-Stage Filter Designs} % <<< ----------------------------------- %
 \label{sec:multi_stage_filter_designs}
 % ---------------------------------------------------------------------------- %
@@ -1072,11 +1097,11 @@ pronounced~\cite{crochiere-rabiner:multirate-dsp}.
 
 Another advantage of  cascading filters is that successive stages  can be used
 to  shape the  overall frequency  response, as  seen in  the case  of the  CIC
-compensator  in Section~TODO:reference. A  drawback  of cascades  is that  the
-ripple in their  passband shows additive behavior, so the  stages in a cascade
-of filters  have more  stringent ripple  requirements in  the passband  then a
-single-stage. However, the cost  for this is usually offset  by the advantages
-of multi-stage designs.
+compensator in Section~\ref{subsubsec:cic:compensators} A drawback of cascades
+is that the ripple in their passband shows additive behavior, so the stages in
+a cascade of  filters have more stringent ripple requirements  in the passband
+then  a single-stage. However,  the cost  for this  is usually  offset by  the
+advantages of multi-stage designs.
 
 When designing multi-stage filters, it can  happen that the transition band of
 an earlier stage overlaps with the spectral copy of a later stage running at a
