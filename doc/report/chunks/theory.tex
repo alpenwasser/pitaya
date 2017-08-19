@@ -80,7 +80,7 @@ Of particular  interest for our  application is  what happens in  the ADC. The
 quantization process converts a  value-continuous signal into a value-discreet
 one,  with its  resolution being  a specification  of the  ADC which  is being
 used. As an example, the ADC in our system has a resolution of \num{14}\,bits,
-meaning it can divite its valid  input range into \num{16384} values. Given an
+meaning it can divide its valid  input range into \num{16384} values. Given an
 input  range of  \SI{2}{\volt_\mathrm{PP}}, this  equates to  a resolution  of
 roughly \SI{122}{\micro\volt}  (in theory). This  quantization process  is the
 source of what is generally known as \emph{quantization noise}.
@@ -100,7 +100,7 @@ project.
 
 Descriptively, the sampling  process can be thought of as  looking at a signal
 at  specific points  in  time and  capturing  its value. Mathematically,  this
-amounts to multipliying the  signal with a series of Dirac  pulses in the time
+amounts to multiplying  the signal with a  series of Dirac pulses  in the time
 domain,  and  convolving with  a  series  of  Dirac  pulses in  the  frequency
 domain\footnotemark.
 \footnotetext{%
@@ -112,7 +112,7 @@ problem   of  aliasing,   because  it   results  in   the  incoming   signal's
 spectrum  being  repeated  at  intervals  of  $f_s$  (see  also:  stage  3  in
 Figure~\ref{fig:dspChain:signals}). This is no problem as long as the spectrum
 of the incoming signal fits within  the boundaries set by this repetition. But
-if  the  spectrum   of  the  incoming  singal  is  too   broad,  two  or  more
+if  the  spectrum   of  the  incoming  signal  is  too   broad,  two  or  more
 recurrences  of  the spectrum  will  overlap. This  effect is  highlighted  in
 Figure~\ref{fig:aliasing:band}.
 
@@ -205,7 +205,7 @@ downsampled  being a  \emph{digital} signal  instead  of an  analog one,  that
 low-pass filter must  naturally be a digital filter as  well. Designing such a
 digital low-pass filter is the core mission of this project.
 
-The key properites of such a filter which are relevant to our application are
+The key properties of such a filter which are relevant to our application are
 \begin{itemize}\tightlist
     \item
         its transition band width (filter steepness), and
@@ -219,13 +219,13 @@ producing spectral copies of a signal when sampling an analog signal).
 
 The stopband  components of these  copies overlap with the  intended passband,
 leading to aliasing  (it should be noted that this  phenomenon is also present
-in the  case of the  analog intput filter for  the DSP chain). This  effect is
+in the  case of  the analog input  filter for the  DSP chain). This  effect is
 portrayed  in  Figure~\ref{fig:aliasing:iirCopies}. The  top  plot  shows  the
 filter's frequency response  along with four copies to  illustrate the overlap
 effect. The bottom plot shows the aliasing effect more clearly by removing the
 spectral copies and retaining the aliased regions.
 
-The overlapping parts  of the spetrum are composed of  spectral copies both to
+The overlapping parts of the spectrum  are composed of spectral copies both to
 the right  and left side of  the original. Therefore, the aliased  regions are
 alternately flipped around the vertical axis. This creates in essence the same
 effect  as if  the paper  were folded  along multiples  of the  lower sampling
@@ -264,7 +264,7 @@ response. There  are  two commonly  used  types  of digital  filters: Infinite
 impulse   response   (IIR)  filters   and   finite   impulse  response   (FIR)
 filters. Another important class of filters are cascaded integrator-comb (CIC)
 filters,  however, in  the strictest  sense they  are a  special class  of FIR
-filters rather than an entirely new  type of LTI system \cite{1163535}.  While
+filters rather than an entirely new  type of LTI system~\cite{1163535}.  While
 our system uses FIR and CIC filters,  a brief overview of IIR filters is still
 presented here, for the sake of completeness.
 % ==============================================================================
@@ -276,7 +276,7 @@ presented here, for the sake of completeness.
 \label{subsec:iir_filters}
 % ---------------------------------------------------------------------------- %
 
-Infinite impulse response  filters are so named because  their imulse response
+Infinite impulse response filters are  so named because their impulse response
 continues  into perpetuity,  never  reaching zero. In  practice, the  response
 usually comes  sufficiently close to  zero at a certain  point that it  can be
 considered zero for most intents and purposes.
@@ -364,7 +364,7 @@ FIR filters have several advantages:
         makes them ideally  suited for certain purposes,  such as compensation
         filters (see Section~\ref{subsec:CIC_filters}).
     \item
-        Implemenation is usually rather straightforward.
+        Implementation is usually rather straightforward.
 \end{itemize}
 
 Their  main  disadvantage   is  that  due  to  the  lack   of  feedback,  they
@@ -675,7 +675,7 @@ in the bottom  plot from Figure~\ref{fig:cic:freq_responses}. The integrator's
 pole at $f = 0$ compensates for  the comb section's zero at the same location,
 leading to a significant, but finite, DC gain of the CIC filter.
 
-One  drawback of  CIC filtes  is that  they have  no clearly  defined passband
+One drawback  of CIC  filters is  that they have  no clearly  defined passband
 as  such. Rather,  their  frequency  response starts  dropping  off  right  as
 the  frequency axis  goes  beyond  zero. This effect  (  also  referred to  as
 \emph{passband  droop}  or  \emph{passband  attenuation}) is  visible  in  the
@@ -719,9 +719,9 @@ well   as  the   differential  delay   $M$. Table~\ref{tab:cic:pb_attenuation}
 Appendix~\ref{sec:app:cic_filter_tables}  contains  some   values  for  common
 ranges for M and $f_c$.
 
-As  mentioned, the  CIC filter  has  only three  design paramterers: Its  rate
+As  mentioned, the  CIC filter  has  only three  design parameters: Its  rate
 change factor  $R$, the differential delay  $M$ and the number  of stages $N$.
-The influence  of these paramters  on the  CIC filter's frequency  response is
+The influence  of these parameters  on the  CIC filter's frequency  response is
 portrayed in Figure~\ref{fig:cic:freq_responses:var}. Some things of note are:
 \begin{itemize}\tightlist
     \item
@@ -758,8 +758,8 @@ portrayed in Figure~\ref{fig:cic:freq_responses:var}. Some things of note are:
     \centering
         \input{images/cic/cicFreqResponsesVar.tikz}
         \caption[Influence of Design Parameters on Frequency Response]{%
-            The influence  of the design paramters  $R$, $M$ and $N$  on a CIC
-            filter' frequency response.  Inreaseing $R$ and $M$, respectively,
+            The influence of  the design parameters $R$, $M$ and  $N$ on a CIC
+            filter' frequency response.  Increasing $R$ and $M$, respectively,
             leads to an  increased number of nulls, as visible  in the top two
             plots,  as well  as  an  increase in  the  DC  gain.  Adding  more
             stages does  not change the  location of  the nulls, but  does add
@@ -772,7 +772,7 @@ portrayed in Figure~\ref{fig:cic:freq_responses:var}. Some things of note are:
     \centering
         \input{images/cic/cicPassbandAttenuation.tikz}
         \caption[CIC Filter: Passband and Aliasing Attenuation]{%
-            Passband   attenation   for   two    CIC   filters   with   $R=9$,
+            Passband   attenuation   for   two   CIC   filters   with   $R=9$,
             $N=4$   and  $M=1$   and   $M=2$,  respectively. The   attenuation
             is  identical   for  the  bandwidth-differential   delay  product,
             which   is  $1/8$   for   both  of   these  configurations.    The
@@ -813,9 +813,9 @@ filter's    attenuation     in    the    frequency    range     observed    in
 Figure~\ref{fig:cic:freq_responses:passband:attenuation}  can  be  compensated
 with a filter  whose frequency response has the opposite  shape. Operated in a
 cascade  (see Section~\ref{sec:multi_stage_filter_designs}),  the two  filters
-create a  frequency response with a  flat passband and a  sharop drop-off into
-the  stopband. Figure~\ref{fig:cic:cfir} shows  an example  of such  a system,
-with frequency responses  of a CIC filter, its compensator,  and the resulting
+create a frequency response with a flat passband and a sharp drop-off into the
+stopband. Figure~\ref{fig:cic:cfir} shows  an example  of such a  system, with
+frequency  responses of  a  CIC  filter, its  compensator,  and the  resulting
 cascade.
 
 The compensation filter not only serves to compensate for the passband, but is
@@ -829,7 +829,7 @@ is  often  sufficient in  such  cases  (the filter  used  for  the example  in
 Figure~\ref{fig:cic:cfir} has \num{50} coefficients).
 
 The design of CIC compensators is  usually left up to software algorithms, for
-example with Matlab. For a more detailled introduction to the topic, including
+example with Matlab. For a more detailed introduction to the topic, including
 example  code  and  more  thorough  explanations,  Altera's  Application  Note
 from~\cite{altera:an455} is warmly recommended.
 
@@ -1058,12 +1058,12 @@ with the  same parameters for  a downsampling  ratio of $R=625$  is \num{8860}
 coefficients in size.
 
 Using multi-stage  designs helps to avoid  the need to implement  filters with
-such large  kernels.  When  cascading filters,  it is the  last stage  of  the
-chain which defines  the overall passband and transition  band width. The same
-overall transition band in absolute terms can be achieved with smaller filters
-in multi-stage designs,  because a filter's transition band  width is relative
-to the sampling rate at which it  is running.  This is shown in the bottommost
-plot in Figure~\ref{fig:fdesign:tbw_width_Rvar}. 
+such large kernels.  When cascading filters, it is the last stage of the chain
+which defines the overall passband and transition band width. The same overall
+transition band  in absolute  terms can  be achieved  with smaller  filters in
+multi-stage designs, because  a filter's transition band width  is relative to
+the sampling rate at which it is running.  This is shown in the bottom plot in
+Figure~\ref{fig:fdesign:tbw_width_Rvar}.
 
 \begin{figure}
     \centering
@@ -1074,9 +1074,9 @@ plot in Figure~\ref{fig:fdesign:tbw_width_Rvar}.
         as  their passbands. The  top filter  is designed  for a  downsampling
         ratio $R=2$ and  has a coefficient count of  $N=30$. The second filter
         is designed for $R=4$ and  has \num{60} coefficients. Cascading two of
-        the top  filters into a  two-stage design, depicted in  the bottommost
-        plot, results in  the same overall passband and  transition band width
-        as the single-stage design.%
+        the top filters into a two-stage  design, depicted in the bottom plot,
+        results in the same overall passband  and transition band width as the
+        single-stage design.%
     }
     \label{fig:fdesign:tbw_width_Rvar}
 \end{figure}
@@ -1138,7 +1138,7 @@ condition being broken or fulfilled.
         sufficient  distance   between  the  start  of   its  stopband  ($0.65
         \cdot  f_\mathrm{s1}$)  and  the  start  of  the  transition  band  of
         the  second stage's  first copy  around $f_\mathrm{s2}$  ($0.675 \cdot
-        f_\mathrm{s1}$). The  second  cascade  (orange)  has a  preak  in  its
+        f_\mathrm{s1}$). The  second  cascade  (orange)  has  a  peak  in  its
         stopband because the transition band  of its first stage overlaps with
         the  copy of  the second  stage ($0.8  \cdot f_\mathrm{s1}$  vs.  $0.6
         \cdot f_\mathrm{s1}$). \emph{Note:} All  frequencies are referenced to
@@ -1153,8 +1153,8 @@ can happen:
 \begin{itemize}\tightlist
     \item
         The second  filter attenuates more  strongly than the  first one. This
-        results  in peaks  above  the second  filter's  stopband attuation  in
-        the  regions  where  the  spectral   copies  of  the  second  filter's
+        results  in  peaks  above  the second  filter's  stopband  attenuation
+        in  the regions  where  the  spectral copies  of  the second  filter's
         passband  are   located. This  can  be   seen  in  the  top   plot  in
         Figure~\ref{fig:fdesign:cascade:ast_demo}.
     \item
@@ -1174,13 +1174,13 @@ to have the same stopband attenuation, in general.
     \centering
     \input{images/fdesign/astDemo.tikz}
     \caption[Cascade: Stopband Attenuation]{%
-        Cascading two filtes with different stopband attenuations: If a filter
-        with stronger  stopband attenuation  is cascaded  after a  filter with
-        weaker attenuation, the  resultant cascade has peaks  above the second
-        filter's stopband  attenuation (top  plot). If the stronger  filter is
-        first in the  cascade, the drop-off in the stopband  right next to the
-        transition band is weaker. The two  filters by themselves are shown in
-        the bottom plots.%
+        Cascading  two  filters  with different  stopband  attenuations: If  a
+        filter with stronger  stopband attenuation is cascaded  after a filter
+        with weaker  attenuation, the  resultant cascade  has peaks  above the
+        second  filter's  stopband  attenuation (top  plot). If  the  stronger
+        filter is  first in the  cascade, the  drop-off in the  stopband right
+        next to the  transition band is weaker. The two  filters by themselves
+        are shown in the bottom plots.%
     }
     \label{fig:fdesign:cascade:ast_demo}
 \end{figure}
