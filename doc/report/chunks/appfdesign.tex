@@ -7,8 +7,13 @@
 \label{ch:app:fdesign}
 % ---------------------------------------------------------------------------- %
 
-This  chapter contains  some additional  information about  the filter  design
-process.
+Some  additional information  about  the filter  design  process is  presented
+here. This  comprises  a graphical  comparison  between  two variants  of  the
+$R=625$  filter  chain,  measurements  for  resource  usage  on  the  FPGA  in
+relation  to filter  size, and  the frequency  responses for  all filters  and
+filter  chains  as  designed  by  Matlab  (for  measurement  results,  consult
+Chapter~\ref{ch:verification}). For studying  the filters  and chains  in more
+detail, consult the design files themselves.
 
 % ==============================================================================
 %
@@ -18,6 +23,13 @@ process.
 \section{Decimation of 625: Variants} % <<< ---------------------------------- %
 \label{sec:dec625_variants}
 % ---------------------------------------------------------------------------- %
+
+There are many possible  ways to implement a filter chain  for a given overall
+downsampling  ratio $R$. Here,  two  possibilities are  compared for  $R=625$,
+consisting  of  a  $125  \rightarrow  5$  cascade  and  a  $25  \rightarrow  5
+\rightarrow 5$ cascade. In  both cascades, the initial stage is  a CIC filter,
+followed by  a FIR compensator  and one or  more FIR filters. The  results are
+shown in Figure~\ref{fig:dec625_variants}.
 
 \begin{figure}
     \centering
@@ -88,7 +100,7 @@ requirements.
     \input{images/fdesign/usageReport.tikz}
     \caption[Usage Report FIR Compiler]{%
         Usage  report figures  for DSP  slices using  the Xilinx  FIR compiler
-        block. The  configuration  of  the  filter in  terms  of  bith  widths
+        block. The  configuration  of  the  filter in  terms  of  bit  widths
         is  identical   to  the  actual   configuration  used  in   the  final
         implementation. Unlike  the  implementation,  however, only  a  single
         channel was configured.%
