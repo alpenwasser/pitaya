@@ -22,6 +22,7 @@
                 at={(ticklabel* cs:1.05)},
                 anchor=east,
             },
+            ylabel={$X_\mathrm{a}(f)$},
             ymin=0,
             ymax=1.33,
             xmin=-800,

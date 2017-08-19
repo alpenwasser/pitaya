@@ -20,6 +20,8 @@
             },
             xmin=-8,
             xmax=8,
+            ylabel={$\delta(f)$},
+            legend columns=3,
         },
         every axis legend/.append style={
             %at={(1.05,1.1)}, % if attached to top plot
