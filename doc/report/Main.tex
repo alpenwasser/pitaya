@@ -11,6 +11,13 @@
 \paperfalse
 %https://tex.stackexchange.com/a/210456/131649
 \renewcommand\partnumberlinebox[2]{#2\hspace{2em}}
+\ifpaper
+    \hypersetup{%
+        linkcolor=black,
+        citecolor=black,
+        urlcolor=black,%
+    }
+\fi
 \usetikzlibrary{positioning}
 \usetikzlibrary{spy}
 \usetikzlibrary{fit}
