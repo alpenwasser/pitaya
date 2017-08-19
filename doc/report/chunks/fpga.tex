@@ -44,7 +44,7 @@ and~\ref{sec:fpga:chains}, respectively.
 The bitstream is compiled  using Vivado, Xilinx's own IDE, a  tool that can do
 everything around  Xilinx FPGAs. It does  the crucial  parts right and  can be
 interfaced  with using  Tcl. This  is very  convenient, as  a  project can  be
-replicated indempotently\footnote{%
+replicated idempotently\footnote{%
     Idempotence [\ldots] is the property  of certain operations in mathematics
     and computer science, that can  be applied multiple times without changing
     the result beyond the initial application~\cite{wiki:idempotence}.%
@@ -52,16 +52,16 @@ replicated indempotently\footnote{%
 whenever a rebuild is needed.
 
 Whilst Vivado offers  a GUI to build  block designs, this process can be a bit
-frustrating to the user due to various ``excentricities'' of the application.
+frustrating to the user due to various ``eccentricities'' of the application.
 Therefore, we choose to use its Tcl API
 to write scripts that create a new project and apply and connect all necessary
 blocks. This avoids a lot of errors as  a bug in Vivado's user interface won't tamper
 with the project.
 It  also enables  us  to use  version control tools for  the  project as  Vivado
-projects  create  a  lot  of  files which  oftentimes  clash  in  very  simple
+projects  create  a  lot  of  files which  often  clash  in  very  simple
 versioning operations. Using Tcl scripts which create and configure the project,
 and leaving everything else out of the repository, avoids this hassle.
-Tcl also allows  the creation of subblocks: One can group  blocks together and
+Tcl also allows  the creation of sub-blocks: One can group  blocks together and
 insert  them multiple  times  with  little effort;  a  feature which  Vivado's
 graphical front-end apparently does not offer.
 More    on    the    Tcl    API     and    Tcl    itself    can    be    found
@@ -71,7 +71,7 @@ and~\cite{tcl-exchange}.
 
 The final advantage of the Tcl API to  be mentioned here is that it allows the
 creation of  the entire project, the  block design, perform the  synthesis and
-implementation, build  a bitstream, as well  as the board support  apckage and
+implementation, build  a bitstream, as well  as the board support  package and
 first stage  bootloader, all in a  single sequence of automated  tasks without
 the need  for manual  intervention. Since this  tends to take  quite a  lot of
 time, that is a significant advantage.
@@ -107,7 +107,7 @@ and project can be read in Section~\ref{subsec:concept:fpga_components}.
 
 The logger core (logger  in further text) is a piece of  VHDL code that stores
 samples it  gets from a  source in  a ringbuffer in  the RAM. It is packaged  as a
-Vivado IP core and can be seemlessly integrated into the project.
+Vivado IP core and can be seamlessly integrated into the project.
 The logger originated  from an earlier project\cite{huess-schnid}. 
 In addition  to logging data  to RAM, it can  also be programmed  with various
 triggers. It reads  instructions from  a BRAM  on the  FPGA and  iterates over
@@ -150,7 +150,7 @@ core.
 The filter chains are  the most crucial part of the project  and also the most
 delicate  one  as  simple  mistakes  can cost  several  decibels  of  SNR  and
 make  the signal  leaving  the filter  worse  than it  came  into the  filter,
-intead  of improving  it.  The  logical structure  of the  chains can  be seen
+instead  of improving  it.  The  logical structure  of the  chains can  be seen
 in  Figure~\ref{fig:fdesign:chain_concept}  and  the rationale  behind  it  is
 explained  in the  respective Section~\ref{sec:fdesign:filter_specifications}.
 For the  detailed implementation,  it is  advised to look  at the  project in
@@ -227,10 +227,10 @@ chain.
 
 As values can use up significantly  more than \num{24}\,bits inside the filter
 due to bit growth, it has to be ensured that no overflows happen, resulting in
-greater  bitwidths at  the output  of the  filter.  It  is important  that the
+greater  bit widths at  the output  of the  filter.  It  is important  that the
 location  of the  decimal point  is always  tracked and  remains in  its right
-place.  Figure~\ref{fig:fpga:bitflow} depics the flow through an example chain
-but represents the general case in out blockdesign.
+place.  Figure~\ref{fig:fpga:bitflow} depicts the flow through an example chain
+but represents the general case in out block design.
 
 \begin{figure}
     \centering
@@ -264,8 +264,8 @@ the signal (a sine wave in our example) will clip or, even worse, overflow and
 wrap around. The same applies  to the case where too few  bits are cut off. If
 the bit count is increased by one  to guarantee no overflow inside the filter,
 but that bit is  not set at the output due to unity  gain, it will effectively
-be lost as it  will never be used.  This reduces the maximum theoretically achieveable SNR  by \SI{6}{\dB}, which is
-obviously highly undesirable.
+be lost  as it  will never  be used.  This  reduces the  maximum theoretically
+achievable SNR by \SI{6}{\dB}, which is obviously highly undesirable.
 
 To make  sure neither  of these faults  happens, it is  important to  have the
 highest possible  filter gain at $G  \leq 1$. Furthermore, at the  end of each
@@ -285,7 +285,7 @@ range to a perfect extent as the full-scale sine has an amplitude of \num{31},
 the maximum  value a \SI{6}{\bit}  \code{int} can hold. Case  \num{2} (middle
 plot) shows  a sine  that has  been scaled  to \num{34}  and thus  requires an
 additional bit.  But  because a \SI{7}{\bit} \code{int} can hold  values up to
-\num{63}, most of the time the MSB  ends up not being used. with \SI{7}{\bit},
+\num{63}, most of the time the MSB  ends up not being used. With \SI{7}{\bit},
 the highest $SNR_\mathrm{max}$ possible would be
 \begin{align}
     %\mathrm{ENOB}             &= \log_2(130) \nonumber\\
@@ -308,12 +308,12 @@ This yields a difference of only \SI{1.09}{\dB}\footnote{%
     significantly better than in this illustrative example.%
 }.
 This example shows that it is well  advised to scale the coefficient such that
-they dont ripple around \num{1}, but  rather that the maximum ripple is exacly
-\num{1} and not more.
+they  don't ripple  around  \num{1}, but  rather that  the  maximum ripple  is
+exactly \num{1} and not more.
 
-Because if it can be ensured that no additional MSB is used wich is empty most
-of the time,  it is possible use  an additional LSB which is  always well used
-and  to effectively  win a  bit. So in  most cases  when the  coefficients are
+Because if  it can be ensured  that no additional  MSB is used which  is empty
+most of the  time, it is possible  use an additional LSB which  is always well
+used and to effectively win a bit. So  in most cases when the coefficients are
 designed to have a unity gain, close to \SI{6.02}{\dB} can be won by rescaling
 the coefficients.
 
@@ -334,7 +334,7 @@ the coefficients.
 \label{subsec:fpga:errors_in_cic_filter}
 % ---------------------------------------------------------------------------- %
 
-As detailled in Section~\ref{subsubsec:cic:register_growth},  the high gain of
+As detailed in Section~\ref{subsubsec:cic:register_growth},  the high gain of
 CIC filters generally requires discarding  bits at the filter's output. In our
 implementation,  we discard  \SI{17}{\bit} at  the  output of  the $R=25$  CIC
 filter, and \SI{26}{\bit}  at the output of the $R=125$  filter, in both cases

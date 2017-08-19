@@ -251,7 +251,7 @@ Essentially, this presents us with three options on how to proceed:
 In   order    to   have    a   somewhat    objective   measure    to   compare
 the   first   and   last   option,    a   decision   matrix   is   used;   see
 table~\ref{tab:decision_matrix:pitaya_vs_own}. In  the  following  paragraphs,
-the criteria and weighings in the  table are elaborated upon. The table uses a
+the criteria  and weights in the  table are elaborated upon. The  table uses a
 scale of  \num{1} through \num{6},  with \num{1}  being the worst  and \num{6}
 being the best score. At the end, totals are tallied and compared.
 
@@ -269,7 +269,7 @@ choice of pursuing our own solution.
 
 \paragraph{Flexibility:} Obviously, implementing our own  system would give us
 much higher flexibility  than using the existing ecosystem. The  only two true
-limitations would  be the  time and  hardware resources  available to  us. the
+limitations would  be the  time and  hardware resources  available to  us. The
 official codebase would limit us to its capabilities. Adding new functionality
 to the existing codebase would be possible, but adapting software for purposes
 for which  it was  not originally  intended does tend  to be  a time-consuming
@@ -279,10 +279,10 @@ solution wins out again here.
 \paragraph{Complexity  of  complete  system:} This  refers  not  just  to  the
 complexity  of  the  components  we  work  on,  but  of  the  entire  platform
 and  ecosystem. As  anyone who  bothers  to  peruse  the Red  Pitaya  codebase
-(\cite{pita:github}) can  dedude, it is  a large ecosystem with  many features
+(\cite{pita:github}) can  deduce, it is  a large ecosystem with  many features
 and capabilities, most of which are not relevant to our needs. A custom system
-developed for the specific needs of this project would be much leaner and have
-fewer points of failure.
+developed for the  specific requirements of this project would  be much leaner
+and have fewer points of failure.
 
 \paragraph{Labor  costs:} Here  is where  using  the  existing codebase  would
 be  beneficial  in our  view. While  understanding  its inner  workings  would
@@ -318,7 +318,7 @@ without bugs,  have had  a lot  of time to  mature on  the other  hand.  Also,
 Xilinx is a big company with vast resources, so any bugs which are encountered
 in  their products  are more  likely to  be addressed  in our  view. For these
 reasons, we score  developing our own solution higher than  using the existing
-cosebase.
+codebase.
 
 \paragraph{Reparability:} If any issues are found in the resulting product, we
 are more likely to  be able to fix them if it is  our own codebase rather than
@@ -349,31 +349,31 @@ to lead to a successful outcome.
         \toprule
         & RP & Custom \\
         \midrule
-        reliance on others &
+        Reliance on Others &
         2 & 5 \\
 
-        flexibility &
+        Flexibility &
         2 & 5 \\
 
-        complexity of complete system &
+        Complexity of Complete System &
         1 & 4 \\
 
-        labor costs &
+        Labor Costs &
         4 & 2 \\
 
-        chances of success &
+        Chances of Success &
         4 & 4 \\
 
-        available documentation for used building blocks &
+        Available Documentation for Used Building Blocks &
         3 & 5 \\
 
-        robustness of third-party components &
+        Robustness of Third-Party Components &
         2 & 5 \\
 
-        reparability &
+        Reparability &
         2 & 5 \\
 
-        long-term viability&
+        Long-term Viability&
         2 & 4 \\
         \midrule
         Total & 21 & 37 \\
@@ -396,7 +396,7 @@ now devise a concept for how that solution will look.  On the most fundamental
 level, it will require the following components:
 \begin{itemize}
     \item
-        a custom FPGA firmare for data acquisition and filtering
+        a custom FPGA firmware for data acquisition and filtering
     \item
         a new scope application for data visualization
     \item
@@ -442,7 +442,7 @@ streaming interface\footnotemark.
 Since   this   project  is   open-source   and   has  a   permissive   license
 (MIT   license~\cite{licenses:mit},   template   text    can   be   found   in
 Appendix~\ref{sec:mit_license} on page~\pageref{sec:mit_license}) and fulfills
-our  main technical  requirement (easily  interfaceable),  it is  used in  our
+our main technical  requirement (easily to interface with), it  is used in our
 project to interface the FPGA with the ADC.
 
 For filtering,  one can either  implement custom filter topologies  from basic
@@ -521,7 +521,7 @@ frequency domain.   Furthermore it is  capable of calculating  certain metrics
 such as the power in a given frequency range or the auto-detection of the SNR.
 
 In  order  to  ensure  maximum   portability,  the  scope  is  implemented  as
-a   web   application   rather   than   a   cusom   binary. This   allows   it
+a   web   application   rather   than  a   custom   binary. This   allows   it
 to   function   on   any   operating   system   with   a   reasonably   modern
 browser. A  through  documentation  of  its  capabilities  and  implementation
 is   available    in   Chapter~\ref{ch:graphical_front_end},    beginning   on

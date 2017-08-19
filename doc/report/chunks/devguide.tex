@@ -26,96 +26,6 @@ The rest  of the  developer guide explains  the setup and  usage of  the major
 components listed  in the above  directory trees. For the most  up-to-date and
 complete documentation, consulting the READMEs and source code is advised.
 
-%\vspace{6ex}
-%
-%\noindent\begin{minipage}[t]{0.33\textwidth}
-%    \noindent\dirtree{%
-%        .1 /.
-%        .2 design/.
-%        .3 /filter/.
-%        .3 /fpga/.
-%        .2 doc/.
-%        .3 report/.
-%        .3 verfication/.
-%        .3 vivado-install/\vspace{7.75ex}.
-%        .2 env/\vspace{6ex}.
-%        .2 (continued on next page).
-%    }
-%\end{minipage}
-%\hfill
-%\begin{minipage}[t]{0.64\textwidth}
-%    \begin{description}\tightlist
-%        \item[\code{design/}]       contains      the       filter      design
-%            toolchain     \code{filter/}     which     is     described     in
-%            Chapter~\ref{ch:devguide:filter_toolchain}. Additionally,  it  has
-%            a  subdirectory   for  running   FPGA  tests  with   the  designed
-%            filters, used  to create the  filter resource usage  analysis from
-%            Appendix~\ref{sec:fir_filter_resouce_usage}.
-%
-%        \item[\code{doc/}] is where the project documentation and associated
-%            tools      are      located.     \code{report/}      is      where
-%            the     directory      containing     this      document.      The
-%            \code{verification/}     directory     contains    the     scripts
-%            and    results   on    which   Chapter~\ref{ch:verification}    is
-%            based. A   pictorial   guide   to    the   Vivado   install   (see
-%            Section~\ref{sec:devguide:fpga_toolchain:vivado}) can  be found in
-%            \code{vivado-install/}.
-%
-%        \item[\code{env/}] has the  components which are needed to  set up the
-%            build  box. See  Section~\ref{sec:devguide:fpga_toolchain:buildbox}
-%            for the instructions on how to accomplish this.
-%    \end{description}
-%\end{minipage}
-%
-%\newpage
-%
-%\noindent\begin{minipage}[t]{0.33\textwidth}
-%    \noindent\dirtree{%
-%        .1 / (continued).
-%        .2 firmware/.
-%        .3 arm/.
-%        .4 patches/.
-%        .4 scripts/.
-%        .4 server/.
-%        .3 bin/.
-%        .3 fpga/\vspace{16ex}.
-%        .2 scope/\vspace{8ex}.
-%        .2 resources/.
-%    }
-%\end{minipage}
-%\hfill
-%\begin{minipage}[t]{0.64\textwidth}
-%    \vspace{1.33ex}
-%    \begin{description}\tightlist
-%        \item[\code{firmware/}]  comprises all  necessary components  to build
-%            the Linux image for the STEMlab and the bitstream. \code{patches/}
-%            is a  set of  patches which  are needed  to get  Ubuntu to  run on
-%            the  STEMlab,  \code{scripts/} are  some  helper  scripts to  ease
-%            development and deployment, and \code{server/} contains the server
-%            and its needed dependencies.
-%
-%            \code{bin/} is a collection of helper scripts and binary blobs
-%                related to the creation of the board firmware.
-%
-%            \code{fpga/} consists  of the  FPGA toolchain, which  is primarily
-%                the collection of  Tcl scripts and Makefiles  used to generate
-%                the Vivado projects, block designs, and the bitstream.
-%
-%            \item[\code{scope/}]   encompasses   the    scope   project   (see
-%                Chapter~\ref{ch:gui}). Note   that  this   is  located   in  a
-%                dedicated  Git repository  and is  included via  the mechanism
-%                offered by Git submodules.
-%
-%            \item[\code{resources/}]  are  documents   and  links  which  have
-%                accumulated through the  course of the project  and which have
-%                proven  more or  less  useful.  This  primarily includes  data
-%                sheets and user manuals from third parties.
-%    \end{description}
-%\end{minipage}
-%
-%\vspace{6ex}
-
-% Alternative: everything on a single page
 \newpage
 \vspace*{20ex}
 \noindent\begin{minipage}[t]{0.33\textwidth}
@@ -126,7 +36,7 @@ complete documentation, consulting the READMEs and source code is advised.
         .3 /fpga/.
         .2 doc/.
         .3 report/.
-        .3 verfication/.
+        .3 verification/.
         .3 vivado-install/\vspace{7.75ex}.
         .2 env/\vspace{5.5ex}.
         .2 firmware/.
@@ -239,10 +149,10 @@ machine first:
     \item ansible
     \item VirtualBox
 \end{itemize}
-If you are on a Linux or OSX  and use a package manager to install VirtualBox.
-It is also necessary to install the Virtualbox Guest Additions packages.  They
-are  required in  later  stages during  the  setup  of the  box.   It is  also
-advisible to perform a
+If  you  are on  a  Linux  or  macOS and  use  a  package manager  to  install
+VirtualBox.  It  is also necessary  to install the VirtualBox  Guest Additions
+packages.  They are required in later stages  during the setup of the box.  It
+is also advisable to perform a
 \begin{commandshell}
     sudo vboxreload
 \end{commandshell}
@@ -264,7 +174,7 @@ setup (red messages in the shell), you can run and retry the provisioning with
     vagrant provision
 \end{commandshell}
 
-Once the provisioning  has finished, the build box should  be rebootet because
+Once the provisioning  has finished, the build box should  be rebooted because
 some  changes  (for  example  the installed  desktop  environment)  require  a
 reboot. Do this by running
 \begin{commandshell}
@@ -311,13 +221,13 @@ have been made to the FPGA project  or the server application, it is advisable
 to perform  an initial  build. This allows  to check if  everything is  set up
 correctly and works as intended.
 
-First  we  copy  the  repo  to  a  \textbf{non-shared}  folder  on  the  guest
+First  we  copy  the  repository  to  a  \textbf{non-shared}  folder  on  the  guest
 machine,  because uboot  requires  \code{mmap()}, which  cannot handle  shared
 folders. After  that,  building the  image  is  a single-step  process.   This
-includes building the Linux, the bitstream, the required firststage bootloader
+includes building the Linux, the bitstream, the required first-stage bootloader
 and  the  board  support  package,   the  logger  kernel  module,  the  server
 application, and the scope application.  After  that, a bash script is used to
-create an  image with all  the components, mount  it and provision  the ubuntu
+create an  image with all  the components, mount  it and provision  the Ubuntu
 environment which is to be run on the STEMlab. To start this process, enter
 \begin{commandshell}
         cp -r /repo ~/local_folder
@@ -347,7 +257,7 @@ Designing   the  filters   according  to   the  desired   specifications  (see
 Chapter~\ref{ch:filter_design})  is   performed  through   a  set   of  Matlab
 scripts. This chapter describes the overall  structure of the script suite and
 gives a basic usage example. All  functions have a \code{help} available which
-describes their usage, particularly their respective interfaces. 
+describes their usage, particularly their respective interfaces.
 
 \section{Toolchain Structure} % ---------------------------------------------- %
 \label{sec:devguide:filter_toolchain:structure}
@@ -355,7 +265,7 @@ describes their usage, particularly their respective interfaces.
 
 This  section explains  which files  constitute the  toolchain and  what their
 purpose is. The  entire toolchain can  be used either from  Matlab's graphical
-front-end, or  from its commandline  mode. The following files are  present in
+front-end, or from  its command-line mode. The following files  are present in
 the filter design directory\footnote{%
     relative to global project root%
 }:
@@ -382,20 +292,20 @@ the filter design directory\footnote{%
 \paragraph{\code{cliDispatcher.m}} is  the main  script from where  the design
 functions are initiated.   If you wish to  design a new filter  chain, this is
 where its specifications are located, and from where the filter design scripts
-are then called with those paramters.
+are then called with those parameters.
 
 \paragraph{\code{guiWrapper.m}} is  a convenience layer which  makes it easier
 to work with \code{cliDispatcher.m} from Matlab's graphical front-end. It sets
-some  of  the  configuration  parameters  for  calling  \code{cliDispatcher.m}
-which are  otherwise set  in Matlab's commandline  interface when  calling the
+some of the configuration  parameters for calling \code{cliDispatcher.m} which
+are  otherwise  set  in  Matlab's  command-line  interface  when  calling  the
 dispatcher from there.
 
 \paragraph{\code{generators/}}  is  the  directory  where  the  filter  design
 scripts are located. These are split  into two primary groups: Functions which
 design filters, and functions which  combine them into cascades. Note that all
 generators support  generating multiple filters  at once for a  combination of
-various paramters and  will pass back a cell array  with the resulting filters
-and the paramters used in their specification.
+various parameters and will pass back  a cell array with the resulting filters
+and the parameters used in their specification.
 
 This  allows to  iteratively generate  a large  set of  filters in  an initial
 step  to assess  resource  usage or  other characteristics  for  a wide  range
@@ -405,7 +315,7 @@ differ.  The filter design functions are:
 \begin{description}\tightlist
     \item[\code{decCIC.m}] designs a CIC filter.
     \item[\code{decFIR.m}] designs a FIR filter.
-    \item[\code{halfbandFIR.m}] designs a halfband filter.
+    \item[\code{halfbandFIR.m}] designs a half-band filter.
     \item[\code{compCIC.m}] designs a compensator for a CIC filter.
 \end{description}
 Note that all of these have version which iterate in parallel over a given set
@@ -415,7 +325,7 @@ parallel processing toolbox is available. If only a small set of filters is to
 be designed,  it is  recommended to  use the  regular, serial  versions, since
 starting up  a parallel processing  pool in Matlab is  a slow process  and its
 overhead is  usually not  worth it in  those cases. In case  Matlab is  run in
-commandline  mode, make  sure \emph{not}  to start  it with  the \code{-nojvm}
+command-line mode,  make sure  \emph{not} to start  it with  the \code{-nojvm}
 switch, since the parallel processing pool requires the Java Virtual Machine.
 
 The functions  \code{cascador.m} and  \code{parcascador.m} create  cascades of
@@ -438,11 +348,11 @@ allows a direct import of Matlab's results into Vivado's FIR compiler.
 \code{plotData} contains frequency  responses for each filter, as  well as any
 potential cascade, in \code{.csv} format,  as given by Matlab's \code{freqz()}
 function.  This  is used to  generate the  frequency response plots  from this
-report, for examlpe.
+report, for example.
 
 \paragraph{The  \code{Makefile}} can  be used  to call  \code{cliDispatcher.m}
 from the command line. It has  various targets for designing different filters
-or filter  chains. Matlab will be called  in commandline mode, and  its output
+or filter chains. Matlab  will be called in command-line mode,  and its output
 redirected  to  a  log file,  so  not  output  will  generally be  visible  on
 screen. This  is primarily  intended to  be used  when all  filters have  been
 specified and fixed, and  the needed files are to be generated  for use on the
@@ -483,7 +393,8 @@ it. This is shown in Listing~\ref{lst:devguide:fdesign:cliDispatchter}.
 ]{matlab}{./code/fdesign/cliDispatcher.m}
 \end{tcolorbox}
 
-To execute \code{cliDispatcher.m}, Matlab's commandline interface can be used:
+To  execute \code{cliDispatcher.m},  Matlab's  command-line  interface can  be
+used:
 \begin{tcolorbox}[
     skin=alpenlisting,
     title={
@@ -520,7 +431,7 @@ run cliDispatcher;
 \end{tcolorbox}
 
 Besides  knowing  how  to  initiate   the  filter  design  toolbox,  one  must
-obviously   also  know   how  to   actually  design   filtes.   The   code  in
+obviously  also   know  how   to  actually  design   filters.   The   code  in
 Listing~\ref{lst:devguide:fdesign:fir}  designs \emph{two}  FIR filters,  with
 two  different stopband  edge  frequencies (\code{Fst}).   The resulting  cell
 array  \code{Hd} from  Listing~\ref{lst:devguide:fdesign:fir_cell} has  in its
@@ -531,7 +442,7 @@ the design parameters used to specify the filter.
     skin=alpenlisting,
     title={
         \refstepcounter{listing}
-        \textbf{Listing \thelisting:} Designing two FIR Filtes 
+        \textbf{Listing \thelisting:} Designing two FIR Filtes
         \label{lst:devguide:fdesign:fir}
         \addcontentsline{lol}{listing}{\protect\numberline{\thelisting}Designing two FIR Filters}
     }
@@ -621,7 +532,7 @@ these properties before actually cascading  the filter, the user must manually
 set these to the correct  values. Particularly when cascading cell arrays with
 multiple filters, some care must be taken  in order to ensure that all desired
 permutations are  produced. This is because the  \code{cascador} iterates over
-these paramters  when cascading the  filters. They are  also used to  name the
+these parameters  when cascading the filters. They  are also used to  name the
 resulting plot files for the cascade.
 
 \begin{tcolorbox}[
@@ -684,7 +595,7 @@ by issuing
 \end{commandshell}
 
 The   server  application   is   a  one-file   application   and  depends   on
-libuWebSockets~\cite{uws:github} and a  headerfile called \code{json.hpp} from
+libuWebSockets~\cite{uws:github} and a header file called \code{json.hpp} from
 Niels Lohmann's \emph{JSON for Modern C++} project \cite{lohmann:github:json},
 which contains the entire JSON library.   There is two important functions for
 extending the  server application: \code{onHttpRequest}  and \code{onMessage},
@@ -694,33 +605,29 @@ which are explained in the following sections.
 \label{sec:devguide:server:build}
 % ---------------------------------------------------------------------------- %
 
-TODO: Raphi read!
-The image for the entire system is built such that it contains a Sys-V init script and the necessary entries to start on boot.
-The Sys-V init script then in turn calls the server startup script.
+The image for  the entire system is  built such that it contains  a Sys-V init
+script and the necessary entries to start on boot.  The Sys-V init script then
+in turn calls the server startup script.
 
 This  script loads  the kernel  module and  sets the  \code{LD\_LIBRARY\_PATH}
 variable such that  it can load the shared libraries  required. The script can
 be executed with
-
 \begin{commandshell}
     /opt/server/init_server.sh
 \end{commandshell}
-
 If the Sys-V init daemon already started an instance, it can be stopped using
-
 \begin{commandshell}
     service server stop
 \end{commandshell}
-
 For the exact commands, consult the code of the \code{init\_server.sh} script.
 
 \subsection{onHttpRequest} % ------------------------------------------------- %
 \label{subsec:devguide:server:onhttprequest}
 % ---------------------------------------------------------------------------- %
 
-This callback  is executed  when the user  makes an HTTP  request wich  is not
-an  \code{UPGRADE} request. Currently  it  simply serves  the  files from  the
-filesystem, but  could easily be  extended to  outline data or  similar tasks.
+This callback is executed when the user  makes an HTTP request which is not an
+\code{UPGRADE} request. Currently  it simply  serves the  files from  the file
+system,  but could  easily  be  extended to  outline  data  or similar  tasks.
 Returning a  correct HTTP  Response has to  be done manually  and is  not well
 documented in the library itself.
 
@@ -768,9 +675,6 @@ WebSocket.  For  now, this  call only  handles incoming  text messages  in our
 project  as  those  contain  the instructions.   Binary  messages  are  simply
 discarded but could be used at a later time to interface with the DAC.
 
-TODO: Raphi read! (Evtl chönnt mer de satz au weg lah)
-As a reference how exactly a command can be added, the code of the server application can be inspected
-
 \section{Instruction Set} % -------------------------------------------------- %
 \label{sec:devguide:server:instruction}
 % ---------------------------------------------------------------------------- %
@@ -784,10 +688,10 @@ their basic purpose and functionality.
 \label{subsec:devguide:server:forcing_trigger}
 % ---------------------------------------------------------------------------- %
 
-This  command  forces  the  logger  to  finish  its  current  frame. It  still
-repects the  set \code{pre}  and \code{suf} conditions.   The server  does not
-automatically send the recorded frame. It has to be requested separately.  The
-argument \code{forceTrigger} always has to be set to \code{true}.
+This command forces the logger to  finish its current frame. It still respects
+the \code{pre} and \code{suf} conditions which have been set.  The server does
+not automatically send the recorded  frame; it has to be requested separately.
+The argument \code{forceTrigger} always has to be set to \code{true}.
 
 \begin{tcolorbox}[
     skin=alpenlisting,
@@ -909,7 +813,7 @@ has to be a number in the JSON format, not strings.
 % ---------------------------------------------------------------------------- %
 
 This command sets the  sampling rate.  The argument has to be  a number in the
-JSON format and has to be the samplingrate in \si{\Hz}
+JSON format and has to be the sampling rate in \si{\Hz}
 
 \begin{tcolorbox}[
     skin=alpenlisting,
@@ -962,7 +866,7 @@ recommended to peruse its code at~\cite{pita:github:huesser:zynq-logger}.
 \code{channel} is the channel on which the trigger should be active. The level
 at which the trigger shot fire is set with \code{level}, while \code{slope} is
 the  minimum slope  the  curve needs  to have  to  trigger. The hysteresis  is
-configured for  all triggers at  once and makes  sure there is  no accidential
+configured for  all triggers  at once  and makes sure  there is  no accidental
 trigger. It is the variance the signal can have until a trigger is armed.
 
 \begin{tcolorbox}[
@@ -1025,7 +929,7 @@ debugging mode with
     yarn watch
 \end{commandshell}
 The webpage  can now  be reached on  \code{http://localhost:8080} and  will be
-automatically reloaded when yarn detecs a change and rebuilds the bundle.
+automatically reloaded when yarn detects a change and rebuilds the bundle.
 %>>>
 
 %^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>
