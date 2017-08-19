@@ -29,6 +29,7 @@
 \usepackage{algorithmicx}
 \usepackage{algpseudocode}
 \usepackage{algorithm}
+\usepackage{pdfpages}
 \usepackage{dirtree}
 \pgfplotsset{
     %title style={font=\bfseries\sffamily\mathversion{boldsf}},
@@ -67,22 +68,37 @@
 \begin{titlingpage}
     \fullhexpage{q1}{q0}
     \flushright\sffamily
+    \enlargethispage{10ex}
 
     \vspace*{5em}
     
     \Huge\bfseries{Front-End Signal Processing for Red Pitaya Spectrum Analyzer}\\[1ex]
-    \Large\mdseries{Thesis}\\[3ex]
+    \Large\mdseries{Bachelor Thesis}\\[3ex]
 
     \normalsize\mdseries
 
+    \input{images/titlepage/impzChain25.tikz}
+
     \vfill
-    Raphael Frey\\
-    Noah H\"usser\\[3ex]
+    \begin{tabular}{>{\bfseries}rl}
+        Degree Program: & Electrical Engineering and Information Technology \\[2mm]
+        Course:         & Project \num{6}\\[2mm]
+        Coaches:        & Prof. Dr. Richard Gut \\[2mm]
+                        & Michael Pichler       \\[2mm]
+        External Expert & Dr. J\"urg Stettbacher \\[2mm]
+        Team:           & Raphael Frey, Noah H\"usser \\[2mm]
+        Date:           & August 18, 2017 \\[2mm]
+        Revision:       & 1.0.0 \\[2mm]
+    \end{tabular}
 
-    \vspace{5em}
-
-    \today\\
-    Version 0.0.1
+    \tikzexternaldisable
+        \begin{tikzpicture}[remember picture,overlay]
+            \node[anchor=north east,yshift=-2.5mm,xshift=-2.5mm,] 
+                at (current page.north east) {\includegraphics[width=10cm]{images/titlepage/logo-fhnw.pdf}};
+            \node[anchor=south east,yshift=2.5mm,xshift=-2.5mm,] 
+                at (current page.south east) {\includegraphics[width=4cm]{images/titlepage/logo-ime.pdf}};
+        \end{tikzpicture}
+    \tikzexternalenable
 \end{titlingpage} % >>>
 % ==============================================================================
 %
@@ -94,6 +110,9 @@
 % <<< --------------------------------------------------------------- ABSTRACT %
 \include{chunks/abstract}
 % >>> ABSTRACT
+% <<< ----------------------------------------------------------------- THANKS %
+\include{chunks/thanks}
+% >>> THANKS
 % <<< -------------------------------------------------------- ToC AND FRIENDS %
 % https://en.wikipedia.org/wiki/Edition_notice
 \renewcommand*\contentsname{Short Contents}
@@ -208,9 +227,8 @@
 \include{chunks/appfdesign}
 \include{chunks/appgui}
 \include{chunks/licenses}
-\ifpaper
-    \include{chunks/media}
-\fi
+\include{chunks/task}
+\include{chunks/media}
 
 % Matlab-prettifier: Uses the lstlisting counter
 % Minted: Uses the listing counter
