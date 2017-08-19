@@ -7,7 +7,7 @@ set(sock,'OutputBufferSize',buffSize);
 
 fopen(sock);
 
-cmd = 'APPLy:SIN 1e3,1,0';
+cmd = 'APPLy:SIN 1e4,1,0';
 % cmd = 'SOUR1:VOLT:UNIT VPP'
 % cmd = 'SOUR1:VOLT:UNIT?'
 % cmd = '*IDN?';
