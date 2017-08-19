@@ -23,6 +23,8 @@
 \usepackage{pgfplotstable}
 \DeclareSIUnit\sample{sample}
 \DeclareSIUnit\channel{channel}
+\DeclareSIUnit[number-unit-product = {}]\partspermillion{ppm}
+\DeclareSIUnit[number-unit-product = {}]\permille{\perthousand}
 \usepackage[simplified]{pgf-umlcd}
 \usepackage{algorithmicx}
 \usepackage{algpseudocode}
@@ -55,31 +57,32 @@
 %\includeonly{chunks/introduction,chunks/theory}
 % >>>
 \begin{document}
-% ==============================================================================
+%% ==============================================================================
+%%
+%%                            T I T L I N G P A G E
+%%
+%% ==============================================================================
+%% <<< ------------------------------------------------------------ TITLINGPAGE %
+%\begin{titlingpage}
+%    \fullhexpage{q1}{q0}
+%    \flushright\sffamily
 %
-%                            T I T L I N G P A G E
+%    \vspace*{5em}
+%    
+%    \Huge\bfseries{Front-End Signal Processing for Red Pitaya Spectrum Analyzer}\\[1ex]
+%    \Large\mdseries{Thesis}\\[3ex]
 %
-% ==============================================================================
-% <<< ------------------------------------------------------------ TITLINGPAGE %
-\begin{titlingpage}
-    \fullhexpage{q1}{q0}
-    \flushright\sffamily
-
-    \vspace*{5em}
-    \Huge\bfseries{Red Pitaya}\\[1ex]
-    \Large\mdseries{Thesis}\\[3ex]
-
-    \normalsize\mdseries
-
-    \vfill
-    Raphael Frey\\
-    Noah H\"usser\\[3ex]
-
-    \vspace{5em}
-
-    \today\\
-    Version 0.0.1
-\end{titlingpage} % >>>
+%    \normalsize\mdseries
+%
+%    \vfill
+%    Raphael Frey\\
+%    Noah H\"usser\\[3ex]
+%
+%    \vspace{5em}
+%
+%    \today\\
+%    Version 0.0.1
+%\end{titlingpage} % >>>
 % ==============================================================================
 %
 %                            F R O N T M A T T E R
@@ -87,6 +90,10 @@
 % ==============================================================================
 %<<< ------------------------------------------------------------ FRONT MATTER %
 \frontmatter
+% <<< --------------------------------------------------------------- ABSTRACT %
+\include{chunks/abstract}
+% >>> ABSTRACT
+% <<< -------------------------------------------------------- ToC AND FRIENDS %
 % https://en.wikipedia.org/wiki/Edition_notice
 \renewcommand*\contentsname{Short Contents}
 \setcounter{tocdepth}{0}
@@ -102,13 +109,14 @@
 \clearpage
 \listoflistings
 \clearpage
-% >>>
+% >>> ToC AND FRIENDS
+% >>> FRONT MATTER
 % ==============================================================================
 %
 %                             M A I N M A T T E R
 %
 % ==============================================================================
-\mainmatter
+mainmatter
 % ==============================================================================
 %
 %                           I N T R O D U C T I O N
@@ -122,12 +130,10 @@
 %                         P R O J E C T   R E P O R T
 %
 % ==============================================================================
-%
 % <<< --------------------------------------------------- PART: PROJECT REPORT %
 \part{Project Report}
 \label{part:project_report}
 % ---------------------------------------------------------------------------- %
-%
 % <<< ----------------------------------------------------------------- THEORY %
 \include{chunks/theory}
 % ------------------------------------------------------------------------->>> %
@@ -152,7 +158,10 @@
 % <<< ------------------------------------------------------------- CONCLUSION %
 \include{chunks/conclusion}
 % ------------------------------------------------------------------------->>> %
-
+% <<< ----------------------------------------------------------- BIBLIOGRAPHY %
+\bibliographystyle{IEEEtran}
+\bibliography{chunks/references}
+% ------------------------------------------------------------------------->>> %
 % >>>
 % ==============================================================================
 %
@@ -198,7 +207,9 @@
 \include{chunks/appfdesign}
 \include{chunks/appgui}
 \include{chunks/licenses}
-\include{chunks/media}
+\ifpaper
+    \include{chunks/media}
+\fi
 
 % Matlab-prettifier: Uses the lstlisting counter
 % Minted: Uses the listing counter
@@ -211,8 +222,6 @@
 % ==============================================================================
 \cleardoublepage % <<< -------------------------------------------- BACKMATTER %
 \backmatter
-\bibliographystyle{IEEEtran}
-\bibliography{chunks/references}
 % Indexing: memman.pdf, pp. 302ff.
 \printindex
 %>>>

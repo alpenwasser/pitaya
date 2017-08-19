@@ -336,19 +336,26 @@ the coefficients.
 % ---------------------------------------------------------------------------- %
 
 As detailled in Section~\ref{subsubsec:cic:register_growth},  the high gain of
-CIC  filters generally  requires discarding  bits at  the filter's  output. In
-our  implementation,  we  discard  TODO   bits  at  the  filter's  input,  and
-TODO  bits  at   its  output. According  to  the  calculations   laid  out  in
-Section~\ref{subsubsec:cic:register_growth},  this  yields  a mean  error  and
-variance of:
+CIC filters generally requires discarding  bits at the filter's output. In our
+implementation,  we discard  \SI{17}{\bit} at  the  output of  the $R=25$  CIC
+filter, and \SI{26}{\bit}  at the output of the $R=125$  filter, in both cases
+through  truncation. No bits  are discarded  at  the filter's  input, and  the
+CIC  compiler ensures  that  its  internal widths  are  always sufficient  for
+full  precision~\cite{xilinx:cic-compiler}. Therefore,  only  the  last  stage
+introduces an error.
+
+Hogenauer's formulas are used to determine the mean error and variance of both
+CIC  filters. Interestingly, the  result  is identical  for both  filters. But
+given that the output precision is  \SI{16}{\bit} in both cases, this actually
+does make sense. The results are:
 \begin{align}
     \mu_\mathrm{CIC25}       &= 0.5 \label{eq:fpga:cic:mu:cic25}  \\
-    \sigma^2_\mathrm{CIC25}  &= \label{eq:fpga:cic:sigmasq:cic25} \\
+    \sigma^2_\mathrm{CIC25}  &= 0.289\label{eq:fpga:cic:sigmasq:cic25} \\
     \mu_\mathrm{CIC125}      &= 0.5 \label{eq:fpga:cic:mu:cic125} \\
-    \sigma^2_\mathrm{CIC125} &= \label{eq:fpga:cic:sigmasq:cic125}
+    \sigma^2_\mathrm{CIC125} &= 0.289\label{eq:fpga:cic:sigmasq:cic125}
 \end{align}
-for  the two  CIC filters  used in  our configuration.   The calculations  are
-performed by a Matlab script and are therefore omitted at this point.
+The  calculations are  performed  by a  Matlab script  and  are therefore  not
+further elaborated upon at this point.
 
 %>>>
 %>>>
