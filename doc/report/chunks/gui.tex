@@ -11,7 +11,7 @@ Because the  FPGA and Linux  side are newly  implemented, and because  the new
 transmission protocol  is not the same  as the old one,  existing applications
 reading data from the STEMlab no longer function. A new front-end is therefore
 required. This front-end is  a web application whose  functionality is broadly
-modelled on conventional oscilloscopes; therefore, it is generally referred to
+modeled on conventional oscilloscopes; therefore, it is generally referred to
 as \emph{scope} in this report. This chapter lays out the requirements for the
 scope, explains the design choices on  which it is built, summarizes the major
 implementation details, and presents the final product.
@@ -31,7 +31,7 @@ replicated. More functionality  may be added where  sensible and possible. The
 main requirements are:
 \begin{itemize}\tightlist
     \item Receive data in configurable size over the network.
-    \item Display received data both in the time and fequency domain.
+    \item Display received data both in the time and frequency domain.
     \item Calculate RMS power density in the signal.
     \item Calculate THD of the signal.
 \end{itemize}
@@ -50,9 +50,9 @@ libraries to go  with them. The following sections explain  why JavaScript and
 web technologies are used to implement  the graphical user interface (GUI) and
 the mathematical functions of the scope. 
 
-for  this  purpose,  a  group   of  programming  languages  are  compared  and
+For  this  purpose,  a  group   of  programming  languages  are  compared  and
 weighed  against each  other in  various aspects;  the results  are summarized
-in   table~\ref{tab:gui:language_choices}.  the   general  attributes   listed
+in   table~\ref{tab:gui:language_choices}.  The   general  attributes   listed
 in  table~\ref{tab:gui:language_choices}  are   explained  in  the  subsequent
 paragraphs to enable the reader to  understand how they apply to our decision.
 Due to its  importance, there is an additional section  dedicated to the topic
@@ -66,7 +66,7 @@ policies  (avoiding vendor  lock-in). Some programming  languages are  managed
 openly and accept contributions from the public, others not.
 
 \paragraph{Networking:} The  two criteria  which  the data  transfer needs  to
-fulfill are  speed and data integrigy.   Since networking is a  highly complex
+fulfill are  speed and data integrity.   Since networking is a  highly complex
 topic,  it is  important that  the language  not only  has libraries  for good
 networking  protocols, but  that those  libraries are  also easy  to use. More
 information on the topic is contained in Section~\ref{subsec:gui:networking}.
@@ -145,10 +145,10 @@ easy to deploy from an end-user perspective.
 JavaScript's  popularity ensures  that there  is no  danger of  the underlying
 technology  of  the  scope   becoming  obsolete  any  time  soon. Furthermore,
 with  its support  for  WebGL and  the WebSockets  protocol,  it provides  two
-performant and easy-to-use technologies  to implement graphics and networking,
-respectively. Its primary downside is a heavy memory footprint, but since that
-is  rarely a  concern on  modern computers,  it is  not considered  a relevant
-factor for our decision.
+high-performance  and  easy-to-use  technologies  to  implement  graphics  and
+networking, respectively. Its  primary downside  is a heavy  memory footprint,
+but since that is rarely a concern on modern computers, it is not considered a
+relevant factor for our decision.
 
 % >>>
 % ==============================================================================
@@ -178,8 +178,8 @@ automatically adapted  to the network,  and only as much  data is sent  as the
 client can actually receive and process.
 
 When  deciding how  to  deploy TCP,  one  can choose  to  implement one's  own
-subprotocol,  or  use  one  of   the  existing  two: HTTP  or  WebSockets. The
-WebSockets  subprotocol,   being  intended  for  data   streaming  and  having
+sub-protocol,  or  use  one  of   the  existing  two: HTTP  or  WebSockets. The
+WebSockets  sub-protocol,   being  intended  for  data   streaming  and  having
 mature  JavaScript   support,  fits   the  requirements  of   our  application
 perfectly.    Some  additional   notes   on  WebSockets   can   be  found   in
 Appendix~\ref{sec:app:gui:websockets} on page~\ref{sec:app:gui:websockets}.
@@ -246,7 +246,7 @@ information   across  various   objects.   Listing~\ref{lst:gui:app_structure}
 in              Appendix~\ref{sec:app:gui:state_tree_of_scope}              on
 page~\pageref{sec:app:gui:state_tree_of_scope}   shows  an   extract  of   the
 tree   structure. Like   any    JavaScript   application,   the   oscilloscope
-runs     asynchronously. Its    eventloop     structure     is    shown     in
+runs    asynchronously. Its    event    loop    structure    is    shown    in
 Figure~\ref{fig:gui:eventstructure}.
 
 \begin{figure}
@@ -381,8 +381,8 @@ project.
 \begin{figure}
     \centering
     \input{images/gui/fft_comparison.tikz}
-    \caption[FFT comparison]{%
-        The used JS FFT compared to the FFT of Matlab.%
+    \caption[FFT Comparison]{%
+        The used JavaScript FFT compared to Matlab's FFT%
     }
     \label{fig:gui:fft_comparison}
 \end{figure}
@@ -441,7 +441,7 @@ all the bins:
 \label{subsec:gui:snr_autodetection}
 % ---------------------------------------------------------------------------- %
 
-Calculating  the signa-to-noise  ratio requires  defining which  components of
+Calculating the  signal-to-noise ratio  requires defining which  components of
 captured data  are signal, and which  parts are noise. The power  contained in
 each frequency  range can  then be computed  with Equation~\ref{eq:gui:power},
 and the SNR calculated as the following ratio:
@@ -453,7 +453,7 @@ and the SNR calculated as the following ratio:
 Automatically determining which parts of  a spectrum constitute the signal and
 which parts are  noise is the purpose of SNR  autodetection. This requires the
 detection of the actual signal components as well as additional spectral lines
-introduced  in  the  FFT  process. The phenomen  of  these  spurious  spectral
+introduced  in the  FFT  process. The phenomenon  of  these spurious  spectral
 components is commonly known as \emph{spectral leakage}. Additionally, one may
 wish to remove any spurious harmonics originating from the signal source (e.g.
 a function generator which does not generate a flawless sine wave).
@@ -483,7 +483,7 @@ similar  to  the  one   in  Figure~\ref{fig:gui:snr_comparison}  processed  by
 Matlab's \code{snr()} function yields about \SI{78}{\dB}. Calculating SNR with
 the static  method as outlined  above results  in only about  \SI{33}{\dB} for
 such a signal.  Even accounting  for Matlab's harmonics cancellation, a result
-no better than \SI{43}{\dB} is achieved (\num{10} harmonics cancelled out).
+no better than \SI{43}{\dB} is achieved (\num{10} harmonics canceled out).
 
 Improving  this  SNR  detection  method   can  be  accomplished  by  using  an
 iterative  algorithm. The   number  of  lines   below  the  peak   lobe  which
@@ -493,10 +493,8 @@ no  greater  than   \SI{0.05}{\dB}. Algorithm~\ref{alg:gui:snr}  depicts  this
 process  systematically.   It can  be  repeated  for  any number  of  spurious
 harmonics  to  cancel   them  out  as  well. The  two   methods  are  compared
 in  Figure~\ref{fig:gui:snr_comparison}. The  example also  shows  highlighted
-harmonics for eliminiation in the SNR calculations. The result is in line with
+harmonics for elimination in the SNR calculations. The result is in line with
 Matlab's.
-
-%TODO: congruence with reference, matlab?
 
 \begin{algorithm}
     \centering
