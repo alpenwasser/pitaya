@@ -19,30 +19,31 @@
             y unit=\si{\dB},
             x unit=\times\,\pi\,\si{\radian}/\si{\sample},
             % ytick={-80,-40,0,40},
+            legend columns=3,
         },
         every axis legend/.append style={
-            at={(0.96,0.07)},
+            at={(0.995,0.02)},
             anchor=south east,
             cells={anchor=west},
         },
     }
     \begin{axis}[
-            title={Attenuation in the Edge and Stopband in Contrast to the Passband for R=1250},
+            title={Attenuation in the Edge and Stopband in Contrast to the Passband for $R=1250$},
             at = {(0,0)},
             xmin=0,
             xmax=4096,
             %ymin=-120,
             %ymax=5,
             xtick={4096},
-            xticklabels={$\frac{f_s}{2}$},
+            xticklabels={$\frac{f_\mathrm{s}}{2}$},
         ]
         \addplot[thick,q1,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=s100] \freqzTableA;
         \addplot[thick,ct4,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=s410] \freqzTableA;
         \addplot[thick,q5,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=s700] \freqzTableA;
         \legend{%
-            $f_{in}=5\frac{f_s}{2}\cdot \frac{10}{200}$ (Passband),%
-            $f_{in}=5\frac{f_s}{2}\cdot \frac{41}{200}$ (Edge),%
-            $f_{in}=5\frac{f_s}{2}\cdot \frac{70}{200}$ (Stopband),%
+            $f_\mathrm{in}=5\frac{f_\mathrm{s}}{2}\cdot \frac{10}{200}$ (Passband),%
+            $f_\mathrm{in}=5\frac{f_\mathrm{s}}{2}\cdot \frac{41}{200}$ (Edge),%
+            $f_\mathrm{in}=5\frac{f_\mathrm{s}}{2}\cdot \frac{70}{200}$ (Stopband),%
         }
     \end{axis}
     

@@ -59,8 +59,8 @@ libraries and features are available.
 
 Since  the  server application  is  rather  complex,  C++  is a  good  choice,
 eliminating some of the caveats  which C has. Additionally, the entire feature
-set of  C can be used  in C++ as well,  so the choice carries  no penalties in
-terms of features.
+set of C  can be used in C++,  so the choice carries no penalties  in terms of
+features.
 
 \paragraph{The  WebSockets  protocol}  is  mandatory, due  to  the  choice  of
 JavaScript on the client side.  This is  less of a design choice on the server
@@ -73,9 +73,9 @@ of the  overall data pipeline;  the network  connection will choke  before uWS
 reaches the limits of its capabilities.
 
 uWS  is  based  on  epoll,  libuv  or  boost::asio  depending  on  the  user's
-choice. All  of  those are  asynchronous  (more  on  this  topic can  be  read
-in~\cite{uws:async}) libraries  which makes  networking very  convenient. uWS
-comes with  callbacks that  can be  registered for  each WebSockets  event (see
+choice. All  of   them  are  asynchronous   libraries  (more  on   this  topic
+at~\cite{uws:async}),  which  makes  networking  very  convenient.  uWS  comes
+with  callbacks  that  can  be  registered  for  each  WebSockets  event  (see
 Section~\ref{subsec:gui:websockets}). Furthermore the  user can hook  into the
 event loop and register other events such as a reocurring timeout (timer).
 
@@ -112,7 +112,7 @@ Figure~\ref{fig:server:eventstructure}.
     \centering
     \input{images/server/eventloop.tikz}
     \caption[Server Event Structure]{%
-        The server's event structure.%
+        The server's event structure%
     }
     \label{fig:server:eventstructure}
 \end{figure}

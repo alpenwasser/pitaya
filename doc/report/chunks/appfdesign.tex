@@ -10,10 +10,10 @@
 Some  additional information  about  the filter  design  process is  presented
 here. This  comprises  a graphical  comparison  between  two variants  of  the
 $R=625$  filter  chain,  measurements  for  resource  usage  on  the  FPGA  in
-relation  to filter  size, and  the frequency  responses for  all filters  and
-filter  chains  as  designed  by  Matlab  (for  measurement  results,  consult
+relation  to  filter  size,  and  the  frequency  responses  for  all  filters
+and  filter  chains  as  designed  by Matlab  (for  measurement  results,  see
 Chapter~\ref{ch:verification}). For studying  the filters  and chains  in more
-detail, consult the design files themselves.
+detail, the reader is referred to the design files themselves.
 
 % ==============================================================================
 %
@@ -56,11 +56,12 @@ shown in Figure~\ref{fig:dec625_variants}.
 \label{sec:fir_filter_resouce_usage}
 % ---------------------------------------------------------------------------- %
 
-This    section   contains    the   experimental    results   of    how   many
-DSP   slices    a   given   FIR    filter   needs   when    implemented   with
-Xilinx's    FIR   Compiler~\cite{xilinx:fir-compiler}. These    figures   form
-the    basis     to    determine    reasonable    bounds     for    the    FIR
-filter    \code{5steep}     (see    Figure~    \ref{fig:fdesign:chain_concept}
+Measurements   on    resource   usage    for   various   FIR    filters   have
+been   performed    and   are    presented   here. The   objective    was   to
+determine   how   many   DSP   slices   a  given   FIR   filter   needs   when
+implemented   with  Xilinx's   FIR  Compiler~\cite{xilinx:fir-compiler}. These
+figures   form   the    basis   to   define   reasonable    bounds   for   the
+FIR   filter   \code{5steep}  (see   Figure~   \ref{fig:fdesign:chain_concept}
 on    page~\pageref{fig:fdesign:chain_concept}). Figure~\ref{fig:usage_report}
 depicts      the       results      of      the       measurements,      while
 Table~\ref{tab:usage_report:config}  contains   the  configuration  parameters
@@ -118,8 +119,8 @@ requirements.
 \label{sec:filter_frequency_responses}
 % ---------------------------------------------------------------------------- %
 
-This section contains the frequency responses  of the filters and the cascades
-as specified in Section~\ref{ch:filter_design}.
+This section lists the frequency responses  of the filters and the cascades as
+specified in Section~\ref{ch:filter_design}.
 % ==============================================================================
 %
 %                                 5 S T E E P

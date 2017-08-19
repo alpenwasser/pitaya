@@ -52,8 +52,8 @@ the mathematical functions of the scope.
 
 For  this  purpose,  a  group   of  programming  languages  are  compared  and
 weighed  against each  other in  various aspects;  the results  are summarized
-in   table~\ref{tab:gui:language_choices}.  The   general  attributes   listed
-in  table~\ref{tab:gui:language_choices}  are   explained  in  the  subsequent
+in   Table~\ref{tab:gui:language_choices}.  The   general  attributes   listed
+in  Table~\ref{tab:gui:language_choices}  are   explained  in  the  subsequent
 paragraphs to enable the reader to  understand how they apply to our decision.
 Due to its  importance, there is an additional section  dedicated to the topic
 of networking (Section~\ref{subsec:gui:networking}).
@@ -88,7 +88,7 @@ being able to provide support if needed.
 
 \paragraph{Ease  of  Development:} Some  solutions   require  large  IDEs  and
 unwieldy  toolchains  for   development. Others  can  be  used   with  a  more
-lightweight  setup. Since both  team  members come  from  a Linux  background,
+lightweight setup. Because  both team  members come  from a  Linux background,
 the  latter  is preferred. Since  added  complexity  always also  means  added
 probability  of errors  and failures,  using leaner  tools also  decreases the
 chances of having to fight with  the development tools instead of tackling the
@@ -99,7 +99,7 @@ it is for an end-user to install the scope and get it up and running. Having a
 toolchain which allows the effortless creation of stable binaries is important
 here.
 
-\paragraph{Familiarity With The Language:} The best  toolkits do not matter if
+\paragraph{Familiarity With the Language:} The best  toolkits do not matter if
 none of  the involved programmers have  ever used them and  will struggle with
 even  the basics  for  a major  part  of the  project's  duration. Thus it  is
 inevitable that personal preferences also flow into the decision process.
@@ -136,11 +136,11 @@ inevitable that personal preferences also flow into the decision process.
 \paragraph{Summary:} As          the          total         scores          in
 Table~\ref{tab:gui:language_choices} show, JavaScript  fits the priorities set
 in this project best. As  a scripting language which can be  run in any modern
-browser, a website  can be provided by  the STEMlab board and  accessed from a
-client via  a browser. Since no special  programs need to be  installed on the
-client  computer, and  every major  operating system  today has  at least  one
-reasonably modern  browser, this makes  the solution both highly  portable and
-easy to deploy from an end-user perspective.
+browser, it  can provide  a website from  the STEMlab board  and which  can be
+accessed from  a client via  a browser. Since no  special programs need  to be
+installed on the  client computer, and every major operating  system today has
+at least  one reasonably modern browser,  this makes the solution  both highly
+portable and easy to deploy from an end-user perspective.
 
 JavaScript's  popularity ensures  that there  is no  danger of  the underlying
 technology  of  the  scope   becoming  obsolete  any  time  soon. Furthermore,
@@ -160,22 +160,25 @@ relevant factor for our decision.
 \label{subsec:gui:networking}
 % ---------------------------------------------------------------------------- %
 
-For networking, two primary protocols are available: UDP and TCP.  To ensure a
-fluid stream of data, minimizing protocol overhead is key. In situations where
-data integrity is not essential, UDP is generally used. It carries no overhead
-for guaranteeing completeness and correct order of packages.
+For networking, two primary protocols are available: UDP and TCP. TCP has been
+chosen in this project; the following paragraphs explain why.
 
-If data  integrity is vital, TCP  is generally the protocol  of choice. It has
-mechanisms  for  guaranteeing  both  the completeness  and  correct  order  of
+To ensure  a fluid  stream of  data, minimizing  protocol overhead  is key. In
+situations where  data integrity is  not essential, UDP is  generally used. It
+carries  no  overhead  for  guaranteeing completeness  and  correct  order  of
+packages.
+
+But if  data integrity is vital,  TCP is generally the  protocol of choice. It
+has mechanisms  for guaranteeing  both the completeness  and correct  order of
 packages.  This comes at the cost  of some overhead, but in most applications,
 this is negligible and well worth the cost. Another key feature of TCP is that
 it can perform congestion control. TCP will  send no more packages if previous
-packages  have  gone missing  (i.e. if  their  reception has  not  been
-confirmed).  Where UDP will happily flood the network with as much data as it
-is fed,  TCP ensures that  the network is not  flooded. The result is  that in
-case of a  bad or slow network  connection, the amount of  transmitted data is
-automatically adapted  to the network,  and only as much  data is sent  as the
-client can actually receive and process.
+packages have gone  missing (i.e. if their reception has  not been confirmed).
+Where UDP will happily  flood the network with as much data as  it is fed, TCP
+ensures that the network  is not flooded. The result is that in  case of a bad
+or slow  network connection, the  amount of transmitted data  is automatically
+adapted  to the  network, and  only as  much data  is sent  as the  client can
+actually receive and process.
 
 When  deciding how  to  deploy TCP,  one  can choose  to  implement one's  own
 sub-protocol,  or  use  one  of   the  existing  two: HTTP  or  WebSockets. The
@@ -197,7 +200,7 @@ Appendix~\ref{sec:app:gui:websockets} on page~\ref{sec:app:gui:websockets}.
 \begin{figure}
     \centering
     \includegraphics[width=1\textwidth]{images/gui/scope}
-    \caption[The scope application]{%
+    \caption[The Scope Application]{%
         The scope application in it's current state, displaying time and FFT data.%
     }
     \label{fig:gui:screenshot}
@@ -216,8 +219,8 @@ current implementation:
     \item 
         Calculate and display the power density spectrum.
     \item 
-        Calculate the SNR both automatically detecting the signal and manually
-        being told where the signal is.
+        Calculate the  SNR both by  automatically detecting the signal  and by
+        being told manually where the signal is.
     \item 
         Export data to an array-string.
     \item 
@@ -245,7 +248,7 @@ better   overview   of   the   application   state   than   scattering   state
 information   across  various   objects.   Listing~\ref{lst:gui:app_structure}
 in              Appendix~\ref{sec:app:gui:state_tree_of_scope}              on
 page~\pageref{sec:app:gui:state_tree_of_scope}   shows  an   extract  of   the
-tree   structure. Like   any    JavaScript   application,   the   oscilloscope
+tree  structure  code. Like  any   JavaScript  application,  the  oscilloscope
 runs    asynchronously. Its    event    loop    structure    is    shown    in
 Figure~\ref{fig:gui:eventstructure}.
 
@@ -263,14 +266,14 @@ are  also controllable  directly through  the state  tree. Upon initialization
 of  the  application, the  entire  state  tree  is  loaded and  references  to
 parts  of it  are passed  to  the controller  objects.  The  structure of  the
 application  is hierarchical;  the most  important relations  are depicted  in
-Figure~\ref{fig:gui:structure}.  In  the following some of  the more important
-prototypes  and functions  from Figure~\ref{fig:gui:structure}  are elaborated
-upon.
+Figure~\ref{fig:gui:structure}.  In  the following sections, some  of the more
+important  prototypes and  functions  from Figure~\ref{fig:gui:structure}  are
+explained.
 
 \begin{figure}
     \centering
     \input{images/gui/structure.tikz}
-    \caption[The scope structure]{%
+    \caption[The Scope Structure]{%
         The structure of the scope application with its major relations%
     }
     \label{fig:gui:structure}
@@ -301,11 +304,9 @@ Appendix~\ref{sec:app:gui:websockets}.
 \code{Source} stores all received frames in itself. The frames will then later
 be  copied and  processed by  the trace  controller.  Each  frame received  is
 always overwritten by the next one,  preventing memory leaks and ensuring that
-the data is current.
-
-Once  the   \code{Source}  controller  receives   new  data,  it   starts  the
-\code{calc()} call for each  trace to trigger an update of  the trace with new
-data.
+the data is current.  Once the  \code{Source} controller receives new data, it
+starts the \code{calc()} call for each trace to trigger an update of the trace
+with new data.
 
 \paragraph{The \code{Trace} prototype} is in charge of drawing and calculating
 traces. It has  two derived  prototypes, \code{Timetrace}  and \code{FFTrace}.
@@ -391,7 +392,7 @@ The following equations detail  the calculations. For an in-depth explanation,
 see~\cite{gui:hanspi}.   The two-sided  spectrum  of an  input  signal $x$  is
 obtained with
 \begin{equation}
-    Y[i] = \frac{1}{N}FFT\{x[i]w[i]\}.
+    Y[i] = \frac{1}{N}FFT\left(x[i]w[i]\right).
     \label{eq:gui:onesidedf}
 \end{equation}
 From that, the one-sided power spectrum can be calculated via
@@ -446,7 +447,7 @@ captured data  are signal, and which  parts are noise. The power  contained in
 each frequency  range can  then be computed  with Equation~\ref{eq:gui:power},
 and the SNR calculated as the following ratio:
 \begin{equation}
-    SNR = 10\log_{10}(\frac{P_s}{P_n})
+    \mathrm{SNR} = 10\log_{10}(\frac{P_s}{P_n})
     \label{eq:gui:snr}
 \end{equation}
 

@@ -30,14 +30,14 @@
     \begin{axis}[
         at = {(0,-65mm)},
         title = {Half-band Filter Coefficients},
-        xmin=-14,
-        xmax=14,
-        xtick={-10,-5,0,5,10},
+        xmin=-1,
+        xmax=27,
+        xtick={0,5,10,15,20,25},
         ylabel=$y$,
         xlabel=$n$,
         x unit = {},
     ]
-        \draw[gray] (-14,0) -- (14,0);
+        \draw[gray] (-1,0) -- (28,0);
         \addplot[thick,ycomb,mark=*,q1] table[x=x,y=y,col sep=comma] \coefTable;
     \end{axis}
 \end{tikzpicture}

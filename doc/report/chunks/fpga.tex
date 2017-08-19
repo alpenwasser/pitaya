@@ -12,15 +12,15 @@
 %
 % ==============================================================================
 %<<<
-Broadly speaking,  the FPGA  firmware (the bitstream)  consists of  three main
-components:  The ADC control logic, a  data acquisition core which writes data
-to  RAM  and  is  responsible  for  triggering,  and,  most  importantly,  the
+
+This chapter  first presents a rough  outline of the FPGA  toolchain, and then
+provides more  specific information on  each of  the three FPGA  subsystems in
+Sections~\ref{sec:fpga:adc},  \ref{sec:fpga:logger} and~\ref{sec:fpga:chains},
+respectively. Those subsystems are  the ADC control logic,  a data acquisition
+core  which writes  data to  RAM and  is responsible  for triggering,  and the
 filter chains  that connect the two.   Figure~\ref{fig:fpga:structure} shows a
 schematic of  how these components fit  together, and how they  are related to
-the overall STEMlab system. This chapter first presents a rough outline of the
-FPGA toolchain,  and then provides  more specific  information on each  of the
-three  FPGA subsystems  in Sections~\ref{sec:fpga:adc},  \ref{sec:fpga:logger}
-and~\ref{sec:fpga:chains}, respectively.
+the overall STEMlab system.
 
 \begin{figure}
     \centering
@@ -106,13 +106,12 @@ and project can be read in Section~\ref{subsec:concept:fpga_components}.
 % ---------------------------------------------------------------------------- %
 
 The logger core (logger  in further text) is a piece of  VHDL code that stores
-samples it  gets from a  source in  a ringbuffer in  the RAM. It is packaged  as a
-Vivado IP core and can be seamlessly integrated into the project.
-The logger originated  from an earlier project\cite{huess-schnid}. 
-In addition  to logging data  to RAM, it can  also be programmed  with various
-triggers. It reads  instructions from  a BRAM  on the  FPGA and  iterates over
-them. Having reached  the last one, it  issues an IRQ signal,  signalizing the
-end of the transcription.
+samples it gets from a source into  a ringbuffer in the RAM. It is packaged as
+a  Vivado IP  core and  can be  seamlessly integrated  into the  project.  The
+logger originated from an earlier project~\cite{huess-schnid}.  In addition to
+logging data to RAM, it can also be programmed with various triggers. It reads
+instructions from  a BRAM on the  FPGA and iterates over  them. Having reached
+the last one, it issues an IRQ signal, signaling the end of the transcription.
 
 The logger's original  implementation features eight channels with  a width of
 \SI{14}{\bit}, padded to \SI{16}{\bit} in  order to simplify data transmission
@@ -126,11 +125,9 @@ The penalty for this is one additional  clock cycle of delay, since the adders
 and  comparators cannot  match  the timing  requirements  with two  additional
 carries.  Since this project aims to optimize for lower-frequency signals, the
 resulting additional delay of \SI{8}{\nano\second}  is acceptable and will not
-be an issue in practice.
-
-The  logger  core comes  with  a  kernel  module  that provides  a  convenient
-interface from the ARM core. This avoids having to manually program the logger
-core.
+be an  issue in  practice.  The logger  core comes with  a kernel  module that
+provides  a convenient  interface from  the  ARM core. This  avoids having  to
+manually program the logger core.
 
 %>>>
 % ==============================================================================
@@ -148,12 +145,12 @@ core.
 % ==============================================================================
 %<<<
 The filter chains are  the most crucial part of the project  and also the most
-delicate  one  as  simple  mistakes  can cost  several  decibels  of  SNR  and
-make  the signal  leaving  the filter  worse  than it  came  into the  filter,
-instead  of improving  it.  The  logical structure  of the  chains can  be seen
+delicate one as simple mistakes can cost  several decibels of SNR and create a
+worse  signal  at  the  filter  chain's output  than  at  its  input,  instead
+of  an  improved  one.  The  logical  structure  of  the  chains can  be  seen
 in  Figure~\ref{fig:fdesign:chain_concept}  and  the rationale  behind  it  is
 explained  in the  respective Section~\ref{sec:fdesign:filter_specifications}.
-For the  detailed implementation,  it is  advised to look  at the  project in
+For  the detailed  implementation, it  is advised  to look  at the  project in
 Vivado  itself, as  the block  design is  impractically large  to be  put onto
 paper, thus it is omitted in this report.
 
@@ -216,8 +213,8 @@ output.
 % ---------------------------------------------------------------------------- %
 
 For  this  application, only  \SI{16}{\bit}  values  are stored. However,  the
-filters generate far wider numbers at  their outputs.  This means that many of
-them are  discarded at the  output.  To make sure  that no important  bits are
+filters generate  far wider numbers  at their  outputs.  This means  that many
+bits are  discarded at the  output.  To make sure  that no important  bits are
 truncated, the chosen  input format for the filters  is \code{17.7}, resulting
 in \num{24} total bits. The MSB should always remain just a sign extend of the
 sign actually  residing at bit  \num{15}. The \num{7} fractional bits  are cut
@@ -259,13 +256,15 @@ but represents the general case in out block design.
 \label{subsec:fpga:maximize_dynamic_range}
 % ---------------------------------------------------------------------------- %
 
-Of course it is important not to discard any MSBs (or signs) because otherwise
-the signal (a sine wave in our example) will clip or, even worse, overflow and
-wrap around. The same applies  to the case where too few  bits are cut off. If
-the bit count is increased by one  to guarantee no overflow inside the filter,
-but that bit is  not set at the output due to unity  gain, it will effectively
-be lost  as it  will never  be used.  This  reduces the  maximum theoretically
-achievable SNR by \SI{6}{\dB}, which is obviously highly undesirable.
+The challenge of optimally using the available dynamic range is explained here
+on a simple example  of a sampled sine wave coming  into the filtering system.
+It  is important  not to  discard any  MSBs (or  signs) because  otherwise the
+signal will clip or, even worse, overflow and wrap around. The same applies to
+the case where too few bits are cut  off. If the bit count is increased by one
+to guarantee  no overflow inside the  filter, but that  bit is not set  at the
+output due  to unity gain,  it will  effectively be lost  as it will  never be
+used.  This reduces  the maximum theoretically achievable  SNR by \SI{6}{\dB},
+which is obviously highly undesirable.
 
 To make  sure neither  of these faults  happens, it is  important to  have the
 highest possible  filter gain at $G  \leq 1$. Furthermore, at the  end of each
@@ -286,7 +285,7 @@ the maximum  value a \SI{6}{\bit}  \code{int} can hold. Case  \num{2} (middle
 plot) shows  a sine  that has  been scaled  to \num{34}  and thus  requires an
 additional bit.  But  because a \SI{7}{\bit} \code{int} can hold  values up to
 \num{63}, most of the time the MSB  ends up not being used. With \SI{7}{\bit},
-the highest $SNR_\mathrm{max}$ possible would be
+the highest $\mathrm{SNR}_\mathrm{max}$ possible would be
 \begin{align}
     %\mathrm{ENOB}             &= \log_2(130) \nonumber\\
     %\mathrm{SNR}_\mathrm{max} &= \SI{1.76}{\dB} + \mathrm{ENOB} \cdot \SI{6.02}{\dB} = 44.03
@@ -320,7 +319,8 @@ the coefficients.
 \begin{figure}
     \centering
     \input{images/fpga/dynamicrange.tikz}
-    \caption{An illustration of good and bad use of dynamic range.}
+    \caption[Good Vs. Bad Use Of Dynamic Range]%
+        {An illustration of good and bad use of dynamic range}
     \label{fig:fpga:dynamicrange}
 \end{figure}
 
@@ -354,7 +354,7 @@ does make sense. The results are:
     \sigma^2_\mathrm{CIC125} &= 0.289\label{eq:fpga:cic:sigmasq:cic125}
 \end{align}
 The  calculations are  performed  by a  Matlab script  and  are therefore  not
-further elaborated upon at this point.
+further elaborated upon at.
 
 %>>>
 %>>>

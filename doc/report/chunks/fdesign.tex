@@ -12,15 +12,14 @@
 %
 % ==============================================================================
 
-Some    key    points    underlying     the    theory    of    filters    have
-been   treated   in  Chapter~\ref{ch:analog-to-digital_data_aquisition},   and
-Chapter~\ref{ch:mission}  defines  the  overall objectives  of  this  project;
-implementing a custom  filtering system on the FPGA among  them.  This chapter
-develops a concrete  concept for that filtering system, addresses  some of the
-issues encountered when  moving from the theory of filters  to the practice of
-designing  them,  and  specifies  the  filters which  are  to  be  used.   The
-implementation of those filters on the  FPGA is addressed in the next chapter,
-beginning on page~\pageref{ch:fpga}.
+Some  key  points underlying  the  theory  of  filters  have been  treated  in
+Chapter~\ref{ch:theory},  and  Chapter~\ref{ch:mission}  defines  the  overall
+objectives of this project; implementing a custom filtering system on the FPGA
+among  them.  This  chapter develops  a  concrete concept  for that  filtering
+system, addresses some  of the issues encountered when moving  from the theory
+of filters to the practice of  designing them, and specifies the filters which
+are to be used.  The implementation of  those filters on the FPGA is addressed
+in the next chapter, beginning on page~\pageref{ch:fpga}.
 
 
 % ==============================================================================
@@ -66,7 +65,7 @@ of  \num{5}  is chosen  instead. This  makes  for  a  resulting data  rate  of
 
 On the lower end  of the spectrum, the system should still  be able to process
 audio signals. Common  sampling frequencies for audio  are \SI{44.1}{\kHz} for
-compact  discs, and  \SI{48}{\kHz}  for the  audio  component of  audio-visual
+Compact  Discs, and  \SI{48}{\kHz}  for the  audio  component of  audio-visual
 applications. Neither  of these  frequencies  fit  nicely into  \SI{125}{\MHz}
 (requiring large  prime factor  for the  rate change),  so the  lower boundary
 is  specified  as \SI{50}{\kHz},  corresponding  to  a downsampling  ratio  of
@@ -110,17 +109,17 @@ corresponding sampling frequencies.
 \label{sec:cascade_concept}
 % ---------------------------------------------------------------------------- %
 
-Based on  the downsampling factors  from Table~\ref{tab:ratio_decompositions},
-this section presents the general  concept for filter cascades which implement
-those rate changes.
+Based on the downsampling factors from Table~\ref{tab:ratio_decompositions}, a
+general  concept for  the filter  cascades which  implement those  rate change
+factors is presented next.
 
 As  discussed  in  Section~\ref{sec:multi_stage_filter_designs},  implementing
 high downsampling  ratios in a  single stage is  generally not a  sound design
 choice. Consequently, the downsampling ratios  must be decomposed into smaller
-factors. Table~\ref{tab:ratio_decompositions}  contains  prime  decompositions
-for all ratios, and then recombines the  primes into factors which can be used
-as downsampling  ratios in a  multi-stage design.  These factors  must fulfill
-the following criteria:
+factors. Table~\ref{tab:ratio_decompositions} contains  the prime  factors for
+all ratios, and then  recombines the primes into factors which  can be used as
+downsampling ratios in  a multi-stage design.  These factors  must fulfill the
+following criteria:
 \begin{itemize}\tightlist
     \item
         Filters  for  different stages  should  be  re-usable across  multiple
@@ -135,8 +134,8 @@ the following criteria:
         as outlined in Section~\ref{sec:multi_stage_filter_designs}.
 \end{itemize}
 
-CIC  filters  are  well-suited  for  large   rate  changes,  but  are  not  an
-optimal solution  for smaller  ones. As an  example of  a low-rate  change CIC
+CIC filters  are well-suited for  large rate changes,  but are not  an optimal
+solution  for smaller  ones. As  an example  for such  a  low-rate change  CIC
 filter,  Figure~\ref{fig:cic_simu:freqz} on  page~\pageref{fig:cic_simu:freqz}
 in  Appendix~\ref{sec:app:cic_simu}  shows the  frequency  response  of a  CIC
 filter  with a  rate change  of  \num{2}.  Based  on that  observation, it  is
@@ -146,17 +145,17 @@ higher rate  changes. This allows  taking advantage of  the CIC  filter's high
 computational efficiency for large downsampling rates, while still having good
 frequency response behavior for the lower rate changes.
 
-Other choices are of course possible. Particularly in the case of $R=625$, one
-may  choose  to implement  a  chain  of $125  \rightarrow  5$  instead of  $25
-\rightarrow  5 \rightarrow  5$.   The  two implementations  as  they would  be
-in  the  final  design  are compared  in  Figure~\ref{fig:dec625_variants}  on
-\pageref{fig:dec625_variants} in Appendix~\ref{sec:dec625_variants}. While the
-$125 \rightarrow 5$ chain would offer better stopband attunation behavior over
-certain frequency  ranges and  therefore improved SNR,  the $25  \rightarrow 5
-\rightarrow 5$ chain  offers the advantage that if the  design is ever changed
-and only  the higher sampling rates  are implemented (removing the  chains for
-$R=1250$ and $R=2500$), it can re-use the elements from the higher chains. The
-$25 \rightarrow  5 \rightarrow 5$  chain is  therefore chosen.
+Other choices  are of  course possible. Particularly in  the case  of $R=625$,
+one  may  choose to  implement  a  chain of  $125  \rightarrow  5$ instead  of
+$25  \rightarrow  5 \rightarrow  5$.   The  two implementations  are  compared
+in   Figure~\ref{fig:dec625_variants}   on  \pageref{fig:dec625_variants}   in
+Appendix~\ref{sec:dec625_variants}. While the $125  \rightarrow 5$ chain would
+offer better stopband  attenuation behavior over certain  frequency ranges and
+therefore improved SNR, the $25 \rightarrow  5 \rightarrow 5$ chain offers the
+advantage that  if the  design is  ever changed and  only the  higher sampling
+rates are implemented (removing the chains  for $R=1250$ and $R=2500$), it can
+re-use the elements from the  higher chains. The $25 \rightarrow 5 \rightarrow
+5$ chain is therefore chosen.
 
 With  the above  considerations in  mind, an  overall concept  for the  filter
 cascades  can  be  devised; Figure~\ref{fig:fdesign:chain_concept}  shows  the
@@ -184,12 +183,13 @@ twice carries no significant penalty over using a second, flatter filter.
 \label{sec:fdesign:filter_specifications}
 % ---------------------------------------------------------------------------- %
 
-Having determined  the filters needed,  this section outlines  the constraints
-imposed upon  them and the specifications  used for the  filter design process
-based on those  constraints.  For this purpose, it is  no longer sufficient to
-merely consider  the filters  in the mathematical  sense and  the requirements
-derived from that; resource usage on  the hardware must be taken into account.
-The hardware places two main constraints on the design:
+Having determined  the needed filters,  the constraints imposed upon  them and
+the  specifications  used  for  the  filter  design  process  based  on  those
+constraints are documented in the  following paragraphs.  For this purpose, it
+is no  longer sufficient to  merely consider  the filters in  the mathematical
+sense and the  requirements derived from that; resource usage  on the hardware
+must be taken  into account.  The hardware places two  main constraints on the
+design:
 \begin{itemize}\tightlist
     \item
         Number of available LUTs: \num{17600}
@@ -241,8 +241,8 @@ measurements are  available in  Appendix~\ref{sec:fir_filter_resouce_usage} on
 page~\pageref{sec:fir_filter_resouce_usage}. Based on those  figures, a filter
 size  of  around  \num{250}  is  determined  to  be  the  upper  boundary  for
 \code{5steep}; a filter  of that size uses about \num{25}  DSP slices, leaving
-\num{15} slices for other filters per  channel.  Of these, \code{5flat} is the
-most  critical, because  it must  also be  able to  run at  the full  incoming
+\num{15} slices  for other filters  (per channel).  Of these,  \code{5flat} is
+the most critical,  because it must also  be able to run at  the full incoming
 sampling frequency. \code{2steep}  runs at a much lower sampling  rate and can
 therefore be of significant size without  a notable penalty in resource usage.
 The final implementation of \code{5steep} is  actually smaller, at a length of

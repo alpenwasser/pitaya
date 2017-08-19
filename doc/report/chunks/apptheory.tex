@@ -9,7 +9,7 @@
 
 This  chapter  contains  some  supplementary information  on  the  theoretical
 background behind  this project. For those  who wish to better  understand the
-internal  workings of  a CIC  filter, the  next section  details exactly  what
+internal  workings of  a CIC  filter, the first section  details exactly  what
 happens inside a CIC filter for a very simple example. Simulink files are also
 provided for further  study. The second section contains  tabulated values for
 CIC filter design taken from~\cite{1163535}
@@ -27,14 +27,14 @@ In the interest of simplicity, we choose  a filter with a decimation rate $R =
 shown in Figure~\ref{fig:cic_simu:topo}; Figure~\ref{fig:cic_simu:freqz} shows
 the magnitude frequency  response of the filter. As can be  clearly seen, this
 filter would be of very limited  use in practice. However, for the purposes of
-this example, we  will feed a DC  signal (a constant) into the  filter, so the
+this example, we  feed a DC  signal (a constant) into the  filter, so the
 only thing  of importance is  the filter's DC  gain (which is  \SI{6}{\dB}, or
 \num{2}).
 
-Lastly,  we  will   restrict  numerical  accuracy  to  three   bits  in  two's
+Lastly,   we   restrict   numerical   accuracy  to   three   bits   in   two's
 complement;  the  entire  range  of  representable  values  can  be  found  in
-Figure~\ref{fig:cic_simu:twos_complement_circle}. This  will limit  the number
-of steps  which need  to be calculated  to gain the  desired insight  into the
+Figure~\ref{fig:cic_simu:twos_complement_circle}. This  limits  the number  of
+steps  which need  to  be calculated  to  gain the  desired  insight into  the
 filter's mathematical mechanics.
 
 \begin{figure}
@@ -58,11 +58,11 @@ The  state  of  the  filter  can  be  calculated  by  the  formulas  given  in
 Equations~\ref{eq:cic_simu:INT} and \ref{eq:cic_simu:OUT}:
 \begin{align}
     N             & = 1 \quad M = 1 \quad R=2\nonumber\\
-    OUT_{INT}[n]  & = IN_{COMB}[n] = IN[n]        + OUT[n-1]
+    OUT_\mathrm{INT}[n]  & = IN_\mathrm{COMB}[n] = IN[n]        + OUT[n-1]
     \label{eq:cic_simu:INT} \\
-    OUT_{COMB}[n] & = IN_{COMB}[n] - IN_{COMB}[n-R\cdot M]
+    OUT_\mathrm{COMB}[n] & = IN_\mathrm{COMB}[n] - IN_\mathrm{COMB}[n-R\cdot M]
     \nonumber\\
-                  & = OUT_{INT}[n] - OUT_{INT}[n-2]
+                  & = OUT_\mathrm{INT}[n] - OUT_\mathrm{INT}[n-2]
     \label{eq:cic_simu:OUT}
 \end{align}
 
@@ -87,11 +87,11 @@ the  entire filter's  state for  15 steps). At  this point,  the state  of the
 filter's output is  as follows (represented in three-bit  two's complement and
 decimal):
 \begin{align}
-    OUT_{COMB}[4]_\mathrm{b} &= OUT_{INT}[4] - OUT_{INT}[2]     \nonumber\\
+    OUT_\mathrm{COMB}[4]_\mathrm{b} &= OUT_{INT}[4] - OUT_{INT}[2]     \nonumber\\
                              &= 101_\mathrm{b} - 011_\mathrm{b} \nonumber\\
                              &= 010_\mathrm{b}
     \label{eq:cic_simu:stage4:binary} \\
-    OUT_{COMB}[4]_\mathrm{d} &= -3_\mathrm{d} - 3_\mathrm{d}    \nonumber\\
+    OUT_\mathrm{COMB}[4]_\mathrm{d} &= -3_\mathrm{d} - 3_\mathrm{d}    \nonumber\\
                              &= -6_\mathrm{d}
     \label{eq:cic_simu:stage4:decimal:bounded}
 \end{align}
@@ -113,7 +113,7 @@ an  unbounded integrator  and comb  would have  yielded the  same outcome. And
 indeed, they would have:
 \begin{equation}
     \label{eq:cic_simu:stage4:decimal:unbounded}
-    OUT_{COMB}[6] = 7 - 5 = 2
+    OUT_\mathrm{COMB}[6] = 7 - 5 = 2
 \end{equation}
 
 \begin{figure}
@@ -133,11 +133,11 @@ indeed, they would have:
     \caption[CIC Filter Example: States for 16 Cycles]{%
         Binary and  decimal values  for the  different filter  elements during
         various  stages  of the  filtering  process. As  expected due  to  the
-        filter's DC  gain of  \num{2}, its output  is indeed  \num{2}. The two
-        right  columns contain  the calculations  as they  would occur  if the
-        filter's components had  unbounded precision. It can be  seen that the
-        wraparound effect  of the two's complement  representation does indeed
-        not change the filter's output.%
+        filter's  DC gain  of \num{2},  its output  is \num{2}. The  two right
+        columns contain the  calculations as they would occur  if the filter's
+        components had unbounded precision. It can be seen that the wraparound
+        effect of the  two's complement representation does  indeed not change
+        the filter's output.%
     }
     \label{tab:cic_simu:cic_filter_states}
     \ttfamily
@@ -201,7 +201,8 @@ states  are  identical  to  our manually  calculated  example. The  effect  of
 the  integrator's   output  wrapping   around  the  numerical   boundaries  is
 also  nicely  visible. In  case  the  reader  wishes  to  tinker  around  with
 this  themselves,  the  Simulink  files  can  be  found  in  the  subdirectory
-\code{doc/report/images/cicSimu}, relative to the repository root.
+\code{doc/report/images/cicSimu}, relative  to the repository  root. Note that
+the fixed-point toolbox is required for this.
 
 \begin{figure}
     \centering
@@ -219,7 +220,7 @@ this  themselves,  the  Simulink  files  can  be  found  in  the  subdirectory
     \input{images/cicSimu/simulinkOut.tikz}
     \caption[Simulink Simulation Results]{%
         Simulation    results    from    Simulink   for    the    filter    in
-        Figure~\ref{fig:cic_simu:simulink_model}.%
+        Figure~\ref{fig:cic_simu:simulink_model}%
     }
     \label{fig:cic_simu:simulink_results}
 \end{figure}
@@ -291,9 +292,8 @@ simulation with the modified input also confirms this result.
 \begin{table}
     \centering
     \caption[CIC Filter Passband Attenuations]{%
-        Passband    attenuation    for    CIC   filters    as    a    function
-        of   the   bandwidth-differential    delay   product. Taken   directly
-        from~\cite{1163535}.%
+        Passband  attenuation   for  CIC   filters  as   a  function   of  the
+        bandwidth-differential delay product. Taken from~\cite{1163535}.%
     }
     \label{tab:cic:pb_attenuation}
     \begin{tabular}{rrrrrrrr}
@@ -322,9 +322,8 @@ simulation with the modified input also confirms this result.
 \begin{table}
     \centering
     \caption[CIC Filter Passband Aliasing Attenuation]{%
-        Passband  aliasing   attenuation  for   CIC  filters  as   a  function
-        of   the  bandwidth   and  the   differential  delay. Taken   directly
-        from~\cite{1163535}.%
+        Passband aliasing  attenuation for  CIC filters as  a function  of the
+        bandwidth and the differential delay. Taken from~\cite{1163535}.%
     }
     \label{tab:cic:pb_aliasing}
     \begin{tabular}{rrrrrrrrr}

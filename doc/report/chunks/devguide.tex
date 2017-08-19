@@ -33,11 +33,11 @@ complete documentation, consulting the READMEs and source code is advised.
         .1 /.
         .2 design/.
         .3 /filter/.
-        .3 /fpga/.
+        .3 /fpga/\vspace{4.5ex}.
         .2 doc/.
         .3 report/.
         .3 verification/.
-        .3 vivado-install/\vspace{7.75ex}.
+        .3 vivado-install/\vspace{5.25ex}.
         .2 env/\vspace{5.5ex}.
         .2 firmware/.
         .3 arm/.
@@ -53,6 +53,7 @@ complete documentation, consulting the READMEs and source code is advised.
 \hfill
 \begin{minipage}[t]{0.64\textwidth}
     \begin{description}\tightlist
+        \vspace*{1ex}
         \item[\code{design/}]       contains      the       filter      design
             toolchain     \code{filter/}     which     is     described     in
             Chapter~\ref{ch:devguide:filter_toolchain}. Additionally,  it  has
@@ -243,6 +244,7 @@ After the build process has finished, the image can be created using
 \noindent These scripts were initially  created by the Red Pitaya corporation,
 altered by  Pavel Demin~\cite{pita:github:pitaya-notes},  and have  again been
 adapted to the requirements of this project.
+
 %>>>
 % ==============================================================================
 %
@@ -290,9 +292,9 @@ the filter design directory\footnote{%
 }
 
 \paragraph{\code{cliDispatcher.m}} is  the main  script from where  the design
-functions are initiated.   If you wish to  design a new filter  chain, this is
-where its specifications are located, and from where the filter design scripts
-are then called with those parameters.
+functions are  initiated.  To  design a  new filter chain,  this is  where its
+specifications need to be placed, and from where the filter design scripts are
+then called with those parameters.
 
 \paragraph{\code{guiWrapper.m}} is  a convenience layer which  makes it easier
 to work with \code{cliDispatcher.m} from Matlab's graphical front-end. It sets
@@ -318,13 +320,13 @@ differ.  The filter design functions are:
     \item[\code{halfbandFIR.m}] designs a half-band filter.
     \item[\code{compCIC.m}] designs a compensator for a CIC filter.
 \end{description}
-Note that all of these have version which iterate in parallel over a given set
-of  specifications,  prefixed  with  \code{par}  (e.g.  \code{pardecFIR}). The
+Note that all of  these have a version which iterate in  parallel over a given
+set of  specifications, prefixed with \code{par}  (e.g. \code{pardecFIR}). The
 interface for all parallel versions is identical. They can be used if Matlab's
 parallel processing toolbox is available. If only a small set of filters is to
 be designed,  it is  recommended to  use the  regular, serial  versions, since
 starting up  a parallel processing  pool in Matlab is  a slow process  and its
-overhead is  usually not  worth it in  those cases. In case  Matlab is  run in
+overhead is  usually not  worth it in  those cases. If  Matlab is being run in
 command-line mode,  make sure  \emph{not} to start  it with  the \code{-nojvm}
 switch, since the parallel processing pool requires the Java Virtual Machine.
 
@@ -341,9 +343,9 @@ when only cascading single CIC filters with other filters.
 
 \paragraph{\code{coefData} and \code{plotData}} are  two directories which are
 created  by the  functions  (if they  do  not yet  exist)  for storing  filter
-property  data.  \code{coefData} contains  the  filter  coefficients for  each
-filter which  has coefficients in a  Vivado-compliant \code{.coe} format. This
-allows a direct import of Matlab's results into Vivado's FIR compiler.
+property data. \code{coefData} contains the  filter coefficient files for each
+filter in the Vivado-compliant \code{.coe} format. This allows a direct import
+of Matlab's results into Vivado's FIR compiler.
 
 \code{plotData} contains frequency  responses for each filter, as  well as any
 potential cascade, in \code{.csv} format,  as given by Matlab's \code{freqz()}
@@ -411,7 +413,7 @@ used:
 \end{tcolorbox}
 \noindent Alternatively, one  may create an entry  in \code{guiWrapper.m} when
 using Matlab's graphical interface for added convenience. An entry can be created
-as show
+as shown  below:
 \begin{tcolorbox}[
     skin=alpenlisting,
     title={
@@ -516,7 +518,7 @@ No special care  needs to be taken when handling  \code{HdComp} cell arrays to
     There is  a limitation  to the numbers  of filters Matlab  can chain  in a
     single  cascade. This limitation  might  be relevant  when designing  long
     filter chains. However,  multiple cascades can themselves  be cascaded, so
-    this limitation can be worked around if necessary.
+    this issue can be worked around if necessary.%
 },
 despite  its first  column  being  a cascade  filter  object
 instead of  a single  filter. \code{cascador} will  notice the  difference and
@@ -582,7 +584,7 @@ Chapter~\ref{ch:devguide:fpga_toolchain}.  A simple
     make
 \end{commandshell}
 \noindent should suffice to build all the external dependencies and the binary
-for the ARM core. These externals can be rebuilt using
+for the ARM core. The external libraries can be rebuilt using
 \begin{commandshell}
     cd /repo/firmware/arm/server
     make external
@@ -597,11 +599,12 @@ by issuing
 The   server  application   is   a  one-file   application   and  depends   on
 libuWebSockets~\cite{uws:github} and a header file called \code{json.hpp} from
 Niels Lohmann's \emph{JSON for Modern C++} project \cite{lohmann:github:json},
-which contains the entire JSON library.   There is two important functions for
+which contains the entire JSON library.  There are two important functions for
 extending the  server application: \code{onHttpRequest}  and \code{onMessage},
-which are explained in the following sections.
+which  are   explained  in  Section~\ref{subsec:devguide:server:onhttprequest}
+and~\ref{subsec:devguide:server:onmessage}, respectively.
 
-\section{Manually Starting the Server} % ---------------------------------------------- %
+\section{Manually Starting the Server} % ------------------------------------- %
 \label{sec:devguide:server:build}
 % ---------------------------------------------------------------------------- %
 
@@ -628,7 +631,7 @@ For the exact commands, consult the code of the \code{init\_server.sh} script.
 This callback is executed when the user  makes an HTTP request which is not an
 \code{UPGRADE} request. Currently  it simply  serves the  files from  the file
 system,  but could  easily  be  extended to  outline  data  or similar  tasks.
-Returning a  correct HTTP  Response has to  be done manually  and is  not well
+Returning a correct HTTP response has to be performed manually and is not well
 documented in the library itself.
 
 If the response should outline a \code{200 OK} status,
@@ -679,7 +682,7 @@ discarded but could be used at a later time to interface with the DAC.
 \label{sec:devguide:server:instruction}
 % ---------------------------------------------------------------------------- %
 
-The        instruction        set        contains        eight        commands
+The     server's      instruction     set     contains      eight     commands
 which     are      listed     in     Listing~\ref{lst:devguide:server:instr:1}
 through~\ref{lst:devguide:server:instr:8}. The   following  sections   explain
 their basic purpose and functionality.
@@ -764,9 +767,8 @@ JSON format, not strings.
 
 This command  forces the server  to send the  currently stored frame  over the
 binary channel as soon as the current  frame is finished. If the logger is not
-recording currently the frame will be sent immediately.
-The  \code{channel} argument  has to  be a  number in  the JSON  format, not
-strings.
+currently recording  the frame will  be sent immediately.   The \code{channel}
+argument has to be a number in the JSON format, not strings.
 
 \begin{tcolorbox}[
     skin=alpenlisting,
@@ -854,7 +856,7 @@ the information the logger currently holds.
 ]{javascript}{./code/serverinstructions/status.js}
 \end{tcolorbox}
 
-\subsection{Configuring the trigger} % --------------------------------------- %
+\subsection{Configuring the Trigger} % --------------------------------------- %
 \label{subsec:devguide:server:configuring_trigger}
 % ---------------------------------------------------------------------------- %
 
@@ -904,8 +906,8 @@ reason.  For development, a local install is advised, however.
 
 This  requires installing  yarn  and  nodejs version  8.0  or newer.   Package
 managers for  Unix systems usually  already have  packages for these  tools in
-their repositories. For  Windows, the  official installers  can be  used.  For
-Once yarn is set up, the project dependencies can be installed using
+their repositories. For  Windows, the official  installers can be  used.  Once
+yarn is set up, the project dependencies can be installed using
 \begin{commandshell}
     cd ~/repo/scope/
     yarn install
@@ -919,11 +921,9 @@ deployment and one for running a debugging webserver. Building is done with
 
 This leaves all the built files in \code{~/repo/scope/build}. They can then be
 copied to any directory  served by a webserver, to be provided  to a client by
-said server.
-
-Running the debugging webserver brings the benefit of automatic rebuilding and
-reloading in  the browser  after rebuilding. The webserver  can be  started in
-debugging mode with
+said server.  Running the debugging  webserver brings the benefit of automatic
+rebuilding and reloading in the browser after rebuilding. The webserver can be
+started in debugging mode with
 \begin{commandshell}
     cd ~/repo/scope/
     yarn watch

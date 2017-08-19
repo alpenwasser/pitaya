@@ -15,16 +15,16 @@
 Designing filters  in Matlab  and running  FPGA simulations  in Vivado  is all
 nice  and well,  but  in the  end,  what  counts is  how  the system  performs
 in  practice. This chapter  outlines  which sorts  of  measurements have  been
-performed, the rationale behind them, and summarizes the results themselves.
+performed, the rationale behind them, and summarizes the results.
 
-All  the  metrics  presented  in  this  chapter are  based  on  the  same  set
-of  measurements. For each  filter  chain, \num{2000}  measurements have  been
-made,  each with  a size  of  \num{8192} samples  in  the time  domain at  one
-frequency. Between each of the \num{2000} runs  for a single chain, the signal
-frequency  increases equidistantly  from \num{0}  to five  times the  filter's
-outgoing sampling  frequency. Covering \num{2000} frequencies allows  to cover
-the passband ripple and the transition band in sufficient resolution to detect
-possible issues.
+All  the metrics  presented in  this  chapter are  based  on the  same set  of
+measurements, unless  otherwise mentioned. For  each filter  chain, \num{2000}
+measurements have  been made, each  with a size  of \num{8192} samples  in the
+time domain at one frequency. Between each of the \num{2000} runs for a single
+chain, the signal frequency increases equidistantly from \num{0} to five times
+the  filter's  outgoing  sampling frequency. Covering  \num{2000}  frequencies
+allows to  cover the  passband ripple  and the  transition band  in sufficient
+resolution to detect possible issues.
 
 For the  filter chains  with $R=5$  decimators at their  ends (the  chains for
 decimation factors by \num{5}, \num{25},  \num{125} and \num{625}), this means
@@ -47,20 +47,21 @@ process, so no particular distinction is made here.
 Note that it is generally not necessary to measure at even higher frequencies.
 As can be seen in Section~\ref{sec:multi_stage_filter_designs} and some of the
 frequency responses  for the filter  cascades which  are being used  (e.g. the
-chain for  $R=25$, see page~\pageref{images/fdesign/chain25.tikz}), it  is the
-final filter in a cascade which determines the chain's overall behavior in the
-relevant frequency regions (assuming the individual filters in the chains have
-been sensibly designed  to match each other's  characteristics, also explained
-in  the section  \emph{\nameref{sec:multi_stage_filter_designs}}).  Increasing
-the input  frequency further  simply moves  into regions  which are  ever more
-strongly  attenuated, so  unless serious  issues are  encountered, the  higher
-spectral  ranges are  not of  much interest  in verifying  the filter  chain's
-functionality. The  measurements for  the  \num{1250}  and \num{2500}  chains,
-which do indeed cover more than the necessary frequency range, confirm this.
+chain for  $R=25$, see page~\pageref{sec:filter_frequency_responses:chain25}),
+it  is   the  final  filter  in   a  cascade  which  determines   the  chain's
+overall   behavior   in  the   relevant   frequency   regions  (assuming   the
+individual   filters  in   the   chains  have   been   sensibly  designed   to
+match   each  other's   characteristics,   also  explained   in  the   section
+\emph{\nameref{sec:multi_stage_filter_designs}}).    Increasing    the   input
+frequency  further simply  moves into  regions  which are  ever more  strongly
+attenuated,  so unless  serious issues  are encountered,  the higher  spectral
+ranges are not of interest  in verifying the filter chain's functionality. The
+measurements for the  \num{1250} and \num{2500} chains, which  do indeed cover
+more than the necessary frequency range, confirm this.
 
 All   measurements   are   adjusted   to   have   the   right   scaling   with
-Equation~\ref{eqn:verification:transform} where $x_{unsigned}$ is the measured
-sample.
+Equation~\ref{eqn:verification:transform}  where $x_\mathrm{unsigned}$  is the
+measured sample.
 \begin{align}
     \label{eqn:verification:transform}
     x_{i,\mathrm{signed}} &= \left(x_{i,\mathrm{unsigned}} - 2^{15}\right) \cdot 2^{-15} \\
@@ -79,8 +80,8 @@ sample.
 
 To verify  that the  filters perform as  expected, the RMS  of all  samples is
 calculated and  plotted against their  respective input frequency, as  seen in
-Figure~\ref{fig:verification:rmsAll}.  The RMS looks  okay and the passband is
-practically linear. Two things stand out as not too positive:
+Figure~\ref{fig:verification:rmsAll}.  The RMS looks  good and the passband is
+practically flat. Two things stand out as not too positive:
 \begin{itemize}\tightlist
     \item 
         The passband frequency  response has a slight slope  upwards. It is at
@@ -191,9 +192,8 @@ the power in  the signal is measured,  and its power compared  to the measured
 noise floor. This method  is more precise than the automated  method, and also
 happens to give better results.
 
-Indeed, when comparing two 
-our new system against the measurements of the STEMlab's
-stock configuration by our predecessors\footnote{%
+Indeed,  when  comparing  our  new  system against  the  measurements  of  the
+STEMlab's stock configuration by our predecessors\footnote{%
     Those  measurements  are also  referenced  against  a \SI{50}{\ohm}  noise
     floor.%
 }, our system achieves an SNR of \SI{84}{\dB} for an input frequency of \SI{3}{\kHz}
@@ -201,7 +201,7 @@ at a sampling rate of \SI{50}{\kHz}! The stock configuration needs to downsample
 by a factor of \num{65536} (corresponding to a sampling frequency of \SI{1.9}{\kHz}
 in order to achieve an SNR of \SI{83.5}{\dB}\footnote{%
     The higher the downsampling ratio, the  better the achievable SNR tends to
-be.%
+    be.%
 }.
 
 \begin{figure}
@@ -266,17 +266,7 @@ and~\ref{fig:stl125:moving_averager} for illustrations of the phenomenon.
 
 For this purpose,  the power density spectrum is plotted
 properly scaled and adjusted  as seen in Equation~\ref{eqn:verification:power}
-through~\ref{eqn:verification:power_density}. 
-Figures~\ref{fig:verification:fB5}  through \ref{fig:verification:fB5}  depict
-the results. Each plot  contains one frequency which falls  into the passband,
-one which falls into the filter's edge, and one which falls into the stopband.
-
-The passband and edge frequency components  are expected to be relatively high
-(depending  on where  exactly in  the edge  the measurement  point falls). The
-measurement point  in the stopband  should be \SI{60}{\dB} below  the passband
-measurement point, however. Most satisfactorily,  the measurement results line
-up very nicely with the specifications.
-
+through~\ref{eqn:verification:power_density}:
 \begin{align}
     x_{i,\mathrm{corrected}} &= x_{i,\mathrm{V}} \cdot \sqrt{\frac{1}{2f_s N}} \label{eqn:verification:power} \\
     X                        &= FFT\left(x_{i,\mathrm{corrected}}\right)       \\
@@ -285,11 +275,20 @@ up very nicely with the specifications.
     S_{\si{\dB}}             &= 10\log_{10}(X_{i,\mathrm{abs}}^2)              \label{eqn:verification:power_density}
 \end{align}
 
+Figures~\ref{fig:verification:fB5}  through \ref{fig:verification:fB5}  depict
+the results. Each plot  contains one frequency which falls  into the passband,
+one which falls into the filter's edge, and one which falls into the stopband.
+The passband and edge frequency components  are expected to be relatively high
+(depending  on where  exactly in  the edge  the measurement  point falls). The
+measurement point  in the stopband  should be \SI{60}{\dB} below  the passband
+measurement point. Most satisfactorily, this is  the case, and the measurement
+results line up very nicely with the specifications.
+
 \begin{figure}
     \centering
     \input{images/verification/foldingBack5.tikz}
     \caption[Attenuation in the Edge and Stopband in Contrast to the Passband for R=5]{%
-    Attenuation in the Edge and Stopband in Contrast to the Passband for R=5%
+        Attenuation in the edge and stopband in contrast to the passband for $R=5$%
     }
     \label{fig:verification:fB5}
 \end{figure}
@@ -298,7 +297,7 @@ up very nicely with the specifications.
     \centering
     \input{images/verification/foldingBack25.tikz}
     \caption[Attenuation in the Edge and Stopband in Contrast to the Passband for R=25]{%
-    Attenuation in the Edge and Stopband in Contrast to the Passband for R=25%
+        Attenuation in the edge and stopband in contrast to the passband for $R=25$%
     }
     \label{fig:verification:fB25}
 \end{figure}
@@ -307,7 +306,7 @@ up very nicely with the specifications.
     \centering
     \input{images/verification/foldingBack125.tikz}
     \caption[Attenuation in the Edge and Stopband in Contrast to the Passband for R=125]{%
-    Attenuation in the Edge and Stopband in Contrast to the Passband for R=125%
+        Attenuation in the edge and stopband in contrast to the passband for $R=125$%
     }
     \label{fig:verification:fB125}
 \end{figure}
@@ -316,7 +315,7 @@ up very nicely with the specifications.
     \centering
     \input{images/verification/foldingBack625.tikz}
     \caption[Attenuation in the Edge and Stopband in Contrast to the Passband for R=625]{%
-    Attenuation in the Edge and Stopband in Contrast to the Passband for R=625%
+        Attenuation in the edge and stopband in contrast to the passband for $R=625$%
     }
     \label{fig:verification:fB625}
 \end{figure}
@@ -325,7 +324,7 @@ up very nicely with the specifications.
     \centering
     \input{images/verification/foldingBack1250.tikz}
     \caption[Attenuation in the Edge and Stopband in Contrast to the Passband for R=1250]{%
-    Attenuation in the Edge and Stopband in Contrast to the Passband for R=1250%
+        Attenuation in the edge and stopband in contrast to the passband for $R=1250$%
     }
     \label{fig:verification:fB5}
 \end{figure}
@@ -334,7 +333,7 @@ up very nicely with the specifications.
     \centering
     \input{images/verification/foldingBack2500.tikz}
     \caption[Attenuation in the Edge and Stopband in Contrast to the Passband for R=2500]{%
-    Attenuation in the Edge and Stopband in Contrast to the Passband for R=2500%
+        Attenuation in the edge and stopband in contrast to the passband for $R=2500$%
     }
     \label{fig:verification:fB5}
 \end{figure}
@@ -352,10 +351,9 @@ up very nicely with the specifications.
 In  conclusion, the  filter  chains  perform their  task  mostly according  to
 specifications. The main point  of concern is the stark passband  droop in the
 chain for $R=5$ chain. More investigating is  needed to determine the cause of
-this  behavior. But  overall,  particularly  considering  this  is  the  first
-implementation of our design, we consider it to be a success.
+this behavior. But overall, we consider it to be a success.
 
-Table\ref{tab:verification:results}  lists  the   resulting  mean  values  for
+Table~\ref{tab:verification:results}  lists  the  resulting  mean  values  for
 comparison  against each  other. \emph{SNR  won} is  the theoretical  SNR gain
 caused by the bits which are gained  along the processing chain. It is not the
 actually achieved  improvement in SNR  as other factors  play a role  as well.
