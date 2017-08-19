@@ -70,7 +70,7 @@ sample.
 % >>>
 % ==============================================================================
 %
-%                R M S   F R E Q U E N C Y   R E S P O N S E S
+%                R M S   F R E Q U E N C Y   R E S P O N S E
 %
 % ==============================================================================
 \section{RMS Frequency Response} % <<< --------------------------------------- %
@@ -162,65 +162,91 @@ Figure~\ref{fig:verification:snrAll}.
     }
     \label{fig:verification:meanAll}
 \end{figure}
-
-\section{SNR Frequency Response}
+%>>>
+% ==============================================================================
+%
+%                S N R   F R E Q U E N C Y   R E S P O N S E
+%
+% ==============================================================================
+\section{SNR Frequency Response}% <<< ---------------------------------------- %
 \label{sec:verification:snr}
+% ---------------------------------------------------------------------------- %
 
+Two series of measurements  are used for SNR: An automated one  by us which is
+evaluated  with Matlab's  SNR  algorithms. Those determine  SNR  for a  signal
+signal by separating  signal and noise components,  calculating the respective
+power and the ratio of signal power to noise power components\footnote{%
+    This is similar to what our scope does.%
+}.
+This series of measurements  allows us to get a good idea of  the shape of the
+system's overall frequency response for the SNR.
+
+However, Matlab's SNR algorithms are  not perfect; the automated separation of
+signal from  noise components  is prone  to errors. Consequencly,  the results
+achieved by  this method are  below the system's true  capabilities. To assess
+actual  system performance,  SNR  measurements referenced  against a  measured
+noise floor have also been performed  by Mr. Gut. For this, the noise floor is
+measured by terminating  the device with a \SI{50}{\ohm}  resistor, instead of
+extracting it from  a signal. Afterwards, a signal is put  through the system,
+the power in  the signal is measured,  and its power compared  to the measured
+noise floor. This method  is more precise than the automated  method, and also
+happens to give better results.
+
+Indeed, when comparing two 
+our new system against the measurements of the STEMlab's
+stock configuration by our predecessors\footnote{%
+    Those  measurements  are also  referenced  against  a \SI{50}{\ohm}  noise
+    floor.%
+}, our system achieves an SNR of \SI{84}{\dB} for an input frequency of \SI{3}{\kHz}
+at a sampling rate of \SI{50}{\kHz}! The stock configuration needs to downsample
+by a factor of \num{65536} (corresponding to a sampling frequency of \SI{1.9}{\kHz}
+in order to achieve an SNR of \SI{83.5}{\dB}\footnote{%
+    The higher the downsampling ratio, the  better the achievable SNR tends to
+be.%
+}.
 
 \begin{figure}
     \centering
     \input{images/verification/snrAll.tikz}
     \caption[SNR at Filter Outputs]{%
         The  SNR  at  the  output  of  each  filter  stage  over  a  range  of
-        frequencies.  Note the downward spikes  in the passband. These are not
-        expected, nor desired.%
+        frequencies.   Note the  downward  spikes in  the passband. These  are
+        caused by  Matlab's algorithms during  post-processing and are  not an
+        actual system issue.%
     }
     \label{fig:verification:snrAll}
 \end{figure}
 
-Generally the  SNR looks very  promising. Compared to the measurements  of the
-STEMlab's stock  configuration carried  out by  our predecessors,  the filters
-have  improved: Taking  the  example  for $R=1024$  and  $f_\mathrm{signal}  =
-\SI{40}{\kHz}$, Table~\ref{tab:stl125:measurements_bucher_kuery}  gives an SNR
-of \SI{76.4}{\dB}, while Matlab computes an SNR of \SI{78.1}{\dB} for $R=1250$
-and the  same frequency in  our system. This  result and comparison  does come
-with some caveats, however:
-\begin{itemize}\tightlist
-    \item
-        The   measurement  methodology   between  the   two  results   is  not
-        the   same. The   first   result   was    acquired   by   way   of   a
-        \SI{50}{\ohm}-terminated separate reference  measurement for the noise
-        floor instead of extracting it  from the measured signal, which Matlab
-        does.
-
-        Unfortunately, the function generator has  some strong harmonics and a
-        non-negligible noise floor itself, and sometimes Matlab fails to catch
-        all  the signal  components which  should be  discarded for  the noise
-        floor  RMS  calculation. This can  lead  to  errors and  artefacts  in
-        Matlab's SNR calculations.
-    \item
-        Experience  has shown  that the  latter method  yields an  SNR several
-        decibels worse than the former method.
-    \item
-        In  conclusion, we  are confident  that  we have  actually achieved  a
-        higher improvement over the stock configuration than these two numbers
-        would indicate.
-\end{itemize}
-Of course, we could also perform \SI{50}{\ohm} reference measurements, extract
-the peaks  from the measured signals,  and then calculate RMS  via integrating
-the power density of both. However, automating this process for a large set of
-data  points  has not  been  feasible  within  the  time constraints  of  this
-project. For  assessing  the overall  performance  of  our filter  chains,  we
-consider collecting a large data set across the frequency axis more meaningful
-than  than  manually  performing  measurements  for  a  small  set  of  single
-frequencies, which is why we have chosen a different methodology.
-
-Another  point which  needs to  be addressed  are the  downward spikes  in the
-passband.  At the  moment, their cause is not yet  clear. We suspect that they
-are caused by the harmonic distortion of the function generator which has been
-used. However,  this  might not  be  the  sole cause  (if  at  all), and  more
-investigation is  required.  Comparing with  a dedicated spectrum  analyzer is
-certainly also advisable.
+\begin{table}
+    \centering
+    \caption[SNR Referenced Against \SI{50}{\ohm}]{%
+        SNR  measurements  referenced  against   a  true  \SI{50}{\ohm}  noise
+        floor,  measured  by  Mr. Gut. The results  constitute  a  significant
+        improvement   over   the   stock  system's   SNR   capabilities   (see
+        Table~\ref{tab:stl125:measurements_bucher_kuery}). Only the  chain for
+        $f_\mathrm{s}  = \SI{25}{\MHz}$  lies  outside  the expected  pattern;
+        this  has already  been seen  in its  magnitude frequency  response in
+        Section~\ref{sec:verification:rms}.%
+    }
+    \label{tab:verification:results}
+    \begin{tabular}{SSSSSS}
+        \toprule
+        {\parbox[t]{10mm}{\raggedleft $f_\mathrm{s}$                       \\(\si{\kHz})}          } &
+        {\parbox[t]{10mm}{\raggedleft $f_\mathrm{signal}$                  \\(\si{\kHz})}          } &
+        {\parbox[t]{10mm}{\raggedleft $V_\mathrm{sine,RMS}$                \\(\si{\milli\volt})}   } &
+        {\parbox[t]{15mm}{\raggedleft $V_\mathrm{noise,RMS}$               \\(\si{\milli\volt})}   } &
+        {\parbox[t]{15mm}{\raggedleft $\mathrm{SNR}_\mathrm{\SI{50}{\ohm}}$\\(\si{\dB})}           } &
+        {\parbox[t]{10mm}{\raggedleft $\mathrm{SNR}_\mathrm{autom.}$       \\(\si{\dB})}           } \\
+        \midrule
+           50 &    1 & 707 & 40e-6  & 84   & 71 \\
+          100 &   25 & 707 & 55e-6  & 82   & 71 \\
+          200 &   50 & 708 & 59e-6  & 81.5 & 69 \\
+         1000 &  250 & 708 & 75e-6  & 79.5 & 69 \\
+         5000 & 1250 & 707 & 130e-3 & 79.5 & 69 \\
+        25000 & 6250 & 707 & 260e-6 & 62   & 69 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 % >>>
 % ==============================================================================
@@ -325,22 +351,18 @@ up very nicely with the specifications.
 % ---------------------------------------------------------------------------- %
 
 In  conclusion, the  filter  chains  perform their  task  mostly according  to
-specifications, and overall we consider the  design to be a success. There are
-a few points of concern though, such  as the passband droop in $R=5$ chain RMS
-frequency response, and the anomalies in the SNR values in the passbands.
-
-Certainly, more  investigating is  needed to determine  the cause(s)  of these
-anomalies, and overall  performance could be tuned further. But  since this is
-the  first implementation  of our  design, the  results are  considered mostly
-satisfactory.
+specifications. The main point  of concern is the stark passband  droop in the
+chain for $R=5$ chain. More investigating is  needed to determine the cause of
+this  behavior. But  overall,  particularly  considering  this  is  the  first
+implementation of our design, we consider it to be a success.
 
 Table\ref{tab:verification:results}  lists  the   resulting  mean  values  for
-comparison. \emph{SNR  won} is  the theoretical  SNR gain  caused by  the bits
-which are gained  along the processing chain. It is not  the actually achieved
-improvement in SNR as other factors  play a role as well. \emph{Correction} is
-the  correction factor  which needs  to  be applied  in order  to achieve  the
-proper gain  (\SI{0.707}{\volt} RMS  for a \SI{2}{\V_\mathrm{PP}}  signal, see
-Section~\ref{sec:verification:rms}).
+comparison  against each  other. \emph{SNR  won} is  the theoretical  SNR gain
+caused by the bits which are gained  along the processing chain. It is not the
+actually achieved  improvement in SNR  as other factors  play a role  as well.
+\emph{Correction} is the correction factor which  needs to be applied in order
+to achieve the proper gain (\SI{0.707}{\volt} RMS for a \SI{2}{\V_\mathrm{PP}}
+signal, see Section~\ref{sec:verification:rms}).
 
 \begin{table}
     \centering

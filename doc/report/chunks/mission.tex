@@ -1,23 +1,48 @@
-\chapter{Mission} % <<< ------------------------------------------------------ %
+% ==============================================================================
+%
+%                                M I S S I O N
+%
+% ==============================================================================
+\chapter{Mission} % ---------------------------------------------------------- %
 \label{ch:mission}
 % ---------------------------------------------------------------------------- %
+% ==============================================================================
+%
+%                                OVERVIEW
+%
+% ==============================================================================
 
-This chapter presents a brief summary of the hardware platform and some of its
-key characteristics  which are of  interest to us. From that  information, the
-objectives of  this project  are derived. Possible  approaches to  reach those
-objectives are  presented and evaluated, and  a decision is reached  on how to
-achieve this project's aims. At the end  of this chapter, the reader will know
-what we intend to do and why.
+Moving from the theoretical domain  to the practical, the overarching question
+becomes
+\begin{center}
+    \emph{What do  we intend to do, why, and how?}
+\end{center}
+To answer that question is the  purpose of this chapter. A general overview of
+the STEMlab hardware is presented first  to give the reader a broad impression
+of what  the hardware  component of  the project actually  is.  Based  on that
+information, the  objectives of this project  are derived. Possible approaches
+to  reach those  objectives are  presented and  evaluated, and  a decision  is
+reached on how to achieve this project's aims.
 
-
+% ==============================================================================
+%
+%                         S T E M L A B   1 2 5 - 1 4
+%
+% ==============================================================================
 \section{The Red Pitaya STEMlab 125-14} % <<< -------------------------------- %
 \label{sec:stl125}
 % ---------------------------------------------------------------------------- %
 
-First, some key  specifications of the hardware are given,  to then proceed to
-the key problems which occur when downsampling with its stock configuration.
+In order to have a rough idea of what sort of device this project is based on,
+some key information of the STEMlab is given first. With that in mind, some of
+the  shortcomings  of  its  stock configuration  are  discussed,  which  leads
+directly to the main task of this project.
 
-
+% ==============================================================================
+%
+%       S T E M L A B   1 2 5 - 1 4:   H A R D W A R E   O V E R V I E W
+%
+% ==============================================================================
 \subsection{Hardware Overview} %<<< ------------------------------------------ %
 \label{subsec:stl125:hardware_overview}
 % ---------------------------------------------------------------------------- %
@@ -66,9 +91,13 @@ Figure~\ref{fig:stl125:block_diagram}.
         {Block diagram of the Red Pitaya STEMlab. Source:~\cite{pita:ossmann}}
     \label{fig:stl125:block_diagram}
 \end{figure}
-%>>>
 
-
+%>>> STEMLAB HARDWARE OVERVIEW
+% ==============================================================================
+%
+%            S T E M L A B   1 2 5 - 1 4:   D O W N S A M P L I N G
+%
+% ==============================================================================
 \subsection{Downsampling on the STEMlab With Stock Configuration} %<<< ------- %
 \label{subsec:stl125:ds_default}
 % ---------------------------------------------------------------------------- %
@@ -97,8 +126,8 @@ using only  decimation rates of powers  of two, as  is the case for  the stock
 software of the  STEMlab. The weight for each coefficient of  $z^{-k}$ will be
 $\frac{1}{N+1}  =  \frac{1}{R} =  2^{-m},  m  \in \mathbb{N}_0$,  meaning  the
 computations can  be performed without  multipliers by performing  a bit-shift
-operations to  the right. The  primary disadvantage  which results  from these
-rate reduction  factors is that the  resulting reduced sampling rates  are not
+operation to the right. The primary disadvantage which results from these rate
+reduction  factors  is that  the  resulting  reduced  sampling rates  are  not
 very  ``nice'' numbers,  so  to speak,  since the  incoming  sampling rate  is
 \SI{125}{\MHz}, and therefore not a power of \num{2}.
 
@@ -111,7 +140,7 @@ case of  $R=8$ and  a signal  of \SI{5}{\MHz}. The  incoming sampling  rate is
 \SI{15.625}{\MHz}$. Therefore, anything  above half that frequency  is aliased
 back into the region below $\SI{15.625}{\MHz} \div 2 = \SI{7.8125}{\MHz}$.  In
 the case of a signal at  \SI{5}{\MHz}, this results in an aliasing attenuation
-of a paltry TODO: (objectivity) \SI{8.06}{\dB}. Combined with the passband droop of \SI{1.48}{\dB}
+of a modest \SI{8.06}{\dB}. Combined with the passband droop of \SI{1.48}{\dB}
 (a signal  attenuation of  almost \SI{16}{\percent})  at that  frequency, this
 makes for a  margin of a mere \SI{6.58}{\dB} between  the signal's attenuation
 and the aliasing attenuation!
@@ -140,7 +169,8 @@ components above  $f_\mathrm{s,low}/2$. In that case, the  considerations from
 Figure~\ref{fig:stl125:moving_averager}  become crucial  to understanding  the
 aliasing issue.  This behavior was also confirmed in~\cite{bucher:kuery}.  Our
 primary aim  is therefore more  to reduce  these aliasing effects  rather than
-purely trying to improve SNR for specific single frequencies.
+purely  trying  to  improve  SNR for  specific  single  frequencies,  although
+improving SNR is certainly still a goal.
 
 \begin{table}
     \centering
@@ -165,21 +195,23 @@ purely trying to improve SNR for specific single frequencies.
 \end{table}
 
 In conclusion, we can formulate three main objectives:
-\begin{itemize}
+\begin{itemize}\tightlist
     \item
         Reduce  aliasing   of  out-of-range  frequency  components   into  the
         passband.
     \item
-        Improve SNR TODO: (all thre points sloppy formulated?).
+        Improve SNR
     \item
         Have a nicer set of reduced sampling rates.
 \end{itemize}
 
-%>>>
-
-%>>>
-
-
+%>>> DOWNSAMPLING ON STEMLAB 125-14
+%>>> STEMLAB 125-14
+% ==============================================================================
+%
+%                     P O S S I B L E   S O L U T I O N S
+%
+% ==============================================================================
 \section{Possible Solutions} % <<< ------------------------------------------- %
 \label{sec:mission:possible_solutions}
 % ---------------------------------------------------------------------------- %
@@ -349,16 +381,19 @@ to lead to a successful outcome.
     \end{tabular}
 \end{table}
 
-%>>>
-
-
+%>>> POSSIBLE SOLUTIONS
+% ==============================================================================
+%
+%                                C O N C E P T
+%
+% ==============================================================================
 \section{Concept} % <<< ------------------------------------------------------ %
 \label{sec:mission:concept}
 % ---------------------------------------------------------------------------- %
 
 Having concluded that  we shall develop our own solution  from scratch, we can
-now  develop  a  concept  for  how  that solution  will  look.   On  the  most
-fundamental level, it will require the following components:
+now devise a concept for how that solution will look.  On the most fundamental
+level, it will require the following components:
 \begin{itemize}
     \item
         a custom FPGA firmare for data acquisition and filtering
@@ -375,7 +410,11 @@ the components  in detail, while Chapter~\ref{ch:filter_design}  documents the
 filter design process, which is rather separate from the firmware and software
 and therefore a dedicated chapter.
 
-
+% ==============================================================================
+%
+%               C O N C E P T :   F P G A   C O M P O N E N T S
+%
+% ==============================================================================
 \subsection{FPGA Components} % <<< ------------------------------------------- %
 \label{subsec:concept:fpga_components}
 % ---------------------------------------------------------------------------- %
@@ -442,8 +481,13 @@ In summary, the concept for the FPGA data processing system looks as follows:
         A custom control logic configures the data processing chain on-the-fly
         through user input.
 \end{itemize}
-%>>>
 
+%>>> CONCEPT: FPGA COMPONENTS
+% ==============================================================================
+%
+%             C O N C E P T :   I N T E R F A C I N G   L A Y E R
+%
+% ==============================================================================
 \subsection{Interfacing Layer} % <<< ----------------------------------------- %
 \label{subsec:concept:interfacing_layer}
 % ---------------------------------------------------------------------------- %
@@ -461,18 +505,20 @@ module,  processes  and packages  it  as  necessary,  and  sends it  out  over
 Ethernet.  The application is documented in detail in Chapter~\ref{ch:server},
 starting on page~\pageref{ch:server}.
 
-%>>>
-
+%>>> CONCEPT: INTERFACING LAYER
+% ==============================================================================
+%
+%                         C O N C E P T :   S C O P E
+%
+% ==============================================================================
 \subsection{Scope} % <<< ----------------------------------------------------- %
 \label{subsec:concept:scope}
 % ---------------------------------------------------------------------------- %
 
-The scope is the main interface between the end user and the STEMlab in our
-system. Through it, data can be visualized and analyzed in both the time and
-frequency domain.
-TODO: raphi read!
-Furthermore it is capable of calculating certain metrics such as the calculation of the power in a given frequency range or the auto-detection of the SNR.
-TODO: end raphi read!
+The scope is  the main interface between  the end user and the  STEMlab in our
+system. Through it, data  can be visualized and analyzed in  both the time and
+frequency domain.   Furthermore it is  capable of calculating  certain metrics
+such as the power in a given frequency range or the auto-detection of the SNR.
 
 In  order  to  ensure  maximum   portability,  the  scope  is  implemented  as
 a   web   application   rather   than   a   cusom   binary. This   allows   it
@@ -480,15 +526,19 @@ to   function   on   any   operating   system   with   a   reasonably   modern
 browser. A  through  documentation  of  its  capabilities  and  implementation
 is   available    in   Chapter~\ref{ch:graphical_front_end},    beginning   on
 page~\ref{ch:graphical_front_end}.
-%>>>
 
-\subsection{Summary} % <<< --------------------------------------------------- %
-\label{subsec:concept:summary}
+%>>> CONCEPT: SCOPE
+% ==============================================================================
+%
+%                       C O N C E P T :   S U M M A R Y
+%
+% ==============================================================================
+%\subsection{Summary} % <<< --------------------------------------------------- %
+%\label{subsec:concept:summary}
 % ---------------------------------------------------------------------------- %
 
-in summary, our concept looks as follows:
-%>>>
+%>>> CONCEPT: SUMMARY
 
-%>>>
-%>>>
+%>>> CONCEPT
+
 %^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>
