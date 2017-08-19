@@ -12,7 +12,7 @@
 \label{ch:verification}
 % ---------------------------------------------------------------------------- %
 
-Designing  filtes in  Matlab and  running FPGA  simulations in  Vivado is  all
+Designing filters  in Matlab  and running  FPGA simulations  in Vivado  is all
 nice  and well,  but  in the  end,  what  counts is  how  the system  performs
 in  practice. This chapter  outlines  which sorts  of  measurements have  been
 performed, the rationale behind them, and summarizes the results themselves.
@@ -27,8 +27,8 @@ the passband ripple and the transition band in sufficient resolution to detect
 possible issues.
 
 For the  filter chains  with $R=5$  decimators at their  ends (the  chains for
-decimations by  \num{5}, \num{25}, \num{125}  and \num{625}), this  means that
-the output  filter's passband  is first  traversed, and  then its  stopband up
+decimation factors by \num{5}, \num{25},  \num{125} and \num{625}), this means
+that the output filter's passband is first traversed, and then its stopband up
 until half its incoming sampling rate. This enables us to measure the passband
 and  stopband magnitude  response. Furthermore, by  performing an  FFT of  the
 filter chain's output at specific frequencies,  we can verify how strongly the
@@ -102,10 +102,9 @@ On the other hand, these results are as expected:
 \begin{itemize}
     \item 
         The  Passband has  a  slight ripple  of  $\pm\SI{1}{\percent}$ in  all
-        filter  chains.   chains. This  is  well  within   the  filter  design
-        specification in theory.  Matlab predicts  a a ripple in the cascade's
-        passband between \SI{0.67}{\percent} and \SI{2.8}{\percent}, depending
-        on the chain.
+        filter chains.  This is well within the filter design specification in
+        theory.  Matlab predicts a  ripple in the cascade's passband between
+        \SI{0.67}{\percent} and \SI{2.8}{\percent}, depending on the chain.
     \item 
         The  passband   shows  a   gain  loss. If  the   optimum  case   of  a
         \SI{2}{\bit}  win   were  achieved,   all  of  the   amplitudes  would
@@ -182,7 +181,7 @@ This series of measurements  allows us to get a good idea of  the shape of the
 system's overall frequency response for the SNR.
 
 However, Matlab's SNR algorithms are  not perfect; the automated separation of
-signal from  noise components  is prone  to errors. Consequencly,  the results
+signal from  noise components  is prone  to errors. Consequently,  the results
 achieved by  this method are  below the system's true  capabilities. To assess
 actual  system performance,  SNR  measurements referenced  against a  measured
 noise floor have also been performed  by Mr. Gut. For this, the noise floor is
@@ -259,8 +258,8 @@ be.%
 % ---------------------------------------------------------------------------- %
 
 Measuring stopband attenuation  is relevant in order to verify  whether or not
-an the aliasing  effect of the stopband into the  passband during downsampling
-is attenuated to the specified degree of \SI{60}{\dB}. See
+the aliasing effect  of the stopband into the passband  during downsampling is
+attenuated to the specified degree of \SI{60}{\dB}. See
 Figures~\ref{fig:aliasing:iirCopies},
 \ref{fig:cic:freq_responses:passband:aliasing}
 and~\ref{fig:stl125:moving_averager} for illustrations of the phenomenon.
