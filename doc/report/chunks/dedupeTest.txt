@@ -1,0 +1,8 @@
+This is a sentence with with a word which appears twice.
+
+And then we make another paragraph with a a doubly-entered word.
+
+The third test case
+case goes across two lines.
+
+The fourth test case has     has multiple spaces between the words.
