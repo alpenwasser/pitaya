@@ -3,9 +3,14 @@
 %                                 S E R V E R
 %
 % ==============================================================================
-\chapter{Server} % <<< ------------------------------------------------------- %
+\chapter{Server} % ----------------------------------------------------------- %
 \label{ch:server}
 % ---------------------------------------------------------------------------- %
+% ==============================================================================
+%
+%                               O V E R V I E W
+%
+% ==============================================================================
 
 Once the  FPGA has  recorded data, that  data has to  be transmitted  over the
 network. Since implementing  networking in  hardware is  not feasible  in most
@@ -19,6 +24,7 @@ the logger running on the FPGA.  An  application is then needed that reads the
 necessary data  from the  RAM and sends  it to the  network. This part  of the
 overall product is designated as  the \emph{server}. This section explains the
 design choices and internal structure of the server application.
+
 \section{Requirements} % <<< ------------------------------------------------- %
 \label{sec:server:requirements}
 % ---------------------------------------------------------------------------- %
@@ -68,8 +74,8 @@ reaches the limits of its capabilities.
 
 uWS  is  based  on  epoll,  libuv  or  boost::asio  depending  on  the  user's
 choice. All  of  those are  asynchronous  (more  on  this  topic can  be  read
-in~\cite{uws:async}) libraries  which makes  networking very  conventient. uWS
-comes with  callbacks that  can be  registered for  each WebSocket  event (see
+in~\cite{uws:async}) libraries  which makes  networking very  convenient. uWS
+comes with  callbacks that  can be  registered for  each WebSockets  event (see
 Section~\ref{subsec:gui:websockets}). Furthermore the  user can hook  into the
 event loop and register other events such as a reocurring timeout (timer).
 
@@ -78,7 +84,7 @@ our format of  choice because it has by  far the largest user base  of all the
 available formats,  the specification  is simple and  JavaScript can  parse it
 natively into a JavaScript object. This also another point where the choice of
 C++ offers significant  benefits over C, since  it has a number  of high level
-(i.e.  easy-to-use)  libraries  that  can  serialize  and,  more  importantly,
+(i.e.  easy to use)  libraries  that  can  serialize  and,  more  importantly,
 deserialize JSON objects.
 
 %>>>
@@ -112,5 +118,4 @@ Figure~\ref{fig:server:eventstructure}.
 \end{figure}
 %>>>
 
-%>>>
 %^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>
