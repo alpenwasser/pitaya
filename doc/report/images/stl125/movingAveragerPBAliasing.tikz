@@ -31,7 +31,7 @@
             y unit=\si{dB},
             xlabel=Frequency,
             ylabel=Magnitude,
-            xticklabel style={rotate=45},
+            xticklabel style={rotate=90},
             xmajorgrids=true,
         },
     }
