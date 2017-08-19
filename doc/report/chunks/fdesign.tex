@@ -80,8 +80,8 @@ corresponding sampling frequencies.
 \begin{table}
     \centering
     \caption[Downsampling Ratios, Decompositions, and Target Frequencies]{
-        The  chosen downsampling  ratios, their  prime factor  decompositions,
-        the  downsampling ratios  distribet across  stages, and  the resultant
+        The chosen downsampling ratios, their prime factor decompositions, the
+        downsampling  ratios  distributed  across stages,  and  the  resultant
         sampling rates%
     }
     \label{tab:ratio_decompositions}
@@ -189,7 +189,7 @@ imposed upon  them and the specifications  used for the  filter design process
 based on those  constraints.  For this purpose, it is  no longer sufficient to
 merely consider  the filters  in the mathematical  sense and  the requirements
 derived from that; resource usage on  the hardware must be taken into account.
-The hardware places two main contrainst on the design:
+The hardware places two main constraints on the design:
 \begin{itemize}\tightlist
     \item
         Number of available LUTs: \num{17600}
@@ -308,7 +308,7 @@ other CIC  filter apply. The filter  and its  compensator are specified  for a
 rate  change  of  \num{125}  and  \num{5} instead  of  \num{25}  and  \num{1},
 respectively, and  the cutoff frequency  is set to  match the filter  chain of
 $R=1250$. This makes it twice as wide as it needs to be for $R=2500$, which is
-corrected by a second halfband filter.
+corrected by a second half-band filter.
 
 \paragraph{Requirements  for  compensators:} The  compensators  are  specified
 according to the considerations from Section~\ref{subsubsec:cic:compensators},
