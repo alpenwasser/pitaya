@@ -1,6 +1,18 @@
-\chapter{Theoretical Background} % <<< --------------------------------------- %
+% ==============================================================================
+%
+%                 T H E O R E T I C A L   B A C K G R O U N D
+%
+% ==============================================================================
+\chapter{Theoretical Background} % ------------------------------------------- %
 \label{ch:app:theoretical_background}
 % ---------------------------------------------------------------------------- %
+
+This  chapter  contains  some  supplementary information  on  the  theoretical
+background behind  this project. For those  who wish to better  understand the
+internal  workings of  a CIC  filter, the  next section  details exactly  what
+happens inside a CIC filter for a very simple example. Simulink files are also
+provided for further  study. The second section contains  tabulated values for
+CIC filter design taken from~\cite{1163535}
 
 \section{Internal Behavior of a CIC Filter} % <<< ---------------------------- %
 \label{sec:app:cic_simu}
@@ -42,15 +54,15 @@ filter's mathematical mechanics.
     \label{fig:cic_simu:freqz}
 \end{figure}
 
-The  state  of  the  filter  can  be  calculated  by  the  formulae  given  in
+The  state  of  the  filter  can  be  calculated  by  the  formulas  given  in
 Equations~\ref{eq:cic_simu:INT} and \ref{eq:cic_simu:OUT}:
 \begin{align}
-    N             & = 1 \quad M = 1 \quad R=2\nonumber\\     
-    OUT_{INT}[n]  & = IN_{COMB}[n] = IN[n]        + OUT[n-1] 
+    N             & = 1 \quad M = 1 \quad R=2\nonumber\\
+    OUT_{INT}[n]  & = IN_{COMB}[n] = IN[n]        + OUT[n-1]
     \label{eq:cic_simu:INT} \\
-    OUT_{COMB}[n] & = IN_{COMB}[n] - IN_{COMB}[n-R\cdot M] 
+    OUT_{COMB}[n] & = IN_{COMB}[n] - IN_{COMB}[n-R\cdot M]
     \nonumber\\
-                  & = OUT_{INT}[n] - OUT_{INT}[n-2] 
+                  & = OUT_{INT}[n] - OUT_{INT}[n-2]
     \label{eq:cic_simu:OUT}
 \end{align}
 
@@ -63,7 +75,7 @@ representable value  (\code{011}~$ =  3$) and begins  counting from  its lower
 numerical limit  (\code{100}~$=-4$) again. This cycle keeps  repeating as long
 as the filter is running.
 
-The  ingenuinty of  the  CIC filter  lies  in exploiting  the  fact that  this
+The  ingenuity of  the  CIC filter  lies  in exploiting  the  fact that  this
 wraparound is irrelevant to the  comb stage. Whether the comb stage calculates
 the difference between  an integrator's value whose precision  is unbounded or
 whether it calculates the difference between two values which have potentially
@@ -109,7 +121,7 @@ indeed, they would have:
     \input{images/cicSimu/twosComplement.tikz}
     \caption[Two's Complement Circle]{%
         Subtracting  $3$  from $-3$  in  two's  complement with  three  digits
-        precicion,  represented on  a  circle. Addition of  a positive  number
+        precision,  represented on  a  circle. Addition of  a positive  number
         corresponds  to moving  clockwise,  subtraction of  a positive  number
         corresponds to moving counterclockwise.%
     }
@@ -184,12 +196,12 @@ Figure~\ref{fig:cic_simu:simulink_model}. All   blocks   are  set   to   two's
 complement with three digits of precision (no fractional bits).
 
 The          simulation         results          are         given          in
-Figure~\ref{fig:cic_simu:simulink_results}. As can be  seen, the filter states
-are  identical  to   our  manually  calculated  example. The   effect  of  the
-integrator's output  wrapping around the  numerical boundaries is  also nicely
-visible.
-
-TODO: Give file path
+Figure~\ref{fig:cic_simu:simulink_results}. As   can  be   seen,  the   filter
+states  are  identical  to  our manually  calculated  example. The  effect  of
+the  integrator's   output  wrapping   around  the  numerical   boundaries  is
+also  nicely  visible. In  case  the  reader  wishes  to  tinker  around  with
+this  themselves,  the  Simulink  files  can  be  found  in  the  subdirectory
+\code{doc/report/images/cicSimu}, relative to the repository root.
 
 \begin{figure}
     \centering
@@ -220,7 +232,7 @@ Because \num{4}  is not  within the  range of  a three-digit  two's complement
 number  system, the  filter wraps  around  and produces  an incorrect  output,
 \num{-4}.   The  first  few  calculation  steps  for  this  are  presented  in
 Table~\ref{tab:cic_simu:cic_filter_states:out_of_bounds};  running  the  above
-simulation with the modified input also comfirms this result.
+simulation with the modified input also confirms this result.
 
 \begin{table}
     \centering
@@ -348,7 +360,6 @@ simulation with the modified input also comfirms this result.
         \bottomrule
     \end{tabular}
 \end{table}
-%>>>
 %>>>
 
 %^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>
