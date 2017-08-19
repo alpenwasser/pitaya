@@ -3,7 +3,7 @@
 %                           O S C I L L O S C O P E
 %
 % ==============================================================================
-\chapter{Oscilloscope} % <<< ------------------------------------------------- %
+\chapter{Oscilloscope} % ----------------------------------------------------- %
 \label{ch:app:gui}
 % ---------------------------------------------------------------------------- %
 
@@ -32,7 +32,7 @@ through most  firewalls. Furthermore it greatly simplifies  the implementation
 of handshakes for the programmer.
 
 The client sends an upgrade request to the server which then opens a WebSocket
-connection.   This allows  for  a  very conventient  way  to  use TCP  Sockets
+connection.   This allows  for  a  very convenient  way  to  use TCP  Sockets
 without any entirely new  standards.  Section~1.5, \emph{Design Philosophy} in
 RFC~6455~\cite{rfc:6455} explains it well:
 \begin{quote}
@@ -53,7 +53,7 @@ JavaScript provides an interface that  offers convenient sending and receiving
 of  large amounts  of data.   As nearly  anything in  JavaScript this  is done
 using callbacks. There  are callbacks  which handle connections,  messages and
 errors. The code snippet in  Listing~\ref{lst:gui:jsws} gives some insight how
-WebSockets in JavaScript are used. For  more detailled information, the reader
+WebSockets in JavaScript are used. For  more detailed information, the reader
 is referred to the Mozilla documentation~\cite{moz:ws}.
 
 \begin{tcolorbox}[
@@ -101,12 +101,12 @@ is referred to the Mozilla documentation~\cite{moz:ws}.
 %                             M I T H R I L . J S
 %
 % ==============================================================================
-\section{\code{mithril.js}} % <<< -------------------------------------------- %
+\section{mithril.js} % <<< --------------------------------------------------- %
 \label{sec:app:gui:mithril}
 % ---------------------------------------------------------------------------- %
 
 The   official  mithril   webpage  describes   mithril.js  in   the  following
-way: ``Mithril  is  a modern  client-side  Javascript  framework for  building
+way: ``Mithril  is  a modern  client-side  JavaScript  framework for  building
 Single Page Applications. It's  small (< 8kb gzip), fast  and provides routing
 and XHR utilities out of the box.''~\cite{mithril:home}
 
@@ -161,7 +161,7 @@ shaders  or,  in  the  case  of our  scope  application,  simple  2D  geometry
 calls. These are  sufficient for our  purposes since the scope  basically only
 requires the drawing of lines.
 
-Via  the canvas  one  can retreive  a  2D rendering  context  on which  simple
+Via  the canvas  one  can retrieve  a  2D rendering  context  on which  simple
 geometry can  be drawn.   In JavaScript  this can  be done  using the  code in
 Listing~\ref{lst:js2dcontext} which shows  how a single red line  can be drawn
 on the canvas.
@@ -195,7 +195,7 @@ Instead of simply drawing to the canvas over and over again, it would be ideal
 to only  do that  before a  new frame is  pulled from  the framebuffer  by the
 display. JavaScript provides a interface to register a callback that is called
 before  a  new frame  is  released. This  callback  will  be called  with  the
-same  frequency  as the  display  referesh  rate,  which nowadays  usually  is
+same  frequency  as  the  display  refresh rate,  which  nowadays  usually  is
 \SI{60}{\hertz}.  To make sure that a callback will always be executed, it has
 to  be registered  again  after a  callback has  been  issued. The example  in
 Listing~\ref{lst:gui:glcallback} shows  how this is done.   This callback will
@@ -224,7 +224,7 @@ of the data onto just one of the DOM elements.
 %                           W I N D O W   T A B L E
 %
 % ==============================================================================
-\section{FFT Windowing Paramters} % <<< -------------------------------------- %
+\section{FFT Windowing Parameters} % <<< -------------------------------------- %
 \label{sec:app:gui:fft_params}
 % ---------------------------------------------------------------------------- %
 
@@ -252,6 +252,5 @@ of the data onto just one of the DOM elements.
     \end{tabular}
 \end{centering}
 
-%>>>
 %>>>
 %^^A vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>
