@@ -44,10 +44,11 @@ process.
 \label{sec:fir_filter_resouce_usage}
 % ---------------------------------------------------------------------------- %
 
-This   section   contains  the   experimental   results   of  how   many   DSP
-slices  a  given   FIR  filter  needs  when  implemented   with  Xilinx's  FIR
-Compiler. These  figures form  the basis  to determine  reasonable bounds  for
-the  FIR  filter  \code{5steep} (see  Figure~  \ref{fig:fdesign:chain_concept}
+This    section   contains    the   experimental    results   of    how   many
+DSP   slices    a   given   FIR    filter   needs   when    implemented   with
+Xilinx's    FIR   Compiler~\cite{xilinx:fir-compiler}. These    figures   form
+the    basis     to    determine    reasonable    bounds     for    the    FIR
+filter    \code{5steep}     (see    Figure~    \ref{fig:fdesign:chain_concept}
 on    page~\pageref{fig:fdesign:chain_concept}). Figure~\ref{fig:usage_report}
 depicts      the       results      of      the       measurements,      while
 Table~\ref{tab:usage_report:config}  contains   the  configuration  parameters
@@ -60,8 +61,6 @@ two channels, and  because other filters are required as  well, an upper limit
 for \code{5steep} of  \num{250} coefficients is set based  on these results. A
 smaller  filter  is  also  acceptable  as long  as  it  fulfills  the  general
 requirements.
-
-TODO: source FIR compiler documentation
 
 \begin{table}
     \centering
@@ -127,26 +126,7 @@ as specified in Section~\ref{ch:filter_design}.
 \subsection{\code{5flat}} % <<< ---------------------------------------------- %
 \label{sec:filter_frequency_responses:5flat}
 % ---------------------------------------------------------------------------- %
-
-\begin{tabular}{lS}
-    \toprule
-    \multicolumn{2}{c}{\sffamily\scshape\bfseries Filter Characteristics} \\
-    \midrule
-    Filter Length                   &   62       \\
-    Passband Edge                   &    0.2     \\
-    \SI{3}{\dB} Point               &    0.23491 \\
-    \SI{6}{\dB} Point               &    0.24708 \\
-    Stopband Edge                   &    0.3     \\
-    Passband Ripple (\si{\dB})      &  0.047745  \\
-    Stopband Attenuation (\si{\dB}) & 60.1991    \\
-    Transition Width                &    0.1     \\
-    Number of DSP Slices            &   22       \\
-    \bottomrule
-\end{tabular}
-
-\vspace{1em}
-
-\noindent\input{images/fdesign/5flat.tikz}
+\input{images/fdesign/5flat.tikz}
 %>>>
 % ==============================================================================
 %

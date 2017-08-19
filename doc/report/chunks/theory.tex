@@ -81,9 +81,9 @@ quantization process converts a  value-continuous signal into a value-discreet
 one,  with its  resolution being  a specification  of the  ADC which  is being
 used. As an example, the ADC in our system has a resolution of \num{14}\,bits,
 meaning it can divite its valid  input range into \num{16384} values. Given an
-input range of \SI{2}{\volt} $V_{PP}$, this equates to a resolution of roughly
-\SI{122}{\micro\volt} (in theory). This quantization  process is the source of
-what is generally  known as \emph{quantization noise}.
+input  range of  \SI{2}{\volt_\mathrm{PP}}, this  equates to  a resolution  of
+roughly \SI{122}{\micro\volt}  (in theory). This  quantization process  is the
+source of what is generally known as \emph{quantization noise}.
 
 Besides the quantization,  the other step happening in the  ADC is sampling; a
 time-continuous signal is converted into a series of time-discreet values. The
@@ -527,7 +527,7 @@ between   the   integrator   and   comb   sections.    A   single   integrator
 stage   is   shown    in   Figure~\ref{fig:filtertopologies:integrator},   and
 Figure~\ref{fig:filtertopologies:comb}   shows   a   single  comb   stage   in
 feedforward form. Figure~\ref{fig:filtertopologies:cic}  shows a  complete CIC
-filter with three stages.
+decimator with three stages.
 
 \begin{figure}
     \centering
@@ -1063,7 +1063,7 @@ chain which defines  the overall passband and transition  band width. The same
 overall transition band in absolute terms can be achieved with smaller filters
 in multi-stage designs,  because a filter's transition band  width is relative
 to the sampling rate at which it  is running.  This is shown in the bottommost
-plot in Figure~\ref{fig:fdesign:tbw_width_Rvar}.
+plot in Figure~\ref{fig:fdesign:tbw_width_Rvar}. 
 
 \begin{figure}
     \centering
@@ -1084,16 +1084,25 @@ plot in Figure~\ref{fig:fdesign:tbw_width_Rvar}.
 Since  cascading  multiple  filters   does  increase  coefficient  count  (and
 storage), one might  be inclined to think that not  much has been won. Indeed,
 the  overall  number  of  coefficients   is  identical  for  both  filters  in
-Figure~\ref{fig:fdesign:tbw_width_Rvar} (though, this obviously need not be so
-in other  examples). However: Merely \num{30} multipliers and  \num{29} adders
-(those  of the  first filter  in  the cascade)  run at  the incoming  sampling
-frequency  in the  case of  the cascade,  while the  components of  the second
-filter  run  at half  that.   In  the case  of  the  single-stage filter,  all
-its  \num{60}  multipliers  and  \num{59}  adders run  at  the  full  sampling
-frequency. Distributing  the  calculations  over   two  stages  has  therefore
-yielded  an overall  reduction  in needed  computation  power. As rate  change
-factors  increase,  the  benefits  of multi-stage  designs  become  even  more
-pronounced~\cite{crochiere-rabiner:multirate-dsp}.
+Figure~\ref{fig:fdesign:tbw_width_Rvar}  (though, this  obviously need  not be
+so  in  other  examples). However: Merely \num{30}  multipliers  and  \num{29}
+adders  (those  of the  first  filter  in the  cascade)  run  at the  incoming
+sampling  frequency in  the  case  of the  cascade,  while  the components  of
+the  second  filter  run at  half  that.   In  the  case of  the  single-stage
+filter,  all  its  \num{60}  multipliers   and  \num{59}  adders  run  at  the
+full  sampling frequency. Distributing  the calculations  over two  stages has
+therefore yielded  an overall reduction  in needed computation  power. As rate
+change  factors increase,  the  benefits of  multi-stage  designs become  even
+more pronounced~\cite{crochiere-rabiner:multirate-dsp}. 
+
+In general, the  earlier stages in a cascade tend  to have higher downsampling
+ratios  but  wider   transition  bands,  and  the  later   stages  have  lower
+downsampling  ratios  and  narrower  transition  bands  (normalized  to  their
+respective  sampling frequencies).   This  minimizes  computations across  the
+overall design by  using smaller filters for  high-frequency calculations, and
+giving the larger filters more  time to compute their outputs. Multiple stages
+having the  same downsampling  ratios is  also a  valid approach,  but earlier
+stages having lower downsampling ratios than later stages is uncommon.
 
 Another advantage of  cascading filters is that successive stages  can be used
 to  shape the  overall frequency  response, as  seen in  the case  of the  CIC
