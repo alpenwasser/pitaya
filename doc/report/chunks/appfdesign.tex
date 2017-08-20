@@ -47,6 +47,7 @@ shown in Figure~\ref{fig:dec625_variants}.
 \end{figure}
 
 %>>>
+\clearpage
 % ==============================================================================
 %
 %                         R E S O U R C E   U S A G E
@@ -75,7 +76,22 @@ for \code{5steep} of  \num{250} coefficients is set based  on these results. A
 smaller  filter  is  also  acceptable  as long  as  it  fulfills  the  general
 requirements.
 
-\begin{table}
+\vfill
+\begin{figure}[h]
+    \centering
+    \input{images/fdesign/usageReport.tikz}
+    \caption[Usage Report FIR Compiler]{%
+        Usage  report figures  for DSP  slices using  the Xilinx  FIR compiler
+        block. The  configuration  of  the  filter in  terms  of  bit  widths
+        is  identical   to  the  actual   configuration  used  in   the  final
+        implementation. Unlike  the  implementation,  however, only  a  single
+        channel was configured.%
+    }
+    \label{fig:usage_report}
+\end{figure}
+
+\vfill
+\begin{table}[h]
     \centering
     \caption[FIR Compiler Parameters]{%
         The parameters used  to configure the FIR compiler core  for the usage
@@ -95,21 +111,9 @@ requirements.
         \bottomrule
     \end{tabular}
 \end{table}
-
-\begin{figure}
-    \centering
-    \input{images/fdesign/usageReport.tikz}
-    \caption[Usage Report FIR Compiler]{%
-        Usage  report figures  for DSP  slices using  the Xilinx  FIR compiler
-        block. The  configuration  of  the  filter in  terms  of  bit  widths
-        is  identical   to  the  actual   configuration  used  in   the  final
-        implementation. Unlike  the  implementation,  however, only  a  single
-        channel was configured.%
-    }
-    \label{fig:usage_report}
-\end{figure}
-
+\vfill
 %>>>
+\clearpage
 % ==============================================================================
 %
 %             F I L T E R   F R E Q U E N C Y   R E S P O N S E S
@@ -119,8 +123,11 @@ requirements.
 \label{sec:filter_frequency_responses}
 % ---------------------------------------------------------------------------- %
 
-This section lists the frequency responses  of the filters and the cascades as
-specified in Section~\ref{ch:filter_design}.
+This  section   lists  the  frequency   responses  of  the  filters   and  the
+cascades as specified  in Section~\ref{ch:filter_design}. For detailled filter
+specifications, see the appropriate chapters  and/or the filter design code in
+the repository.
+
 % ==============================================================================
 %
 %                                 5 S T E E P

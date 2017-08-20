@@ -20,7 +20,7 @@ becomes
 To answer that question is the  purpose of this chapter. A general overview of
 the STEMlab hardware is presented first  to give the reader a broad impression
 of what  the hardware  component of  the project actually  is.  Based  on that
-information, the  objectives of this project  are derived. Possible approaches
+information, the  objectives of this project  are defined. Possible approaches
 to  reach those  objectives are  presented and  evaluated, and  a decision  is
 reached  on  how  to  achieve  this  project's  goals. The  project's  problem
 statement is included in Appendix~\ref{app:ch:task}.
@@ -454,14 +454,14 @@ documentation~\cite{xilinx:cic-compiler},~\cite{xilinx:fir-compiler}.       In
 order to  avoid re-inventing the  wheel and to take  advantage of some  of the
 advanced features offered by these two blocks, we use them in our design.
 
-Interfacing between the FPGA and the  outside world requires a component which
-can take data from the filters and hand it off to the GNU/Linux running on the
-ARM cores. Additionally,  the user must  be able to trigger  measurements from
-the operating system.  Luckily, such a data logging core for a Xilinx FPGA has
-already been  developed in an  earlier project~\cite{pita:github:huess-schnid}
-under a compatible  license.  It comes with a kernel  module to interface with
-GNU/Linux. With  some minor  adaption work,  this core  should suit  our needs
-nicely.
+Interfacing  between the  FPGA  and  the outside  world  requires a  component
+which  can take  data  from the  filters  and  hand it  off  to the  GNU/Linux
+running  on the  ARM cores. Additionally,  the user  must be  able to  trigger
+measurements  from  the  operating  system.   Luckily,  such  a  data  logging
+core  for   a  Xilinx  FPGA   has  already   been  developed  in   an  earlier
+project~\cite{pita:github:huesser:zynq-logger} under a compatible license.  It
+comes  with a  kernel  module  to interface  with  GNU/Linux. With some  minor
+adaption work, this core should suit our needs nicely.
 
 The  last  component needed  for  the  FPGA is  a  control  logic to  set  the
 decimation  rate  and  enable  or  disable specific  components  of  the  data
@@ -477,7 +477,7 @@ In summary, the concept for the FPGA data processing system looks as follows:
         Filtering the data is conducted with Xilinx's CIC and FIR compilers.
     \item
         For     interfacing     with     GNU/Linux,    the     data     logger
-        from~\cite{pita:github:huess-schnid} is used.
+        from~\cite{huess-schnid} is used.
     \item
         A custom control logic configures the data processing chain on-the-fly
         through user input.
@@ -512,7 +512,7 @@ page~\pageref{ch:server}.
 %                         C O N C E P T :   S C O P E
 %
 % ==============================================================================
-\subsection{Scope} % <<< ----------------------------------------------------- %
+\subsection{Oscilloscope} % <<< ---------------------------------------------- %
 \label{subsec:concept:scope}
 % ---------------------------------------------------------------------------- %
 

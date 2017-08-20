@@ -1,12 +1,9 @@
 // Request
-
 {
     "readFrame": true,
     "channel": channelID
 }
-
 // Response
-
 {
     "response", {
         {"request", "readFrame"},

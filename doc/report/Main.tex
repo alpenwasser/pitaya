@@ -1,14 +1,14 @@
 \RequirePackage{snapshot}
-\documentclass[a4paper,oneside]{alpenthesis/alpenthesis}
+\documentclass[a4paper,twoside]{alpenthesis/alpenthesis}
 % ==============================================================================
 %
 %                               P R E A M B L E
 %
 % ==============================================================================
 % <<< ----------------------------------------------------------------PREAMBLE %
-\hexfalse
+\hextrue
 %\aiiistock % Compile twice for A4, then once for A3, with hextrue
-\paperfalse
+\papertrue
 %https://tex.stackexchange.com/a/210456/131649
 \renewcommand\partnumberlinebox[2]{#2\hspace{2em}}
 \ifpaper
@@ -90,8 +90,7 @@
     \begin{tabular}{>{\bfseries}rl}
         Degree Program: & Electrical Engineering and Information Technology \\[2mm]
         Course:         & Project \num{6}\\[2mm]
-        Coaches:        & Prof. Dr. Richard Gut \\[2mm]
-                        & Michael Pichler       \\[2mm]
+        Coaches:        & Prof. Dr. Richard Gut, Michael Pichler \\[2mm]
         External Expert & Dr. J\"urg Stettbacher \\[2mm]
         Team:           & Raphael Frey, Noah H\"usser \\[2mm]
         Date:           & August 18, 2017 \\[2mm]

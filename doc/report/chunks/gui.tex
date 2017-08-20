@@ -58,6 +58,37 @@ paragraphs to enable the reader to  understand how they apply to our decision.
 Due to its  importance, there is an additional section  dedicated to the topic
 of networking (Section~\ref{subsec:gui:networking}).
 
+\clearpage
+
+\begin{table}
+    \centering
+    \caption[Comparison of Programming Languages]{%
+        A comparison  of a few  programming languages  which might be  used to
+        implement  a  graphical  front-end  like the  oscilloscope  from  this
+        project. The scale goes from \num{1} (worst) to \num{6} (best).%
+    }
+    \label{tab:gui:language_choices}
+    \begin{tabular}{lrrrrr}
+        \toprule
+                                        & \parbox[t]{2mm}{\rotatebox{90}{Rust}}
+                                        & \parbox[t]{2mm}{\rotatebox{90}{C++}}
+                                        & \parbox[t]{2mm}{\rotatebox{90}{Java}}
+                                        & \parbox[t]{2mm}{\rotatebox{90}{Python}}
+                                        & \parbox[t]{2mm}{\rotatebox{90}{JavaScript}}\\
+        \midrule
+        Open Standard                   &  6 &  6 &  1 &  6 &  6 \\
+        Networking                      &  6 &  6 &  6 &  6 &  4 \\
+        Graphics                        &  2 &  5 &  5 &  5 &  6 \\
+        Prevalence                      &  3 &  6 &  6 &  5 &  6 \\
+        Ease of Development             &  5 &  5 &  5 &  5 &  6 \\
+        Ease of Deployment              &  3 &  4 &  5 &  6 &  6 \\
+        Familiarity With the Language   &  3 &  3 &  4 &  6 &  6 \\
+        \midrule
+        Total                           & 28 & 35 & 32 & 39 & 40 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
 \paragraph{Open  Standard:} Since this  is a  university project  meant, among
 other things, for educational purposes, it  is crucial to make all source code
 available to the public under a flexible license. Thus, it is desirable to use
@@ -103,35 +134,6 @@ here.
 none of  the involved programmers have  ever used them and  will struggle with
 even  the basics  for  a major  part  of the  project's  duration. Thus it  is
 inevitable that personal preferences also flow into the decision process.
-
-\begin{table}
-    \centering
-    \caption[Comparison of Programming Languages]{%
-        A comparison  of a few  programming languages  which might be  used to
-        implement  a  graphical  front-end  like the  oscilloscope  from  this
-        project. The scale goes from \num{1} (worst) to \num{6} (best).%
-    }
-    \label{tab:gui:language_choices}
-    \begin{tabular}{lrrrrr}
-        \toprule
-                                        & \parbox[t]{2mm}{\rotatebox{90}{Rust}}
-                                        & \parbox[t]{2mm}{\rotatebox{90}{C++}}
-                                        & \parbox[t]{2mm}{\rotatebox{90}{Java}}
-                                        & \parbox[t]{2mm}{\rotatebox{90}{Python}}
-                                        & \parbox[t]{2mm}{\rotatebox{90}{JavaScript}}\\
-        \midrule
-        Open Standard                   &  6 &  6 &  1 &  6 &  6 \\
-        Networking                      &  6 &  6 &  6 &  6 &  4 \\
-        Graphics                        &  2 &  5 &  5 &  5 &  6 \\
-        Prevalence                      &  3 &  6 &  6 &  5 &  6 \\
-        Ease of Development             &  5 &  5 &  5 &  5 &  6 \\
-        Ease of Deployment              &  3 &  4 &  5 &  6 &  6 \\
-        Familiarity With the Language   &  3 &  3 &  4 &  6 &  6 \\
-        \midrule
-        Total                           & 28 & 35 & 32 & 39 & 40 \\
-        \bottomrule
-    \end{tabular}
-\end{table}
 
 \paragraph{Summary:} As          the          total         scores          in
 Table~\ref{tab:gui:language_choices} show, JavaScript  fits the priorities set
@@ -193,6 +195,7 @@ Appendix~\ref{sec:app:gui:websockets} on page~\ref{sec:app:gui:websockets}.
 %                              P R O D U C T
 %
 % ==============================================================================
+\clearpage
 \section{Product} % <<< ------------------------------------------------------ %
 \label{sec:gui:product}
 % ---------------------------------------------------------------------------- %
@@ -374,10 +377,12 @@ pages~\pageref{sec:app:gui:webgl}f.
 
 Calculating  the spectral  power  of  a signal  is  accomplished  via the  FFT
 algorithm first presented by Cooley and Tukey in 1965~\cite{fft:cooley:tukey}.
-Kevin Kwok  has written a  compact and  fast implementation of  this algorithm
-in  JavaScript~\cite{kwok},  which  is  provided under  a  permissive  license
-\cite{kwok:license}  and  therefore  nicely  suits the  requirements  of  this
-project.
+Kevin  Kwok   has  written   a  compact  and   fast  implementation   of  this
+algorithm  in JavaScript~\cite{kwok},  which  is provided  under a  permissive
+license  \cite{kwok:license}  and  therefore  nicely  suits  the  requirements
+of  this  project. It  has  been  verified  against  Matlab's  FFT  algorithms
+as   a  reference;   the   results   line  up   nicely   and   are  shown   in
+\mbox{Figure~\ref{fig:gui:fft_comparison}}.
 
 \begin{figure}
     \centering
@@ -388,6 +393,7 @@ project.
     \label{fig:gui:fft_comparison}
 \end{figure}
 
+\clearpage
 The following equations detail  the calculations. For an in-depth explanation,
 see~\cite{gui:hanspi}.   The two-sided  spectrum  of an  input  signal $x$  is
 obtained with
@@ -459,6 +465,7 @@ components is commonly known as \emph{spectral leakage}. Additionally, one may
 wish to remove any spurious harmonics originating from the signal source (e.g.
 a function generator which does not generate a flawless sine wave).
 
+\clearpage
 Depending  on how  the  signal is  windowed for  the  FFT, different  spectral
 lines will occur with varying magnitudes. Table~\ref{tab:fft_window_params} in
 Appendix~\ref{sec:app:gui:fft_params} contains the primary characteristics for
@@ -496,8 +503,8 @@ harmonics  to  cancel   them  out  as  well. The  two   methods  are  compared
 in  Figure~\ref{fig:gui:snr_comparison}. The  example also  shows  highlighted
 harmonics for elimination in the SNR calculations. The result is in line with
 Matlab's.
-
-\begin{algorithm}
+\vfill
+\begin{algorithm}[h]
     \centering
     \begin{algorithmic}
     \State $l\gets 1$
@@ -519,6 +526,7 @@ Matlab's.
     \caption[Iterative SNR Algorithm]{Algorithm to iteratively determine the SNR of a spectrum}
     \label{alg:gui:snr}
 \end{algorithm}
+\vfill
 
 \begin{figure}
     \centering

@@ -1,13 +1,8 @@
 // Request
-
 {
     "setNumberOfChannels": 2
 }
-
 // Response
-
-// Response
-
 {
     "response", {
         {"request", "setNumberOfChannels"},

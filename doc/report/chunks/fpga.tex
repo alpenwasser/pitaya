@@ -256,6 +256,7 @@ but represents the general case in out block design.
 \label{subsec:fpga:maximize_dynamic_range}
 % ---------------------------------------------------------------------------- %
 
+\enlargethispage{2ex}
 The challenge of optimally using the available dynamic range is explained here
 on a simple example  of a sampled sine wave coming  into the filtering system.
 It  is important  not to  discard any  MSBs (or  signs) because  otherwise the
@@ -276,8 +277,8 @@ ensure no ``empty'' bits.
 The FIR  compiler can avoid  those empty  bits by normalizing  the coefficient
 such  that the  highest  gain (i.e.  the  top peaks  of  its passband  ripple)
 is  at  exactly   \num{1}.   This  is  called   \emph{maximizing  the  dynamic
-range}. Figure~\ref{fig:fpga:dynamicrange}  illustrates the  issue of  loosing
-one bit.
+range}. Figure~\ref{fig:fpga:dynamicrange} illustrates the issue of losing one
+bit.
 
 One can  observe that  the sine in  Case \num{1} (top  plot) uses  the dynamic
 range to a perfect extent as the full-scale sine has an amplitude of \num{31},
@@ -354,7 +355,7 @@ does make sense. The results are:
     \sigma^2_\mathrm{CIC125} &= 0.289\label{eq:fpga:cic:sigmasq:cic125}
 \end{align}
 The  calculations are  performed  by a  Matlab script  and  are therefore  not
-further elaborated upon at.
+further explained.
 
 %>>>
 %>>>

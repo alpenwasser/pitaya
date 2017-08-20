@@ -147,10 +147,6 @@ without filters!), the  mean of each sample has been  calculated too such that
 at later stages  the offset can be calibrated out  in the scoping application.
 The results are shown in Figure~\ref{fig:verification:meanAll}.
 
-Achieving  a  good  SNR is  also  one  of  project's  goals, so  the  SNR  has
-been  calculated  plotted   for  each  input  frequency  as   well,  shown  in
-Figure~\ref{fig:verification:snrAll}.
-
 \begin{figure}
     \centering
     \input{images/verification/meanAll.tikz}
@@ -168,12 +164,14 @@ Figure~\ref{fig:verification:snrAll}.
 %                S N R   F R E Q U E N C Y   R E S P O N S E
 %
 % ==============================================================================
+\clearpage
 \section{SNR Frequency Response}% <<< ---------------------------------------- %
 \label{sec:verification:snr}
 % ---------------------------------------------------------------------------- %
 
-Two series of measurements  are used for SNR: An automated one  by us which is
-evaluated with  Matlab's SNR algorithms. Those  determine SNR for a  signal by
+Two  series  of  measurements  are  used  for  SNR: An  automated  one  by  us
+which  is  evaluated  with  Matlab's SNR  algorithms. Its  results  are  shown
+in  Figure~\ref{fig:verification:snrAll}. SNR for  a signal  is determined  by
 separating signal and  noise components, calculating the  respective power and
 the ratio of signal power to noise power components\footnote{%
     This is similar to what our scope does.%
@@ -188,12 +186,13 @@ actual  system performance,  SNR  measurements referenced  against a  measured
 noise floor have also been performed  by Mr. Gut. For this, the noise floor is
 measured by terminating  the device with a \SI{50}{\ohm}  resistor, instead of
 extracting it from  a signal. Afterwards, a signal is put  through the system,
-the power in  the signal is measured,  and its power compared  to the measured
-noise floor. This method  is more precise than the automated  method, and also
-happens to give better results.
+the  power  in  the  signal  is  measured,  and  its  power  compared  to  the
+measured noise floor. This  method is more precise than  the automated method,
+and  also  happens to  give  better  results. Its findings are  summarized  in
+Table~\ref{tab:verification:fifty_ohms}.
 
-Indeed,  when  comparing  our  new  system against  the  measurements  of  the
-STEMlab's stock configuration by our predecessors\footnote{%
+When comparing our new system against  the measurements of the STEMlab's stock
+configuration by our predecessors\footnote{%
     Those  measurements  are also  referenced  against  a \SI{50}{\ohm}  noise
     floor.%
 }, our system achieves an SNR of \SI{84}{\dB} for an input frequency of \SI{3}{\kHz}
@@ -227,7 +226,7 @@ in order to achieve an SNR of \SI{83.5}{\dB}\footnote{%
         this  has already  been seen  in its  magnitude frequency  response in
         Section~\ref{sec:verification:rms}.%
     }
-    \label{tab:verification:results}
+    \label{tab:verification:fifty_ohms}
     \begin{tabular}{SSSSSS}
         \toprule
         {\parbox[t]{10mm}{\raggedleft $f_\mathrm{s}$                       \\(\si{\kHz})}          } &
@@ -275,14 +274,14 @@ through~\ref{eqn:verification:power_density}:
     S_{\si{\dB}}             &= 10\log_{10}(X_{i,\mathrm{abs}}^2)              \label{eqn:verification:power_density}
 \end{align}
 
-Figures~\ref{fig:verification:fB5}  through \ref{fig:verification:fB5}  depict
-the results. Each plot  contains one frequency which falls  into the passband,
-one which falls into the filter's edge, and one which falls into the stopband.
-The passband and edge frequency components  are expected to be relatively high
-(depending  on where  exactly in  the edge  the measurement  point falls). The
-measurement point  in the stopband  should be \SI{60}{\dB} below  the passband
-measurement point. Most satisfactorily, this is  the case, and the measurement
-results line up very nicely with the specifications.
+Figures~\ref{fig:verification:fB5}    through    \ref{fig:verification:fB2500}
+depict  the results. Each  plot contains  one frequency  which falls  into the
+passband, one which falls into the filter's edge, and one which falls into the
+stopband.   The passband  and edge  frequency  components are  expected to  be
+relatively high (depending on where exactly  in the edge the measurement point
+falls). The measurement point in the stopband should be \SI{60}{\dB} below the
+passband measurement  point. Most satisfactorily,  this is  the case,  and the
+measurement results line up very nicely with the specifications.
 
 \begin{figure}
     \centering
@@ -326,7 +325,7 @@ results line up very nicely with the specifications.
     \caption[Attenuation in the Edge and Stopband in Contrast to the Passband for R=1250]{%
         Attenuation in the edge and stopband in contrast to the passband for $R=1250$%
     }
-    \label{fig:verification:fB5}
+    \label{fig:verification:fB1250}
 \end{figure}
 
 \begin{figure}
@@ -335,7 +334,7 @@ results line up very nicely with the specifications.
     \caption[Attenuation in the Edge and Stopband in Contrast to the Passband for R=2500]{%
         Attenuation in the edge and stopband in contrast to the passband for $R=2500$%
     }
-    \label{fig:verification:fB5}
+    \label{fig:verification:fB2500}
 \end{figure}
 
 % >>>
@@ -344,6 +343,7 @@ results line up very nicely with the specifications.
 %                                S U M M A R Y
 %
 % ==============================================================================
+\clearpage
 \section{Summary} % <<< ------------------------------------------------------ %
 \label{sec:verification:summary}
 % ---------------------------------------------------------------------------- %
@@ -361,7 +361,8 @@ actually achieved  improvement in SNR  as other factors  play a role  as well.
 to achieve the proper gain (\SI{0.707}{\volt} RMS for a \SI{2}{\V_\mathrm{PP}}
 signal, see Section~\ref{sec:verification:rms}).
 
-\begin{table}
+\vfill
+\begin{table}[h]
     \centering
     \caption[Mean Metrics for All Filter Chains]{Mean metrics for all filter chains}
     \label{tab:verification:results}
@@ -384,6 +385,7 @@ signal, see Section~\ref{sec:verification:rms}).
         \bottomrule
     \end{tabular}
 \end{table}
+\vfill
 
 % >>>
 

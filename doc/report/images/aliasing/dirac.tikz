@@ -25,8 +25,8 @@
         },
         every axis legend/.append style={
             %at={(1.05,1.1)}, % if attached to top plot
-            at={(1.05,2.6)},  % if attached to bottom plot
-            anchor=south east,
+            at={(0.5,2.6)},  % if attached to bottom plot
+            anchor=south,
             font=\footnotesize,
             cells={anchor=east},
         },

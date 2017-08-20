@@ -7,6 +7,9 @@
 \label{ch:app:gui}
 % ---------------------------------------------------------------------------- %
 
+Some  supplementary   information  for   the  technologies   underpinning  the
+oscilloscope application is presented here.
+
 % ==============================================================================
 %
 %                             W E B S O C K E T S
@@ -56,6 +59,7 @@ and errors. The code snippet  in Listing~\ref{lst:gui:jsws} gives some insight
 how  WebSockets in  JavaScript are  used. For more  detailed information,  the
 reader is referred to the Mozilla documentation~\cite{moz:ws}.
 
+\vspace{2ex}
 \begin{tcolorbox}[
         skin=alpenlisting,
         title={
@@ -72,6 +76,7 @@ reader is referred to the Mozilla documentation~\cite{moz:ws}.
     ]{javascript}{./code/websockets.js}
 \end{tcolorbox}
 %>>>
+\clearpage
 % ==============================================================================
 %
 %                             S T A T E   T R E E
@@ -125,6 +130,7 @@ can also be  issued manually.  A virtual DOM consists  of many vnodes (virtual
 nodes) and  can be  mounted on  any actual node  of the  browser's DOM  as the
 example in Listing~\ref{lst:gui:mithrilmount} shows.
 
+\vspace{2ex}
 \begin{tcolorbox}[
         skin=alpenlisting,
         title={
@@ -169,6 +175,7 @@ geometry can  be drawn.   In JavaScript  this can  be done  using the  code in
 Listing~\ref{lst:js2dcontext} which shows  how a single red line  can be drawn
 on the canvas.
 
+\vspace{2ex}
 \begin{tcolorbox}[
         skin=alpenlisting,
         title={
@@ -184,6 +191,7 @@ on the canvas.
         style=solarizedlight,
     ]{javascript}{./code/2dcontext.js}
 \end{tcolorbox}
+\vspace{2ex}
 
 There  is  also   the  possibility  to  draw  rectangles,   circles  and  much
 more. All  of those  elements  can  be styled  easily  via  properties of  the
@@ -207,6 +215,7 @@ not affect the  rest of the DOM. This allows JavaScript  to handle the redraws
 of the DOM  with high speed while  the callback will render a  fluent graph of
 the data onto just one of the DOM elements.
 
+\vspace{2ex}
 \begin{tcolorbox}[
         skin=alpenlisting,
         title={

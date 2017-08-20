@@ -1,11 +1,8 @@
 // Request
-
 {
     "forceTrigger": "true"
 }
-
 // Response
-
 {
     "response", {
         {"request", "forceTrigger"},

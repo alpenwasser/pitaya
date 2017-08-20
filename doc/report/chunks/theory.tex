@@ -52,29 +52,6 @@ Figure~\ref{fig:dspChain:blocks}.
     \label{fig:dspChain:blocks}
 \end{figure}
 
-\begin{figure}
-    \centering
-    \input{images/dspChain/timeDomain.tikz}
-    \input{images/dspChain/freqDomain.tikz}
-    \caption[Signals Passing Through the DSP Chain (Simplified)]{%
-        Simplified  time-domain  (top)   and  frequency-domain  (bottom)  view
-        of  the  signal  at  different  stages on  its  way  through  the  DSP
-        chain. The  circled  numbers  correspond  to the  stages  as  outlined
-        in  Figure~\ref{fig:dspChain:blocks}.  Stage  1 is  the signal  before
-        passing through the  input low-pass filter, with  a significant amount
-        of  high-frequency noise. The  low-pass filter  removes any  frequency
-        components  above ${f_s}/{2}$  in an  ideal scenario  (in reality,  it
-        merely attenuates them, as we will see later), resulting in the signal
-        at  stage  2.\protect\newline
-        After  having  been  filtered,  the  ADC  samples  and  quantizes  the
-        signal, yielding a sequence of  values, schematically portrayed in the
-        rightmost picture for stage 3.  Note that due to the sampling process,
-        the  spectrum of  the  filtered  signal is  repeated  at intervals  of
-        $f_s$. This is the source of the issue of \emph{aliasing}.%
-    }
-    \label{fig:dspChain:signals}
-\end{figure}
-
 Of particular  interest for our  application is  what happens in  the ADC. The
 quantization process converts a  value-continuous signal into a value-discreet
 one, with  its resolution  being a  specification of  the ADC. As  an example,
@@ -113,7 +90,29 @@ boundaries set by this repetition. But if  the spectrum of the incoming signal
 is  too broad,  two or  more recurrences  of the  spectrum will  overlap. This
 effect is highlighted in Figure~\ref{fig:aliasing:band}.
 
-\begin{figure}
+\begin{figure}[p]
+    \centering
+    \input{images/dspChain/timeDomain.tikz}
+    \input{images/dspChain/freqDomain.tikz}
+    \caption[Signals Passing Through the DSP Chain (Simplified)]{%
+        Simplified  time-domain  (top)   and  frequency-domain  (bottom)  view
+        of  the  signal  at  different  stages on  its  way  through  the  DSP
+        chain. The  circled  numbers  correspond  to the  stages  as  outlined
+        in  Figure~\ref{fig:dspChain:blocks}.  Stage  1 is  the signal  before
+        passing through the  input low-pass filter, with  a significant amount
+        of  high-frequency noise. The  low-pass filter  removes any  frequency
+        components  above ${f_s}/{2}$  in an  ideal scenario  (in reality,  it
+        merely attenuates them, as we will see later), resulting in the signal
+        at  stage  2.\protect\newline
+        After  having  been  filtered,  the  ADC  samples  and  quantizes  the
+        signal, yielding a sequence of  values, schematically portrayed in the
+        rightmost picture for stage 3.  Note that due to the sampling process,
+        the  spectrum of  the  filtered  signal is  repeated  at intervals  of
+        $f_s$. This is the source of the issue of \emph{aliasing}.%
+    }
+    \label{fig:dspChain:signals}
+\end{figure}
+\begin{figure}[p]
     \centering
     \input{images/aliasing/band.tikz}
     \caption[Aliasing Illustrated via Signal Frequency Band]{%
@@ -136,10 +135,8 @@ This overlap results in two primary problems:
         actually  present  in  the  original  signal. This  problem  is  often
         referred to  as the  \emph{folding back} of  frequency components. See
         Figure~\ref{fig:aliasing:dirac} for an illustration  of how this might
-        look.
-
-        This problem is of particular interest  to our application, as we will
-        see later.
+        look.  This problem  is of particular interest to  our application, as
+        we will see later.
 \end{itemize}
 
 \begin{figure}
@@ -199,13 +196,8 @@ downsampled  being a  \emph{digital} signal  instead  of an  analog one,  that
 low-pass filter  must naturally  be a digital  filter as  well. Designing such
 digital low-pass filters is the core mission of this project.
 
-The key properties of such filters which are relevant to our application are
-\begin{itemize}\tightlist
-    \item
-        its transition band width (filter steepness), and
-    \item
-        its aliasing attenuation.
-\end{itemize}
+The key properties  of such filters which are relevant  to our application are
+its transition  band width  (filter steepness)  and its  aliasing attenuation.
 The aliasing attenuation refers  to the fact that when a  filter is being used
 for  downsampling,  copies  of  its  frequency response  will  be  created  at
 intervals  of the  lower  sampling  rate (analogous  to  the sampling  process
@@ -282,14 +274,16 @@ usually comes  sufficiently close to  zero at a certain  point that it  can be
 considered zero for most intents and purposes.
 
 IIR  filters have  feedback paths,  resulting  in a  filter response  equation
-with non-zero  denominator components. Their  basic building blocks  are delay
-elements, multipliers and adders.
+with  non-zero   denominator  components. Their  basic  building   blocks  are
+delay  elements,   multipliers  and  adders,   as  seen  in  the   example  of
+Figure~\ref{fig:filtertopologies:iir}. Their transfer functions have the form
 \begin{equation}
     \label{eq:iir_filter}
     H(z) = \frac{%
             \sum_{k=0}^N b_k \cdot z^{-k}}{%
             1 + \sum_{i=0}^M a_i \cdot z^{-i}}
 \end{equation}
+
 IIR filters generally require a lower order (and therefore fewer resources) to
 approximate a  certain frequency  response specification  than FIR  filters do
 (particularly the constraint of a narrow transition band), but this comes at a
@@ -345,6 +339,20 @@ filter response is characterized by Equation~\ref{eq:fir_filter}:
     \label{eq:fir_filter}
     H(z) = \sum_{k=0}^{N} b_k \cdot z^{-k}
 \end{equation}
+
+Figure~\ref{fig:filtertopologies:fir}   shows   one  possible   topology   for
+implementing a  FIR filter,  the so-called  direct form. As  can be  seen, the
+basic building  blocks of  a FIR  filter are  delay elements,  multipliers and
+adders, same as for IIR filters.
+
+\begin{figure}[b]
+    \centering
+    \input{images/filtertopologies/fir.tikz}
+    \caption[FIR Filter Topology Example]
+        {One possible topology for a FIR filter (direct form)}
+    \label{fig:filtertopologies:fir}
+\end{figure}
+
 FIR filters have several advantages:
 \begin{itemize}\tightlist
     \item
@@ -456,19 +464,6 @@ algorithms.
     \label{fig:filter_specs:coefs}
 \end{figure}
 
-Figure~\ref{fig:filtertopologies:fir}   shows   one  possible   topology   for
-implementing a  FIR filter,  the so-called  direct form. As  can be  seen, the
-basic building  blocks of  a FIR  filter are  delay elements,  multipliers and
-adders, same as for IIR filters.
-
-\begin{figure}
-    \centering
-    \input{images/filtertopologies/fir.tikz}
-    \caption[FIR Filter Topology Example]
-        {One possible topology for a FIR filter (direct form)}
-    \label{fig:filtertopologies:fir}
-\end{figure}
-
 One   particular  form   of  a   FIR   filter  is   the  so-called   half-band
 filter. Half-band  filters   are  used   for  downsampling   by  a   ratio  of
 $R=2$.   They  are  characterized  by  a  point-symmetric  frequency  response
@@ -497,6 +492,7 @@ frequency response and the coefficient set of an example filter.
 %                            C I C   F I L T E R S
 %
 % ==============================================================================
+\clearpage
 \subsection{CIC Filters} %<<< ------------------------------------------------ %
 \label{subsec:CIC_filters}
 % ---------------------------------------------------------------------------- %
@@ -664,6 +660,20 @@ cascading integrators and combs.  The integrator's pole at $f = 0$ compensates
 for the  comb section's zero at  the same location, leading  to a significant,
 but finite, DC gain of the CIC filter.
 
+\begin{figure}
+    \centering
+        \input{images/cic/cicFreqResponses.tikz}
+        \caption[Frequency Responses for Integrators, Combs and CIC Filters]{%
+            Frequency responses  for integrators, combs and  their combination
+            into a three-stage CIC filter with a rate change factor of \num{9}
+            and a  differential delay of  \num{1}.  Note that  \num{4.5} lobes
+            fit into the plot for the comb  filter, due to $R\cdot M = 9$ (the
+            order of the  comb filter).%
+        }
+        \label{fig:cic:freq_responses}
+\end{figure}
+
+
 One  drawback   of  CIC  filters  is   that  they  have  no   clearly  defined
 passband  as  such. Rather,  their  frequency  response  starts  dropping  off
 right  as   the  frequency   axis  goes  beyond   zero. This  effect   (  also
@@ -699,6 +709,21 @@ can  be used  to  compensate for  the  CIC filter's  passband  droop; this  is
 generally  known as  a \emph{CIC  compensation filter}. More  on the  topic in
 Section~\ref{subsubsec:cic:compensators}.
 
+\begin{figure}
+    \centering
+        \input{images/cic/cicPassbandAttenuation.tikz}
+        \caption[CIC Filter: Passband and Aliasing Attenuation]{%
+            Passband   attenuation   for   two   CIC   filters   with   $R=9$,
+            $N=4$   and  $M=1$   and   $M=2$,  respectively. The   attenuation
+            is  identical   for  the  bandwidth-differential   delay  product,
+            which    is   $1/8$    for    the    two   configurations.     The
+            attenuation   is  \SI{-3.65}{\dB}   in  both   cases;  the   value
+            can    be   found    in   Table~\ref{tab:cic:pb_attenuation}    on
+            page~\pageref{tab:cic:pb_attenuation}.%
+        }
+        \label{fig:cic:freq_responses:passband:attenuation}
+\end{figure}
+
 Another  effect which  must be  taken  into consideration  when designing  CIC
 filters is  the amount  of aliasing  which occurs from  the stopband  into the
 passband. A region of width $f_\mathrm{c}$ above  and below each $M$th null is
@@ -708,6 +733,24 @@ effect  depends  on  the  width  of the  cutoff  frequency  $f_\mathrm{c}$  as
 well  as  the  differential delay  $M$. Table~\ref{tab:cic:pb_attenuation}  in
 Appendix~\ref{sec:app:cic_filter_tables}  contains  some   values  for  common
 ranges for M and $f_\mathrm{c}$.
+
+\begin{figure}
+    \centering
+        \input{images/cic/cicPassbandAliasing.tikz}
+        \caption[CIC Filter: Passband and Aliasing Attenuation]{%
+            Passband  aliasing  for   a  CIC  filter  with  $R   =  9$,  $N=4$
+            and  $M=1$  and  a  cutoff frequency  of  $f_\mathrm{c}  =  0.25$,
+            referenced  to the  lower  sampling frequency  $f_\mathrm{s,low}$.
+            The  region  of  width  $f_\mathrm{c}$  around  every  $M$th  null
+            is   folded   back   into   the   passband. The   regions   beyond
+            that   are  of   course  folded   back  as   well,  but   are  cut
+            off  by  the   compensator,  see  Figure~\ref{fig:cic:cfir}.   The
+            resulting   passband  aliasing   attenuation  is   \SI{41.8}{\dB},
+            as     indicated     in     Table~\ref{tab:cic:pb_aliasing}     on
+            page~\pageref{tab:cic:pb_aliasing}.%
+        }
+        \label{fig:cic:freq_responses:passband:aliasing}
+\end{figure}
 
 As  mentioned, the  CIC filter  has  only three  design parameters: Its  rate
 change factor  $R$, the differential delay  $M$ and the number  of stages $N$.
@@ -730,19 +773,6 @@ portrayed in Figure~\ref{fig:cic:freq_responses:var}. Some things of note are:
 
 \begin{figure}
     \centering
-        \input{images/cic/cicFreqResponses.tikz}
-        \caption[Frequency Responses for Integrators, Combs and CIC Filters]{%
-            Frequency responses  for integrators, combs and  their combination
-            into a three-stage CIC filter with a rate change factor of \num{9}
-            and a  differential delay of  \num{1}.  Note that  \num{4.5} lobes
-            fit into the plot for the comb  filter, due to $R\cdot M = 9$ (the
-            order of the  comb filter).%
-        }
-        \label{fig:cic:freq_responses}
-\end{figure}
-
-\begin{figure}
-    \centering
         \input{images/cic/cicFreqResponsesVar.tikz}
         \caption[Influence of Design Parameters on Frequency Response]{%
             The influence of  the design parameters $R$, $M$ and  $N$ on a CIC
@@ -755,38 +785,6 @@ portrayed in Figure~\ref{fig:cic:freq_responses:var}. Some things of note are:
         \label{fig:cic:freq_responses:var}
 \end{figure}
 
-\begin{figure}
-    \centering
-        \input{images/cic/cicPassbandAttenuation.tikz}
-        \caption[CIC Filter: Passband and Aliasing Attenuation]{%
-            Passband   attenuation   for   two   CIC   filters   with   $R=9$,
-            $N=4$   and  $M=1$   and   $M=2$,  respectively. The   attenuation
-            is  identical   for  the  bandwidth-differential   delay  product,
-            which    is   $1/8$    for    the    two   configurations.     The
-            attenuation   is  \SI{-3.65}{\dB}   in  both   cases;  the   value
-            can    be   found    in   Table~\ref{tab:cic:pb_attenuation}    on
-            page~\pageref{tab:cic:pb_attenuation}.%
-        }
-        \label{fig:cic:freq_responses:passband:attenuation}
-\end{figure}
-
-\begin{figure}
-    \centering
-        \input{images/cic/cicPassbandAliasing.tikz}
-        \caption[CIC Filter: Passband and Aliasing Attenuation]{%
-            Passband  aliasing  for   a  CIC  filter  with  $R   =  9$,  $N=4$
-            and  $M=1$  and  a  cutoff frequency  of  $f_\mathrm{c}  =  0.25$,
-            referenced  to the  lower  sampling frequency  $f_\mathrm{s,low}$.
-            The  region  of  width  $f_\mathrm{c}$  around  every  $M$th  null
-            is   folded   back   into   the   passband. The   regions   beyond
-            that   are  of   course  folded   back  as   well,  but   are  cut
-            off  by  the   compensator,  see  Figure~\ref{fig:cic:cfir}.   The
-            resulting   passband  aliasing   attenuation  is   \SI{41.8}{\dB},
-            as     indicated     in     Table~\ref{tab:cic:pb_aliasing}     on
-            page~\pageref{tab:cic:pb_aliasing}.%
-        }
-        \label{fig:cic:freq_responses:passband:aliasing}
-\end{figure}
 % ==============================================================================
 %
 %                           C O M P E N S A T O R S

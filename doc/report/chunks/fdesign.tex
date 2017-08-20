@@ -256,6 +256,43 @@ the dark,  so to  speak. The following  paragraphs explain  the considerations
 which lead to  the final filter specifications. The results  are summarized in
 Table~\ref{tab:filter_specs}.
 
+\begin{table}
+    \centering
+    \caption[Summary of Filter Specifications]{
+        The   target   filter   specifications. These  parameters   are  based
+        both  on  the  desired  frequency   domain  behavior  of  the  filters
+        as   well  as   the  feasibility   of  implementation   in  terms   of
+        resource   usage. For  resource   considerations,  the   results  from
+        Appendix~\ref{sec:fir_filter_resouce_usage} are used as a guideline.%
+    }
+    \label{tab:filter_specs}
+    \newcommand*\NA{\footnotesize N/A}
+    \begin{tabular}{>{\ttfamily}lSSSS}
+        \toprule
+        \sffamily Filter                                                          &
+        {\parbox[t]{26.5mm}{Passband Edge \\ ($\times \pi \si{\radian\per\sample}$)}} &
+        {\parbox[t]{26.5mm}{Stopband Edge \\ ($\times \pi \si{\radian\per\sample}$)}} &
+        {\parbox[t]{26.5mm}{Passband Ripple \\ (\si{\dB})}}                           &
+        {\parbox[t]{26.5mm}{Stopband \\ Attenuation (\si{\dB})}}                     \\
+        \midrule
+        5steep  & 0.2    & 0.225  & 0.2   & 60 \\
+        5flat   & 0.2    & 0.3    & 0.05  & 60 \\
+        CIC25   & 0.008  & {\NA}  & {\NA} & 60 \\
+        CFIR25  & 0.008  & 0.016  & 0.05  & 60 \\
+        CIC125  & 0.0016 & {\NA}  & {\NA} & 60 \\
+        CFIR125 & 0.0016 & 0.0024 & 0.05  & 60 \\
+        \midrule
+        & 
+        \multicolumn{2}{l}{{\parbox[t]{53.0mm}{Transition  Band Width \\ ($\times \pi \si{\radian\per\sample}$)}}} &
+        &
+        {\parbox[t]{26.5mm}{Stopband \\ Attenuation (\si{\dB})}}                     \\
+        \midrule
+        2steep  & 0.004  & {\NA}   & {\NA}  & 60 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\clearpage
 \paragraph{Requirements  for   \code{5steep}:}   Based   on  the   results  of
 the  moving  averager   used  in  the  STEMlab's   stock  configuration,  even
 a  FIR  filter  with   moderate  performance  characteristics  should  already
@@ -323,42 +360,6 @@ frequencies   results  in   the  values   from  Table~\ref{tab:tb_widths}. The
 frequency    responses    of   all    filters    and    filter   chains    are
 listed    in   Appendix~\ref{sec:filter_frequency_responses},    starting   on
 page~\pageref{sec:filter_frequency_responses}.
-
-\begin{table}
-    \centering
-    \caption[Summary of Filter Specifications]{
-        The   target   filter   specifications. These  parameters   are  based
-        both  on  the  desired  frequency   domain  behavior  of  the  filters
-        as   well  as   the  feasibility   of  implementation   in  terms   of
-        resource   usage. For  resource   considerations,  the   results  from
-        Appendix~\ref{sec:fir_filter_resouce_usage} are used as a guideline.%
-    }
-    \label{tab:filter_specs}
-    \newcommand*\NA{\footnotesize N/A}
-    \begin{tabular}{>{\ttfamily}lSSSS}
-        \toprule
-        \sffamily Filter                                                          &
-        {\parbox[t]{26.5mm}{Passband Edge \\ ($\times \pi \si{\radian\per\sample}$)}} &
-        {\parbox[t]{26.5mm}{Stopband Edge \\ ($\times \pi \si{\radian\per\sample}$)}} &
-        {\parbox[t]{26.5mm}{Passband Ripple \\ (\si{\dB})}}                           &
-        {\parbox[t]{26.5mm}{Stopband \\ Attenuation (\si{\dB})}}                     \\
-        \midrule
-        5steep  & 0.2    & 0.225  & 0.2   & 60 \\
-        5flat   & 0.2    & 0.3    & 0.05  & 60 \\
-        CIC25   & 0.008  & {\NA}  & {\NA} & 60 \\
-        CFIR25  & 0.008  & 0.016  & 0.05  & 60 \\
-        CIC125  & 0.0016 & {\NA}  & {\NA} & 60 \\
-        CFIR125 & 0.0016 & 0.0024 & 0.05  & 60 \\
-        \midrule
-        & 
-        \multicolumn{2}{l}{{\parbox[t]{53.0mm}{Transition  Band Width \\ ($\times \pi \si{\radian\per\sample}$)}}} &
-        &
-        {\parbox[t]{26.5mm}{Stopband \\ Attenuation (\si{\dB})}}                     \\
-        \midrule
-        2steep  & 0.004  & {\NA}   & {\NA}  & 60 \\
-        \bottomrule
-    \end{tabular}
-\end{table}
 
 \begin{table}
     \centering
