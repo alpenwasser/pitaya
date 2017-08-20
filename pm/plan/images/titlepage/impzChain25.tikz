@@ -1,0 +1,35 @@
+\tikzexternaldisable
+%\tikzsetnextfilename{titlepage}
+\begin{tikzpicture}[
+    signalPath/.style={
+        draw=q4,,
+        fill=q4!50!white,
+        circle,
+        inner sep=0.3mm,
+    },
+    remember picture,
+    overlay,
+]
+     \pgfplotsset{
+         every axis/.style={
+            anchor=center,
+            at={(current page.center)},
+            width=165mm,
+            height=100mm,
+            grid=none,
+            axis line style={draw=none},
+            tick style={draw=none},
+            ticks = none,
+            each nth point=4,
+            filter discard warning=false,
+            unbounded coords=discard,
+            yshift=-6.75mm,
+            xshift=16mm,
+        }
+    }
+    \begin{axis}
+        \addplot[ycomb,mark=*,mark options={scale=0.75},very thin,q1] 
+            table[x=t,y=h,col sep=comma] {images/titlepage/impzChain25.csv};
+    \end{axis}
+\end{tikzpicture}
+\tikzexternalenable

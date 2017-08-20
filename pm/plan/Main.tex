@@ -1,8 +1,8 @@
 \RequirePackage{snapshot}
 \documentclass[a4paper,oneside]{alpenspecs/alpenspecs}
 % <<< Preamble
-\hexfalse
-\paperfalse
+\hextrue
+\papertrue
 %https://tex.stackexchange.com/a/210456/131649
 \renewcommand\partnumberlinebox[2]{#2\hspace{2em}}
 \usetikzlibrary{positioning}
@@ -14,34 +14,43 @@
 \makeindex
 % >>>
 \begin{document}
-\begin{titlingpage} % <<<
+\begin{titlingpage}
     \fullhexpage{q1}{q0}
     \flushright\sffamily
+    \enlargethispage{10ex}
 
     \vspace*{5em}
-    \Huge\bfseries{Red Pitaya}\\[1ex]
-    \Large\mdseries{Specifications}\\[3ex]
+    
+    \Huge\bfseries{Front-End Signal Processing for Red Pitaya Spectrum Analyzer}\\[1ex]
+    \Large\mdseries{Bachelor Thesis: Specifications and Planning}\\[3ex]
 
     \normalsize\mdseries
 
+    \input{images/titlepage/impzChain25.tikz}
+
     \vfill
-    Raphael Frey\\
-    Noah H\"usser\\[3ex]
+    \begin{tabular}{>{\bfseries}rl}
+        Degree Program: & Electrical Engineering and Information Technology \\[2mm]
+        Course:         & Project \num{6}\\[2mm]
+        Coaches:        & Prof. Dr. Richard Gut, Michael Pichler \\[2mm]
+        External Expert & Dr. J\"urg Stettbacher \\[2mm]
+        Team:           & Raphael Frey, Noah H\"usser \\[2mm]
+        Date:           & August 18, 2017 \\[2mm]
+        Revision:       & 1.0.0 \\[2mm]
+    \end{tabular}
 
-    \vspace{5em}
-
-    \today\\
-    Version 1.2
+    \tikzexternaldisable
+        \begin{tikzpicture}[remember picture,overlay]
+            \node[anchor=north east,yshift=-2.5mm,xshift=-2.5mm,] 
+                at (current page.north east) {\includegraphics[width=10cm]{images/titlepage/logo-fhnw.pdf}};
+            \node[anchor=south east,yshift=2.5mm,xshift=-2.5mm,] 
+                at (current page.south east) {\includegraphics[width=4cm]{images/titlepage/logo-ime.pdf}};
+        \end{tikzpicture}
+    \tikzexternalenable
 \end{titlingpage} % >>>
 
 \frontmatter % <<<
-% https://en.wikipedia.org/wiki/Edition_notice
 \tableofcontents*
-%\clearpage
-%\listoffigures*
-%\clearpage
-%\listoftables*
-%\clearpage
 % >>>
 
 \mainmatter
@@ -50,27 +59,44 @@
 \label{ch:initial}
 % ---------------------------------------------------------------------------- %
 
-To replace common lab tools which are usually expensive and big Red Pitaya produces a board called STEMlab which features a capable (125$\frac{MS}{s}$, 14bit) ADC and a ZYNQ SoC from Xilinx. The idea is to record data on the board and transmit it using the network infrastructure to a PC which does all the number crunching.
+To replace  common lab tools which  are usually expensive and  big, Red Pitaya
+produces a board  called STEMlab which features  a capable (125$\frac{MS}{s}$,
+14bit) ADC and a ZYNQ SoC from Xilinx. The idea is to record data on the board
+and transmit it  using the network infrastructure  to a PC which  does all the
+number crunching.
 
-To reduce data load, downsampling filter can be activated to decimate the signal. The filter is necessary such that the Nyquist theorem is fulfilled and no aliasing happens. Sadly the stock filters are not quite as capable as desired, as they do not attenuate the stopband well enough and have a frequency response not as flat as desired.
+To  reduce the  data rate  and processing  load, downsampling  filters can  be
+enabled to decimate the signal. The filters are necessary in order to keep the
+Nyquist theorem is fulfilled and to prevent aliasing. Sadly, the stock filters
+are not  quite as capable  as desired, as they  do not attenuate  the stopband
+well enough and have a frequency response not as flat as desired.
 
-A previous project implemented new filter chains which based on IIR filters. Whilst those designed filter chains worked well in theory they did not so much in practice.
+A  previous project  implemented  new filter  chains which  are  based on  IIR
+filters. While those  filter chains worked  well in theory (i.e.  their design
+was  fundamentally  sound),  they  did not  produce  satisfactory  results  in
+practice.
 
-This project aims to anlyze the previous work with respect to design and implementation of those filter chains, reproduce and fix the problems that exist to date.
+This project  aims to  analyze the  previous work with  respect to  design and
+implementation of those  filter chains, and to reproduce and  fix the problems
+that exist in the earlier solution.
 
-The structure of the idea behind the STEMlab can be seen in Figure~\label{fig:system}
+The   structure  of   the   idea   behind  the   STEMlab   can   be  seen   in
+Figure~\ref{fig:system}.
 
-TODO: Raphi pls fix :P
-% \begin{figure}
-%     \centering
-%     \input{../../doc/report/images/intro/system-overview.tikz}
-%     \caption{The structure of the entire system of the STEMlab.}
-%     \label{fig:system}
-% \end{figure}
+\begin{figure}[h]
+    \centering
+    %\includegraphics[width=0.5\textwidth]{images/stemlab125.png}
+    \includegraphics[width=0.60\textwidth]{images/system-overview.pdf}
+    \caption{Block diagram of the STEMlab 125}
+    \label{fig:system}
+\end{figure}
 
 \chapter{Objectives} % <<< ------------------------------------------------ %
 \label{ch:objectives}
 % ---------------------------------------------------------------------------- %
+
+\emph{Note:} \emph{Revised}  goals are  the result  of decisions  and findings
+during the project, which have lead to amendments in its goals.
 
 \section{Must Haves}
     \begin{enumerate}
@@ -78,56 +104,65 @@ TODO: Raphi pls fix :P
         \begin{enumerate}
             \item What was the exact strategy?
             \item Why did it fail?
-            \item How can the mistakes made be fixed?
+            \item How can potential mistakes be fixed?
             \item Is the project salvageable?
         \end{enumerate}
-            \item Finding a solution to implement the desired filter chains
+            \item Comparing and finding a solution to implement the desired filter chains
         \begin{enumerate}    
-            \item Start over from the beginning
-            \item Continue working on the existing solution
+            \item Start over from the beginning, or
+            \item Continue working on the existing solution.
         \end{enumerate}
             \item A complete specification for all the filter chains with respect to
         \begin{enumerate}
             \item Decimation Rates
-            \item Attenuation in Stopband
-            \item Maximum Ripple in Passband
+            \item Attenuation in stopband
+            \item Maximum ripple in passband
         \end{enumerate}
-        \item A complete matlab model to simulate the entire filter chains
+        \item A complete simulation of the filter chains either in Matlab or another tool.
         \item Filter implementation on the FPGA
-        \item Verify the performance of the implemented filters
+        \item Verification of the performance of the implemented filters
     \end{enumerate}
+
+\clearpage
 \section{Must Haves (revised)}
+
+After  analysis of  the previous  project and  the overall  STEMlab ecosystem,
+these are the modified/amended objectives. For the full analysis, see the main
+project report.
+
 \begin{enumerate}
     \item Develop our own STEMlab toolchain including
     \begin{enumerate}
-        \item Build-system
-        \item Good Documentation
-        \item Vivado TCl scripts
+        \item Build system
+        \item Good documentation
+        \item Vivado TcL scripts
     \end{enumerate}
-    \item Develop our own Scoping Application
+    \item Develop our own oscilloscope application
     \begin{enumerate}
-        \item A server on the FPGA
+        \item A server on the STEMlab
         \item A scope application in JavaScript
     \end{enumerate}
 \end{enumerate}
 
-\section{Nice To Haves}
+\section{Nice to Haves}
 \begin{enumerate}
     \item Additional scoping application features
     \begin{enumerate}
         \item Automatic SNR calculation
         \item Automatic THD calculation
-        \item Multiple source
-        \item Different triggers
+        \item Multiple trace sources
+        \item Different types of triggers
     \end{enumerate}
 \end{enumerate}
 
 \section{Do Not Implement (revised)}
+
 \begin{enumerate}
     \item IIR filter chains
 \end{enumerate}
 
-\chapter{Objects of delivery} % <<< ------------------------------------------------ %
+
+\chapter{Objects of Delivery} % <<< ------------------------------------------------ %
 \label{ch:objectives}
 % ---------------------------------------------------------------------------- %
 
@@ -136,8 +171,9 @@ TODO: Raphi pls fix :P
     \item Working Implementation of the Filter Chains (18.08.2017)
     \item Working Implementation of the JavaScript Scoping Application (18.08.2017)
     \item Factsheet (31.08.2017)
-    \item Technical Report (18.08.2017)
-    \item Working Repository (containing README's, Toolchain, VM, Calculations, Simulations, Measurements, etc.)(18.08.2017)
+    \item Technical Report (18.08.2017), including Developer and User Guides
+    \item Working Repository (containing  READMEs, Toolchain, Virtual Machine,
+            Calculations, Simulations, Measurements, etc.) (18.08.2017)
     \item Presentation (15.09.2017)
 \end{itemize}
 
@@ -147,27 +183,52 @@ TODO: Raphi pls fix :P
 
 \section{Toolbox (revised)}
 
-Since it became apparent that the STEMlab project base led by Red Pitaya is going through a major overhaul and it is rather undeterministic wether this will change in the future, we will develop our own toolbox.
+Since it has become  apparent that the STEMlab project base  led by Red Pitaya
+is going through a major overhaul and it is uncertain whether this will change
+in the future, we will develop our own toolbox.
 
-We will implement a toolchain that can build a ARM Linux image with all necessary components. This will be done based on the original Red Pitaya patches to make the Linux run on the ZYNQ and some scripts of Open Source Projects which we will adapt to our needs and a more general toolchain.
+We will implement a  toolchain that can build an ARM Linux  image with all the
+necessary  components. This will  be done  based  on the  original Red  Pitaya
+patches to  make the Linux  run on  the ZYNQ and  some scripts of  Open Source
+projects which we will adapt to our needs and a more general toolchain.
 
-We will use Linux as a Platform and Matlab and Vivado for filter design and implementation respectively.
+We will use  GNU/Linux as a Platform  and Matlab and Vivado  for filter design
+and implementation, respectively.
 
-For the JavaScript Application we will use node.js, yarn, rollup and mithril.js for the implementation.
+For  the  JavaScript  Application  we  will  use  node.js,  yarn,  rollup  and
+mithril.js for the implementation.
 
-\section{Realisation (revised)}
+\section{Realization (revised)}
 
-In the preceding project implemented filter chains using IIR filters as at preliminary chain stages and FIR filters at the final stages. This was to reduce the needed hardware ressources as IIR filters need way less resources than FIR filter but are less optimal in other aspects.
-Sadly this measure was not enough and the resources available did not suffice.
-Thus it was decided to implement chains using a CIC filter.
-Since a CIC filter alone is not enough a first CIC filter will be used to reduce the rate drastically (R=25, R=125). Afterwards steep FIR filters will filter the signal at a final stage and decimate it again (R=5, R=2).
+The  preceding project  implemented filter  systems by  cascading several  IIR
+filters.  While IIR filters tend to use fewer resources for a given transition
+band width than FIR  filters, it still turned out that  resource usage was too
+high to implement filter cascades for both channels present on the STEMlab.
 
-As it was decided to develop an entirely self-dependent solution of the project, general components on the FPGA such as an ADC controller or a data logger are required. For the ADC part an IP from Pavel Demin will be utilized. For the logger part an IP core that Mr. Hüsser developed in a previous project will be used.
+Consequently, the  decision was made to  exploit CIC filters in  this project.
+They are very computationally efficient and can be used as initial stages in a
+filter cascade,  followed by FIR  filters to  shape the passband  response and
+clean  up any  undesired  effects  which may  have  been  introduced into  the
+frequency response of the system. Two types  of CIC filters are used: One with
+a  decimation ratio  of  \num{25},  and another  with  a  decimation ratio  of
+\num{125}.  Both are then followed by their respective compensation FIR filter
+and more FIR filters for the final rate reduction.
 
-For the ARM Core a Linux will be set up that can talk to the logger core via a kernel module. A server application will be developped which will run on the Linux to send the data written to the RAM by the logger to the network. This will be done using WebSockets.
+As it has  been decided to develop an entirely  self-dependent solution of the
+project, general components  on the FPGA such  as an ADC controller  or a data
+logger are required. For the ADC part an  IP from Pavel Demin will be utilized
+(see the project  report for further remarks and source). For  the logger part
+an IP core that Mr. Hüsser developed in a previous project will be used.
 
-The scoping webapp will be implemented using JavaScript. WebSockets are thus used to transmit and receive data to and from the network.
-As build systems yarn and rollup will be used. To implement the GUI side of the application, mithril.js will be used.
+For the ARM Core, a Linux will be  set up that can communicate with the logger
+core via  a GNU/Linux kernel  module. A server application will  be developed
+which will run on the Linux to send  the data written to the RAM by the logger
+to the network. This will be done using WebSockets.
+
+The    oscilloscope    web    application   will    be    implemented    using
+JavaScript. WebSockets are used  to transmit and receive data to  and from the
+network.  As build systems, yarn and rollup will be used. To implement the GUI
+side of the application, mithril.js will be deployed.
 
 \section{Testing}
 
@@ -187,11 +248,11 @@ Optional testing would involve a comparison to the reference implementation and 
 \label{ch:initial}
 % ---------------------------------------------------------------------------- %
 
-\begin{a3pages} % The opening brace is needed (see also a3pages.tex)
+\begin{a3pages}
     \begin{figure}
         \centering
         \input{../../doc/report/images/pm/timetable.pgf}
-        \caption{The timetables of the project. The planned and effective timespans are visible.}
+        \caption{The timetables of the project. The planned and effective time spans are visible.}
     \end{figure}
 \end{a3pages}
 
@@ -211,7 +272,9 @@ Optional testing would involve a comparison to the reference implementation and 
 \section{General Prerequisite Tasks}
 \label{sec:general}
 
-Conatins task to get an overview of the previous project's current state left behind by the predecessors and define the further steps and requirements to this project.
+Contains tasks to get an overview  of the previous project's current state and
+to define  further steps and  requirements to  this project which  follow from
+that.
 
 \subsection{Read Literature about the Existing Project}
 \label{subsec:general:read}
@@ -224,8 +287,11 @@ Conatins task to get an overview of the previous project's current state left be
     {}
     {Raphael Frey, Noah Hüsser}
     {%
-        Read the predecessor documentation and general information to the STEMlab board to get familiar with the project and it's general state.
-        Fromon here the specifications will be determined and the project requirements will be revised.
+        Read  the preceding  project's documentation  and general  information
+        about  the STEMlab  board to  get familiar  with the  project and  its
+        general state. Based  on this,  the specifications will  be determined
+        and  the  project requirements  (this  document)  will be  revised  to
+        reflect the new findings.%
     }
 
 \subsection{Tutorial to IIR Filters}
@@ -239,7 +305,8 @@ Conatins task to get an overview of the previous project's current state left be
     {}
     {Raphael Frey, Noah Hüsser}
     {%
-        Complete the lab course about IIR filters and their bitgrowth problems and fixes provided by Mr. Pichler.
+        Complete  the  lab course  about  IIR  filters  and their  bit  growth
+        problems and fixes provided by Mr. Pichler.
     }
 
 \subsection{Assess Results of the Predecessor Project}
@@ -253,7 +320,8 @@ Conatins task to get an overview of the previous project's current state left be
     {}
     {Raphael Frey, Noah Hüsser}
     {%
-        Define what the current project status is and where we can connect to the predecessor project.
+        Define what the current project status  is and where we can connect to
+        the predecessor project.
     }
 
 \subsection{Outline the Project}
@@ -267,7 +335,8 @@ Conatins task to get an overview of the previous project's current state left be
     {}
     {Raphael Frey, Noah Hüsser}
     {%
-        Define what the requirements for the project are and which of those are a must and which a nice to have.
+        Define what  the requirements for the  project are and which  of those
+        are a must and which a nice to have.
     }
 
 \section{Filter Design}
@@ -322,17 +391,17 @@ implementation in the FPGA tool chain.
     {}
     {Raphael Frey}
     {%
-        Matlab scripts which design various filter chains. These consist of one
-        or several dispatcher scripts where the filter chains are specified in
-        terms of their frequency band properties, and scripts which actually
-        design the filters according to these specifications.
+        Matlab scripts  which design  various filter chains. These  consist of
+        one  or  several  dispatcher  scripts  where  the  filter  chains  are
+        specified in  terms of  their frequency  band properties,  and scripts
+        which actually design the filters according to these specifications.
 
-        Specifically, scripts for generating CIC filters and their compensation
-        filters, as well as FIR filters are needed. For FIR filters, the resulting
-        coefficients are to be saved in files so that they can be loaded by the
-        Xilinx tool chain.
+        Specifically,   scripts  for   generating   CIC   filters  and   their
+        compensation  filters, as  well  as FIR  filters  are needed. For  FIR
+        filters, the resulting  coefficients are to be saved in  files so that
+        they can be loaded by the Xilinx tool chain.
 
-        If possible Matlab's parallelism should be exploited to reduce filter
+        If possible, Matlab's parallelism should be exploited to reduce filter
         design times.
     }
 
@@ -347,19 +416,18 @@ implementation in the FPGA tool chain.
     {}
     {Raphael Frey}
     {%
-    In order to assess the resource usage of the filter chains which are
-    designed by Matlab, the respective filter blocks (CIC, FIR) need to be
+    In  order to  assess the  resource usage  of the  filter chains  which are
+    designed by  Matlab, the respective  filter blocks  (CIC, FIR) need  to be
     implemented in Vivado and a bitstream must be compiled.
 
-    Since the number of filters generated by package~\ref{subsec:filter:matlab}
-    can be very large (dozens or even hundreds of filters), this process must be automated
-    to be of any use. For this, TCL scripts are used.
+    Since       the      number       of       filters      generated       by
+    package~\ref{subsec:filter:matlab}  can  be  very large  (dozens  or  even
+    hundreds of filters), this process must be automated to be of any use. For
+    this, Tcl scripts are used.
 
-    For FIR filters, the scripts load the coefficient files which have been
-    generated by Matlab.
-
-    Vivado will  generate usage  reports which  can then  be automatically
-    post-processed.
+    For FIR  filters, the scripts load  the coefficient files which  have been
+    generated by Matlab.  Vivado will generate usage reports which can then be
+    automatically post-processed.
     }
 
 
@@ -374,10 +442,9 @@ implementation in the FPGA tool chain.
     {}
     {Raphael Frey}
     {%
-        Documentation  for the  filter design  tool chain. The  documentation
-        should be sufficiently detailed so that the tool chain can be used by
-        a  person  who wishes  to  compile  a  new bitstream  with  different
-        filters.
+        Documentation  for the  filter  design  tool chain. The  documentation
+        should be sufficiently detailed so that  the tool chain can be used by
+        a person who wishes to create new filters for a new bitstream.
     }
 
 
@@ -405,8 +472,9 @@ implementation in the FPGA tool chain.
     {}
     {Raphael Frey, Noah H\"usser}
     {%
-    Continuously check, restructure and update the report to current new insights.
-    Compile and round up the actual thesis document after all the different parts have been written.%
+    Continuously  check, restructure  and  update the  report  to current  new
+    insights.  Compile and round out the  actual thesis document after all the
+    different parts have been written.%
     }
 
 
@@ -425,9 +493,11 @@ implementation in the FPGA tool chain.
     {Noah H\"usser}
     {%
     Boot an Ubuntu Linux onto the Red Pitaya.%
-    The target here is to have a ARM Linux distribution which boots fine on the RedPitaya.
-    The official sources from the RedPitaya project should be used as they contain a lot of patches for the RedPitaya hardware.
-    A standalone toolchain has to be developped as the compiled versions do not contain the right device tree (DT) and board support package (BSP).
+    The target here  is to have a  ARM Linux distribution which  boots fine on
+    the STEMlab.  The official sources  from the STEMlab project should be
+    used as they contain a lot of patches for the STEMlab hardware.
+    A standalone toolchain has to be developed as the compiled versions do not
+    contain the right device tree (DT) and board support package (BSP).
     Compiling in the right DT and BSP is not part of this task.
     }
 
@@ -444,9 +514,12 @@ implementation in the FPGA tool chain.
     {}
     {Noah H\"usser}
     {%
-        It has to be determined what technology should be used to provide the server side of the data transmission.
-        The server needs to be able to perform IOCTL calls and to serve data with the chosen protocol over the network. It has to run on the arm linux and shouldn't have too many dependencies.
-        A C-like language will most likely serve best since it's close to the kernel.
+        It has to be determined what  technology should be used to provide the
+        server side of the data transmission.   The server needs to be able to
+        perform IOCTL  calls and to serve  data with the chosen  protocol over
+        the network. It has to run on the arm GNU/Linux and shouldn't have too
+        many  dependencies.  A  C-like language  will most  likely serve  best
+        since it's close to the kernel.
     }
 
 \subsubsection{Build External Libraries and Test Them}
@@ -459,7 +532,9 @@ implementation in the FPGA tool chain.
     {}
     {Noah H\"usser}
     {%
-        A library for networking and another for JSON are needed. The requirements will be decided by the specifications of the scope application.
+        A  library  for  networking  and  another  for  JSON  are  needed. The
+        requirements  will  be decided  by  the  specifications of  the  scope
+        application.
     }
 
 \subsubsection{Write the Server Application}
@@ -472,9 +547,11 @@ implementation in the FPGA tool chain.
     {}
     {Noah H\"usser}
     {%
-        A server application has to be written that reads data from the Logger and transmits it over the network.
-        It needs to be able to configure the logger via RPCs that are mapped to IOCTLs.
-        It should read data from /dev/logger which is presented by the kernel module.
+        A server application has to be written that reads data from the Logger
+        and transmits it  over the network.  It needs to  be able to configure
+        the logger  via RPCs  that are mapped  to \texttt{IOCTL}s.   It should
+        read data from  \texttt{/dev/logger} which is presented  by the kernel
+        module.
     }
 
 \subsubsection{Document the Server Application}
@@ -503,13 +580,11 @@ implementation in the FPGA tool chain.
     {}
     {Noah H\"usser}
     {%
-        Get a minimal working example project running on the Red Pitaya.
-
-        This requires importing the cores from Pavel Denim's project as
-        well as compiling the Linux for the Red Pitaya.
-
-        Correct functionality of the Red Pitaya hardware, particularly the
-        ADC, is to be verified via Anton Potochnik's frequency counter.
+        Get a minimal working example project running on the Red Pitaya.  This
+        requires importing  the cores  from Pavel Demin's  project as  well as
+        compiling the Linux for the STEMlab.  Correct functionality of the Red
+        Pitaya hardware,  particularly the  ADC, is to  be verified  via Anton
+        Potochnik's frequency counter.
     }
 
 \subsubsection{Set up a Sane Toolchain for the FPGA}
@@ -523,7 +598,10 @@ implementation in the FPGA tool chain.
     {}
     {Raphael Frey}
     {%
-        Depending on the previous project's results, ane entirely new Toolchain is required or not. Either way, Vivado can be very bitchy and we need to have a sane toolchain for the entire FPGA build process so we can work cleanly.
+    Depending on the previous project's  results, an entirely new Toolchain is
+    required or  not. Either way, Vivado  can be very  finicky and we  need to
+    have a  sane toolchain for  the entire FPGA build  process so we  can work
+    cleanly.
     }
 
 \subsubsection{Port the ZYNQ Logger}
@@ -553,10 +631,8 @@ implementation in the FPGA tool chain.
     {}
     {Raphael Frey}
     {%
-        Implement the filter chains as designed in Matlab on the FPGA.
-
-        This requires correct functionality of the FIR and CIC filter
-        blocks.
+        Implement the filter  chains as designed in Matlab on  the FPGA.  This
+        requires correct functionality of the FIR and CIC filter blocks.
     }
 
 \subsubsection{Verification by Simulation}
@@ -569,8 +645,8 @@ implementation in the FPGA tool chain.
     {}
     {Raphael Frey}
     {%
-        Simulate all the FPGA blocks.
-        Simulate the filters with a sine to make sure the filter work as expected.
+        Simulate all  the FPGA blocks.   Simulate the  filters with a  sine to
+        make sure the filter work as expected.
     }
 
 \subsubsection{Document FPGA Toolchain and Filter Structure}
@@ -583,10 +659,7 @@ implementation in the FPGA tool chain.
     {}
     {Raphael Frey}
     {%
-        Implement the filter chains as designed in Matlab on the FPGA.
-
-        This requires correct functionality of the FIR and CIC filter
-        blocks.
+        Document the implemented filter chains and surrounding FPGA structure.
     }
 
 \section{Validation}
@@ -602,8 +675,8 @@ implementation in the FPGA tool chain.
     {}
     {Raphael Frey}
     {%
-        Build the entire project (Linux, bitstream), flash
-        result onto the Red Pitaya and verify correct functionality.
+        Build the entire project (Linux, bitstream), flash result onto the Red
+        Pitaya and verify correct functionality.
     }
 
 \subsection{Validate the Filter Implementation}
@@ -616,13 +689,14 @@ implementation in the FPGA tool chain.
     {}
     {Noah Hüsser}
     {%
-        Validate the specified frequency response of the filters and the attenuation in the passband.
+        Validate  the specified  frequency  response of  the  filters and  the
+        attenuation in the passband.
     }
 
-\section{Frontend}
+\section{Front-end}
 \label{sec:frontend}
 
-\subsection{Techology Research}
+\subsection{Technology Research}
 \label{subsec:frontend:research}
 \wpac
     {}
@@ -632,13 +706,20 @@ implementation in the FPGA tool chain.
     {}
     {Noah Hüsser}
     {%
-        Research the possibilities to design and implement a nice frontend for the RedPitaya recording system.
-        The RedPitaya Project has a built-in webinterface which allows the display of signals and rudimentary calculations.
-        Furthermore Prof. Gut has implemented a spectrum analyzer in Java which interfaces with the RedPitaya.
-        Both approaches are feasible and should be evaluated properly.
-        Furthermore it has to be evaluated how the data should be transferred to the frontend.
-        This descision correlates a lot with the selection of a programming language since e.g. web technologies do not support UDP.
-        Finally, existing libraries have to examined very carefully. There is a lot of libraries around data transmission and GUI design, but not all of them are feasible.
+        Research the possibilities to design and implement a nice front-end for
+        the STEMlab recording system.
+        The  STEMlab Project  has a  built-in web  interface which  allows the
+        display of signals and rudimentary calculations.
+        Furthermore  Prof. Gut has  implemented  a spectrum  analyzer in  Java
+        which interfaces with the STEMlab.
+        Both approaches are feasible and should be evaluated thoroughly.
+        Furthermore it has to be evaluated  how the data should be transferred
+        to the front-end.
+        This decision  correlates a  lot with the  selection of  a programming
+        language since e.g. web technologies do not support UDP.
+        Finally, existing libraries have to examined very carefully. There are
+        a lot  of libraries around data  transmission and GUI design,  but not
+        all of them are viable solutions.
     }
 
 \subsection{Scope Specifications}
@@ -651,7 +732,7 @@ implementation in the FPGA tool chain.
     {}
     {Noah Hüsser}
     {%
-        Specify the scopes requirements and nice-to-haves.
+        Specify the scope's requirements and nice-to-haves.
     }
 
 \subsection{Implementation of a Basic Plotter}
@@ -664,10 +745,14 @@ implementation in the FPGA tool chain.
     {}
     {Noah Hüsser}
     {%
-        At first a simple plotter will be implemented. It should not do more than plot a given vector of data points on a canvas.
-        The plotting should be done performantly at 60 frames per second not being dependant on the size of the data vector.
-        Of course more data will slow down the plotting, but it should perform so well that the size of vectors up to 64 kilosamples do plot nicely.
-        For this task it is recommended to use existing libraries which make use of the GPU such as OpenGL.
+        At first a  simple plotter is implemented. It should  not do more
+        than plot a given vector of data points on a canvas.
+        The plotting  should be done  with high  performance at 60  frames per
+        second independently of the size of the data vector.
+        Of course more data will slow down the plotting, but it should perform
+        well enough that vectors up to 64 kilosamples in size plot nicely.
+        For this task  it is recommended to use existing  libraries which make
+        use of the GPU such as OpenGL.
     }
 
 \subsection{Implementation of a Basic Receiver}
@@ -681,10 +766,14 @@ implementation in the FPGA tool chain.
     {Noah Hüsser}
     {%
         A simple receiver which receives recorded samples over the network should be created.
-        For this task a simple emmitter which emmits test samples without actually recording anything should be implemented.
-        In further tasks it can be used conveniently without the need of a running RedPitaya board.
-        The receiver should simply receive samples as packets with lengths of powers of two over the network.
-        Again, a good, performant and publicly accepted library should be used to reduce workload and ensure reliability.
+        For  this task  a simple  emitter which  emits test  samples without
+        actually recording anything should be implemented.
+        In further  tasks it can  be used conveniently  without the need  of a
+        running STEMlab board.
+        The receiver should simply receive  samples as packets with lengths of
+        powers of two over the network.
+        Again, a  good, high-performance and publicly  accepted library should
+        be used to reduce workload and ensure reliability.
     }
 
 \subsection{Combining the Plotter and the Receiver}
@@ -697,8 +786,9 @@ implementation in the FPGA tool chain.
     {}
     {Noah Hüsser}
     {%
-        The plotter and the receiver should be combined to display vecors received over the network.
-        This should happen fluently without any delays.
+        The plotter  and the  receiver should be  combined to  display vectors
+        received over  the network.  This  should happen fluently  without any
+        delays.
     }
 
 \subsection{Setting a Trigger on the Logger Core}
@@ -711,7 +801,8 @@ implementation in the FPGA tool chain.
     {}
     {Noah Hüsser}
     {%
-        The application should have a possibility to set a trigger type for any channel with the possibility to do this using a GUI.
+        The application  should have a ability  to set a trigger  type for
+        any channel with the possibility to do this using a GUI.
     }
 
 \subsection{Implement Proper Scaling}
@@ -724,9 +815,12 @@ implementation in the FPGA tool chain.
     {}
     {Noah Hüsser}
     {%
-        The GUI should not only plot a qualitatively correct signal but also show it's quantities.
-        A grid should be programmed into the GUI which can be used to read metrics of a signal. A panel on the GUI should display the current grid size.
-        It should be possible to scale signals using the mouse or the GUI. Grids should adjust with the current scale.
+        The GUI should  not only plot a qualitatively correct  signal but also
+        show its  quantitative properties.  A  grid should be  programmed into
+        the GUI which can be used to  read metrics of a signal. A panel on the
+        GUI should  display the current grid  size.  It should be  possible to
+        scale signals using the mouse or the GUI. Grids should adjust with the
+        current scale.
     }
 
 \subsection{Implement Trigger Modes}
@@ -739,10 +833,11 @@ implementation in the FPGA tool chain.
     {}
     {Noah Hüsser}
     {%
-        It should be possible to use the scope application in \textit{normal}, \textit{auto}, and \textit{single} mode. Those modes should behave as follows:
+        It should be possible to use the scope application in \textit{normal},
+        \textit{auto}, and \textit{single} mode. Those modes should behave as follows:
         \begin{tabular}{l l}
         \textit{normal} & send a packet when a trigger was fired and repeats this procedure \\
-        \textit{auto} & send a packet when a trigger was fired or a timeout ocurred and repeat \\
+        \textit{auto} & send a packet when a trigger was fired or a timeout occurred and repeat \\
         \textit{single} & send a packet after a first trigger and does not repeat this procedure
         \end{tabular}
     }
@@ -760,7 +855,7 @@ implementation in the FPGA tool chain.
         An FFT should be calculated and displayed live.
     }
 
-\subsection{Implement Power Measuremenets}
+\subsection{Implement Power Measurements}
 \label{subsec:frontend:}
 \wpac
     {}
@@ -771,7 +866,8 @@ implementation in the FPGA tool chain.
     {Noah Hüsser}
     {%
         Calculate the power in the signal.
-        It has to be possible to calculate the power between two markers to limit the calulation on a certain part of the signal.
+        It has  to be possible to  calculate the power between  two markers to
+        limit the calculation on a certain part of the signal.
     }
 
 \subsection{Implement SNR Calculation}
@@ -785,7 +881,7 @@ implementation in the FPGA tool chain.
     {Noah Hüsser}
     {%
         The SNR of the signal between two markers has to be calculated automatically.
-        As a reference use the Java applicaion of Prof. Gut.
+        As a reference use the Java application of Prof. Gut.
     }
 
 \subsection{Implement THD Calculation}
@@ -799,7 +895,7 @@ implementation in the FPGA tool chain.
     {Noah Hüsser}
     {%
         The THD of the signal spectrum has to be calculated automatically.
-        As a reference use the Java application of Prof. Gut.
+        As a reference, use the Java application of Prof. Gut.
     }
 
 \subsection{Implement Dual Channel Possibilities}
@@ -812,8 +908,11 @@ implementation in the FPGA tool chain.
     {}
     {Noah Hüsser}
     {%
-        The entire transmission and plotting of all the signals should be implemented for dual channel capabilities.
-        The FPGA code supports up to eight channels whilst only supplying two to the server since the RedPitaya board only supports two physical channels.
+        The  entire transmission  and plotting  of all  the signals  should be
+        implemented for dual channel capabilities.
+        The FPGA code supports up to  eight channels whilst only supplying two
+        to  the server  since the  STEMlab  board only  supports two  physical
+        channels.
     }
 
 \subsection{Document the Scope}
@@ -826,7 +925,7 @@ implementation in the FPGA tool chain.
     {}
     {Noah Hüsser}
     {%
-        Document the entire scoping application and how to use it.
+        Document the entire oscilloscope application and how to use it.
     }
 
 % >>>

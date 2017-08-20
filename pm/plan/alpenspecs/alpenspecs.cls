@@ -505,7 +505,7 @@
         \vspace{1em}
         \begin{tabular}{lp{100mm}}
             \textsf{\textsc{Ancestors:}}   & #4 \\
-            \textsf{\textsc{Descendants:}} & #5 \\
+            %\textsf{\textsc{Descendants:}} & #5 \\
             \textsf{\textsc{Assignee:}}    & #6 \\
             \textsf{\textsc{Description:}} & #7 \\
         \end{tabular}
