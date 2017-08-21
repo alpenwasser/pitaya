@@ -19,11 +19,11 @@ converter  is   decimated  to  a   lower-rate  signal  using   the  integrated
 FPGA. During decimation, the signal passes through one of six filter chains to
 attenuate aliasing  effects. 
 
-The  chains run  on the  STEMlab's FPGA. They  are based  on a  combination of
-FIR  and CIC  filters,  and  decimate the  incoming  125MHz  signal to  output
-frequencies  between \SI{50}{\kHz}  and  25MHz, depending  on the  chain. They
-achieve  an  aliasing attenuation  of  60dB  and exhibit  negligible  passband
-droop. A signal-to-noise ratio of up to 84dB has been measured.
+The chains run on  the STEMlab's FPGA. They are based on  a combination of FIR
+and CIC filters, and decimate the incoming 125MHz signal to output frequencies
+between  50kHz and  25MHz, depending  on the  chain. They achieve  an aliasing
+attenuation of  60dB and exhibit negligible  passband droop. A signal-to-noise
+ratio of up to 84dB has been measured.
 
 The decimated signal is then passed on  to an embedded GNU/Linux and sent to a
 client over  a network connection. A newly  developed oscilloscope application
