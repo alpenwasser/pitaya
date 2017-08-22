@@ -1,5 +1,5 @@
 \RequirePackage{snapshot}
-\documentclass[a4paper,twoside]{alpenthesis/alpenthesis}
+\documentclass[a4paper,oneside]{alpenthesis/alpenthesis}
 % ==============================================================================
 %
 %                               P R E A M B L E
@@ -8,7 +8,7 @@
 % <<< ----------------------------------------------------------------PREAMBLE %
 \hextrue
 %\aiiistock % Compile twice for A4, then once for A3, with hextrue
-\papertrue
+\paperfalse
 %https://tex.stackexchange.com/a/210456/131649
 \renewcommand\partnumberlinebox[2]{#2\hspace{2em}}
 \ifpaper
@@ -93,7 +93,7 @@
         Coaches:        & Prof. Dr. Richard Gut, Michael Pichler \\[2mm]
         External Expert & Dr. J\"urg Stettbacher \\[2mm]
         Team:           & Raphael Frey, Noah H\"usser \\[2mm]
-        Date:           & August 18, 2017 \\[2mm]
+        Date:           & \today \\[2mm]
         Revision:       & 1.0.0 \\[2mm]
     \end{tabular}
 
@@ -234,7 +234,7 @@
 \include{chunks/appgui}
 \include{chunks/licenses}
 \include{chunks/task}
-\include{chunks/media}
+%\include{chunks/media}
 
 % Matlab-prettifier: Uses the lstlisting counter
 % Minted: Uses the listing counter

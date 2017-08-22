@@ -8,7 +8,7 @@
     trim axis right,
 ]
     \pgfplotsset{every axis/.style={
-            height=45mm,
+            height=55mm,
             width=\textwidth,
             grid=none,
             % y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
@@ -18,24 +18,31 @@
             % x unit=\si{\Hz},
             y unit=\si{\dB},
             x unit=\times\,\pi\,\si{\radian}/\si{\sample},
-            % ytick={-80,-40,0,40},
-            legend columns=3,
+            ymax=0,ymin=-180,
+            ytick={0,-30,-60,-90,-120,-150,-180},
+            ymajorgrids=true,
         },
         every axis legend/.append style={
-            at={(0.995,0.02)},
-            anchor=south east,
+            at={(0,-0.1)},
+            anchor=north west,
             cells={anchor=west},
+            /tikz/column 1/.style={column sep= 5pt},
+            /tikz/column 2/.style={column sep=10pt},
+            /tikz/column 3/.style={column sep= 5pt},
+            /tikz/column 4/.style={column sep=10pt},
+            /tikz/column 5/.style={column sep= 5pt},
         },
+        legend image post style={mark options={scale=1}},
     }
     \begin{axis}[
-            title={Attenuation in the Edge and Stopband in Contrast to the Passband for $R=1250$},
+            title={Attenuation in Passband, Edge and Stopband for $R=1250$},
             at = {(0,0)},
             xmin=0,
             xmax=4096,
             %ymin=-120,
             %ymax=5,
             xtick={4096},
-            xticklabels={$\frac{f_\mathrm{s}}{2}$},
+            xticklabels={$f_\mathrm{s}/2$},
         ]
         \addplot[thick,q1,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=s100] \freqzTableA;
         \addplot[thick,ct4,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=s410] \freqzTableA;
