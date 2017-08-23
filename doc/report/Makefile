@@ -48,7 +48,7 @@ tikzcache:
 # regular targets, so  this target needs to  be run manually
 # at the appropriate times (see README.md).
 tikz:
-	@make -j$(CORE_COUNT) -C $(OUT_DIR) -f $(DOCUMENT).makefile
+	@exec ./tcache.sh $(CORE_COUNT) $(OUT_DIR) $(DOCUMENT)
 
 .PHONY: meta
 meta:
@@ -56,7 +56,7 @@ meta:
 	@cp $(OUT_DIR)/$(DOCUMENT).ctr $(META_DIR)/$(DOCUMENT).ctr.$(HOST_ID)
 	@echo "%% host name: $(HOST_NAME)" >> $(META_DIR)/$(DOCUMENT).ctr.$(HOST_ID)
 	@exec $(META_DIR)/tally.sh $(DOCUMENT) $(META_DIR)
-	
+
 
 index:
 	@makeindex -o $(OUT_DIR)/$(DOCUMENT).ind $(OUT_DIR)/$(DOCUMENT).idx
@@ -95,7 +95,7 @@ bundle:
 	@rm $(OUT_DIR)/$(DOCUMENT).tar
 	@cp -r $(CODE_DIR) $(META_DIR)/$(DOCUMENT)
 	@cp Makefile $(META_DIR)/$(DOCUMENT)
-	@tar -C $(META_DIR) -cf - $(DOCUMENT) | xz --best > $(META_DIR)/$(DOCUMENT)--$(TIMESTAMP).tar.xz 
+	@tar -C $(META_DIR) -cf - $(DOCUMENT) | xz --best > $(META_DIR)/$(DOCUMENT)--$(TIMESTAMP).tar.xz
 	@rm -r $(META_DIR)/$(DOCUMENT)
 
 # Tidy up, but don't clean out cached files and pdf documents.

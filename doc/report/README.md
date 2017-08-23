@@ -47,7 +47,7 @@ machine ID should be a valid string for a file name.
 **NOTE**: The machine-id is considered confidential  and should not be exposed
 to  untrusted environments. If  you  wish to  base  `meta/machine-id` on  your
 `/etc/machine-id`, hash  the latter and  put the  result into the  former (for
-example).   
+example).
 
 See here: http://man7.org/linux/man-pages/man5/machine-id.5.html
 
@@ -130,3 +130,71 @@ Install solarized theme for pygments:
 ```
 # pip install pygments-style-solarized
 ```
+
+Statistics (v1.0.2, 2017-AUG-23)
+================================
+
+## Word Count
+
+```
+texcount chunks/*.tex
+
+Total
+-----------------------------------------
+Words:                              27067
+
+of which:
+Words in text:                      24157
+Words in headers:                     389
+Words outside text (captions, etc.): 2521
+
+Number of headers:                    153
+Number of floats/tables/figures:       70
+Number of math inlines:               195
+Number of math displayed:              32
+Files:                                 20
+
+Subcounts (sorted by text word count)
+-------------------------------------------------------------------------------------
+  total text headers captions  #headers #floats #inlines #displayed File
+   5963 4913      32     1018        13      21       99         19 chunks/theory.tex
+   4072 3891      95       86        31       0        1          0 chunks/devguide.tex
+   2734 2572      44      118        18       5        9          1 chunks/mission.tex
+   2719 2485      43      191        21       7       16          4 chunks/gui.tex
+   2105 1878      33      194         9       3       10          3 chunks/fpga.tex
+   1874 1782      26      166        11       4       17          0 chunks/fdesign.tex
+   1612 1322      13      277         6      11       22          2 chunks/verification.tex
+   1049 1024      11       14         6       0        0          0 chunks/appgui.tex
+    970  930       9       31         2       1        0          0 chunks/introduction.tex
+    984  742      11      231         3       9       15          3 chunks/apptheory.tex
+    632  605      13       14         7       1        0          0 chunks/server.tex
+    645  586       2       57         2       5        0          0 chunks/userguide.tex
+    422  421       1        0         1       0        0          0 chunks/conclusion.tex
+    480  312      44      124        16       3        6          0 chunks/appfdesign.tex
+    309  306       3        0         2       0        0          0 chunks/abstract.tex
+    210  206       4        0         2       0        0          0 chunks/licenses.tex
+    116  115       1        0         1       0        0          0 chunks/thanks.tex
+     64   62       2        0         1       0        0          0 chunks/media.tex
+      3    3       0        0         0       0        0          0 chunks/info.tex
+      4    2       2        0         1       0        0          0 chunks/task.tex
+```
+
+## Build Time (2 x X5680 Xeon, 12 PC/24 LC)
+
+When building from a clean directory:
+```
+time make
+make        101.91s user  1.23s system  99% cpu  1:43.75 total
+time make tikz
+make tikz  5556.67s user 11.26s system 725% cpu 12:47.14 total
+time make
+make         72.34s user  0.37s system  99% cpu  1:12.80 total                           
+```
+
+## File Sizes
+File size without Ti*k*Z pictures: 3.8 MiB
+File size with Ti*k*Z pictures: 14 MiB
+
+## Page Count (oneside)
+Pages without Ti*k*Z pictures: 111
+Pages with Ti*k*Z pictures: 143
