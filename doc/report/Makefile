@@ -55,6 +55,8 @@ meta:
 	@mkdir -p $(META_DIR)
 	@cp $(OUT_DIR)/$(DOCUMENT).ctr $(META_DIR)/$(DOCUMENT).ctr.$(HOST_ID)
 	@echo "%% host name: $(HOST_NAME)" >> $(META_DIR)/$(DOCUMENT).ctr.$(HOST_ID)
+	@exec $(META_DIR)/tally.sh $(DOCUMENT) $(META_DIR)
+	
 
 index:
 	@makeindex -o $(OUT_DIR)/$(DOCUMENT).ind $(OUT_DIR)/$(DOCUMENT).idx

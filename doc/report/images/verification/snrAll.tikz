@@ -23,32 +23,42 @@
     trim axis right,
 ]
     \pgfplotsset{every axis/.style={
-            height=45mm,
+            height=55mm,
             width=\textwidth,
             grid=none,
             % y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
             % x filter/.code={\pgfmathparse{\pgfmathresult * 25e3}},
             xlabel=Frequency,
-            ylabel=$SNR$,
-            % x unit=\si{\Hz},
+            ylabel=$\text{SNR}$,
+            x unit=\times\,\pi\,\si{\radian}/\si{\sample},
             y unit=\si{\dB},
-            % ytick={-80,-40,0,40},
+            ytick={120,90,60,30,0,-30},
+            ymajorgrids=true,
+            xmajorgrids=true,
         },
         every axis legend/.append style={
             %at={(1,-0.15)},
             %anchor=north east,
             cells={anchor=west},
         },
+        legend image post style={mark options={scale=1}},
     }
     \begin{axis}[
-            title={The SNR Frequency Response},
+            title={SNR Frequency Response},
             at = {(0,0)},
             xmin=0,
             xmax=2000,
             %ymin=-120,
             %ymax=5,
-            xtick={400,2000},
-            xticklabels={$\frac{f_s}{2}$,$5\frac{f_s}{2}$},
+            xtick={0,400,800,1200,1600,2000},
+            xticklabels={%
+                $0$,
+                $\frac{f_\mathrm{s}}{2}$,
+                $2\frac{f_\mathrm{s}}{2}$,
+                $3\frac{f_\mathrm{s}}{2}$,
+                $4\frac{f_\mathrm{s}}{2}$,
+                $5\frac{f_\mathrm{s}}{2}$%
+            },
         ]
         \addplot[thick,q1,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xsnr] \freqzTableA;
         \addplot[thick,ct4,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xsnr] \freqzTableB;
@@ -57,12 +67,12 @@
         \addplot[thick,q5,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xsnr] \freqzTableE;
         \addplot[thick,q6,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=xsnr] \freqzTableF;
         \legend{%
-            R=5,%
-            R=25,%
-            R=125,%
-            R=625,%
-            R=1250,%
-            R=2500%
+            $R=5$,%
+            $R=25$,%
+            $R=125$,%
+            $R=625$,%
+            $R=1250$,%
+            $R=2500$%
         }
     \end{axis}
     

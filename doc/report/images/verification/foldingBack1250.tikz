@@ -42,7 +42,7 @@
             %ymin=-120,
             %ymax=5,
             xtick={4096},
-            xticklabels={$f_\mathrm{s}/2$},
+            xticklabels={$\frac{f_\mathrm{s}}{2}$},
         ]
         \addplot[thick,q1,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=s100] \freqzTableA;
         \addplot[thick,ct4,-,smooth,only marks,mark options={scale=0.2}] table[x=f, y=s410] \freqzTableA;

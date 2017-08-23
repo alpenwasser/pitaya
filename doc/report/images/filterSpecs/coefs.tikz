@@ -14,7 +14,8 @@
         xmin=-1,
         xmax=39,
         ylabel=$y$,
-        xlabel=$n$,
+        xlabel=Time,
+        x unit=cycles,
     ]
         \draw[gray] (-1,0) -- (39,0);
         \addplot[thick,ycomb,mark=*,q1] table[x=x,y=y,col sep=comma] {images/filterSpecs/coefs.csv};

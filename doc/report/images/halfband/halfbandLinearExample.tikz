@@ -12,7 +12,7 @@
             width=\textwidth,
             grid=none,
             xlabel=Normalized Frequency,
-            ylabel=Magnitude,
+            ylabel=Amplitude,
             x unit=\times\,\pi\,\si{\radian}/\si{\sample},
         },
     }
@@ -34,8 +34,8 @@
         xmax=27,
         xtick={0,5,10,15,20,25},
         ylabel=$y$,
-        xlabel=$n$,
-        x unit = {},
+        xlabel=Time,
+        x unit=cycles,
     ]
         \draw[gray] (-1,0) -- (28,0);
         \addplot[thick,ycomb,mark=*,q1] table[x=x,y=y,col sep=comma] \coefTable;

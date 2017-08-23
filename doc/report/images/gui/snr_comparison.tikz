@@ -31,7 +31,7 @@
     trim axis right,
 ]
      \pgfplotsset{every axis/.style={
-            height=45mm,
+            height=55mm,
             width=\textwidth,
             grid=none,
             % y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
@@ -63,7 +63,7 @@
 
     \begin{axis}[
             title={Iterative SNR Calculation},
-            at = {(0,-65mm)},
+            at = {(0,-75mm)},
             xmin=0,
             xmax=25e3,
             %ymin=-120,

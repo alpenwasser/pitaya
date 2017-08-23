@@ -1,0 +1,78 @@
+\newcounter{globalCounter}
+\newcounter{hostCounter}
+\tikzifexternalizing{%
+    %true code
+    \setcounter{globalCounter}{0}
+    \setcounter{hostCounter}{0}
+}{% false code
+    \newcommand*\globalCounterFile{meta/Main.global.ctr}
+    \newwrite\globalCounterFH
+    \immediate\openin\globalCounterFH=\globalCounterFile
+    \immediate\read\globalCounterFH to \globalCounterLine
+    \immediate\read\globalCounterFH to \hostCounterLine
+    \immediate\closein\globalCounterFH
+    \setcounter{globalCounter}{\globalCounterLine}
+    \setcounter{hostCounter}{\hostCounterLine}
+    \stepcounter{globalCounter}
+}
+
+\vspace*{30mm}
+
+\begin{tiny}
+    \begin{tabular}{lll}
+        Content & \copyright~2017 & Raphael Frey \\
+                &                  & Noah Hüsser  \\
+                &                  &              \\
+        Design  & \copyright~2017  & Raphael Frey \\
+    \end{tabular}
+
+
+    % ---------------------------------------------------- %
+    % Having  this  in  a  tabular  is  a  bit  ugly,  but %
+    % it  ensures alignment  and  limited paragraph  width %
+    % without much effort.                                 %
+    % ---------------------------------------------------- %
+    \vspace{3em}
+    \begin{tabular}{p{.9\textwidth}}
+        This bachelor thesis was created in the spring semester of 2017 at the
+        FHNW University of Applied  Sciences and Arts Northwestern Switzerland
+        in the degree program \emph{Electrical and Information Technology}.\\
+
+        \\
+        \\
+        \ifpaper%
+            This is the  print version of the  document. An electronic version
+            with colored links can be found in the official repository under
+            \url{https://github.com/alpenwasser/pitaya/tree/master/doc/report/snapshots}
+            or requested by email from
+            \href{mailto:rmfrey@runbox.com}{\nolinkurl{rmfrey@runbox.com}}.
+        \else
+            This is the electronic version of the document, with colored links
+            and color gradients for decorations.   The color gradients in this
+            version might  pose problems when  printing; the print  version is
+            recommended in that case. It can be found at
+            \url{https://github.com/alpenwasser/pitaya/tree/master/doc/report/snapshots}
+            or requested by email from
+            \href{mailto:rmfrey@runbox.com}{\nolinkurl{rmfrey@runbox.com}}.
+        \fi
+        \\
+        \\
+        \\
+        This document has been compiled at least~\theglobalCounter~times across~\thehostCounter~hosts so far.\\
+    \end{tabular}
+    \vspace{3em}
+
+    \begin{tabular}{>{\ttfamily}lrp{88mm}}
+        \textbf{Version History} \\[1ex]
+        Version 1.0.0 & August 18, 2017 & Release as handed in for official review \\
+        \textcolor{gray}{Version 1.0.1}&& \textcolor{gray}{Skipped to keep in sync with global repository}\\
+        Version 1.0.2 & August 23, 2017 & Removes \emph{Media} appendix,
+                                          adds edition notice (this page),
+                                          tweaks plots in \emph{\nameref{ch:verification}} chapter for clarity and consistency,
+                                          adjusts height of axes in Figure~\ref{fig:gui:snr_comparison},
+                                          adjusts $x$ axis labels in Figures~\ref{fig:filter_specs:coefs}
+                                          and~\ref{fig:fir:halfband_linear_example} (bottom),
+                                          fixes $y$ axis label in Figure~\ref{fig:fir:halfband_linear_example},
+                                          adds vertical space between chapters in \emph{List of Listings}.\\
+    \end{tabular}
+\end{tiny}
