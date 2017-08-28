@@ -1,0 +1,54 @@
+- System Overview/General Idea
+- Theorie
+    - Downsampling why/how
+        - abtastung
+        - 1-2 plots
+    - Original RP
+        - What do they do
+            - powers of two for R
+            - averager
+        - What are the problems
+            - frequenzgang
+    - Vorgänger
+        - What do they do
+            - chains
+            - IIR/FIIR
+        - What are the problems
+            - hardware-ressourcen knapp
+            - bitbreiten
+- Unser Konzept
+    - CIC/FIR
+    - Chains
+    - Eigene Lösung
+        - bestätigung durch projekte
+        - Linux
+        - FPGA
+        - PC
+- FPGA
+    - Top down system overview
+    - pavel demin für ADC
+    - Logger from previous project
+        - ported
+    - new logic to control
+    - Xilinx blocks für filter
+        - bits propagate (slicing)
+        - dynamic range
+- Linux
+    - Build chain for image
+    - Kernel module
+    - Server
+        - websockets
+- Front-End
+    - Web based (JS)
+- Resultate
+    - Demo
+    - Tech specs
+        - 84db at max
+            - artifacts in matlab snr
+        - 60dB attenuation
+- Outlook
+    - better testing
+    - more functionality in scope
+    - more adapters for websockets
+    - more efficient filter chains
+        - maybe skip top most FIR (25MHz)
