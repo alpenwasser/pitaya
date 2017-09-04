@@ -1,0 +1,140 @@
+% **************************************************** <<< %
+% DOCUMENT INFORMATION                                     %
+% ******************************************************** %
+%                                                          %
+% Purpose of Document                                      %
+% -------------------                                      %
+% Defense of Thesis                                        %
+%                                                          %
+% Institution                                              %
+% -----------                                              %
+% University of Applied Sciences and Arts Northwestern     %
+% Switzerland, School of Engineering                       %
+%                                                          %
+% Degree Program                                           %
+% --------------                                           %
+% Electrical and Information Technology, BSc.              %
+%                                                          %
+% Author & Copyright                                       %
+% ------------------                                       %
+% Raphael Frey, rmfrey@runbox.com                          %
+% Noah Huesser, yatekii@yatekii.ch                         %
+%                                                          %
+% Date: 2017-SEP-15                                        %
+% **************************************************** >>> %
+
+% ================================================================= PREAMBLE <<<
+% ----------------------------------------------------------- DOCUMENT CLASS <<<
+\documentclass{beamer}                % Presentation Version
+%\documentclass[trans]{beamer}         % Transparency Version
+%\documentclass[handout]{beamer}       % Handout Version
+%>>>
+% ------------------------------------------------------------- Beamer Setup <<<
+%\addtobeamertemplate{background canvas}{\transdissolve[duration=1]\hspace{-0.29em}}{}
+%\usetheme[titleformat=smallcaps,numbering=none]{metropolis}
+\usetheme[titleformat=smallcaps,progressbar=frametitle]{metropolis}
+%>>>
+% ----------------------------------------------------------------- Packages <<<
+\usepackage[english]{babel}
+\usepackage{xcolor-solarized}
+\usepackage{lipsum}
+\usetikzlibrary{calc}
+\usetikzlibrary{positioning}
+\usetikzlibrary{arrows}
+\usetikzlibrary{calc}
+\usetikzlibrary{fit}
+\usetikzlibrary{backgrounds}
+\usetikzlibrary{shapes.symbols}
+\usepackage{dirtree}
+\usepackage[outputdir=build,cachedir=mintedCache]{minted}
+\usepackage{hologo}
+\setminted{%
+    %style=xcode,
+    %style=trac,
+    %style=paraiso-light,
+    %style=lovelace,
+    style=murphy,
+    bgcolor=solarized-base3,
+    linenos=false,
+    autogobble,
+}
+\usepackage{booktabs}
+%\setbeamercolor{alerted text}{fg=solarized-red}
+%>>>
+% ------------------------------------------------------------------- Macros <<<
+% Arrow for use in text
+\def\tikzrarrow{%
+    \tikz[baseline=-0.67ex]\draw[double,very thick,-{stealth}](0,0)--(0.5,0);}
+\newlength{\yOffs}
+\newlength{\xOffs}
+\newcommand*\code[1]{\texttt{#1}}
+\newcommand\source[1]{%
+    \tikz[remember picture,overlay]
+        \node[align=left,anchor=south west,text=solarized-base1,font=\tiny]
+        at (current page.south west)
+        {Quelle: #1};
+}
+% Node for use in Table/Text
+\newcommand\contrastnode[1]{%
+    \tikz[
+        baseline=(n0.base),
+        rounded corners=2mm,
+        inner sep=5pt,
+        text=solarized-base2,
+    ]
+        \node[fill=solarized-base01] (n0) {#1};
+}
+\newcommand*\XeLaTeX{\hologo{XeLaTeX}}
+%>>>
+% -------------------------------------------------------------- Title Setup <<<
+\title{\vspace*{4em}\Large Front-End Signal Processing for Red Pitaya Spectrum Analyzer}
+\subtitle{\hfill Bachelor Thesis}
+\date{\today}
+%\date{26. April 2017}
+\author{%
+    Raphael Frey%
+    \hfill%
+    \scriptsize\texttt{%
+        \href{mailto:rmfrey@runbox.com}%
+        {rmfrey@runbox.com}}\\[0.5mm]
+    \small
+    Noah H\"usser
+    \hfill%
+    \scriptsize\texttt{%
+        \href{mailto:yatekii@yatekii.ch}%
+        {yatekii@yatekii.ch}}}
+
+%\institute{IME}
+\titlegraphic{\includegraphics[height=2em]{images/fhnwLogoDE-solarized-base02.eps}}
+\subject{LaTeX -- Kurze Einf\"uhrung}
+\keywords{LaTeX Introduction Primer FHNW Overview}
+%http://web.fhnw.ch/cd/corporate-design/logos-fur-die-hochschulen
+%>>>
+%>>>
+% **************************************************************************** %
+\begin{document}
+% **************************************************************************** %
+
+\frame[plain]{\titlepage} % -------------------------------------- TITLE FRAME %
+
+
+% ============================================================================ %
+%
+%                                 C H U N K S
+%
+% ============================================================================ %
+% <<<
+\input{chunks/overview.tex}
+\input{chunks/theory.tex}
+\input{chunks/concept.tex}
+\input{chunks/fpga.tex}
+\input{chunks/linux.tex}
+\input{chunks/gui.tex}
+\input{chunks/results.tex}
+\input{chunks/outlook.tex}
+% >>>
+
+
+\section<handout:0| trans:0>*{Questions?} % ------------------------------- FRAME %
+\end{document}
+% vim: foldenable foldcolumn=4 foldmethod=marker foldmarker=<<<,>>>
