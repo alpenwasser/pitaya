@@ -1,0 +1,93 @@
+% \tikzsetnextfilename{bitflow}
+\begin{tikzpicture}[
+    % rounded corners=1mm,
+    every node/.append style={
+        minimum height=12ex,
+        scale=0.6
+    },
+    %scale=0.6,
+    x=6mm,
+    y=4mm,
+    node distance=5mm,
+]
+    \small
+    \sffamily
+
+    % \draw[step=1cm,gray,very thin] (-0.9,-12.9) grid (26.9,18.9);
+    \draw[q2,thin,dashed] (0,8) rectangle (2,8.5);
+    \draw[q2,thin,dashed] (0,7.5) rectangle (2,8);
+    \draw[q2,thin,dashed] (0,7) rectangle (2,7.5);
+    \fill[q2] (0,6.5) rectangle (2,7);
+    \draw [-latex,ultra thick] (0.3,6.75) -- (0.3,8.25);
+    \fill[q1] (0,0) rectangle (2,6.5);
+    % \fill[white] (1,0) circle (0.25cm);
+    \node[] at (1,-7.5) (adc) {ADC};
+    \node[] at (1,8.25) {1 bit};
+    \node[] at (1,7.75) {1 bit};
+    \node[] at (1,7.25) {1 bit};
+    \node[white] at (1,6.75) {1 bit};
+    \node[white] at (1,3.25) {13 bits};
+
+    \fill[q4] (4,0) rectangle (6,-3.5);
+    % \fill[white] (5,0) circle (0.25cm);
+    \node[black] at (5,-7.5) (zero) {ZERO};
+    \node[black] at (5,-1.75) {7 bits};
+
+    \fill[q2] (8,6.5) rectangle (10,8.5);
+    \fill[q1] (8,0) rectangle (10,6.5);
+    \fill[q4] (8,0) rectangle (10,-3.5);
+    % \fill[white] (9,0) circle (0.25cm);
+    \node[black] at (9,-7.5) (fir1in) {FIR 1[in]};
+    \node[white] at (9,7.5) {4 bits};
+    \node[white] at (9,3.25) {13 bits};
+    \node[black] at (9,-1.75) {7 bits};
+
+    \fill[q1] (10,0) rectangle (12,9.5);
+    \fill[q4] (10,0) rectangle (12,-6.5);
+    % \fill[white] (11,0) circle (0.25cm);
+    \node[black] at (11,-7.5) (fir1out) {FIR 1[out]};
+    \node[white] at (11,4.75) {19 bits};
+    \node[black] at (11,-3.25) {13 bits};
+    
+    \fill[q1] (14,0) rectangle (16,8.5);
+    \fill[q4] (14,0) rectangle (16,-3.5);
+    % \fill[white] (15,0) circle (0.25cm);
+    \node[black] at (15,-7.5) (fir2in) {FIR 2[in]};
+    \node[white] at (15,3.25) {17 bits};
+    \node[black] at (15,-1.75) {7 bits};
+
+    \fill[q1] (16,0) rectangle (18,9.5);
+    \fill[q4] (16,0) rectangle (18,-6.5);
+    % \fill[white] (17,0) circle (0.25cm);
+    \node[black] at (17,-7.5) (fir2out) {FIR 2[out]};
+    \node[white] at (17,4.75) {19 bits};
+    \node[black] at (17,-3.25) {13 bits};
+
+    \fill[q1] (20,0) rectangle (22,7);
+    \fill[q4] (20,0) rectangle (22,-1);
+    % \fill[white] (21,-1) circle (0.25cm);
+    \node[black] at (21,-7.5) (logger) {Final Value};
+    \node[white] at (21,3) {14 bits};
+    \node[black] at (21,-0.5) {2 bits};
+
+    \draw[->] (adc) -- (zero);
+    \draw[->] (zero) -- (fir1in);
+    \draw[->] (fir1out) -- (fir2in);
+    \draw[->] (fir2out) -- (logger);
+
+    % ----------- L E G E N D -------------
+    \draw[black,dotted] (2,10.25) -- (4,10.25);
+    \node[black] at (5,10.25) (cut) {Cuttoff};
+    \fill[q1] (6,10) rectangle (8,10.5);
+    \node[black] at (9,10.25) (full) {Full bits};
+    \fill[q4] (10,10) rectangle (12,10.5);
+    \node[black] at (14,10.25) (fractionals) {Fractional bits};
+    \fill[q2] (16,10) rectangle (18,10.5);
+    \node[black] at (20,10.25) (extends) {Sign extension bits};
+
+    \draw [black,dashed,thin] (0,0) -- (22,0);
+    \draw [black,dotted] (10,-3.5) -- (16,-3.5);
+    \draw [black,dotted] (16,-1) -- (22,-1);
+    \draw [black,dotted] (16,7) -- (22,7);
+    \draw [black,dotted] (10,8.5) -- (16,8.5);
+\end{tikzpicture}
