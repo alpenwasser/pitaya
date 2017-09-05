@@ -1,0 +1,37 @@
+% \tikzsetnextfilename{dynamicrange}
+\pgfplotsset{
+    axis line style={black},
+    every axis label/.append style={black},
+    every tick label/.append style={black}  
+  }
+\begin{tikzpicture}[
+    scale=1,
+]
+    \small
+    \sffamily
+    \pgfplotsset{every axis/.style={
+            height=70mm,
+            width=\textwidth,
+            samples=300,
+            %ymin=0,ymax=256,
+            ymin=0,ymax=64,
+            xmin=0,xmax=180,
+            xtick={},
+            xticklabels={},
+            const plot mark mid,
+            scaled ticks=false,
+            xlabel={$t$},
+            ylabel={$y$},
+            ytick={0,16,32,64,128,256},
+            yticklabels={0,16,32,64,128,256},
+        },
+    }
+
+    \begin{axis}[
+    ]
+        %\addplot[thick,q1][domain=0:180]{124*sin(x)} node[right]{x(t)};
+        %\draw[dashed,line width=.4pt] (0,128) -- (180,128);
+        \addplot[thick,q1][domain=0:180]{30*sin(x)} node[right]{x(t)};
+        \draw[dashed,line width=.4pt] (rel axis cs:0,0.5) -- (rel axis cs:1,0.5);
+    \end{axis}
+\end{tikzpicture}
