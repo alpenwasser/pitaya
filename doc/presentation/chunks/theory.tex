@@ -1,1 +1,68 @@
-\section{Theoretical Background}
+%\section{Theoretical Background}
+\begin{frame}
+    \frametitle{Downsampling: Aliasing}
+    \begin{center}
+        Short reminder: Aliasing in general (maybe Fig 1.3 or 1.4?)
+
+        Solution: Digital Filter to attenuate everything above fs\_low/2
+
+        Connection to next slide: Such a filter will still exhibit aliasing through folding back, but attenuated
+    \end{center}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Folding Back: Overview}
+    \begin{overprint}
+        \onslide<1>
+            Figure 1.5 Top: Central Copy
+        \onslide<2>
+            Figure 1.5 Top: Copies around +-{1,2}fs\_low
+    \end{overprint}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Folding Back: Detail}
+
+    \begin{overprint}
+        \onslide<1>
+            Figure 1.5 Bottom: Central Copy
+        \onslide<2>
+            Figure 1.5 Bottom: Folding back 1
+        \onslide<3>
+            Figure 1.5 Bottom: Folding back 2
+        \onslide<4>
+            Figure 1.5 Bottom: Folding back 3
+        \onslide<5>
+            Figure 1.5 Bottom: Folding back 4
+    \end{overprint}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Folding Back: Moving Averager}
+    \begin{center}
+        Stock performance: Not great. Connection to next slide: let's improve this.
+    \end{center}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Our Filtering Concept}
+    \begin{center}
+        Filter chain picture: list all filters and their main requirements or somesuch
+    \end{center}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Half-band Filters}
+    \begin{center}
+        frequency response and coefficients, one or two sentences
+    \end{center}
+\end{frame}
+
+\begin{frame}
+    \frametitle{CIC Filters}
+    \begin{center}
+        Topology,    transfer   function,    frequency   characteristics    as
+        superposition,  influence  of  parameters,  passband  droop,  passband
+        aliasing, compensators, bit growth
+    \end{center}
+\end{frame}

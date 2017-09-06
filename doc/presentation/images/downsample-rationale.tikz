@@ -1,0 +1,6 @@
+\begin{tikzpicture}
+    \node at (0,0)  {ADC: 125 MS/s: 4 Gbit/s};
+    \node at (3,0)  {$ R \downarrow$};
+    \node at (5,1)  {gain Bits};
+    \node at (5,-1) {reduce data rate};
+\end{tikzpicture}
