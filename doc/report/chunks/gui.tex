@@ -48,7 +48,7 @@ main requirements are:
 There is  a wealth  of programming  languages to  choose from,  with countless
 libraries to go  with them. The following sections explain  why JavaScript and
 web technologies are used to implement  the graphical user interface (GUI) and
-the mathematical functions of the scope. 
+the mathematical functions of the scope.
 
 For  this  purpose,  a  group   of  programming  languages  are  compared  and
 weighed  against each  other in  various aspects;  the results  are summarized
@@ -213,20 +213,20 @@ The oscilloscope  is a web  application that can  be directly loaded  from the
 server  running on  the  STEMlab. It  has the  following  capabilities in  its
 current implementation:
 \begin{itemize}\tightlist
-    \item 
+    \item
         Receive data over  the network for two channels (this  is only limited
         by the physical channels of the STEMlab).
-    \item 
+    \item
         Manage triggering set a trigger type,  level and the number of samples
         that have to be recorded before and after the trigger is activated.
-    \item 
+    \item
         Calculate and display the power density spectrum.
-    \item 
+    \item
         Calculate the  SNR both by  automatically detecting the signal  and by
         being told manually where the signal is.
-    \item 
+    \item
         Export data to an array-string.
-    \item 
+    \item
         Export and load the scope configuration to and from JSON strings.
 \end{itemize}
 The  following  pages  explain  how   the  application  is  structured,  along
@@ -394,9 +394,14 @@ as   a  reference;   the   results   line  up   nicely   and   are  shown   in
 \end{figure}
 
 \clearpage
-To make up for the finite window size, which has unpleasant effects (e.g. scattering the spectral lines) on the measured signal's spectrum, the signal can be multiplied with a window-function which should weaken the effect.
-This can be done by applying known windows such as a Hanning or a Blackman window as shown in Equation~\ref{eq:gui:window} where $w$ is the window and $x$ is the measured time signal. $c$ is a correction factor to account for the amplitude loss the windowing puts on the signal. This factor is obtained with Equation~\ref{eq:gui:window:correction}.
-
+To compensate for  the finite window size, which has  unpleasant effects (e.g.
+scattering the spectral  lines) on the measured signal's  spectrum, the signal
+can be multiplied with a window function to weaken the effect.
+This can  be done by applying  known windows such  as a Hanning or  a Blackman
+window as  shown in Equation~\ref{eq:gui:window}  where $w$ is the  window and
+$x$ is the measured time signal. $c$ is a correction factor to account for the
+amplitude loss the windowing puts on  the signal. This factor is obtained with
+Equation~\ref{eq:gui:window:correction}.
 \begin{equation}
     y[i] = \left(x[i]w[i]\right).
     \label{eq:gui:window}
@@ -407,23 +412,21 @@ This can be done by applying known windows such as a Hanning or a Blackman windo
     c &= \sqrt{\frac{1}{2\cdot f_s\cdot c}}
     \label{eq:gui:window:correction}
 \end{align}
-
-After that the frequency spectrum can be calculated as always, using Equation~\ref{eq:gui:onesidedf}.
-
+After  that  the frequency  spectrum  can  be  calculated  as usual  by  using
+Equation~\ref{eq:gui:onesidedf}.
 \begin{equation}
     Y[i] = \frac{1}{N}FFT\left(x[i]w[i]\right).
     \label{eq:gui:onesidedf}
 \end{equation}
-From that, the one-sided power spectrum can be calculated via
+From that, the one-sided power spectrum can be obtained with
 \begin{align}
     P_{yy}[0] &= Y[0]\cdot Y[0]^{*}\nonumber\\
     P_{yy}[i] &= 2\cdot Y[i]\cdot Y[i]^{*} \quad \text{for} \quad 0 < i \leq N / 2.
     \label{eq:gui:onesidedp}
 \end{align}
-Finally,  the
-power of a spectral region between two frequencies can be found by integrating
-over that range of frequencies, or in  the discrete case like here, by summing
-all the bins:
+Finally, the power  of a spectral region between two  frequencies can be found
+by integrating  over that range of  frequencies, or in the  discrete case like
+here, by summing all the bins:
 \begin{equation}
     P_{1,2} = \int_{f1}^{f2} P'_{yy}(f)df \approx \sum_{i_1}^{i_2}P_{yy}[i]
     \label{eq:gui:power}
