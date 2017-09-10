@@ -394,21 +394,33 @@ as   a  reference;   the   results   line  up   nicely   and   are  shown   in
 \end{figure}
 
 \clearpage
-The following equations detail  the calculations. For an in-depth explanation,
-see~\cite{gui:hanspi}.   The two-sided  spectrum  of an  input  signal $x$  is
-obtained with
+To make up for the finite window size, which has unpleasant effects (e.g. scattering the spectral lines) on the measured signal's spectrum, the signal can be multiplied with a window-function which should weaken the effect.
+This can be done by applying known windows such as a Hanning or a Blackman window as shown in Equation~\ref{eq:gui:window} where $w$ is the window and $x$ is the measured time signal. $c$ is a correction factor to account for the amplitude loss the windowing puts on the signal. This factor is obtained with Equation~\ref{eq:gui:window:correction}.
+
+\begin{equation}
+    y[i] = \left(x[i]w[i]\right).
+    \label{eq:gui:window}
+\end{equation}
+
+\begin{align}
+    c &= \sum_i^N w[i]^2 \nonumber\\
+    c &= \sqrt{\frac{1}{2\cdot f_s\cdot c}}
+    \label{eq:gui:window:correction}
+\end{align}
+
+After that the frequency spectrum can be calculated as always, using Equation~\ref{eq:gui:onesidedf}.
+
 \begin{equation}
     Y[i] = \frac{1}{N}FFT\left(x[i]w[i]\right).
     \label{eq:gui:onesidedf}
 \end{equation}
 From that, the one-sided power spectrum can be calculated via
 \begin{align}
-    P_{yy}[0] &= \frac{Y[0]\cdot Y[0]^*}{NG} \nonumber\\
-    P_{yy}[i] &= 2\cdot\frac{Y[i]\cdot Y[i]^*}{NG} \quad \text{for} \quad 0 < i \leq N / 2.
+    P_{yy}[0] &= Y[0]\cdot Y[0]^{*}\nonumber\\
+    P_{yy}[i] &= 2\cdot Y[i]\cdot Y[i]^{*} \quad \text{for} \quad 0 < i \leq N / 2.
     \label{eq:gui:onesidedp}
 \end{align}
-Where $NG$ is the noise gain, and depends on the window being used. Values for
-common  cases are  listed  in  Table~\ref{tab:gui:corrfactors}.  Finally,  the
+Finally,  the
 power of a spectral region between two frequencies can be found by integrating
 over that range of frequencies, or in  the discrete case like here, by summing
 all the bins:
@@ -416,26 +428,6 @@ all the bins:
     P_{1,2} = \int_{f1}^{f2} P'_{yy}(f)df \approx \sum_{i_1}^{i_2}P_{yy}[i]
     \label{eq:gui:power}
 \end{equation}
-
-\begin{table}
-    \centering
-    \caption[Window Correction Factors]{%
-        Correction factors  for the different  window types used in  the scope
-        application as seen in \cite{gui:hanspi}.%
-    }
-    \label{tab:gui:corrfactors}
-    \begin{tabular}{lSS}
-        \toprule
-        Window          & {CG}   & {NG}\\
-        \midrule
-        Rectangular     & 1      & 1\\
-        Hamming         & 0.54   & 0.3974\\
-        Hanning         & 0.5    & 0.375\\
-        Blackman-Harris & 0.3587 & 0.258\\
-        Flat Top        & 0.2156 & 0.1752\\
-        \bottomrule
-    \end{tabular}
-\end{table}
 
 % >>>
 
