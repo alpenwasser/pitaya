@@ -82,7 +82,9 @@
             minimum height=8ex,
             fill=br1,
         ] (pcmonitorframe) {};
-    \end{scope} 
+    \end{scope}
+
+    \node[draw=red,fit=(Linux),inner sep=1ex,circle] (spotlight) {};    
 
     \fill[br2] ($(pcmonitorframe.south) + (-1ex,0)$) --+ (0,-1ex) --+ (2ex,-1ex) --+ (2ex,0) -- cycle;
     \draw ($(pcmonitorframe.south) + (-1ex,0)$) --+ (0,-1ex);

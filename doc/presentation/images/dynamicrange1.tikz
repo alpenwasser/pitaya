@@ -34,4 +34,6 @@
         \addplot[thick,q1][domain=0:180]{31*sin(x)} node[right]{x(t)};
         \draw[dashed,line width=.4pt] (rel axis cs:0,0.5) -- (rel axis cs:1,0.5);
     \end{axis}
+    \node at (45mm,-1) {$\mathrm{ENOB} = 5$};
+    \node at (45mm, -1.5) {$\mathrm{SNR}_\mathrm{max} = 31.86$};
 \end{tikzpicture}

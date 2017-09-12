@@ -9,40 +9,21 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{ADC Core \& Logger}
+    \frametitle{Filters}
 
-    Convert to block diagram, maybe combine with diagram from previous slide.
-
-    \begin{itemize}
-        \item
-            ADC of Pavel Demin Used
-        \item
-            ZYNQ Logger (previous project)
-        \item
-            Enables the User with Various Triggers
-        \item
-            Kernel module to control
-        \item
-            Ported to 16 Bits
-        \item
-            New Logic to Control Sampling Rate
-    \end{itemize}
+    \centering
+    \input{images/system-overview-filters.tikz}
+    
 \end{frame}
 
 \begin{frame}
-    \frametitle{Filter Chains Implementation}
+    \frametitle{Filter-Chains}
 
-    No separate slide for this, just mention it, maybe.
-
-    \begin{itemize}
-        \item
-            Chain of various Xilinx Blocks
-        \item
-            Bit Growth \& Bit Alignment
-        \item
-            Dynamic Range
-    \end{itemize}
+    \centering
+    Image of Filter chains with a mark on the connection inbetween, referring to the problematic area 1 (bitgrowth/slicing)
+    
 \end{frame}
+
 
 \begin{frame}
     %% Testing
