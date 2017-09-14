@@ -1,0 +1,78 @@
+%\tikzsetnextfilename{chainConcepts}
+\begin{tikzpicture}[
+        node distance=4mm,
+        every node/.style={
+            font=\ttfamily,
+            rounded corners=1mm,
+            text centered,
+            minimum width=4em,
+            minimum height=3.5ex,
+            text height=1.5ex,
+            text depth=0.25ex,
+        },
+        5steep/.style={
+            draw=sqC!30!white,
+            fill=sq5!30!white,
+            text=da0!40!white,
+        },
+        5flat/.style={
+            draw=sq9!30!white,
+            fill=sq3!30!white,
+            text=da0!40!white,
+        },
+        2steep/.style={
+            draw=dv-7,
+            fill=dv-3,
+        },
+        2flat/.style={
+            draw=dv-5,
+            fill=dv-1,
+        },
+        cic25/.style={
+            draw=q4,
+            fill=q4!80!white,
+        },
+        cic125/.style={
+            draw=q5,
+            fill=q5!80!white,
+        },
+        cfir25/.style={
+            draw=q4!50!white,
+            fill=q4!30!white,
+        },
+        cfir125/.style={
+            draw=q5,
+            fill=q5!50!white,
+        },
+        compressor/.style={
+            draw=br0,
+            fill=br1,
+            minimum width=1em,
+        },
+    ]
+    \node[5flat]                        (5flat25)   at (0,0) {FIR1};
+    \node[compressor,right=of 5flat25,text=da0!40!white]  (5compr25a) {$R1\downarrow$};
+    \node[5steep  ,right=of 5compr25a]  (5steep25)  {FIR2};
+    \node[compressor,right=of 5steep25,text=da0!40!white] (5compr25b) {$R2\downarrow$};
+    \coordinate[left=of 5flat25]    (in25);
+    \coordinate[right=of 5compr25b] (out25);
+    \draw[-latex,draw=da0!40!white] (in25)      -- (5flat25);
+    \draw[-latex,draw=da0!40!white] (5flat25)   -- (5compr25a);
+    \draw[-latex,draw=da0!40!white] (5compr25a) -- (5steep25);
+    \draw[-latex,draw=da0!40!white] (5steep25)  -- (5compr25b);
+    \draw[-latex,draw=da0!40!white] (5compr25b) -- (out25);
+
+    \node[cic25   ,below=of 5flat25]     (25cic125)   {CIC};
+    \node[compressor,right=of 25cic125]  (5compr125a) {$R3\downarrow$};
+    \node[cfir25  ,right=of 5compr125a,text=da0!40!white]  (1cfir125)   {CFIR};
+    \node[5steep  ,right=of 1cfir125]    (5steep125) {FIR2};
+    \node[compressor,right=of 5steep125,text=da0!40!white] (5compr125b) {$R2\downarrow$};
+    \coordinate[left=of 25cic125]    (in125);
+    \coordinate[right=of 5compr125b] (out125);
+    \draw[-latex] (in125)      -- (25cic125);
+    \draw[-latex] (25cic125)   -- (5compr125a);
+    \draw[-latex] (5compr125a) -- (1cfir125);
+    \draw[-latex] (1cfir125)   -- (5steep125);
+    \draw[-latex] (5steep125)  -- (5compr125b);
+    \draw[-latex] (5compr125b) -- (out125);
+\end{tikzpicture}

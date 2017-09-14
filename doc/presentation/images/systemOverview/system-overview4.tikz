@@ -73,23 +73,27 @@
         right=5mm of stemlab,
         minimum width=12ex,
         minimum height=8ex,
-        fill=br2,
+        draw=none,
+        fill=none,
+        text opacity=0,
     ] (pcmonitor) {PC};
 
     \begin{scope}[on background layer]
         \node[
             fit=(pcmonitor),
             minimum height=8ex,
-            fill=br1,
+            draw=none,
+            fill=none,
+            text opacity=0,
         ] (pcmonitorframe) {};
     \end{scope} 
 
-    \fill[br2] ($(pcmonitorframe.south) + (-1ex,0)$) --+ (0,-1ex) --+ (2ex,-1ex) --+ (2ex,0) -- cycle;
-    \draw ($(pcmonitorframe.south) + (-1ex,0)$) --+ (0,-1ex);
-    \draw ($(pcmonitorframe.south) + (1ex,0)$)--+ (0,-1ex);
-    \draw ($(pcmonitorframe.south) + (1ex,0)$)--+ (0,-1ex);
-    \draw[fill=br2] ($(pcmonitorframe.south) + (-6ex,-1ex)$) rectangle
-          ($(pcmonitorframe.south) + (+6ex,-3ex)$);
+    %\fill[br2] ($(pcmonitorframe.south) + (-1ex,0)$) --+ (0,-1ex) --+ (2ex,-1ex) --+ (2ex,0) -- cycle;
+    %\draw ($(pcmonitorframe.south) + (-1ex,0)$) --+ (0,-1ex);
+    %\draw ($(pcmonitorframe.south) + (1ex,0)$)--+ (0,-1ex);
+    %\draw ($(pcmonitorframe.south) + (1ex,0)$)--+ (0,-1ex);
+    %\draw[fill=br2] ($(pcmonitorframe.south) + (-6ex,-1ex)$) rectangle
+    %      ($(pcmonitorframe.south) + (+6ex,-3ex)$);
 
     \draw[-latex] (stemlab.east) -- (pcmonitorframe.west);
     \draw[-latex] ($(stemlab.west) + (-2ex,0)$) -- (stemlab.west);

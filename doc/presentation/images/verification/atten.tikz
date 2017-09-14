@@ -1,0 +1,140 @@
+%\tikzsetnextfilename{rmsAll}
+%\newcommand*\freqzFileA{images/verification/results/calcs5.csv}
+%\pgfplotstableread[col sep=comma]{\freqzFileA}\freqzTableA
+
+\newcommand*\freqzFileB{images/verification/results/atten25.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileB}\freqzTableB
+
+\newcommand*\freqzFileC{images/verification/results/atten125.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileC}\freqzTableC
+
+\newcommand*\freqzFileD{images/verification/results/atten625.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileD}\freqzTableD
+
+\newcommand*\freqzFileE{images/verification/results/atten1250.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileE}\freqzTableE
+
+\newcommand*\freqzFileF{images/verification/results/atten2500.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileF}\freqzTableF
+
+
+\begin{tikzpicture}[
+%    trim axis left,
+%    trim axis right,
+]
+    \pgfplotsset{every axis/.style={
+            height=55mm,
+            width=\textwidth,
+            grid=none,
+            ymax=5,
+            ymin=-100,
+            %ymin = -170,
+            %y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+            % x filter/.code={\pgfmathparse{\pgfmathresult * 25e3}},
+            %xlabel=Frequency,
+            %ylabel=$V_\mathrm{RMS}$,
+            %legend pos=north west,
+            legend columns=2,
+        },
+        every axis legend/.append style={
+            at={(0.05,0.85)},
+            anchor=north west,
+            cells={anchor=west},
+        },
+        legend image post style={mark options={scale=1}},
+    }
+    \begin{axis}[
+            at = {(0,0)},
+            xmin=0,
+            xmax=400,
+            xtick={0,400},
+            xticklabels={%
+                $0$,
+                $\frac{f_\mathrm{s}}{2}$,
+            },
+            x unit=\times\,\pi\,\si{\radian}/\si{\sample},
+            y unit=\si{dBV},
+            ytick={0,-20,-40,-60,-80,-100,-120},
+            ymajorgrids=true,
+            xmajorgrids=true,
+            ylabel=Magnitude,
+            xlabel=Normalized Frequency,
+        ]
+        % Scaling Factors
+        % 1.1398 R = 2500
+        % 1.1171 R = 1250
+        % 1.2529 R =  625
+        % 1.2787 R =  125
+        % 1.5450 R =   25
+        % 1.7278 R =    5
+
+        \addplot[thick,q6,-,smooth,only marks,mark options={scale=0.2},
+            %y filter/.code={\pgfmathparse{1.5450 * \pgfmathresult}},
+            y filter/.code={\pgfmathparse{\pgfmathresult + 32}},
+        ] table[x=f, y=A] \freqzTableB;
+        \addplot[thick,ct4,-,smooth,only marks,mark options={scale=0.2},
+            %y filter/.code={\pgfmathparse{1.2787 * \pgfmathresult}},
+            y filter/.code={\pgfmathparse{\pgfmathresult + 25}},
+        ] table[x=f, y=A] \freqzTableC;
+        \addplot[thick,q4,-,smooth,only marks,mark options={scale=0.2},
+            %y filter/.code={\pgfmathparse{1.2529 * \pgfmathresult}},
+            y filter/.code={\pgfmathparse{\pgfmathresult + 18.5}},
+        ] table[x=f, y=A] \freqzTableD;
+        \addplot[thick,q5,-,smooth,only marks,mark options={scale=0.2},
+            %y filter/.code={\pgfmathparse{1.1171 * \pgfmathresult}},
+            y filter/.code={\pgfmathparse{\pgfmathresult + 15}},
+        ] table[x=f, y=A] \freqzTableE;
+        \addplot[thick,q3,-,smooth,only marks,mark options={scale=0.2},
+            %y filter/.code={\pgfmathparse{1.1398 * \pgfmathresult}},
+            y filter/.code={\pgfmathparse{\pgfmathresult + 12.5}},
+        ] table[x=f, y=A] \freqzTableF;
+    \end{axis}
+    
+    \begin{axis}[
+            axis line style={draw=none},
+            tick style={draw=none},
+            grid=none,
+            ticks=none,
+            at = {(0,0)},
+            xmin=400,
+            xmax=800,
+            %xtick={0,400},
+            %xticklabels={%
+            %    $0$,
+            %    $\frac{f_\mathrm{s}}{2}$,
+            %},
+            x dir=reverse,
+        ]
+
+        \addplot[thick,q6,-,smooth,only marks,mark options={scale=0.2},
+            %y filter/.code={\pgfmathparse{1.5450 * \pgfmathresult}},
+            y filter/.code={\pgfmathparse{\pgfmathresult + 32}},
+        ] table[x=f, y=A] \freqzTableB;
+        \addplot[thick,ct4,-,smooth,only marks,mark options={scale=0.2},
+            %y filter/.code={\pgfmathparse{1.2787 * \pgfmathresult}},
+            y filter/.code={\pgfmathparse{\pgfmathresult + 25}},
+        ] table[x=f, y=A] \freqzTableC;
+        \addplot[thick,q4,-,smooth,only marks,mark options={scale=0.2},
+            %y filter/.code={\pgfmathparse{1.2529 * \pgfmathresult}},
+            y filter/.code={\pgfmathparse{\pgfmathresult + 18.5}},
+        ] table[x=f, y=A] \freqzTableD;
+        \addplot[thick,q5,-,smooth,only marks,mark options={scale=0.2},
+            %y filter/.code={\pgfmathparse{1.1171 * \pgfmathresult}},
+            y filter/.code={\pgfmathparse{\pgfmathresult + 15}},
+        ] table[x=f, y=A] \freqzTableE;
+        \addplot[thick,q3,-,smooth,only marks,mark options={scale=0.2},
+            %y filter/.code={\pgfmathparse{1.1398 * \pgfmathresult}},
+            y filter/.code={\pgfmathparse{\pgfmathresult + 12.5}},
+        ] table[x=f, y=A] \freqzTableF;
+
+        \legend{%
+            %$R=5$,%
+            $R=25$,%
+            $R=125$,%
+            $R=625$,%
+            $R=1250$,%
+            $R=2500$%
+        }
+
+    \end{axis}
+\end{tikzpicture}

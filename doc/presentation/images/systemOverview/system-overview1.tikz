@@ -20,12 +20,12 @@
     \sffamily
 
     \node[SoCComponent,anchor=north] (analogIn) at (0,0) {\rotatebox{90}{analog IN}};
-    \node[fpgaComponent,right=of analogIn] (ADC) {ADC};
+    \node[fpgaComponent,right=of analogIn,draw=none,fill=none,text opacity=0] (ADC) {ADC};
     \node[fpgaComponent,right=of ADC] (filters) {Filters};
-    \node[fpgaComponent,right=of filters] (logger) {Logger};
+    \node[fpgaComponent,right=of filters,draw=none,fill=none,text opacity=0] (logger) {Logger};
 
     \node[SoCComponent,right=of logger] (RAM) {\rotatebox{90}{RAM}};
-    \node[fpgaComponent,right=of RAM] (Linux) {Linux};
+    \node[fpgaComponent,right=of RAM,draw=none,fill=none,text opacity=0] (Linux) {Linux};
     \node[SoCComponent,right=of Linux] (network) {\rotatebox{90}{Network}};
 
     \begin{scope}[on background layer]
@@ -73,30 +73,32 @@
         right=5mm of stemlab,
         minimum width=12ex,
         minimum height=8ex,
-        fill=br2,
+        draw=none,
+        fill=none,
+        text opacity=0,
     ] (pcmonitor) {PC};
 
     \begin{scope}[on background layer]
         \node[
             fit=(pcmonitor),
             minimum height=8ex,
-            fill=br1,
+            draw=none,
+            fill=none,
+            text opacity=0,
         ] (pcmonitorframe) {};
     \end{scope} 
 
-    \fill[br2] ($(pcmonitorframe.south) + (-1ex,0)$) --+ (0,-1ex) --+ (2ex,-1ex) --+ (2ex,0) -- cycle;
-    \draw ($(pcmonitorframe.south) + (-1ex,0)$) --+ (0,-1ex);
-    \draw ($(pcmonitorframe.south) + (1ex,0)$)--+ (0,-1ex);
-    \draw ($(pcmonitorframe.south) + (1ex,0)$)--+ (0,-1ex);
-    \draw[fill=br2] ($(pcmonitorframe.south) + (-6ex,-1ex)$) rectangle
-          ($(pcmonitorframe.south) + (+6ex,-3ex)$);
+    %\fill[br2] ($(pcmonitorframe.south) + (-1ex,0)$) --+ (0,-1ex) --+ (2ex,-1ex) --+ (2ex,0) -- cycle;
+    %\draw ($(pcmonitorframe.south) + (-1ex,0)$) --+ (0,-1ex);
+    %\draw ($(pcmonitorframe.south) + (1ex,0)$)--+ (0,-1ex);
+    %\draw ($(pcmonitorframe.south) + (1ex,0)$)--+ (0,-1ex);
+    %\draw[fill=br2] ($(pcmonitorframe.south) + (-6ex,-1ex)$) rectangle
+    %      ($(pcmonitorframe.south) + (+6ex,-3ex)$);
 
     \draw[-latex] (stemlab.east) -- (pcmonitorframe.west);
     \draw[-latex] ($(stemlab.west) + (-2ex,0)$) -- (stemlab.west);
-    \draw[-latex] (analogIn) -- (ADC);
-    \draw[-latex] (ADC) -- (filters);
-    \draw[-latex] (filters) -- (logger);
-    \draw[-latex] (logger) -- (RAM);
+    \draw[-latex] (analogIn) -- (filters);
+    \draw[-latex] (filters) -- (RAM);
     \draw[-latex] (RAM) -- (ARM);
     \draw[-latex] (ARM) -- (network);
 \end{tikzpicture}

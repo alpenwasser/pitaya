@@ -86,7 +86,15 @@
     autogobble,
 }
 \usepackage{booktabs}
+\usepackage{siunitx}
+\DeclareSIUnit\sample{sample}
+\DeclareSIUnit\channel{channel}
+\DeclareSIUnit[number-unit-product = {}]\partspermillion{ppm}
+\DeclareSIUnit[number-unit-product = {}]\permille{\perthousand}
 \usepackage{pgfplots}
+%\usepgfplotslibrary{external}
+%\tikzexternalize[prefix=tikzCache/]
+\usepgfplotslibrary{units}
 %\setbeamercolor{alerted text}{fg=solarized-red}
 %>>>
 % ------------------------------------------------------------------- Macros <<<
@@ -152,14 +160,12 @@
 %
 % ============================================================================ %
 % <<<
-\begin{frame}
-    \tableofcontents
-\end{frame}
-%\input{chunks/overview.tex}
+%\begin{frame}
+%    \tableofcontents
+%\end{frame}
 \input{chunks/concept.tex}
 \input{chunks/theory.tex}
 \input{chunks/fpga.tex}
-\input{chunks/linux.tex}
 \input{chunks/gui.tex}
 \input{chunks/results.tex}
 \input{chunks/outlook.tex}

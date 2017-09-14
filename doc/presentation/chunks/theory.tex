@@ -1,68 +1,62 @@
 %\section{Theoretical Background}
-\begin{frame}
-    \frametitle{Downsampling: Aliasing}
-    \begin{center}
-        Short reminder: Aliasing in general (maybe Fig 1.3 or 1.4?)
-
-        Solution: Digital Filter to attenuate everything above fs\_low/2
-
-        Connection to next slide: Such a filter will still exhibit aliasing through folding back, but attenuated
-    \end{center}
-\end{frame}
 
 \begin{frame}
-    \frametitle{Folding Back: Overview}
+    \frametitle{Folding Back: Moving Averager}
+    \centering
     \begin{overprint}
         \onslide<1>
-            Figure 1.5 Top: Central Copy
+        \input{images/movAvg/movAvg1.tikz}
         \onslide<2>
-            Figure 1.5 Top: Copies around +-{1,2}fs\_low
+        \input{images/movAvg/movAvg2.tikz}
+        \onslide<3>
+        \input{images/movAvg/movAvg3.tikz}
+        \onslide<4>
+        \input{images/movAvg/movAvg4.tikz}
+        \onslide<5>
+        \input{images/movAvg/movAvg5.tikz}
+        \onslide<6>
+        \input{images/movAvg/movAvg6.tikz}
+        \onslide<7>
+        \input{images/movAvg/movAvg7.tikz}
+        \onslide<8>
+        \input{images/movAvg/movAvg8.tikz}
+        \onslide<9>
+        \input{images/movAvg/movAvg9.tikz}
     \end{overprint}
 \end{frame}
 
 \begin{frame}
     \frametitle{Folding Back: Detail}
+    \centering
+    \input{images/iirCopies/iirCopies4.tikz}
+\end{frame}
 
+\begin{frame}
+    \frametitle{Filtering Concept}
+    \centering
     \begin{overprint}
         \onslide<1>
-            Figure 1.5 Bottom: Central Copy
+        \input{images/chainConcept/chainConcept1.tikz}
         \onslide<2>
-            Figure 1.5 Bottom: Folding back 1
-        \onslide<3>
-            Figure 1.5 Bottom: Folding back 2
-        \onslide<4>
-            Figure 1.5 Bottom: Folding back 3
-        \onslide<5>
-            Figure 1.5 Bottom: Folding back 4
+        \input{images/chainConcept/chainConcept2.tikz}
     \end{overprint}
 \end{frame}
 
 \begin{frame}
-    \frametitle{Folding Back: Moving Averager}
-    \begin{center}
-        Stock performance: Not great. Connection to next slide: let's improve this.
-    \end{center}
+    \frametitle{CIC Filter Topology}
+    \centering
+    \input{images/cic.tikz}
 \end{frame}
 
-\begin{frame}
-    \frametitle{Our Filtering Concept}
-    \begin{center}
-        Filter chain picture: list all filters and their main requirements or somesuch
-    \end{center}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Half-band Filters}
-    \begin{center}
-        frequency response and coefficients, one or two sentences
-    \end{center}
-\end{frame}
-
-\begin{frame}
-    \frametitle{CIC Filters}
-    \begin{center}
-        Topology,    transfer   function,    frequency   characteristics    as
-        superposition,  influence  of  parameters,  passband  droop,  passband
-        aliasing, compensators, bit growth
-    \end{center}
-\end{frame}
+%\begin{frame}
+%    \frametitle{Compensated CIC Filter: Frequency Response}
+%    \centering
+%    \begin{overprint}
+%        \onslide<1>
+%        \input{images/cicFreq/cfirDemo1.tikz}
+%        \onslide<2>
+%        \input{images/cicFreq/cfirDemo2.tikz}
+%        \onslide<3>
+%        \input{images/cicFreq/cfirDemo3.tikz}
+%    \end{overprint}
+%\end{frame}

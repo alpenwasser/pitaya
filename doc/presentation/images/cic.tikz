@@ -1,0 +1,51 @@
+%\tikzsetnextfilename{cicTopology}
+% https://tex.stackexchange.com/a/183092/131649
+\begin{tikzpicture}
+    \coordinate (in)  at  (0,0);
+    \coordinate (out) at (10,0);
+
+    % branching coordinates
+    \coordinate (b1) at (2.1,0); % delta: 1.5
+    \coordinate (b2) at (3.6,0); % delta: 1.5
+    \coordinate (b3) at (5.9,0); % delta: 1.8
+    \coordinate (b4) at (7.4,0); % delta: 1.5
+
+    % Delay elements
+    \node[draw] (d1) at  (1.5,1) {$z^{-1}$};
+    \node[draw] (d2) at  (3.0,1) {$z^{-1}$};
+    \node[draw] (d3) at  (6.5,1) {$z^{-M}$};
+    \node[draw] (d4) at  (8.0,1) {$z^{-M}$};
+
+    % Downsampler
+    \node[draw] (r1) at (5,0) {$R\downarrow$};
+
+    % Adders
+    \node[draw,circle, inner sep=0.3mm] (a1) at  (1.0,0) {$+$};
+    \node[draw,circle, inner sep=0.3mm] (a2) at  (2.5,0) {$+$};
+    \node[draw,circle, inner sep=0.3mm] (a3) at  (7.0,0) {$+$};
+    \node[draw,circle, inner sep=0.3mm] (a4) at  (8.5,0) {$+$};
+
+    % subtractors
+    \node[above right=0.2ex] (s1) at (a3) {$-$};
+    \node[above right=0.2ex] (s2) at (a4) {$-$};
+
+    % Lines
+    \draw[-latex] (in) -- (a1);
+    \draw[-latex] (a4) -- (out);
+    \draw[-latex] (b1) |- (d1);
+    \draw[-latex] (b2) |- (d2);
+    \draw[-latex] (a1) -- (a2);
+    \draw[-latex] (a2) -- (r1);
+    \draw[-latex] (r1) -- (a3);
+    \draw[-latex] (a3) -- (a4);
+    \draw[-latex] (d1) -| (a1);
+    \draw[-latex] (d2) -| (a2);
+    \draw[-latex] (b3) |- (d3);
+    \draw[-latex] (b4) |- (d4);
+    \draw[-latex] (d3) -| (a3);
+    \draw[-latex] (d4) -| (a4);
+
+    % Annotations
+    \node[below left =1.5ex] at (a1) {$f_s$};
+    \node[below right=1.5ex] at (a4) {$f_s/R$};
+\end{tikzpicture}

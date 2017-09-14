@@ -1,115 +1,80 @@
-\section{FPGA}
+%\section{FPGA}
 
 \begin{frame}
     \frametitle{System Overview}
 
     \centering
-    \input{images/system-overview.tikz}
-    
-\end{frame}
-
-\begin{frame}
-    \frametitle{Filters}
-
-    \centering
-    \input{images/system-overview-filters.tikz}
-    
-\end{frame}
-
-\begin{frame}
-    \frametitle{Filter-Chains}
-
-    \centering
-    Image of Filter chains with a mark on the connection inbetween, referring to the problematic area 1 (bitgrowth/slicing)
-    
-\end{frame}
-
-
-\begin{frame}
-    %% Testing
-    \frametitle<1>{Sign Extend 1}
-    \frametitle<2>{Sign Extend 2}
-
     \begin{overprint}
-        \onslide<1>
-        Testing.
-
-        \onslide<2>
-        \input{images/bitflow_sign.tikz}
+        \onslide<1> % Filter only
+        \input{images/systemOverview/system-overview1.tikz}
+        \onslide<2> % + ADC
+        \input{images/systemOverview/system-overview2.tikz}
+        \onslide<3> % + Logger
+        \input{images/systemOverview/system-overview3.tikz}
+        \onslide<4> % + Linux
+        \input{images/systemOverview/system-overview4.tikz}
+        \onslide<5> % + PC
+        \input{images/systemOverview/system-overview5.tikz}
     \end{overprint}
-
-    \centering
-    
 \end{frame}
 
-\begin{frame}
-    \frametitle{Zero Padding}
+%\begin{frame}
+%    \frametitle{Filters}
+%
+%    \centering
+%    \input{images/system-overview-filters.tikz}
+%    
+%\end{frame}
+%
+%\begin{frame}
+%    \frametitle{Filter-Chains}
+%
+%    \centering
+%    \input{images/chainConcept/chainConcept3.tikz}
+%    
+%\end{frame}
 
-    \centering
-    \input{images/bitflow_zeros.tikz}
-    
-\end{frame}
 
-\begin{frame}
-    \frametitle{FIR 1 In}
+%\begin{frame}
+%    %% Testing
+%    \frametitle<1>{Sign Extend}
+%    \frametitle<2>{Zero Padding}
+%    \frametitle<3>{FIR 1 In}
+%    \frametitle<4>{FIR 1 Out}
+%    \frametitle<5>{FIR 2 In}
+%    \frametitle<6>{FIR 2 Out}
+%    \frametitle<7>{Output Stage}
+%
+%    \begin{overprint}
+%        \onslide<1>
+%        \input{images/bitflow_sign.tikz}
+%        \onslide<2>
+%        \input{images/bitflow_zeros.tikz}
+%        \onslide<3>
+%        \input{images/bitflow_fir1_in.tikz}
+%        \onslide<4>
+%        \input{images/bitflow_fir1_out.tikz}
+%        \onslide<5>
+%        \input{images/bitflow_fir2_in.tikz}
+%        \onslide<6>
+%        \input{images/bitflow_fir2_out.tikz}
+%        \onslide<7>
+%        \input{images/bitflow_out.tikz}
+%    \end{overprint}
+%\end{frame}
 
-    \centering
-    \input{images/bitflow_fir1_in.tikz}
-    
-\end{frame}
-
-\begin{frame}
-    \frametitle{FIR 1 Out}
-
-    \centering
-    \input{images/bitflow_fir1_out.tikz}
-    
-\end{frame}
-
-\begin{frame}
-    \frametitle{FIR 2 In}
-
-    \centering
-    \input{images/bitflow_fir2_in.tikz}
-    
-\end{frame}
-
-\begin{frame}
-    \frametitle{FIR 2 Out}
-
-    \centering
-    \input{images/bitflow_fir2_out.tikz}
-    
-\end{frame}
-
-\begin{frame}
-    \frametitle{Output Stage}
-
-    \centering
-    \input{images/bitflow_out.tikz}
-    
-\end{frame}
-
-\begin{frame}
-    \frametitle{Full Dynamic Range}
-
-    \centering
-    \input{images/dynamicrange1.tikz}
-    
-\end{frame}
-
-\begin{frame}
-    \frametitle{Badly Used Dynamic Range}
-
-    \centering
-    \input{images/dynamicrange2.tikz}
-    
-\end{frame}
-
-\begin{frame}
-    \frametitle{Well Used Dynamic Range}
-
-    \centering
-    \input{images/dynamicrange3.tikz}
-    
-\end{frame}
+%\begin{frame}
+%    \frametitle<1>{Full Dynamic Range}
+%    \frametitle<2>{Badly Used Dynamic Range}
+%    \frametitle<3>{Well Used Dynamic Range}
+%
+%    \centering
+%    \begin{overprint}
+%        \onslide<1>
+%        \input{images/dynamicrange1.tikz}
+%        \onslide<2>
+%        \input{images/dynamicrange2.tikz}
+%        \onslide<3>
+%        \input{images/dynamicrange3.tikz}
+%    \end{overprint}
+%\end{frame}

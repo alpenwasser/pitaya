@@ -27,3 +27,12 @@
 - WebSockets (uWS, C++17)
 - Talks to Kernel Module, Sends to Web
 - Kernel Module Serves RAM \& Interfaces the FPGA
+
+## GUI, Scope Features
+
+### Scope Features
+- General scoping functionality
+- Highly modular and extensible
+- Display data in time and frequency space
+- Calculate power in an interval
+- Auto-detect the SNR

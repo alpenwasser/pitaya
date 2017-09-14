@@ -3,15 +3,15 @@
     rounded corners=1mm,
     every node/.append style={
         draw,
-        minimum height=8ex,
+        minimum height=12ex,
     },
-    node distance=3mm,
+    node distance=5mm,
     fpgaComponent/.style={
-        minimum height=8ex,
+        minimum height=12ex,
         fill=q4,
     },
     SoCComponent/.style={
-        minimum height=14ex,
+        minimum height=20ex,
         fill=sq3,
         draw=sqC,
     },
@@ -31,10 +31,10 @@
     \begin{scope}[on background layer]
         \node[
             fit=(ADC) (filters) (logger) (RAM) (Linux) (analogIn) (network),
-            inner sep=1mm,
+            inner sep=2mm,
             align=left,
-            text height=20ex,
-            minimum height=27ex,
+            text height=27ex,
+            minimum height=36ex,
             fill=br1,
         ] (stemlab) {STEMlab};
     \end{scope}
@@ -44,8 +44,8 @@
             fit=(ADC) (filters) (logger) (RAM) (Linux),
             inner sep=2mm,
             align=left,
-            text height=16.5ex,
-            minimum height=20ex,
+            text height=23ex,
+            minimum height=28ex,
             fill=dv-2,
             draw=dv-7,
         ] (SoC) {SoC};
@@ -56,7 +56,7 @@
             SoCComponent,
             fit=(ADC) (filters) (logger),
             align=left,
-            text height=10.5ex,
+            text height=15ex,
         ] (FPGA) {FPGA};
     \end{scope}
 
@@ -65,12 +65,12 @@
             SoCComponent,
             fit=(Linux),
             align=left,
-            text height=10.5ex,
+            text height=15ex,
         ] (ARM) {ARM};
     \end{scope}
 
     \node[
-        right=5mm of stemlab,
+        below right=10mm of stemlab,
         minimum width=12ex,
         minimum height=8ex,
         fill=br2,
@@ -91,8 +91,8 @@
     \draw[fill=br2] ($(pcmonitorframe.south) + (-6ex,-1ex)$) rectangle
           ($(pcmonitorframe.south) + (+6ex,-3ex)$);
 
-    \draw[-latex] (stemlab.east) -- (pcmonitorframe.west);
-    \draw[-latex] ($(stemlab.west) + (-2ex,0)$) -- (stemlab.west);
+    \draw[-latex] (stemlab.east) -| (pcmonitorframe);
+    \draw[-latex] ($(stemlab.west) + (-4ex,0)$) -- (stemlab.west);
     \draw[-latex] (analogIn) -- (ADC);
     \draw[-latex] (ADC) -- (filters);
     \draw[-latex] (filters) -- (logger);
