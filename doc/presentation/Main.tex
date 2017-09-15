@@ -95,6 +95,13 @@
 %\usepgfplotslibrary{external}
 %\tikzexternalize[prefix=tikzCache/]
 \usepgfplotslibrary{units}
+\pgfplotsset{%
+    scale only axis,
+    xticklabel style={font=\footnotesize},
+    yticklabel style={font=\footnotesize},
+    xlabel style={font=\footnotesize},
+    ylabel style={font=\footnotesize},
+}
 %\setbeamercolor{alerted text}{fg=solarized-red}
 %>>>
 % ------------------------------------------------------------------- Macros <<<
@@ -160,9 +167,6 @@
 %
 % ============================================================================ %
 % <<<
-%\begin{frame}
-%    \tableofcontents
-%\end{frame}
 \input{chunks/concept.tex}
 \input{chunks/theory.tex}
 \input{chunks/fpga.tex}

@@ -19,12 +19,12 @@
 
 
 \begin{tikzpicture}[
-%    trim axis left,
-%    trim axis right,
+    trim axis left,
+    trim axis right,
 ]
     \pgfplotsset{every axis/.style={
             height=55mm,
-            width=\textwidth,
+            width=0.8\textwidth,
             grid=none,
             ymax=5,
             ymin=-100,

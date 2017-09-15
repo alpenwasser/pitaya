@@ -1,7 +1,7 @@
 %\tikzsetnextfilename{intro-system-overview}
 \begin{tikzpicture}[
     rounded corners=1mm,
-    node distance=5mm,
+    node distance=7mm,
     fpgaComponent/.style={
         draw,
         minimum height=12ex,
@@ -9,7 +9,7 @@
     },
     SoCComponent/.style={
         minimum height=8ex,
-        minimum width=6em,
+        minimum width=4em,
         fill=ct2,
         draw=sqC,
         text=br2,
@@ -19,8 +19,9 @@
     \small
     \sffamily
 
-    \node[SoCComponent] at (0,0) (fpga) {FPGA};
-    \node[SoCComponent,right=of fpga] (server) {Server};
+    \node[SoCComponent] at (0,0) (fpga) {ADC};
+    \node[SoCComponent,right=of fpga,align=left, minimum width=8em]
+        (server) {SoC \\ \footnotesize{(FPGA, Linux)}};
 
     \begin{scope}[on background layer]
         \node[
@@ -33,7 +34,7 @@
             fill=br1,
             text=black,
             font=\bfseries,
-        ] (board) {Board};
+        ] (board) {STEMlab};
     \end{scope}
 
     \node[
@@ -44,7 +45,7 @@
         fill=ct2,
         align=center,
         text=br2,
-    ] (pcmonitor) {\bfseries Scope\\\\};
+    ] (pcmonitor) {\bfseries PC\\\\};
 
     \begin{scope}[on background layer]
         \node[
@@ -62,13 +63,14 @@
     \draw[fill=br2] ($(pcmonitorframe.south) + (-6ex,-1ex)$) rectangle
           ($(pcmonitorframe.south) + (+6ex,-3ex)$);
 
-    \draw[thick,-latex] (-18.0mm,0mm) -- ($(board.west) + (-1mm,0mm)$);
+    \draw[thick,-latex] (-14.0mm,0mm) -- ($(board.west) + (-1mm,0mm)$);
     \draw[thick,-latex] ($(board.east) + (1mm,0mm)$) -- ($(pcmonitorframe.west) + (-1mm,0mm)$);
     \draw[thick,-latex] ($(fpga.east) + (0.5mm,0mm)$) -- ($(server.west) + (-0.5mm,0mm)$);
 
+    \pgfplotsset{scale only axis=false}
     \begin{axis}[
         anchor=east,
-        at={(-20mm,0mm)},
+        at={(-16mm,0mm)},
         width=32.5mm,
         axis line style={draw=none},
         tick style={draw=none},

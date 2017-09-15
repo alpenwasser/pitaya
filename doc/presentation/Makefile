@@ -43,8 +43,8 @@ presentation: build
 	@cp $(DOC).tex $(DOC).tex.bak
 	@cat $(DOC).tex.bak | \
 		sed 's/^%\?\\addtobeamertemplate{background canvas}{\\transdissolve\[duration=1\]\\hspace{-0.29em}}{}/\\addtobeamertemplate{background canvas}{\\transdissolve\[duration=1\]\\hspace{-0.29em}}{}/' > $(DOC).tex
-	@$(LATEX) $(DOC)
-	@$(LATEX) $(DOC) # For correct progress bar
+	@$(DEBUG) $(DOC)
+	@$(DEBUG) $(DOC) # For correct progress bar
 	@cp $(OUT_DIR)/Main.pdf $(OUT_DIR)/presentation.pdf
 	@mv $(DOC).tex.bak $(DOC).tex
 

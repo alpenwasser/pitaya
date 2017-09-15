@@ -20,11 +20,12 @@
 \pgfplotstableread[col sep=comma]{\freqzFileCICI}\freqzTableCICI
 \pgfplotstableread[col sep=comma]{\freqzFileCICJ}\freqzTableCICJ
 \begin{tikzpicture}[
-%    trim axis left,
-%    trim axis right,
+    trim axis left,
+    trim axis right,
 ]
      \pgfplotsset{every axis/.style={
-            width=\textwidth,
+            height=55mm,
+            width=0.8\textwidth,
             grid=none,
             y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
             x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
@@ -34,91 +35,30 @@
             y unit=\si{dB},
         },
     }
-    %\begin{axis}[
-    %        %title={Folding Back Due to Spectral Copies{,} $f_\mathrm{s,low} = \frac{f_\mathrm{s,high}}{5}$},
-    %        at = {(0,0)},
-    %        height=50mm,
-    %        xmin=-1.8,
-    %        xmax=1.8,
-    %        ymin=-120,
-    %        ymax=5,
-    %        xtick={
-    %            -1,
-    %            %-0.8,
-    %            %-0.4,
-    %            0,
-    %            %0.4,
-    %            %0.8,
-    %            1%
-    %        },
-    %        xticklabels={%
-    %            $-f_\mathrm{s,high}/2$,
-    %            %$-2 \cdot f_\mathrm{s,low}$,
-    %            %$-1 \cdot f_\mathrm{s,low}$,
-    %            $0$,
-    %            %$1 \cdot f_\mathrm{s,low}$,
-    %            %$2 \cdot f_\mathrm{s,low}$,
-    %            $f_\mathrm{s,high}/2$%
-    %        },
-    %        %xticklabel style={rotate=90},
-    %    ]
-    %    \fill[q2!20!white] (0.2,5) rectangle (0.4,-120);
-    %    \fill[q0!20!white] (0.4,5) rectangle (0.6,-120);
-    %    \fill[q5!20!white] (0.6,5) rectangle (0.8,-120);
-    %    \fill[q7!20!white] (0.8,5) rectangle (1.0,-120);
-
-    %    \draw[black] (0,5) -- (0,-120);
-
-    %    \addplot[q2,-]            table[x=w, y=abs(H)] \freqzTableCICB;
-    %    \addplot[q0,-]            table[x=w, y=abs(H)] \freqzTableCICC;
-    %    \addplot[q5,-]            table[x=w, y=abs(H)] \freqzTableCICD;
-    %    \addplot[q7,-]            table[x=w, y=abs(H)] \freqzTableCICE;
-    %    \addplot[very thick,q1,-] table[x=w, y=abs(H)] \freqzTableCICA;
-
-    %    % The rectangles draw over the axis lines
-    %    \draw (0.2,   5) -- (1,   5);
-    %    \draw (0.2,-120) -- (1,-120);
-    %\end{axis}
-
     \begin{axis}[
-            %at = {(0,-125mm)},
-            height=50mm,
             xmin=0,
             xmax=1,
-            ymin=-120,
+            ymin=-100,
             ymax=5,
             xtick={
                 0,
-                %0.2,
-                %0.4,
-                %0.6,
-                %0.8,
+                0.2,
+                0.4,
+                0.8,
                 1%
             },
             xticklabels={%
                 $0$,
-                %$1 \cdot f_\mathrm{s,low}$,
-                %$2 \cdot f_\mathrm{s,low}$,
-                %$3 \cdot f_\mathrm{s,low}$,
-                %$4 \cdot f_\mathrm{s,low}$,
+                $f_\mathrm{s,out}/2$,
+                $f_\mathrm{s,out}$,
+                $2 \cdot f_\mathrm{s,out}$,
                 $f_\mathrm{s,high}/2$%
             },
-            %xticklabel style={rotate=90},
         ]
-        \fill[q2!20!white] (0.2,5) rectangle (0.4,-120);
-        \fill[q0!20!white] (0.4,5) rectangle (0.6,-120);
-        \fill[q5!20!white] (0.6,5) rectangle (0.8,-120);
-        \fill[q7!20!white] (0.8,5) rectangle (1.0,-120);
+        % Passband
+        \fill[q1!20!white] (rel axis cs:0,0) rectangle (rel axis cs:0.2,1);
 
-        \addplot[thick,q2,-] table[x=w, y=abs(H)] \freqzTableCICG;
-        \addplot[thick,q0,-] table[x=w, y=abs(H)] \freqzTableCICH;
-        \addplot[thick,q5,-] table[x=w, y=abs(H)] \freqzTableCICI;
-        \addplot[thick,q7,-] table[x=w, y=abs(H)] \freqzTableCICJ;
+        % Filter
         \addplot[very thick,q1,-] table[x=w, y=abs(H)] \freqzTableCICF;
-
-        % The rectangles draw over the axis lines
-        \draw (0.2,   5) -- (1,   5);
-        \draw (0.2,-120) -- (1,-120);
-        \draw (1,     5) -- (1,-120);
     \end{axis}
 \end{tikzpicture}

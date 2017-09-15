@@ -1,38 +1,23 @@
 %\tikzsetnextfilename{movingAveragerFrequencyResponse}
 \newcommand*\freqzFileMAA{images/movAvg/movingAveragerPBAliasingComplete.csv}
 \newcommand*\freqzFileMAB{images/movAvg/movingAveragerPBAliasingNull1Left.csv}
-\newcommand*\freqzFileMAC{images/movAvg/movingAveragerPBAliasingNull1Right.csv}
-\newcommand*\freqzFileMAD{images/movAvg/movingAveragerPBAliasingNull2Left.csv}
-\newcommand*\freqzFileMAE{images/movAvg/movingAveragerPBAliasingNull2Right.csv}
-\newcommand*\freqzFileMAF{images/movAvg/movingAveragerPBAliasingNull3Left.csv}
-\newcommand*\freqzFileMAG{images/movAvg/movingAveragerPBAliasingNull3Right.csv}
-\newcommand*\freqzFileMAH{images/movAvg/movingAveragerPBAliasingNull4Left.csv}
 \pgfplotstableread[col sep=comma]{\freqzFileMAA}\freqzTableMAA
 \pgfplotstableread[col sep=comma]{\freqzFileMAB}\freqzTableMAB
-\pgfplotstableread[col sep=comma]{\freqzFileMAC}\freqzTableMAC
-\pgfplotstableread[col sep=comma]{\freqzFileMAD}\freqzTableMAD
-\pgfplotstableread[col sep=comma]{\freqzFileMAE}\freqzTableMAE
-\pgfplotstableread[col sep=comma]{\freqzFileMAF}\freqzTableMAF
-\pgfplotstableread[col sep=comma]{\freqzFileMAG}\freqzTableMAG
-\pgfplotstableread[col sep=comma]{\freqzFileMAH}\freqzTableMAH
 \begin{tikzpicture}[
-%    trim axis left,
-%    trim axis right,
+    trim axis left,
+    trim axis right,
 ]
      \pgfplotsset{every axis/.style={
             height=55mm,
-            width=\textwidth,
+            width=0.8\textwidth,
             grid=none,
             y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
             x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
-            %x SI prefix=mega,
-            %x unit=\si{Hz},
             x unit=\times\,\pi\,\si{\radian}/\si{\sample},
             xticklabel style={font=\footnotesize},
             y unit=\si{dB},
             xlabel=Normalized Frequency,
             ylabel=Magnitude,
-            %xticklabel style={rotate=90},
             xmajorgrids=true,
         },
     }
@@ -44,19 +29,20 @@
             ymax=5,
             xtick={
                 0,
+                0.125,
                 0.25,
                 0.5,
                 0.75,
                 1%
             },
-            xticklabels={},
-            %xticklabels={%
-            %    $0$,
-            %    $f_\mathrm{signal} = \SI{5}{\MHz}$,
-            %    $f_\mathrm{s,low}/2  = \SI{7.8125}{\MHz}$,
-            %    $f_\mathrm{s,low}  = \SI{15.625}{\MHz}$,
-            %    $f_\mathrm{s,high}/2 = \SI{62.5}{\MHz}$%
-            %},
+            xticklabels={%
+                $0$,
+                $f_\mathrm{s,out}/2$,
+                $f_\mathrm{s,out}$,
+                $2 \cdot f_\mathrm{s,out}$,
+                $3 \cdot f_\mathrm{s,out}$,
+                $f_\mathrm{s,in}/2$%
+            },
             ytick={
                 0,
                 -20,
@@ -65,51 +51,11 @@
             },
         ]
         % Aliasing rectangles
-        \fill[q1!20!white] (rel axis cs:0,0) rectangle (rel axis cs:0.08,.78);
+        \fill[q1!20!white] (rel axis cs:0,0) rectangle (rel axis cs:0.08,1);
         \fill[q2!20!white] (rel axis cs:0.17,0) rectangle (rel axis cs:0.25,.78);
-        %\fill[q6!20!white] (rel axis cs:0.25,0) rectangle (rel axis cs:0.33,.78);
-        %\fill[q3!20!white] (rel axis cs:0.42,0) rectangle (rel axis cs:0.5,.78);
-        %\fill[q7!20!white] (rel axis cs:0.5,0) rectangle (rel axis cs:0.58,.78);
-        %\fill[q4!20!white] (rel axis cs:0.67,0) rectangle (rel axis cs:0.75,.78);
-        %\fill[q0!20!white] (rel axis cs:0.75,0) rectangle (rel axis cs:0.82,.78);
-        %\fill[q5!20!white] (rel axis cs:0.92,0) rectangle (rel axis cs:1,.78);
 
-        %\fill[q2!20!white] (rel axis cs:0.1875,0) rectangle (rel axis cs:0.25,1);
-        %\fill[q6!20!white] (rel axis cs:0.25,0) rectangle (rel axis cs:0.3125,1);
-        %\fill[q3!20!white] (rel axis cs:0.4375,0) rectangle (rel axis cs:0.5,1);
-        %\fill[q7!20!white] (rel axis cs:0.5,0) rectangle (rel axis cs:0.5625,1);
-        %\fill[q4!20!white] (rel axis cs:0.6875,0) rectangle (rel axis cs:0.75,1);
-        %\fill[q0!20!white] (rel axis cs:0.75,0) rectangle (rel axis cs:0.8125,1);
-        %\fill[q5!20!white] (rel axis cs:0.9375,0) rectangle (rel axis cs:1,1);
-
-        % Signal Frequency
-        %\draw[very thick,ct5] (rel axis cs:0.08,0) -- (rel axis cs:0.08,1);
-
-        % Matlab results (copied by hand from movingAverager.m's output
-        % aliasing_max_db         = -8.057121813367473 
-        % passband_droop_db       = -1.475566945544402 
-        % aliasing_attenuation_db =  6.581554867823072
-        %\draw (0, 0)      -- (0.47, 0);
-        %\draw (0,-1.4756) -- (0.47,-1.4756);
-        %\draw (0,-8.0571) -- (0.35,-8.0571);
-        %\draw[latex-latex] (0.34,-1.4756) -- (0.34,-8.0571);
-        %\draw[-latex]      (0.46, 0.5) -- (0.46, 0);
-        %\draw[-latex]      (0.46,-2)   -- (0.46,-1.4756);
-        %\draw              (0.46,0)    -- (0.46,-1.4756);
-        %\node[anchor=east] 
-        %    at (0.825,-0.735)
-        %    {\footnotesize passband droop at $f_\mathrm{signal}$: \SI{1.48}{\dB}};
-        %\node[anchor=east] 
-        %    at (0.825,-4.9914) 
-        %    {\footnotesize signal to aliasing attenuation at $f_\mathrm{signal}$: \SI{6.58}{\dB}};
-
+        % Filter
         \addplot[line cap=round,very thick,q2,-] table[x=w, y=abs(H)] \freqzTableMAB;
-        %\addplot[line cap=round,very thick,q6,-] table[x=w, y=abs(H)] \freqzTableMAC;
-        %\addplot[line cap=round,very thick,q3,-] table[x=w, y=abs(H)] \freqzTableMAD;
-        %\addplot[line cap=round,very thick,q7,-] table[x=w, y=abs(H)] \freqzTableMAE;
-        %\addplot[line cap=round,very thick,q4,-] table[x=w, y=abs(H)] \freqzTableMAF;
-        %\addplot[line cap=round,very thick,q0,-] table[x=w, y=abs(H)] \freqzTableMAG;
-        %\addplot[line cap=round,very thick,q5,-] table[x=w, y=abs(H)] \freqzTableMAH;
         \addplot[very thick,q1,-] table[x=w, y=abs(H)] \freqzTableMAA;
     \end{axis}
 \end{tikzpicture}

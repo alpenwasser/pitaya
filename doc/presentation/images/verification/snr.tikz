@@ -1,10 +1,10 @@
 \begin{tikzpicture}[
-%    trim axis left,
-%    trim axis right,
+    trim axis left,
+    trim axis right,
 ]
     \pgfplotsset{every axis/.style={
             height=55mm,
-            width=\textwidth,
+            width=0.8\textwidth,
             grid=none,
             %y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
             %x filter/.code={\pgfmathparse{\pgfmathresult * 25e3}},
@@ -38,16 +38,16 @@
                 $25000$%
             },
         ]
-        \addplot[thick,q1,-,smooth,only marks,mark=o,mark options={scale=1.0}] coordinates{%
+        \addplot[thick,q2,-,smooth,only marks,mark=*,mark options={scale=1.0}] coordinates{%
             (0,85) (1,82) (2,81.5) (3,79.5) (4,74.5) (5,68.5)
         };
-        \addplot[thick,q2,-,smooth,only marks,mark=*,mark options={scale=1.0}]  coordinates{%
-            (0,71) (1,71) (2,69) (3,69) (4,69) (5,69)
-        };
-        \legend{%
-            \SI{50}{\ohm},%
-            auto%
-        }
+        %\addplot[thick,q1,-,smooth,only marks,mark=o,mark options={scale=1.0}]  coordinates{%
+        %    (0,71) (1,71) (2,69) (3,69) (4,69) (5,69)
+        %};
+        %\legend{%
+        %    \SI{50}{\ohm},%
+        %    auto%
+        %}
     \end{axis}
     
 \end{tikzpicture}

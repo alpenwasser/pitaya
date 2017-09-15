@@ -24,7 +24,7 @@
 ]
     \pgfplotsset{every axis/.style={
             height=55mm,
-            width=\textwidth,
+            width=0.8\textwidth,
             grid=none,
             % y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
             % x filter/.code={\pgfmathparse{\pgfmathresult * 25e3}},

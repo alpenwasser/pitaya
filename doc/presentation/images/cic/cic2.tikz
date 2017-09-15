@@ -1,0 +1,114 @@
+%\tikzsetnextfilename{cicTopology}
+% https://tex.stackexchange.com/a/183092/131649
+\newcommand*\freqzFileCICB{images/cic/cic913.csv}
+\newcommand*\freqzFileCombB{images/cic/comb913.csv}
+\newcommand*\freqzFileIntB{images/cic/integrator3.csv}
+\pgfplotstableread[col sep=comma]{\freqzFileIntB}\freqzTableIntB
+\pgfplotstableread[col sep=comma]{\freqzFileCombB}\freqzTableCombB
+\pgfplotstableread[col sep=comma]{\freqzFileCICB}\freqzTableCICB
+\begin{tikzpicture}[
+%    trim axis left,
+%    trim axis right,
+]
+    \pgfplotsset{every axis/.style={
+        height=20mm,
+        grid=none,
+        y filter/.code={\pgfmathparse{20*log10(\pgfmathresult))}},
+        x filter/.code={\pgfmathparse{\pgfmathresult / 3.141592654}},
+        %xlabel=Normalized Frequency,
+        %ylabel=Magnitude,
+        %x unit=\times\,\pi\,\si{\radian}/\si{\sample},
+        %y unit=\si{dB},
+        xtick={},
+        xticklabels={},
+        ytick={},
+        yticklabels={},
+        axis line style={draw=none},
+        tick style={draw=none},
+        },
+    }
+
+    \coordinate (in)  at  (0,0);
+    \coordinate (out) at (10,0);
+
+    % branching coordinates
+    \coordinate (b1) at (2.25,0); % delta: 1.5
+    \coordinate (b2) at (3.85,0); % delta: 1.5
+    \coordinate (b3) at (5.8,0); % delta: 1.8
+    \coordinate (b4) at (7.55,0); % delta: 1.5
+
+    % Delay elements
+    \node[draw] (d1) at  (1.6,1) {$z^{-1}$};
+    \node[draw] (d2) at  (3.2,1) {$z^{-1}$};
+    \node[draw] (d3) at  (6.5,1) {$z^{-M}$};
+    \node[draw] (d4) at  (8.25,1) {$z^{-M}$};
+
+    % Downsampler
+    \node[draw] (r1) at (4.85,0) {$R\downarrow$};
+
+    % Adders
+    \node[draw,circle, inner sep=0.3mm] (a1) at  (1.1,0) {$+$};
+    \node[draw,circle, inner sep=0.3mm] (a2) at  (2.7,0) {$+$};
+    \node[draw,circle, inner sep=0.3mm] (a3) at  (7.05,0) {$+$};
+    \node[draw,circle, inner sep=0.3mm] (a4) at  (8.8,0) {$+$};
+
+    % subtractors
+    \node[above right=0.2ex] (s1) at (a3) {$-$};
+    \node[above right=0.2ex] (s2) at (a4) {$-$};
+
+    % Lines
+    \draw[-latex] (in) -- (a1);
+    \draw[-latex] (a4) -- (out);
+    \draw[-latex] (b1) |- (d1);
+    \draw[-latex] (b2) |- (d2);
+    \draw[-latex] (a1) -- (a2);
+    \draw[-latex] (a2) -- (r1);
+    \draw[-latex] (r1) -- (a3);
+    \draw[-latex] (a3) -- (a4);
+    \draw[-latex] (d1) -| (a1);
+    \draw[-latex] (d2) -| (a2);
+    \draw[-latex] (b3) |- (d3);
+    \draw[-latex] (b4) |- (d4);
+    \draw[-latex] (d3) -| (a3);
+    \draw[-latex] (d4) -| (a4);
+
+    % Annotations
+    \node[above left =2.5ex] at (a1) {$f_s$};
+    \node[above right=2.5ex] at (a4) {$f_s/R$};
+
+    \begin{axis}[
+            at = {(0,17mm)},
+            xmin=0,
+            xmax=1,
+            ymin=-30,
+            ymax=140,
+            width=4.5cm,
+            anchor=south west,
+        ]
+        \addplot[thick,q1,-] table[x=w, y=abs(H)] \freqzTableIntB;
+    \end{axis}
+
+    \begin{axis}[
+            at = {(100mm,17mm)},
+            xmin=0,
+            xmax=1,
+            ymin=-80,
+            ymax=30,
+            width=4.5cm,
+            anchor=south east,
+        ]
+        \addplot[thick,q1,-] table[x=w, y=abs(H)] \freqzTableCombB;
+    \end{axis}
+
+    \begin{axis}[
+            at = {(0,-4mm)},
+            xmin=0,
+            xmax=1,
+            ymin=-80,
+            ymax=65,
+            width=10cm,
+            anchor=north west,
+        ]
+        \addplot[thick,q1,-] table[x=w, y=abs(H)] \freqzTableCICB;
+    \end{axis}
+\end{tikzpicture}
