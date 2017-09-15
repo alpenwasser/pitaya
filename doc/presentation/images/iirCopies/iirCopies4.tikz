@@ -52,7 +52,7 @@
                 $f_\mathrm{s,out}/2$,
                 $f_\mathrm{s,out}$,
                 $2 \cdot f_\mathrm{s,out}$,
-                $f_\mathrm{s,high}/2$%
+                $f_\mathrm{s,in}/2$%
             },
         ]
         % Passband
