@@ -6,11 +6,11 @@
     \setcounter{hostCounter}{0}
 }{% false code
     \newcommand*\globalCounterFile{meta/Main.global.ctr}
-    \newwrite\globalCounterFH
-    \immediate\openin\globalCounterFH=\globalCounterFile
-    \immediate\read\globalCounterFH to \globalCounterLine
-    \immediate\read\globalCounterFH to \hostCounterLine
-    \immediate\closein\globalCounterFH
+    \newread\globalCounterFH
+    \openin\globalCounterFH=\globalCounterFile
+    \read\globalCounterFH to \globalCounterLine
+    \read\globalCounterFH to \hostCounterLine
+    \closein\globalCounterFH
     \setcounter{globalCounter}{\globalCounterLine}
     \setcounter{hostCounter}{\hostCounterLine}
     \stepcounter{globalCounter}
